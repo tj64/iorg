@@ -149,22 +149,6 @@ be easier processed by the standard mapping functions."
                  (if ref-p "" " ")))))))
 
 
-    ;; (goto (point-min))
-    ;; (while (re-search-forward
-    ;;         iorg-circ-obj-reference-regexp
-    ;;         nil 'NOERROR)
-
-;; (let* ((print-circle t)
-;;       (tree
-;;        (message
-;;         (format "%s"
-;;            (with-current-buffer
-;;                (find-file-noselect
-;;                 "/home/tj/git/iorg/picoLisp/iorg/sandbox/simple-test.org")
-;;              (org-element-parse-buffer)))))
-;;       (tree1
-
-
 ;; FIXME: kind of out-of-date
 (defun iorg-org-to-pico
   (&optional data buffer-or-file &rest args)
