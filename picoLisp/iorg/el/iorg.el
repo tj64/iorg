@@ -83,14 +83,6 @@ The keys in the resulting alist are symbols."
   (loop for pair in pico-plist
      append (list (cdr pair) (car pair))))
 
-(defun iorg--nreverse-cons-cell (cons-cell)
-  "Does to a cons-cell what `nreverse' does to a list."
-  (and (consp cons-cell)
-       (let ((head (car cons-cell))
-             (tail (cdr cons-cell)))
-         (setcar 'cons-cell tail)
-         (setcdr 'cons-cell head))))
-
 (defun iorg--circular-obj-read-syntax-to-transient-sym (tree)
   "Transform elisp circular-obj syntax into PicoLisp transient symbols.
 
