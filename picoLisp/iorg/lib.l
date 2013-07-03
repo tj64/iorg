@@ -1,6 +1,21 @@
 ## * iorg/lib.l --- utility functions for iOrg
+## ** MetaData
+##   :PROPERTIES:
+##   :copyright: Thorsten Jolitz
+##   :copyright-years: 2013
+##   :version:  0.9
+##   :licence:  GPL 2 or later (free software)
+##   :licence-url: http://www.gnu.org/licenses/
+##   :part-of-emacs: no
+##   :author: Thorsten Jolitz
+##   :author_email: tjolitz AT gmail DOT com
+##   :inspiration:  org-babel picolisp
+##   :keywords: emacs org-mode dhtml interactive-web-applications
+##   :END:
+
 ## ** Commentary
-## convenience function for calling emacs in batch-mode
+## convenience functions for iOrg, especially for the interaction with
+## Emacs/Emacs Lisp
 
 ## * Calling Emacs
 ## ** Info
@@ -54,6 +69,10 @@
 
 ## ** Functions
 
+## convert an elisp plist like (:key val :key val) into a
+## PicoLisp plist ((val . :key) (val . :key))
+(de elisp-plist-to-picolisp-plist (plist) ...)
+   
 ## is symbol S a keyword-symbol like e.g. `:begin'?
 (de keyword-symbol? (S)
    (and

@@ -12,6 +12,7 @@
 ;;   :inspiration:  org-babel picolisp
 ;;   :keywords: emacs org-mode dhtml interactive-web-applications
 ;;   :END:
+
 ;; ** Commentary
 ;; *** About iOrg
 ;; *** Installation
@@ -63,6 +64,33 @@ format.")
 ;; *** Custom Vars
 ;; * Functions
 ;; ** Non-interactive Functions
+
+(defun iorg--nil-and-t-to-uppercase (tree)
+  "Takes a parse TREE as string and upcases nil and t."
+  (and (stringp tree)
+       (replace-regexp-in-string
+        (concat
+         "\\( t \\|(t \\| t)\\|(t)\\|"
+         " nil \\|(nil \\| nil)\\|(nil)\\)")
+        '(lambda (match)
+           (cond
+            ((string= match " t ")
+             (format "%s" " T "))
+            ((string= match "(t ")
+             (format "%s" "(T "))
+            ((string= match " t)")
+             (format "%s" " T)"))
+            ((string= match "(t)")
+             (format "%s" "(T)"))
+            ((string= match " nil ")
+             (format "%s" " NIL "))
+            ((string= match "(nil ")
+             (format "%s" "(NIL "))
+            ((string= match " nil)")
+             (format "%s" " NIL)"))
+            ((string= match "(nil)")
+             (format "%s" "(NIL)"))))
+        tree)))
 
 (defun iorg--wrap-in-parens-with-backquote ()
   "Wrap following SEXP in parenthesis with backquote."
@@ -151,7 +179,47 @@ returned as a string."
                  (if ref-p "`" "setq ")
                  digit
                  (if ref-p "" " '")))))
-    (buffer-string)))
+    (buffer-substring-no-properties (point-min)(point-max))))
+    ;; (buffer-string)))
+
+
+
+;; (defun iorg--convert-preprocessed-tree-to-picolisp-syntax (tree)
+;;   "Convert TREE to syntax suited for PicoLisp property lists.
+
+;; Assumes that TREE is a list containing an Org-mode parse-tree
+;; that was pre-processed with
+;; `iorg--circular-obj-read-syntax-to-transient-sym' and applies
+;; `iorg--elisp-plist-to-picolisp-plist' to each attribute
+;; list (Emacs Lisp plist) inside the tree. Returns the transformed
+;; parse-tree as a list.
+
+;; Use `read-from-string' to read into Emacs Lisp a parse-tree given
+;; as string before calling this function. Use `format' to convert
+;; the value of this function back to a string."
+;;   (mapcar
+;;    #'(lambda (--elem)
+;;        (and
+;;         (listp --elem)
+;;         (keywordp (car --elem))
+;;         (iorg--elisp-plist-to-picolisp-plist --elem))
+;;        )
+;;    tree))
+
+  ;; (with-temp-buffer
+  ;;   (insert tree)
+  ;;   (goto-char (point-min))
+  ;;   (while (re-search-forward
+  ;;           "(:[[:alpha:]]+ " nil 'NOERROR)
+  ;;     (save-excursion
+  ;;       (goto-char (match-beginning 0))
+  ;;       (let* ((beg (point))
+  ;;             (end (save-excursion (forward-sexp)(point)))
+  ;;             (plst (buffer-substring-no-properties beg end)))
+  ;;         (delete-region beg end)
+  ;;         (insert
+  ;;          (format "%s" (iorg--elisp-plist-to-picolisp-plist plst))))))
+  ;;   (buffer-substring-no-properties (point-min)(point-max))))
 
 
 ;; FIXME: kind of out-of-date
@@ -181,7 +249,15 @@ Since `iorg-parsetree-to-alist' is just a convenience function
 built on top of `org-element-parse-buffer' and `org-element-map',
 the arguments are the same as for these two functions, so you can
 consult their doc-strings for more information."
-  (let* ((buf (or (and buffer-or-file
+  (let* ((print-circle t)
+         (map? (and args
+                    (or (plist-get args :types)
+                        (plist-get args :fun)
+                        (plist-get args :info)
+                        (plist-get args :first-match)
+                        (plist-get args :no-recursion)
+                        (plist-get args :with-affiliated))))
+         (buf (or (and buffer-or-file
                        (or (get-buffer buffer-or-file)
                            (if (and
                                 (file-exists-p buffer-or-file)
@@ -199,14 +275,22 @@ consult their doc-strings for more information."
                   (with-current-buffer buf
                     (org-element-parse-buffer gran vis))))
          (typ (or (and args (plist-get args :types))
-                       iorg-default-map-types))
-         (fun (or (and args (plist-get args :fun))
-                       iorg-default-map-fun-org-to-pico))
+                  iorg-default-map-types))
+         ;; (fun (or (and args (plist-get args :fun))
+         ;;               iorg-default-map-fun-org-to-pico))
+         (fun (or (and args (plist-get args :fun)) 'identity))
          (inf (and args (plist-get args :info)))
          (1st-match (and args (plist-get args :first-match))) 
          (no-recur (and args (plist-get args :no-recursion))) 
          (with-affil (and args (plist-get args :with-affiliated))))
-    (org-element-map dat typ fun inf 1st-match no-recur with-affil)))
+    (iorg--nil-and-t-to-uppercase
+     (iorg--circular-obj-read-syntax-to-transient-sym
+      (format
+       "%s"
+       (if map?
+           (org-element-map
+               dat typ fun inf 1st-match no-recur with-affil)
+         dat))))))
 
 (defun iorg-pico-to-org ()
   "")
