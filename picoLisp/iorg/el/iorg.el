@@ -1,5 +1,5 @@
 ;; * iorg.el --- interactive Org-mode
-;; ** Meta Data
+;; ** MetaData
 ;;   :PROPERTIES:
 ;;   :copyright: Thorsten Jolitz
 ;;   :copyright-years: 2013
@@ -24,7 +24,7 @@
 ;; ;; get it from ELPA 
 ;; ;; or from the [[https://github.com/nicferrier/emacs-kv][github-repo]]
 ;; (require 'kv)
-(require 'paredit)
+;; (require 'paredit)
 (require 'org-element)
 
 (eval-when-compile (require 'cl))
@@ -64,22 +64,26 @@ format.")
 ;; * Functions
 ;; ** Non-interactive Functions
 
-;; adapted `kvplist->alist' from library `kv.el'
-(defun iorg-elisp-plist-to-picolisp-plist (plist)
-  "Convert elisp PLIST to an PicoLisp plist.
+(defun iorg--wrap-in-parens-with-backquote ()
+  "Wrap following SEXP in parenthesis with backquote."
+  (save-excursion
+    (insert "`(")
+    (forward-sexp)
+    (insert ")")
+    (forward-char -1)
+    (backward-sexp)))
 
-The keys are expected to be :prefixed and the colons are removed.
-The keys in the resulting alist are symbols."
-  ;; RECURSION KLAXON
+;; adapted `kvplist->alist' from library `kv.el'
+(defun iorg--elisp-plist-to-picolisp-plist (plist)
+  "Convert elisp PLIST to an PicoLisp plist."
   (when plist
     (destructuring-bind (key value &rest plist) plist
       (cons `(,value . ,key)
             (iorg-elisp-plist-to-picolisp-plist plist)))))
 
 ;; adapted `kvalist->plist' from library `kv.el'
-(defun iorg-picolisp-plist-to-elisp-plist (pico-plist)
+(defun iorg--picolisp-plist-to-elisp-plist (pico-plist)
   "Convert an picolisp plist (PICO-PLIST) to an elisp plist."
-  ;; Why doesn't elisp provide this?
   (loop for pair in pico-plist
      append (list (cdr pair) (car pair))))
 
@@ -129,6 +133,7 @@ and references to these symbols:
 Thus, the circular list is resolved into a regular list that can
 be easier processed by the standard mapping functions."
   (with-current-buffer (get-buffer-create "*iorg-tmp-buffer*")
+  ;; (with-temp-buffer
     (insert tree)
     (goto-char (point-min))
     (while (re-search-forward
@@ -138,15 +143,17 @@ be easier processed by the standard mapping functions."
             (ref-p (string= (match-string 3) "#")))
         (replace-match "")
         (unless ref-p
-        (paredit-wrap-sexp)
-          (save-excursion
-            (forward-char -1)
-            (insert (format "%s" "`"))))
+          ;; (paredit-wrap-sexp)
+          (iorg--wrap-in-parens-with-backquote)
+          ;; (save-excursion
+          ;;   (forward-char -1)
+          ;;   (insert (format "%s" "`"))))
+          (forward-char 2))
         (insert
          (format "%s\"n%s\"%s"
                  (if ref-p "`" "setq ")
-                   digit
-                 (if ref-p "" " ")))))))
+                 digit
+                 (if ref-p "" " '")))))))
 
 
 ;; FIXME: kind of out-of-date

@@ -54,17 +54,14 @@
 
 ## ** Functions
 
-## is symbol S a key like e.g. `:begin'?
+## is symbol S a keyword-symbol like e.g. `:begin'?
 (de keyword-symbol? (S)
    (and
       (sym? S)
       (= (car (chop S)) ":") ) )
 
-
-
 ## generic function for calling Emacs from PicoLisp
 ## courtesy of Alexander Burger
-
 (de emx @
    (in
       (cons 'emacs "--no-site-file" "--batch"
