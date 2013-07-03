@@ -130,10 +130,11 @@ and references to these symbols:
  -> (1 2 (3 4 5 6) 7 5 6)
 #+end_quote
 
-Thus, the circular list is resolved into a regular list that can
-be easier processed by the standard mapping functions."
-  (with-current-buffer (get-buffer-create "*iorg-tmp-buffer*")
-  ;; (with-temp-buffer
+Thus, the circular list is resolved into a regular list (that can
+be easier processed by the standard mapping functions) and
+returned as a string."
+  ;; (with-current-buffer (get-buffer-create "*iorg-tmp-buffer*")
+  (with-temp-buffer
     (insert tree)
     (goto-char (point-min))
     (while (re-search-forward
@@ -143,17 +144,14 @@ be easier processed by the standard mapping functions."
             (ref-p (string= (match-string 3) "#")))
         (replace-match "")
         (unless ref-p
-          ;; (paredit-wrap-sexp)
           (iorg--wrap-in-parens-with-backquote)
-          ;; (save-excursion
-          ;;   (forward-char -1)
-          ;;   (insert (format "%s" "`"))))
           (forward-char 2))
         (insert
          (format "%s\"n%s\"%s"
                  (if ref-p "`" "setq ")
                  digit
-                 (if ref-p "" " '")))))))
+                 (if ref-p "" " '")))))
+    (buffer-string)))
 
 
 ;; FIXME: kind of out-of-date
