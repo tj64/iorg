@@ -115,19 +115,36 @@ format.")
     (forward-char -1)
     (backward-sexp)))
 
-;; adapted `kvplist->alist' from library `kv.el'
-(defun iorg--elisp-plist-to-picolisp-plist (plist)
-  "Convert elisp PLIST to an PicoLisp plist."
-  (when plist
-    (destructuring-bind (key value &rest plist) plist
-      (cons `(,value . ,key)
-            (iorg--elisp-plist-to-picolisp-plist plist)))))
+(defun iorg--elements-elisp-plist-to-picolisp-plist (elem)
+  "Convert elisp plist of ELEM into PicoLisp plist."
+  (let ((type (org-element-type elem)))
+    (and type
+         (not (eq type 'plain-text))
+         (not (eq type 'org-data))
+         (let* ((plist (cadr elem))
+                (props (if (iorg--elisp-plist-p plist)
+                           (iorg--elisp-plist-keys plist)
+                         (error "%s is not an Emacs Lisp plist"
+                                plist))))
+           (mapcar
+            (lambda (prop)
+              (cons (org-element-property prop elem) prop))
+            props)))))
 
-;; adapted `kvalist->plist' from library `kv.el'
-(defun iorg--picolisp-plist-to-elisp-plist (pico-plist)
-  "Convert an picolisp plist (PICO-PLIST) to an elisp plist."
-  (loop for pair in pico-plist
-     append (list (cdr pair) (car pair))))
+
+;; ;; adapted `kvplist->alist' from library `kv.el'
+;; (defun iorg--elisp-plist-to-picolisp-plist (plist)
+;;   "Convert elisp PLIST to an PicoLisp plist."
+;;   (when plist
+;;     (destructuring-bind (key value &rest plist) plist
+;;       (cons `(,value . ,key)
+;;             (iorg--elisp-plist-to-picolisp-plist plist)))))
+
+;; ;; adapted `kvalist->plist' from library `kv.el'
+;; (defun iorg--picolisp-plist-to-elisp-plist (pico-plist)
+;;   "Convert an picolisp plist (PICO-PLIST) to an elisp plist."
+;;   (loop for pair in pico-plist
+;;      append (list (cdr pair) (car pair))))
 
 (defun iorg--circular-obj-read-syntax-to-transient-sym (tree)
   "Transform elisp circular-obj syntax into PicoLisp transient symbols.
