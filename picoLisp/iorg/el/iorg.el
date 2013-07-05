@@ -65,6 +65,20 @@ format.")
 ;; * Functions
 ;; ** Non-interactive Functions
 
+(defsubst iorg--elisp-plist-p (lst)
+  "Return non-nil if LST is a list and its car a keyword."
+  (and (listp lst) (keywordp (car lst))))
+
+(defun iorg--elisp-plist-keys (plist)
+  "Return a list with all keywords in PLIST."
+  (and (iorg--elisp-plist-p plist)
+       (remove
+        t
+        (mapcar
+         (lambda (--elem)
+           (or (not (keywordp --elem)) --elem))
+         plist))))
+
 (defun iorg--nil-and-t-to-uppercase (tree)
   "Takes a parse TREE as string and upcases nil and t."
   (and (stringp tree)
@@ -107,7 +121,7 @@ format.")
   (when plist
     (destructuring-bind (key value &rest plist) plist
       (cons `(,value . ,key)
-            (iorg-elisp-plist-to-picolisp-plist plist)))))
+            (iorg--elisp-plist-to-picolisp-plist plist)))))
 
 ;; adapted `kvalist->plist' from library `kv.el'
 (defun iorg--picolisp-plist-to-elisp-plist (pico-plist)
