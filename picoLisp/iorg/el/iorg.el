@@ -86,16 +86,6 @@ format.")
         (setq counter (1+ counter)))))
   tree)
 
-
-;; (defun iorg--map-content-or-secondary-string (strg fun)
-;;   "Apply FUN to STRG and return modified string. 
-
-;; STRG is supposed to be a content string or secondary string in a parse tree
-;; procuced by `org-element-parse-buffer'."
-;;   (and (stringp strg)
-;;        (functionp fun)
-;;        (string-
-
 (defun iorg--unwind-circular-list (tree)
   "Replace circular links with unique ID's in parse TREE."
     (org-element-map tree iorg-all-types
@@ -103,9 +93,6 @@ format.")
         (org-element-put-property
          elem :parent
          (let ((par (org-element-property :parent elem)))
-           ;; (if (and par (listp par)
-           ;;      (not (eq (org-element-type par) 'org-data)))
-           ;;     (org-element-property :elem-id par)) 0))))))
            (if (eq (org-element-type par) 'org-data)
                0
              (org-element-property :elem-id par))))))
