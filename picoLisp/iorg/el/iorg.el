@@ -49,22 +49,6 @@
   org-element-all-objects '(plain-text))
   "Default types to be selected by `org-element-map'.")
 
-(defvar iorg-default-map-fun-org-to-pico 'identity
-  ;; 'iorg--transform-elements-plist-to-picolisp-plist
-  ;; '(lambda (plst) (list (car plst) (kvplist->alist (cadr plst))))
-  "Default function to be mapped on selected types.
-
-This function will be used by `org-element-map' when converting an Org-mode
-parse-tree into a PicoLisp readable alist.")
-
-(defvar iorg-default-map-fun-pico-to-org
-  '(lambda (alst) (list (car alst) (kvalist->plist (cadr alst))))
-  "Default function to be mapped on selected types.
-
-This function will be used by `org-element-map' when converting a
-PicoLisp readable alist into Org-mode parse-tree (plist-)
-format.")
-
 ;; ** Hooks
 ;; ** Customs
 ;; *** Custom Groups
@@ -135,25 +119,6 @@ format.")
              (format "%s" "(NIL)"))))
         tree)))
 
-;; (defun iorg--wrap-in-parens-with-backquote ()
-;;   "Wrap following SEXP(s) in parenthesis with backquote."
-;;   (save-excursion
-;;     (insert "`(")
-;;     ;; sexp is a list
-;;     (if (listp (sexp-at-point))
-;;         (forward-sexp)
-;;       ;; sexp is a non-keyword symbol
-;;       (while (not (or (keywordp (sexp-at-point))
-;;                       (listp (sexp-at-point))))
-;;         (forward-sexp)
-;;         (forward-char))
-;;       (backward-sexp)
-;;       (forward-sexp))
-;;     (insert ")")
-;;     (forward-char -1)
-;;     (backward-sexp)))
-
-
 (defun iorg--convert-plists-to-picolisp (tree)
   "Convert all elements plists in TREE to PicosLisp plists.
 
@@ -181,135 +146,8 @@ compliant form."
            (mapcar
             (lambda (prop)
               (cons (org-element-property prop elem) prop))
-                    ;; (intern (concat ":" (symbol-name prop)))))
             props)))))
 
-         ;; (format "%s\"n%s\"%s"
-
-;; ;; adapted `kvplist->alist' from library `kv.el'
-;; (defun iorg--elisp-plist-to-picolisp-plist (plist)
-;;   "Convert elisp PLIST to an PicoLisp plist."
-;;   (when plist
-;;     (destructuring-bind (key value &rest plist) plist
-;;       (cons `(,value . ,key)
-;;             (iorg--elisp-plist-to-picolisp-plist plist)))))
-
-;; ;; adapted `kvalist->plist' from library `kv.el'
-;; (defun iorg--picolisp-plist-to-elisp-plist (pico-plist)
-;;   "Convert an picolisp plist (PICO-PLIST) to an elisp plist."
-;;   (loop for pair in pico-plist
-;;      append (list (cdr pair) (car pair))))
-
-;; (defun iorg--circular-obj-read-syntax-to-transient-sym (tree)
-;;   "Transform elisp circular-obj syntax into PicoLisp transient symbols.
-
-;; This function expects an Org-mode buffer parse TREE as a string,
-;; as produced e.g. by this Emacs Lisp code (unquote the
-;; double-quotes inside the source-block before evaluating):
-
-;; #+begin_src emacs-lisp
-;;   (let ((print-circle t))
-;;     (message
-;;           (format \"%s\"
-;;              (with-current-buffer
-;;                  (find-file-noselect
-;;                   \"/path/to/my-file.org\")
-;;                (org-element-parse-buffer)))))
-;; #+end_src
-
-;; It replaces the Emacs Lisp read syntax for circular objects with
-;; assignments and references to PicoLisp transient symbols. Here is
-;; a quote form `(info \"(elisp)Circular Objects\")' about the read
-;; syntax:
-
-;; #+begin_quote
-;; To represent shared or circular structures within a complex of Lisp
-;; objects, you can use the reader constructs `#N=' and `#N#'.
-
-;;    Use `#N=' before an object to label it for later reference;
-;; subsequently, you can use `#N#' to refer the same object in another
-;; place.  Here, N is some integer.  For example, here is how to make a
-;; list in which the first element recurs as the third element:
-
-;;      (#1=(a) b #1#)
-
-;; #+end_quote
-
-;; This read syntax is replaced with assignments to PicoLisp transient symbols
-;; and references to these symbols:
-
-;; #+begin_quote
-;; : (1 2 (3 4 . `(setq \"n1\" (5 6))) 7 . `\"n1\")
-;;  -> (1 2 (3 4 5 6) 7 5 6)
-;; #+end_quote
-
-;; Thus, the circular list is resolved into a regular list (that can
-;; be easier processed by the standard mapping functions) and
-;; returned as a string."
-;;   ;; (with-current-buffer (get-buffer-create "*iorg-tmp-buffer*")
-;;   (with-temp-buffer
-;;     (insert tree)
-;;     (goto-char (point-min))
-;;     (while (re-search-forward
-;;             iorg-circ-obj-label-regexp
-;;             nil 'NOERROR)
-;;       (let ((digit (match-string 2))
-;;             (ref-p (string= (match-string 3) "#")))
-;;         (replace-match "")
-;;         (unless ref-p
-;;           (iorg--wrap-in-parens-with-backquote)
-;;           (forward-char 2))
-;;         (insert
-;;          ;; FIXME %S better then %s ?
-;;          (format "%s\"n%s\"%s"
-;;          ;; (format "%S\"n%S\"%S"
-;;                  (if ref-p "`" "setq ")
-;;                  digit
-;;                  (if ref-p "" " '")))))
-;;     (buffer-substring-no-properties (point-min)(point-max))))
-    ;; (buffer-string)))
-
-
-
-;; (defun iorg--convert-preprocessed-tree-to-picolisp-syntax (tree)
-;;   "Convert TREE to syntax suited for PicoLisp property lists.
-
-;; Assumes that TREE is a list containing an Org-mode parse-tree
-;; that was pre-processed with
-;; `iorg--circular-obj-read-syntax-to-transient-sym' and applies
-;; `iorg--elisp-plist-to-picolisp-plist' to each attribute
-;; list (Emacs Lisp plist) inside the tree. Returns the transformed
-;; parse-tree as a list.
-
-;; Use `read-from-string' to read into Emacs Lisp a parse-tree given
-;; as string before calling this function. Use `format' to convert
-;; the value of this function back to a string."
-;;   (mapcar
-;;    #'(lambda (--elem)
-;;        (and
-;;         (listp --elem)
-;;         (keywordp (car --elem))
-;;         (iorg--elisp-plist-to-picolisp-plist --elem))
-;;        )
-;;    tree))
-
-  ;; (with-temp-buffer
-  ;;   (insert tree)
-  ;;   (goto-char (point-min))
-  ;;   (while (re-search-forward
-  ;;           "(:[[:alpha:]]+ " nil 'NOERROR)
-  ;;     (save-excursion
-  ;;       (goto-char (match-beginning 0))
-  ;;       (let* ((beg (point))
-  ;;             (end (save-excursion (forward-sexp)(point)))
-  ;;             (plst (buffer-substring-no-properties beg end)))
-  ;;         (delete-region beg end)
-  ;;         (insert
-  ;;          (format "%s" (iorg--elisp-plist-to-picolisp-plist plst))))))
-  ;;   (buffer-substring-no-properties (point-min)(point-max))))
-
-
-;; FIXME: kind of out-of-date
 (defun iorg-org-to-pico
   (&optional data buffer-or-file &rest args)
   "Converts an org-element parse-tree into an alist.
@@ -364,15 +202,12 @@ consult their doc-strings for more information."
                     (org-element-parse-buffer gran vis))))
          (typ (or (and args (plist-get args :types))
                   iorg-all-types))
-         ;; (fun (or (and args (plist-get args :fun))
-         ;;          iorg-default-map-fun-org-to-pico))
          (fun (or (and args (plist-get args :fun)) 'identity))
          (inf (and args (plist-get args :info)))
          (1st-match (and args (plist-get args :first-match))) 
          (no-recur (and args (plist-get args :no-recursion))) 
          (with-affil (and args (plist-get args :with-affiliated))))
     (iorg--nil-and-t-to-uppercase
-     ;; (iorg--circular-obj-read-syntax-to-transient-sym
      (format "%s"
      (iorg--convert-plists-to-picolisp
       (iorg--unwind-circular-list
