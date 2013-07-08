@@ -43,8 +43,15 @@
   (append org-element-all-elements org-element-all-objects)
   "Default types to be selected by `org-element-map'.")
 
+;; FIXME all types covered?
+(defvar iorg-all-types
+  (append '(org-data) org-element-all-elements
+  org-element-all-objects '(plain-text))
+  "Default types to be selected by `org-element-map'.")
+
 (defvar iorg-default-map-fun-org-to-pico
-  '(lambda (plst) (list (car plst) (kvplist->alist (cadr plst))))
+  'iorg--transform-elements-plist-to-picolisp-plist
+  ;; '(lambda (plst) (list (car plst) (kvplist->alist (cadr plst))))
   "Default function to be mapped on selected types.
 
 This function will be used by `org-element-map' when converting an Org-mode
@@ -68,6 +75,41 @@ format.")
 (defsubst iorg--elisp-plist-p (lst)
   "Return non-nil if LST is a list and its car a keyword."
   (and (listp lst) (keywordp (car lst))))
+
+(defun iorg--add-elem-id (tree)
+  "Add :elem-id property to each element of parse TREE."
+  (let ((counter 1))
+    (org-element-map tree (append '(org-data) iorg-default-map-types)
+      (lambda (elem)
+        (unless (eq (org-element-type elem) 'org-data)
+          (org-element-put-property elem :elem-id counter))
+        (setq counter (1+ counter)))))
+  tree)
+
+
+;; (defun iorg--map-content-or-secondary-string (strg fun)
+;;   "Apply FUN to STRG and return modified string. 
+
+;; STRG is supposed to be a content string or secondary string in a parse tree
+;; procuced by `org-element-parse-buffer'."
+;;   (and (stringp strg)
+;;        (functionp fun)
+;;        (string-
+
+(defun iorg--unwind-circular-list (tree)
+  "Replace circular links with unique ID's in parse TREE."
+    (org-element-map tree iorg-all-types
+      (lambda (elem)
+        (org-element-put-property
+         elem :parent
+         (let ((par (org-element-property :parent elem)))
+           ;; (if (and par (listp par)
+           ;;      (not (eq (org-element-type par) 'org-data)))
+           ;;     (org-element-property :elem-id par)) 0))))))
+           (if (eq (org-element-type par) 'org-data)
+               0
+             (org-element-property :elem-id par))))))
+    tree)
 
 (defun iorg--elisp-plist-keys (plist)
   "Return a list with all keywords in PLIST."
@@ -107,20 +149,29 @@ format.")
         tree)))
 
 (defun iorg--wrap-in-parens-with-backquote ()
-  "Wrap following SEXP in parenthesis with backquote."
+  "Wrap following SEXP(s) in parenthesis with backquote."
   (save-excursion
     (insert "`(")
-    (forward-sexp)
+    ;; sexp is a list
+    (if (listp (sexp-at-point))
+        (forward-sexp)
+      ;; sexp is a non-keyword symbol
+      (while (not (or (keywordp (sexp-at-point))
+                      (listp (sexp-at-point))))
+        (forward-sexp)
+        (forward-char))
+      (backward-sexp)
+      (forward-sexp))
     (insert ")")
     (forward-char -1)
     (backward-sexp)))
 
-(defun iorg--elements-elisp-plist-to-picolisp-plist (elem)
+(defun iorg--transform-elements-plist-to-picolisp-plist (elem)
   "Convert elisp plist of ELEM into PicoLisp plist."
   (let ((type (org-element-type elem)))
     (and type
          (not (eq type 'plain-text))
-         (not (eq type 'org-data))
+         ;; (not (eq type 'org-data))
          (let* ((plist (cadr elem))
                 (props (if (iorg--elisp-plist-p plist)
                            (iorg--elisp-plist-keys plist)
@@ -129,8 +180,10 @@ format.")
            (mapcar
             (lambda (prop)
               (cons (org-element-property prop elem) prop))
+                    ;; (intern (concat ":" (symbol-name prop)))))
             props)))))
 
+         ;; (format "%s\"n%s\"%s"
 
 ;; ;; adapted `kvplist->alist' from library `kv.el'
 ;; (defun iorg--elisp-plist-to-picolisp-plist (plist)
@@ -206,7 +259,9 @@ returned as a string."
           (iorg--wrap-in-parens-with-backquote)
           (forward-char 2))
         (insert
+         ;; FIXME %S better then %s ?
          (format "%s\"n%s\"%s"
+         ;; (format "%S\"n%S\"%S"
                  (if ref-p "`" "setq ")
                  digit
                  (if ref-p "" " '")))))
@@ -281,13 +336,6 @@ built on top of `org-element-parse-buffer' and `org-element-map',
 the arguments are the same as for these two functions, so you can
 consult their doc-strings for more information."
   (let* ((print-circle t)
-         (map? (and args
-                    (or (plist-get args :types)
-                        (plist-get args :fun)
-                        (plist-get args :info)
-                        (plist-get args :first-match)
-                        (plist-get args :no-recursion)
-                        (plist-get args :with-affiliated))))
          (buf (or (and buffer-or-file
                        (or (get-buffer buffer-or-file)
                            (if (and
@@ -307,9 +355,9 @@ consult their doc-strings for more information."
                     (org-element-parse-buffer gran vis))))
          (typ (or (and args (plist-get args :types))
                   iorg-default-map-types))
-         ;; (fun (or (and args (plist-get args :fun))
-         ;;               iorg-default-map-fun-org-to-pico))
-         (fun (or (and args (plist-get args :fun)) 'identity))
+         (fun (or (and args (plist-get args :fun))
+                  iorg-default-map-fun-org-to-pico))
+         ;; (fun (or (and args (plist-get args :fun)) 'identity))
          (inf (and args (plist-get args :info)))
          (1st-match (and args (plist-get args :first-match))) 
          (no-recur (and args (plist-get args :no-recursion))) 
@@ -318,10 +366,9 @@ consult their doc-strings for more information."
      (iorg--circular-obj-read-syntax-to-transient-sym
       (format
        "%s"
-       (if map?
-           (org-element-map
-               dat typ fun inf 1st-match no-recur with-affil)
-         dat))))))
+       (org-element-map
+           dat typ fun inf 1st-match no-recur with-affil)
+       dat)))))
 
 (defun iorg-pico-to-org ()
   "")
