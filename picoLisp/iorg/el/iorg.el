@@ -34,10 +34,10 @@
 ;; ** Consts
 ;; ** Vars
 
-(defvar iorg-circ-obj-label-regexp
-  "\\(#\\)\\([[:digit:]]+\\)\\(#\\|=\\)"
-  "Regexp that matches the label of an object or the
-  reference to such a labeled in a circular list.")
+;; (defvar iorg-circ-obj-label-regexp
+;;   "\\(#\\)\\([[:digit:]]+\\)\\(#\\|=\\)"
+;;   "Regexp that matches the label of an object or the
+;;   reference to such a labeled in a circular list.")
 
 (defvar iorg-default-map-types
   (append org-element-all-elements org-element-all-objects)
@@ -135,23 +135,23 @@ format.")
              (format "%s" "(NIL)"))))
         tree)))
 
-(defun iorg--wrap-in-parens-with-backquote ()
-  "Wrap following SEXP(s) in parenthesis with backquote."
-  (save-excursion
-    (insert "`(")
-    ;; sexp is a list
-    (if (listp (sexp-at-point))
-        (forward-sexp)
-      ;; sexp is a non-keyword symbol
-      (while (not (or (keywordp (sexp-at-point))
-                      (listp (sexp-at-point))))
-        (forward-sexp)
-        (forward-char))
-      (backward-sexp)
-      (forward-sexp))
-    (insert ")")
-    (forward-char -1)
-    (backward-sexp)))
+;; (defun iorg--wrap-in-parens-with-backquote ()
+;;   "Wrap following SEXP(s) in parenthesis with backquote."
+;;   (save-excursion
+;;     (insert "`(")
+;;     ;; sexp is a list
+;;     (if (listp (sexp-at-point))
+;;         (forward-sexp)
+;;       ;; sexp is a non-keyword symbol
+;;       (while (not (or (keywordp (sexp-at-point))
+;;                       (listp (sexp-at-point))))
+;;         (forward-sexp)
+;;         (forward-char))
+;;       (backward-sexp)
+;;       (forward-sexp))
+;;     (insert ")")
+;;     (forward-char -1)
+;;     (backward-sexp)))
 
 (defun iorg--transform-elements-plist-to-picolisp-plist (elem)
   "Convert elisp plist of ELEM into PicoLisp plist."
@@ -186,73 +186,73 @@ format.")
 ;;   (loop for pair in pico-plist
 ;;      append (list (cdr pair) (car pair))))
 
-(defun iorg--circular-obj-read-syntax-to-transient-sym (tree)
-  "Transform elisp circular-obj syntax into PicoLisp transient symbols.
+;; (defun iorg--circular-obj-read-syntax-to-transient-sym (tree)
+;;   "Transform elisp circular-obj syntax into PicoLisp transient symbols.
 
-This function expects an Org-mode buffer parse TREE as a string,
-as produced e.g. by this Emacs Lisp code (unquote the
-double-quotes inside the source-block before evaluating):
+;; This function expects an Org-mode buffer parse TREE as a string,
+;; as produced e.g. by this Emacs Lisp code (unquote the
+;; double-quotes inside the source-block before evaluating):
 
-#+begin_src emacs-lisp
-  (let ((print-circle t))
-    (message
-          (format \"%s\"
-             (with-current-buffer
-                 (find-file-noselect
-                  \"/path/to/my-file.org\")
-               (org-element-parse-buffer)))))
-#+end_src
+;; #+begin_src emacs-lisp
+;;   (let ((print-circle t))
+;;     (message
+;;           (format \"%s\"
+;;              (with-current-buffer
+;;                  (find-file-noselect
+;;                   \"/path/to/my-file.org\")
+;;                (org-element-parse-buffer)))))
+;; #+end_src
 
-It replaces the Emacs Lisp read syntax for circular objects with
-assignments and references to PicoLisp transient symbols. Here is
-a quote form `(info \"(elisp)Circular Objects\")' about the read
-syntax:
+;; It replaces the Emacs Lisp read syntax for circular objects with
+;; assignments and references to PicoLisp transient symbols. Here is
+;; a quote form `(info \"(elisp)Circular Objects\")' about the read
+;; syntax:
 
-#+begin_quote
-To represent shared or circular structures within a complex of Lisp
-objects, you can use the reader constructs `#N=' and `#N#'.
+;; #+begin_quote
+;; To represent shared or circular structures within a complex of Lisp
+;; objects, you can use the reader constructs `#N=' and `#N#'.
 
-   Use `#N=' before an object to label it for later reference;
-subsequently, you can use `#N#' to refer the same object in another
-place.  Here, N is some integer.  For example, here is how to make a
-list in which the first element recurs as the third element:
+;;    Use `#N=' before an object to label it for later reference;
+;; subsequently, you can use `#N#' to refer the same object in another
+;; place.  Here, N is some integer.  For example, here is how to make a
+;; list in which the first element recurs as the third element:
 
-     (#1=(a) b #1#)
+;;      (#1=(a) b #1#)
 
-#+end_quote
+;; #+end_quote
 
-This read syntax is replaced with assignments to PicoLisp transient symbols
-and references to these symbols:
+;; This read syntax is replaced with assignments to PicoLisp transient symbols
+;; and references to these symbols:
 
-#+begin_quote
-: (1 2 (3 4 . `(setq \"n1\" (5 6))) 7 . `\"n1\")
- -> (1 2 (3 4 5 6) 7 5 6)
-#+end_quote
+;; #+begin_quote
+;; : (1 2 (3 4 . `(setq \"n1\" (5 6))) 7 . `\"n1\")
+;;  -> (1 2 (3 4 5 6) 7 5 6)
+;; #+end_quote
 
-Thus, the circular list is resolved into a regular list (that can
-be easier processed by the standard mapping functions) and
-returned as a string."
-  ;; (with-current-buffer (get-buffer-create "*iorg-tmp-buffer*")
-  (with-temp-buffer
-    (insert tree)
-    (goto-char (point-min))
-    (while (re-search-forward
-            iorg-circ-obj-label-regexp
-            nil 'NOERROR)
-      (let ((digit (match-string 2))
-            (ref-p (string= (match-string 3) "#")))
-        (replace-match "")
-        (unless ref-p
-          (iorg--wrap-in-parens-with-backquote)
-          (forward-char 2))
-        (insert
-         ;; FIXME %S better then %s ?
-         (format "%s\"n%s\"%s"
-         ;; (format "%S\"n%S\"%S"
-                 (if ref-p "`" "setq ")
-                 digit
-                 (if ref-p "" " '")))))
-    (buffer-substring-no-properties (point-min)(point-max))))
+;; Thus, the circular list is resolved into a regular list (that can
+;; be easier processed by the standard mapping functions) and
+;; returned as a string."
+;;   ;; (with-current-buffer (get-buffer-create "*iorg-tmp-buffer*")
+;;   (with-temp-buffer
+;;     (insert tree)
+;;     (goto-char (point-min))
+;;     (while (re-search-forward
+;;             iorg-circ-obj-label-regexp
+;;             nil 'NOERROR)
+;;       (let ((digit (match-string 2))
+;;             (ref-p (string= (match-string 3) "#")))
+;;         (replace-match "")
+;;         (unless ref-p
+;;           (iorg--wrap-in-parens-with-backquote)
+;;           (forward-char 2))
+;;         (insert
+;;          ;; FIXME %S better then %s ?
+;;          (format "%s\"n%s\"%s"
+;;          ;; (format "%S\"n%S\"%S"
+;;                  (if ref-p "`" "setq ")
+;;                  digit
+;;                  (if ref-p "" " '")))))
+;;     (buffer-substring-no-properties (point-min)(point-max))))
     ;; (buffer-string)))
 
 
