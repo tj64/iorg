@@ -49,8 +49,8 @@
   org-element-all-objects '(plain-text))
   "Default types to be selected by `org-element-map'.")
 
-(defvar iorg-default-map-fun-org-to-pico
-  'iorg--transform-elements-plist-to-picolisp-plist
+(defvar iorg-default-map-fun-org-to-pico 'identity
+  ;; 'iorg--transform-elements-plist-to-picolisp-plist
   ;; '(lambda (plst) (list (car plst) (kvplist->alist (cadr plst))))
   "Default function to be mapped on selected types.
 
@@ -77,7 +77,7 @@ format.")
   (and (listp lst) (keywordp (car lst))))
 
 (defun iorg--add-elem-id (tree)
-  "Add :elem-id property to each element of parse TREE."
+  "Add ':elem-id' property to each element of parse TREE."
   (let ((counter 1))
     (org-element-map tree (append '(org-data) iorg-default-map-types)
       (lambda (elem)
@@ -152,6 +152,20 @@ format.")
 ;;     (insert ")")
 ;;     (forward-char -1)
 ;;     (backward-sexp)))
+
+
+(defun iorg--convert-plists-to-picolisp (tree)
+  "Convert all elements plists in TREE to PicosLisp plists.
+
+Assume TREE is a parse-tree produced by `org-element-parse-buffer' and turned
+into a non-circular list by applying `iorg--add-elem-id' and
+`iorg--unwind-circular-list' on it. Return the parse-tree in PicoLisp
+compliant form."
+  (org-element-map
+      tree
+      iorg-default-map-types
+    'iorg--transform-elements-plist-to-picolisp-plist)
+  tree)
 
 (defun iorg--transform-elements-plist-to-picolisp-plist (elem)
   "Convert elisp plist of ELEM into PicoLisp plist."
@@ -322,7 +336,15 @@ Since `iorg-parsetree-to-alist' is just a convenience function
 built on top of `org-element-parse-buffer' and `org-element-map',
 the arguments are the same as for these two functions, so you can
 consult their doc-strings for more information."
-  (let* ((print-circle t)
+  (let* ((map? (and args
+                    (or
+                     (plist-get args :types)
+                     (plist-get args :fun)
+                     (plist-get args :info)
+                     (plist-get args :first-match)
+                     (plist-get args :no-recursion)
+                     (plist-get args :with-affiliated))))
+         (print-circle t)
          (buf (or (and buffer-or-file
                        (or (get-buffer buffer-or-file)
                            (if (and
@@ -341,21 +363,24 @@ consult their doc-strings for more information."
                   (with-current-buffer buf
                     (org-element-parse-buffer gran vis))))
          (typ (or (and args (plist-get args :types))
-                  iorg-default-map-types))
-         (fun (or (and args (plist-get args :fun))
-                  iorg-default-map-fun-org-to-pico))
-         ;; (fun (or (and args (plist-get args :fun)) 'identity))
+                  iorg-all-types))
+         ;; (fun (or (and args (plist-get args :fun))
+         ;;          iorg-default-map-fun-org-to-pico))
+         (fun (or (and args (plist-get args :fun)) 'identity))
          (inf (and args (plist-get args :info)))
          (1st-match (and args (plist-get args :first-match))) 
          (no-recur (and args (plist-get args :no-recursion))) 
          (with-affil (and args (plist-get args :with-affiliated))))
     (iorg--nil-and-t-to-uppercase
-     (iorg--circular-obj-read-syntax-to-transient-sym
-      (format
-       "%s"
-       (org-element-map
-           dat typ fun inf 1st-match no-recur with-affil)
-       dat)))))
+     ;; (iorg--circular-obj-read-syntax-to-transient-sym
+     (format "%s"
+     (iorg--convert-plists-to-picolisp
+      (iorg--unwind-circular-list
+       (iorg--add-elem-id
+        (if map?
+            (org-element-map
+                dat typ fun inf 1st-match no-recur with-affil)
+          dat))))))))
 
 (defun iorg-pico-to-org ()
   "")
