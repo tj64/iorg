@@ -60,6 +60,17 @@
   "Return non-nil if LST is a list and its car a keyword."
   (and (listp lst) (keywordp (car lst))))
 
+;; (defun kvplist->alist (plist)
+;;   "Convert PLIST to an alist.
+
+;; The keys are expected to be :prefixed and the colons are removed.
+;; The keys in the resulting alist are symbols."
+;;   ;; RECURSION KLAXON
+;;   (when plist
+;;     (destructuring-bind (key value &rest plist) plist
+;;       (cons `(,(keyword->symbol key) . ,value)
+;;             (kvplist->alist plist)))))
+
 (defun iorg--add-elem-id (tree)
   "Add ':elem-id' property to each element of parse TREE."
   (let ((counter 1))
@@ -128,25 +139,44 @@ into a non-circular list by applying `iorg--add-elem-id' and
 compliant form."
   (org-element-map
       tree
-      iorg-default-map-types
-    'iorg--transform-elements-plist-to-picolisp-plist)
+      iorg-all-types
+      ;; iorg-default-map-types
+    (lambda (elem)
+      ;; (let ((type (org-element-type elem)))
+      ;;   ;; (and (not (eq type 'plain-text))
+      ;;        ;; (not (eq type 'org-data))
+      (let* ((plist (cadr elem))
+             (props (if (iorg--elisp-plist-p plist)
+                        (iorg--elisp-plist-keys plist)
+                      (error "%s is not an Emacs Lisp plist"
+                             plist))))
+        (message "%s"
+        (cons (car elem)
+              (list
+               (mapcar
+                (lambda (prop)
+                  (cons (org-element-property prop elem) prop))
+                props)))))))
+  ;; 'iorg--transform-elements-plist-to-picolisp-plist)
+  (message "%s" tree)
   tree)
 
-(defun iorg--transform-elements-plist-to-picolisp-plist (elem)
-  "Convert elisp plist of ELEM into PicoLisp plist."
-  (let ((type (org-element-type elem)))
-    (and type
-         (not (eq type 'plain-text))
-         ;; (not (eq type 'org-data))
-         (let* ((plist (cadr elem))
-                (props (if (iorg--elisp-plist-p plist)
-                           (iorg--elisp-plist-keys plist)
-                         (error "%s is not an Emacs Lisp plist"
-                                plist))))
-           (mapcar
-            (lambda (prop)
-              (cons (org-element-property prop elem) prop))
-            props)))))
+;; (defun iorg--transform-elements-plist-to-picolisp-plist (elem)
+;;   "Convert elisp plist of ELEM into PicoLisp plist."
+;;   (let ((type (org-element-type elem)))
+;;     (and type
+;;          (not (eq type 'plain-text))
+;;          ;; (not (eq type 'org-data))
+;;          (let* ((plist (cadr elem))
+;;                 (props (if (iorg--elisp-plist-p plist)
+;;                            (iorg--elisp-plist-keys plist)
+;;                          (error "%s is not an Emacs Lisp plist"
+;;                                 plist))))
+;;            (cons (car elem)
+;;                  (mapcar
+;;                   (lambda (prop)
+;;                     (cons (org-element-property prop elem) prop))
+;;                   props))))))
 
 (defun iorg-org-to-pico
   (&optional data buffer-or-file &rest args)
