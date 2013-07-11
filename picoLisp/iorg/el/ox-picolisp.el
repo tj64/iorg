@@ -90,14 +90,28 @@
     (underline . identity)
     (verbatim . identity)
     (verse-block . identity))
+  :export-block "PICOLISP"
+  :filters-alist '(
+                   ;; convert 
+                   (:filter-parse-tree
+		    . (ox-picolisp--translate-stuff))
+                   ;; change #( read syntax
+                   (:filter-plain-text
+		    . (ox-picolisp--translate-stuff))
+                   ;; add info and elem-id to org-data
+                   (:filter-org-data
+		    . (ox-picolisp--translate-stuff))
+                   ;; nil and t to uppercase
+                   (:filter-final-output
+		    . (ox-picolisp--translate-stuff)))
   :menu-entry
   '(?O "Export to Org"
-       ((?O "As Org buffer" org-org-export-as-org)
-	(?o "As Org file" org-org-export-to-org)
+       ((?O "As Org buffer" org-picolisp-export-as-picolisp)
+	(?o "As Org file" org-picolisp-export-to-picolisp)
 	(?v "As Org file and open"
 	    (lambda (a s v b)
-	      (if a (org-org-export-to-org t s v b)
-		(org-open-file (org-org-export-to-org nil s v b))))))))
+	      (if a (org-picolisp-export-to-picolisp t s v b)
+		(org-open-file (org-picolisp-export-to-picolisp nil s v b))))))))
 
 
 ;;; Variables
@@ -209,8 +223,8 @@ CONTENTS is its contents, as a string or nil.  INFO is ignored.")
 ;;;; End-user functions
 
 ;;;###autoload
-(defun org-picolisp-export-as-org (&optional async subtreep visible-only ext-plist)
-  "Export current buffer to an Org buffer.
+(defun org-picolisp-export-as-picolisp (&optional async subtreep visible-only ext-plist)
+  "Export current buffer to an PicoLisp buffer.
 
 If narrowing is active in the current buffer, only export its
 narrowed part.
@@ -232,30 +246,31 @@ EXT-PLIST, when provided, is a property list with external
 parameters overriding Org default settings, but still inferior to
 file-local settings.
 
-Export is done in a buffer named \"*Org ORG Export*\", which will
+Export is done in a buffer named \"*Org PICOLISP Export*\", which will
 be displayed when `org-export-show-temporary-export-buffer' is
 non-nil."
   (interactive)
   (if async
       (org-export-async-start
 	  (lambda (output)
-	    (with-current-buffer (get-buffer-create "*Org ORG Export*")
+	    (with-current-buffer (get-buffer-create "*Org PICOLISP Export*")
 	      (erase-buffer)
 	      (insert output)
 	      (goto-char (point-min))
 	      (org-mode)
-	      (org-export-add-to-stack (current-buffer) 'org)))
-	`(org-export-as 'org ,subtreep ,visible-only nil ',ext-plist))
+	      (org-export-add-to-stack (current-buffer) 'picolisp)))
+	`(org-export-as 'picolisp ,subtreep ,visible-only nil ',ext-plist))
     (let ((outbuf
 	   (org-export-to-buffer
-	    'org "*Org ORG Export*" subtreep visible-only nil ext-plist)))
-      (with-current-buffer outbuf (org-mode))
+	    'picolisp "*Org PICOLISP Export*"
+            subtreep visible-only nil ext-plist)))
+      (with-current-buffer outbuf (picolisp-mode))
       (when org-export-show-temporary-export-buffer
 	(switch-to-buffer-other-window outbuf)))))
 
 ;;;###autoload
-(defun org-picolisp-export-to-org (&optional async subtreep visible-only ext-plist)
-  "Export current buffer to an org file.
+(defun org-picolisp-export-to-picolisp (&optional async subtreep visible-only ext-plist)
+  "Export current buffer to an picolisp file.
 
 If narrowing is active in the current buffer, only export its
 narrowed part.
@@ -279,25 +294,26 @@ file-local settings.
 
 Return output file name."
   (interactive)
-  (let ((outfile (org-export-output-file-name ".org" subtreep)))
+  (let ((outfile (org-export-output-file-name ".l" subtreep)))
     (if async
 	(org-export-async-start
-	    (lambda (f) (org-export-add-to-stack f 'org))
+	    (lambda (f) (org-export-add-to-stack f 'picolisp))
 	  `(expand-file-name
 	    (org-export-to-file
-	     'org ,outfile ,subtreep ,visible-only nil ',ext-plist)))
-      (org-export-to-file 'org outfile subtreep visible-only nil ext-plist))))
+	     'picolisp ,outfile ,subtreep ,visible-only nil ',ext-plist)))
+      (org-export-to-file 'picolisp outfile subtreep visible-only
+      nil ext-plist))))
 
 ;;;###autoload
-(defun org-picolisp-publish-to-org (plist filename pub-dir)
-  "Publish an org file to org.
+(defun org-picolisp-publish-to-picolisp (plist filename pub-dir)
+  "Publish an org file to picolisp.
 
 FILENAME is the filename of the Org file to be published.  PLIST
 is the property list for the given project.  PUB-DIR is the
 publishing directory.
 
 Return output file name."
-  (org-publish-org-to 'org filename ".org" plist pub-dir)
+  (org-publish-org-to 'picolisp filename ".l" plist pub-dir)
   (when (plist-get plist :htmlized-source)
     (require 'htmlize)
     (require 'ox-html)
