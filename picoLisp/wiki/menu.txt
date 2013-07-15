@@ -1,0 +1,16 @@
+*{
+   -{={Home Start Page}}
+   -{={Articles Articles & Essays}}
+   -{={Documentation}}
+   -{={Forum}
+      *{
+         -{={NewsForum News}}
+         -{={GenForum General}}
+         -{={DevForum Development}}
+         -{={BookForum About the book}}} }
+   -{={Book}}
+   -{={Examples}}
+   -{^{http://software-lab.de/down.html Download}}
+   -{={Help}}
+   -{^{http://www.software-lab.de Legal Details}}
+}

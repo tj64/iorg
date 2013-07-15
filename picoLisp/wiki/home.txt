@@ -1,0 +1,7 @@
+1{PicoLisp: The Scalpel of Programming}
+
+A /{Radical Approach} to Software Development
+
+If some programming languages claim to be the "Swiss Army Knife of Programming",
+then PicoLisp may well be called the "Scalpel of Programming": Sharp, accurate,
+small and lightweight, but also dangerous in the hand of the inexperienced.

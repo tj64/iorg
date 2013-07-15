@@ -1,0 +1,49 @@
+31jan12abu
+(c) Software Lab. Alexander Burger
+
+
+         The PicoLisp Wiki
+         =================
+
+To explore the PicoLisp Wiki, install an up-to-date PicoLisp system (as an OS
+distribution package, or from http://software-lab.de/down.html), and unpack the
+tarballs "wiki.tgz" (http://software-lab.de/wiki.tgz) and
+"socialshareprivacy.tgz" (http://software-lab.de/socialshareprivacy.tgz) in some
+convenient place.
+
+"wiki.tgz" will go into a "wiki/" subdirectory, and "socialshareprivacy.tgz"
+will expand in "lib/" (for the social share privacy buttons, you need jQuery 1.4
+or greater).
+
+Then run it as
+
+   $ pil wiki/main.l -main -go +
+
+This will start the server, and create another subdirectory, "db/wiki/",
+containing a minimal database setup.
+
+
+The server listens at port 5000, so you can point your browser to
+
+   http://localhost:5000
+
+or, if you have 'httpGate' running, to
+
+   http://localhost/5000
+
+In both cases, you'll see the wiki application GUI (officially at
+http://wiki.picolisp.com). Log in as user "admin" and password "admin".
+
+On the console, the PicoLisp prompt ':' appears.
+
+
+The initial database contains two roles ("Administrator" and "Member"), a single
+user ("admin"), and three documents ("help", "menu" and "home").
+
+A click on the "Wiki" link on the top left switches to the wiki website view
+(officially at http://home.picolisp.com), and from there "My account" will bring
+you back into the application GUI.
+
+As ever, the debug session (the server's child process handling the current GUI
+session) can be terminated with Ctrl-D. If this is followed by Ctrl-C, the
+server (parent) process will terminate too.

@@ -1,0 +1,44 @@
+2{PicoLisp Wiki Markup Syntax}
+
+The Wiki Markup has a very simple syntax. It always starts with a single
+character (that specifies the type of markup) followed by an opening brace, and
+extends till the matching closing brace.
+
+Currently, the following markup types are supported:
+:{
+   3{Heading}                 Heading (level 3)
+                              Levels 1 .. 6 are allowed
+
+   &{3}                       Insert 3 line breaks
+   &{-3}                      Insert 3 line breaks, clear float style
+
+   /{italic}                  Italic font
+   !{bold}                    Bold font
+   _{underline}               Underlined font
+
+   *{                         Unordered list
+      -{List item 1}             List items
+      -{List item 2}
+   }
+
+   +{                         Ordered list
+      -{List item 1}             List items
+      -{List item 2}
+   }
+
+   <{content}                 Left-floating content (e.g. image, video)
+   @{content}                 Non-floating content (e.g. image, video)
+   >{content}                 Right-floating content (e.g. image, video)
+
+   ={Doc Page}                Internal link to the document "Doc"
+                                 The optional label text is "Page"
+
+   ^{http://ext.org Text}     External link to "http://ext.org"
+                                 The optional label text is "Text"
+
+   :{formatted}               Pre-formatted text
+
+   \{                         Escaped brace
+
+   #{comment}                 Comment
+}
