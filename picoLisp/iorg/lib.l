@@ -81,7 +81,24 @@
 
 ## generic function for calling Emacs from PicoLisp
 ## courtesy of Alexander Burger
-(de emx @
+
+## (de emx @
+##    (in
+##       (cons 'emacs "--no-site-file" "--batch"
+##          (extract
+##             '((X)
+##               (cond
+##                  ((num? (car (info X)))
+##                      (pack "--load=" X) )
+##                  ((= `(char "(") (char X))
+##                      (pack "--eval=" X) ) ) )
+##             (rest) ) ) 
+##       (read) ) )
+
+
+## usage:
+## (emx '(read) ...), (emx '(echo) ...)   
+(de emx (Exe . @)
    (in
       (cons 'emacs "--no-site-file" "--batch"
          (extract
@@ -91,5 +108,5 @@
                      (pack "--load=" X) )
                  ((= `(char "(") (char X))
                      (pack "--eval=" X) ) ) )
-            (rest) ) ) 
-      (read) ) )
+            (rest) ) )
+      (eval Exe) ) )

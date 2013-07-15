@@ -66,6 +66,21 @@
 
 ## ** OrgData
 
+(class +OrgData +Entity)
+(rel nr (+Need +Key +Number))          # Customer/Supplier Number
+(rel sal (+Link) (+Sal))               # Salutation
+(rel nm (+Sn +Idx +String))            # Name
+(rel nm2 (+String))                    # Name 2
+(rel str (+String))                    # Street
+(rel plz (+Ref +String))               # Zip
+(rel ort (+IdxFold +String))           # City
+(rel tel (+Fold +Ref +String))         # Phone
+(rel fax (+String))                    # Fax
+(rel mob (+Fold +Ref +String))         # Mobile
+(rel em (+String))                     # EMail
+(rel txt (+Blob))                      # Memo
+
+
 ## ** Headline
 
 ## ** Section
