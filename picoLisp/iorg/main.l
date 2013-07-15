@@ -1,66 +1,62 @@
-# 01jun13abu
+5# 01jun13abu
 # (c) Software Lab. Alexander Burger
 
-(allowed ("app/")
-   "!start" "!stop" "@lib.css" "!psh" )
+(allowed ("iorg/" "db/iorg/blob/")
+   *PW "!start" "!stop" "!iorg" "@lib.css" "!latex" "!pdf" "!psh"
+   *PRG *Search "!download" )
 
 (load
-   "@lib/http.l" "@lib/xhtml.l" "@lib/form.l"
-   "@lib/ps.l" "@lib/adm.l"
-   "@lib/boss.l" )
+   "@lib/http.l" "@lib/xhtml.l" "@lib/form.l" "@lib/tex.l" "@lib/adm.l"
+   "@lib/socialshareprivacy/lib.l"
+   "@lib/boss.l"
+   "@iorg/lib.l")
 
 (setq
    *Scl 2
-   *Css "@lib.css"
-   *Blob "blob/app/"
-   *Salt (16 . "$6$@1$") )
+   *Pool "db/iorg/"
+   *Blob "db/iorg/blob/"
+   *Jnl (and (info "key/iorg") "fifo/iorg")
+   *Salt (16 . "$6$@1$")
+   *Css '("@lib.css" "iorg/css/lib.css")
+   *IorgCss '("iorg/css/worg.css" "iorg/css/iorg.css")
+   *IorgPort 5000 )
 
-(load "app/er.l" "app/lib.l" "app/gui.l")
+(load "iorg/er.l" "iorg/lib.l" "iorg/gui.l")
 
 (permission
-   Customer    ,"Customer"
-   Item        ,"Item"
-   Order       ,"Order"
-   Report      ,"Report"
-   RoleAdmin   ,"Role Administration"
-   UserAdmin   ,"User Administration"
-   Password    ,"Password"
-   Delete      ,"Delete" )
+   Iorg        "Edit Iorg Documents"
+   System      "Edit System Data"
+   Upload      "File upload"
+   RoleAdmin   "Role Administration"
+   UserAdmin   "User Administration"
+   Password    "Password"
+   Delete      "Delete" )
 
-(de *Locales
-   ("English" NIL)
-   ("English (US)" "US")
-   ("English (UK)" "UK")
-   ("Español (AR)" "AR" . "ar")
-   ("Español (ES)" "ES" . "es")
-   ("Deutsch (DE)" "DE" . "de")
-   ("Deutsch (CH)" "CH" . "ch")
-   ("Norsk" "NO" . "no")
-   ("Русский" "RU" . "ru")
-   ("日本語" "JP" . "jp") )
+(mime "d" NIL 120)
 
 # Entry point
 (de main ()
-   (call 'mkdir "-p" "db/app/" *Blob)
-   (pool "db/app/" *Dbs)
+   (call 'mkdir "-p" *Pool *Blob)
+   (pool *Pool *Dbs *Jnl)
    (unless (seq *DB)
-      (load "app/init.l") ) )
+      (load "iorg/init.l") )
+   (unless (db 'nm '+Doc "home")
+      (msg "No home document") )
+   (if (db 'nm '+Doc "menu")
+      (setq *IorgMenu (id @ T))
+      (msg "No menu document") ) )
 
 (de go ()
    (pw 12)
-   (task (port 4040)  # Set up query server in the background
-      (let? Sock (accept @)
-         (unless (fork)  # Child process
-            (in Sock
-               (while (rd)
-                  (sync)
-                  (tell)
-                  (out Sock
-                     (pr (eval @)) ) ) )
-            (bye) )
-         (close Sock) ) )
-   (forked)
    (rollback)
-   (server 8080 "!start") )
+   (server *IorgPort "!start") )
+
+## # Start Emacs Server named "iorg-server"
+## (call
+##    'emacs
+##    "-Q"
+##    "--daemon=iorg-server"
+##    (pack "--directory=" "@/iorg/el")
+##    "--eval='(require 'ox)'" )
 
 # vi:et:ts=3:sw=3

@@ -3,9 +3,9 @@
 
 (must "Role Administration" RoleAdmin)
 
-(menu ,"Role Administration"
-   (idForm ,"Role" ,"Roles" 'nm '+Role T '(may Delete) '((: nm))
-      (gui '(+E/R +Cue +TextField) '(nm : home obj) ,"Role" 30 ,"Name")
+(menu "Role Administration"
+   (idForm "Role" '(choRole) 'nm '+Role T '(may Delete) '((: nm))
+      (gui '(+E/R +Cue +TextField) '(nm : home obj) "Role" 30 "Name")
       (<table> NIL NIL NIL
          (gui '(+E/R +Fmt +Chart)
             '(perm : home obj)
@@ -17,7 +17,7 @@
                (gui 1 '(+Set +TextField) '((Sym) (val (val Sym))))
                (gui 2 '(+Checkbox)) ) ) )
       (gui '(+/R +Chart) '(usr : home obj) 1 list)
-      (<table> 'chart ,"User" NIL
+      (<table> 'chart "User" NIL
          (do 8
             (<row> (alternating)
                (gui 1 '(+Obj +TextField) '(nm +User)) ) ) )

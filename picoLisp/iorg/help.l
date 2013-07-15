@@ -3,9 +3,9 @@
 
 # *TestMarkup
 
-(must "Help" Wiki)
+(must "Help" Iorg)
 
-(let *Css *WikiCss
+(let *Css *IorgCss
    (menu "Help"
       (<h3> NIL "Help")
       (form NIL

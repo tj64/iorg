@@ -22,7 +22,7 @@
          (quit "DB Check" (cons F @)) ) )
 
    # Backup
-   (call "sh" "-c" "tar cfz bak/wiki$(date +%a).tgz db/wiki/")
+   (call "sh" "-c" "tar cfz bak/iorg$(date +%a).tgz db/iorg/")
 
    # Garbage collection
    (when (dbgc)

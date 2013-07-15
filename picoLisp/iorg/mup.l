@@ -1,7 +1,7 @@
 # 20aug12abu
 # (c) Software Lab. Alexander Burger
 
-(must "Markup" Wiki)
+(must "Markup" Iorg)
 
 (menu "Markup"
    (<h3> NIL "Markup")

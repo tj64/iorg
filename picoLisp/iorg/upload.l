@@ -10,10 +10,10 @@
          (gui '(+UpField) 30)
          (gui '(+Drop +Button) '(field -1) "Upload Logo (logo.png)"
             '(when (: drop)
-               (call 'cp @ "wiki/logo.png") ) )
+               (call 'cp @ "iorg/pics/logo.png") ) )
          (gui '(+UpField) 30)
-         (gui '(+Drop +Button) '(field -1) "Upload CSS File (wiki.css)"
+         (gui '(+Drop +Button) '(field -1) "Upload CSS File (iorg.css)"
             '(when (: drop)
-               (call 'cp @ "wiki/wiki.css") ) ) ) ) )
+               (call 'cp @ "iorg/css/iorg.css") ) ) ) ) )
 
 # vi:et:ts=3:sw=3

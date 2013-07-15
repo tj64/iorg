@@ -1,7 +1,7 @@
 # 18may12abu
 # (c) Software Lab. Alexander Burger
 
-(must "Document" Wiki)
+(must "Document" Iorg)
 
 (menu "Difference"
    (form NIL

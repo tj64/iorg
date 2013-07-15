@@ -3,7 +3,7 @@
 
 # *MupTxt
 
-(must "Document" Wiki)
+(must "Document" Iorg)
 
 (de _newMup ()
    (apply 'newMup> (: home mup) (: home obj))
@@ -40,7 +40,7 @@
                (<div> NIL (render (: mup 4))) )
             (<hr>)
             (off *MupTxt) )
-         (panel '(may Wiki) (pack "Document '@1'")
+         (panel '(may Iorg) (pack "Document '@1'")
             '(may Delete)
             '(choDoc)
             'nm '+Doc
@@ -52,6 +52,6 @@
             "Document" 40 "Name" )
          (----)
          (docFields)
-         (<spread> NIL (editButton '(may Wiki) '(_newMup))) ) ) )
+         (<spread> NIL (editButton '(may Iorg) '(_newMup))) ) ) )
 
 # vi:et:ts=3:sw=3

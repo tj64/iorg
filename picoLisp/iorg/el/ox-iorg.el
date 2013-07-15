@@ -1,4 +1,4 @@
-;;; ox-picolisp.el --- PicoLisp Back-End for Org Export Engine
+;;; ox-iorg.el --- iOrg Back-End for Org Export Engine
 ;;;; License and Copyright
 
 ;; Copyright (C) 2013  Thorsten Jolitz
@@ -23,13 +23,13 @@
 
 ;;;; Commentary
 
-;; This library implements a PicoLisp back-end for Org exporter.
+;; This library implements a iOrg back-end for Org exporter.
 ;;
-;; It introduces two interactive functions, `org-picolisp-export-as-org'
-;; and `org-picolisp-export-to-org', which export, respectively, to
+;; It introduces two interactive functions, `org-iorg-export-as-org'
+;; and `org-iorg-export-to-org', which export, respectively, to
 ;; a temporary buffer and to a file.
 ;;
-;; A publishing function is also provided: `org-picolisp-publish-to-org'.
+;; A publishing function is also provided: `org-iorg-publish-to-org'.
 
 ;;; Require
 (require 'ox)
@@ -37,7 +37,7 @@
 
 ;;; Define Back-End
 
-(org-export-define-backend 'picolisp
+(org-export-define-backend 'iorg
   '((babel-call . identity)
     (bold . identity)
     (center-block . identity)
@@ -53,7 +53,7 @@
     (fixed-width . identity)
     (footnote-definition . identity)
     (footnote-reference . identity)
-    (headline . org-picolisp-headline)
+    (headline . org-iorg-headline)
     (horizontal-rule . identity)
     (inline-babel-call . identity)
     (inline-src-block . identity)
@@ -66,68 +66,68 @@
     (line-break . identity)
     (link . identity)
     (node-property . identity)
-    (paragraph . org-picolisp-paragraph)
-    (plain-list . org-picolisp-plain-list)
-    (plain-text . org-picolisp-plain-text)
+    (paragraph . org-iorg-paragraph)
+    (plain-list . org-iorg-plain-list)
+    (plain-text . org-iorg-plain-text)
     (planning . identity)
     (property-drawer . identity)
     (quote-block . identity)
     (quote-section . identity)
-    (radio-target . org-picolisp-radio-target)
-    (section . org-picolisp-section)
+    (radio-target . org-iorg-radio-target)
+    (section . org-iorg-section)
     (special-block . identity)
     (src-block . identity)
     (statistics-cookie . identity)
     (strike-through . identity)
     (subscript . identity)
     (superscript . identity)
-    (table . org-picolisp-table)
-    (table-cell . org-picolisp-table-cell)
-    (table-row . org-picolisp-table-row)
+    (table . org-iorg-table)
+    (table-cell . org-iorg-table-cell)
+    (table-row . org-iorg-table-row)
     (target . identity)
-    (template . org-picolisp-template)
-    (timestamp . org-picolisp-timestamp)
+    (template . org-iorg-template)
+    (timestamp . org-iorg-timestamp)
     (underline . identity)
     (verbatim . identity)
     (verse-block . identity))
-  :export-block "PICOLISP"
+  :export-block "IORG"
   :filters-alist '(
                    ;; convert 
                    (:filter-parse-tree
-		    . (ox-picolisp--translate-stuff))
+		    . (ox-iorg--translate-stuff))
                    ;; change #( read syntax
                    (:filter-plain-text
-		    . (ox-picolisp--translate-stuff))
+		    . (ox-iorg--translate-stuff))
                    ;; add info and elem-id to org-data
                    (:filter-org-data
-		    . (ox-picolisp--translate-stuff))
+		    . (ox-iorg--translate-stuff))
                    ;; nil and t to uppercase
                    (:filter-final-output
-		    . (ox-picolisp--translate-stuff)))
+		    . (ox-iorg--translate-stuff)))
   :menu-entry
   '(?O "Export to Org"
-       ((?O "As Org buffer" org-picolisp-export-as-picolisp)
-	(?o "As Org file" org-picolisp-export-to-picolisp)
+       ((?O "As Org buffer" org-iorg-export-as-iorg)
+	(?o "As Org file" org-iorg-export-to-iorg)
 	(?v "As Org file and open"
 	    (lambda (a s v b)
-	      (if a (org-picolisp-export-to-picolisp t s v b)
-		(org-open-file (org-picolisp-export-to-picolisp nil s v b))))))))
+	      (if a (org-iorg-export-to-iorg t s v b)
+		(org-open-file (org-iorg-export-to-iorg nil s v b))))))))
 
 
 ;;; Variables
 ;;;; Internal Variables
 ;;;; User Configurable Variables
 
-(defgroup org-export-picolisp nil
-  "Options for exporting Org mode files to PicoLisp."
-  :tag "Org Export PicoLisp"
+(defgroup org-export-iorg nil
+  "Options for exporting Org mode files to iOrg."
+  :tag "Org Export iOrg"
   :group 'org-export
   :version "24.4"
   :package-version '(Org . "8.0"))
 
 (define-obsolete-variable-alias
-  'org-export-htmlized-org-css-url 'org-picolisp-htmlized-css-url "24.4")
-(defcustom org-picolisp-htmlized-css-url nil
+  'org-export-htmlized-org-css-url 'org-iorg-htmlized-css-url "24.4")
+(defcustom org-iorg-htmlized-css-url nil
   "URL pointing to the CSS defining colors for htmlized Emacs buffers.
 Normally when creating an htmlized version of an Org buffer,
 htmlize will create the CSS to define the font colors.  However,
@@ -135,9 +135,9 @@ this does not work when converting in batch mode, and it also can
 look bad if different people with different fontification setup
 work on the same website.  When this variable is non-nil,
 creating an htmlized version of an Org buffer using
-`org-picolisp-export-as-org' will include a link to this URL if the
+`org-iorg-export-as-org' will include a link to this URL if the
 setting of `org-html-htmlize-output-type' is 'css."
-  :group 'org-export-picolisp
+  :group 'org-export-iorg
   :type '(choice
 	  (const :tag "Don't include external stylesheet link" nil)
 	  (string :tag "URL or local href")))
@@ -146,8 +146,8 @@ setting of `org-html-htmlize-output-type' is 'css."
 ;;;; Internal Functions
 ;;;; Template
 
-(defun org-picolisp-template (contents info)
-  "Return complete document string after PicoLisp conversion.
+(defun org-iorg-template (contents info)
+  "Return complete document string after iOrg conversion.
 CONTENTS is the transcoded contents string.  INFO is a plist
 holding export options.")
 
@@ -158,7 +158,7 @@ holding export options.")
 ;; CONTENTS is its contents, as a string or nil.  INFO is ignored."
 ;;   (org-export-expand blob contents t))
 
-(defun org-picolisp-headline (headline contents info)
+(defun org-iorg-headline (headline contents info)
   "Transcode HEADLINE element back into Org syntax.
 CONTENTS is its contents, as a string or nil.  INFO is ignored."
   (unless (plist-get info :with-todo-keywords)
@@ -170,45 +170,45 @@ CONTENTS is its contents, as a string or nil.  INFO is ignored."
   (org-element-headline-interpreter headline contents))
 
 
-(defun org-picolisp-section (headline contents info)
-  "Transcode SECTION element into PicoLisp syntax.
+(defun org-iorg-section (headline contents info)
+  "Transcode SECTION element into iOrg syntax.
 CONTENTS is its contents, as a string or nil.  INFO is ignored.")
 
-(defun org-picolisp-paragraph (headline contents info)
-  "Transcode PARAGRAPH element into PicoLisp syntax.
+(defun org-iorg-paragraph (headline contents info)
+  "Transcode PARAGRAPH element into iOrg syntax.
 CONTENTS is its contents, as a string or nil.  INFO is ignored.")
 
-(defun org-picolisp-plain-list (headline contents info)
-  "Transcode PLAIN-LIST element into PicoLisp syntax.
+(defun org-iorg-plain-list (headline contents info)
+  "Transcode PLAIN-LIST element into iOrg syntax.
 CONTENTS is its contents, as a string or nil.  INFO is ignored.")
 
-(defun org-picolisp-radio-target (headline contents info)
-  "Transcode RADIO-TARGET element into PicoLisp syntax.
+(defun org-iorg-radio-target (headline contents info)
+  "Transcode RADIO-TARGET element into iOrg syntax.
 CONTENTS is its contents, as a string or nil.  INFO is ignored.")
 
-(defun org-picolisp-table (headline contents info)
-  "Transcode TABLE element into PicoLisp syntax.
+(defun org-iorg-table (headline contents info)
+  "Transcode TABLE element into iOrg syntax.
 CONTENTS is its contents, as a string or nil.  INFO is ignored.")
 
-(defun org-picolisp-table-cell (headline contents info)
-  "Transcode TABLE-CELL element into PicoLisp syntax.
+(defun org-iorg-table-cell (headline contents info)
+  "Transcode TABLE-CELL element into iOrg syntax.
 CONTENTS is its contents, as a string or nil.  INFO is ignored.")
 
-(defun org-picolisp-table-row (headline contents info)
-  "Transcode TABLE-ROW element into PicoLisp syntax.
+(defun org-iorg-table-row (headline contents info)
+  "Transcode TABLE-ROW element into iOrg syntax.
 CONTENTS is its contents, as a string or nil.  INFO is ignored.")
 
-(defun org-picolisp-timestamp (headline contents info)
-  "Transcode TIMESTAMP element into PicoLisp syntax.
+(defun org-iorg-timestamp (headline contents info)
+  "Transcode TIMESTAMP element into iOrg syntax.
 CONTENTS is its contents, as a string or nil.  INFO is ignored.")
 
-(defun org-picolisp-plain-text (headline contents info)
-  "Transcode PLAIN-TEXT element into PicoLisp syntax.
+(defun org-iorg-plain-text (headline contents info)
+  "Transcode PLAIN-TEXT element into iOrg syntax.
 CONTENTS is its contents, as a string or nil.  INFO is ignored.")
 
 ;;;; Filter Functions
 
-(defun org-picolisp-final-function (contents backend info)
+(defun org-iorg-final-function (contents backend info)
   "Filter to indent the HTML and convert HTML entities."
   (with-temp-buffer
     (insert contents)
@@ -223,8 +223,8 @@ CONTENTS is its contents, as a string or nil.  INFO is ignored.")
 ;;;; End-user functions
 
 ;;;###autoload
-(defun org-picolisp-export-as-picolisp (&optional async subtreep visible-only ext-plist)
-  "Export current buffer to an PicoLisp buffer.
+(defun org-iorg-export-as-iorg (&optional async subtreep visible-only ext-plist)
+  "Export current buffer to an iOrg buffer.
 
 If narrowing is active in the current buffer, only export its
 narrowed part.
@@ -246,31 +246,31 @@ EXT-PLIST, when provided, is a property list with external
 parameters overriding Org default settings, but still inferior to
 file-local settings.
 
-Export is done in a buffer named \"*Org PICOLISP Export*\", which will
+Export is done in a buffer named \"*Org IORG Export*\", which will
 be displayed when `org-export-show-temporary-export-buffer' is
 non-nil."
   (interactive)
   (if async
       (org-export-async-start
 	  (lambda (output)
-	    (with-current-buffer (get-buffer-create "*Org PICOLISP Export*")
+	    (with-current-buffer (get-buffer-create "*Org IORG Export*")
 	      (erase-buffer)
 	      (insert output)
 	      (goto-char (point-min))
 	      (org-mode)
-	      (org-export-add-to-stack (current-buffer) 'picolisp)))
-	`(org-export-as 'picolisp ,subtreep ,visible-only nil ',ext-plist))
+	      (org-export-add-to-stack (current-buffer) 'iorg)))
+	`(org-export-as 'iorg ,subtreep ,visible-only nil ',ext-plist))
     (let ((outbuf
 	   (org-export-to-buffer
-	    'picolisp "*Org PICOLISP Export*"
+	    'iorg "*Org IORG Export*"
             subtreep visible-only nil ext-plist)))
-      (with-current-buffer outbuf (picolisp-mode))
+      (with-current-buffer outbuf (iorg-mode))
       (when org-export-show-temporary-export-buffer
 	(switch-to-buffer-other-window outbuf)))))
 
 ;;;###autoload
-(defun org-picolisp-export-to-picolisp (&optional async subtreep visible-only ext-plist)
-  "Export current buffer to an picolisp file.
+(defun org-iorg-export-to-iorg (&optional async subtreep visible-only ext-plist)
+  "Export current buffer to an iorg file.
 
 If narrowing is active in the current buffer, only export its
 narrowed part.
@@ -297,23 +297,23 @@ Return output file name."
   (let ((outfile (org-export-output-file-name ".l" subtreep)))
     (if async
 	(org-export-async-start
-	    (lambda (f) (org-export-add-to-stack f 'picolisp))
+	    (lambda (f) (org-export-add-to-stack f 'iorg))
 	  `(expand-file-name
 	    (org-export-to-file
-	     'picolisp ,outfile ,subtreep ,visible-only nil ',ext-plist)))
-      (org-export-to-file 'picolisp outfile subtreep visible-only
+	     'iorg ,outfile ,subtreep ,visible-only nil ',ext-plist)))
+      (org-export-to-file 'iorg outfile subtreep visible-only
       nil ext-plist))))
 
 ;;;###autoload
-(defun org-picolisp-publish-to-picolisp (plist filename pub-dir)
-  "Publish an org file to picolisp.
+(defun org-iorg-publish-to-iorg (plist filename pub-dir)
+  "Publish an org file to iorg.
 
 FILENAME is the filename of the Org file to be published.  PLIST
 is the property list for the given project.  PUB-DIR is the
 publishing directory.
 
 Return output file name."
-  (org-publish-org-to 'picolisp filename ".l" plist pub-dir)
+  (org-publish-org-to 'iorg filename ".l" plist pub-dir)
   (when (plist-get plist :htmlized-source)
     (require 'htmlize)
     (require 'ox-html)
@@ -327,14 +327,14 @@ Return output file name."
       (font-lock-fontify-buffer)
       (setq newbuf (htmlize-buffer))
       (with-current-buffer newbuf
-	(when org-picolisp-htmlized-css-url
+	(when org-iorg-htmlized-css-url
 	  (goto-char (point-min))
 	  (and (re-search-forward
 		"<style type=\"text/css\">[^\000]*?\n[ \t]*</style>.*" nil t)
 	       (replace-match
 		(format
 		 "<link rel=\"stylesheet\" type=\"text/css\" href=\"%s\">"
-		 org-picolisp-htmlized-css-url) t t)))
+		 org-iorg-htmlized-css-url) t t)))
 	(write-file (concat pub-dir (file-name-nondirectory filename) html-ext)))
       (kill-buffer newbuf)
       (unless visitingp (kill-buffer work-buffer)))
@@ -342,10 +342,10 @@ Return output file name."
 
 ;;; Provide and Hooks
 
-(provide 'ox-picolisp)
+(provide 'ox-iorg)
 
 ;; Local variables:
 ;; generated-autoload-file: "org-loaddefs.el"
 ;; End:
 
-;; ox-picolisp.el ends here
+;; ox-iorg.el ends here

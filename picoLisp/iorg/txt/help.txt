@@ -1,6 +1,6 @@
-2{PicoLisp Wiki Markup Syntax}
+2{PicoLisp Iorg Markup Syntax}
 
-The Wiki Markup has a very simple syntax. It always starts with a single
+The Iorg Markup has a very simple syntax. It always starts with a single
 character (that specifies the type of markup) followed by an opening brace, and
 extends till the matching closing brace.
 
