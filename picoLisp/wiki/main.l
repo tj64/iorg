@@ -1,4 +1,4 @@
-# 01jun13abu
+5# 01jun13abu
 # (c) Software Lab. Alexander Burger
 
 (allowed ("wiki/" "db/wiki/blob/")
@@ -17,7 +17,7 @@
    *Jnl (and (info "key/wiki") "fifo/wiki")
    *Salt (16 . "$6$@1$")
    *Css '("@lib.css" "wiki/lib.css")
-   *WikiCss "wiki/wiki.css"
+   *WikiCss '("wiki/worg.css" "wiki/wiki.css")
    *WikiPort 5000 )
 
 (load "wiki/er.l" "wiki/lib.l" "wiki/gui.l")
@@ -50,12 +50,12 @@
    (rollback)
    (server *WikiPort "!start") )
 
-# Start Emacs Server named "iorg-server"
-(call
-   'emacs
-   "-Q"
-   "--daemon=iorg-server"
-   (pack "--directory=" "@/iorg/el")
-   "--eval='(require 'ox)'" )
+## # Start Emacs Server named "iorg-server"
+## (call
+##    'emacs
+##    "-Q"
+##    "--daemon=iorg-server"
+##    (pack "--directory=" "@/iorg/el")
+##    "--eval='(require 'ox)'" )
 
 # vi:et:ts=3:sw=3
