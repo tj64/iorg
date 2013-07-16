@@ -1,7 +1,27 @@
-# 30may13abu
-# (c) Software Lab. Alexander Burger
+## * iorg/user.l --- User for iOrg
+## ** MetaData 
+##   :PROPERTIES:
+##   :copyright: Alexander_Burger Thorsten_Jolitz
+##   :copyright-since: 2011
+##   :version:  0.9
+##   :licence:  GPL3+
+##   :licence-url: http://www.gnu.org/licenses/
+##   :authors: Alexander_Burger Thorsten_Jolitz
+##   :contact: <abu@software-lab.de> <tjolitz@gmail.com>
+##   :git-repo: https://github.com/tj64/iorg
+##   :git-clone: git@github.com:tj64/iorg.git
+##   :keywords: emacs org-mode picolisp wiki
+##   :END:
+
+## ** Comments
+
+## * Code
+
+## ** Permissions
 
 (must "User Administration" Iorg)
+
+## ** Functions
 
 (menu "User Administration"
    (idForm "User" '(choUser) 'nm '+User
@@ -62,4 +82,4 @@
       (<spread> NIL
          (editButton '(or (may UserAdmin) (== *Login (: home obj)))) ) ) )
 
-# vi:et:ts=3:sw=3
+## iorg/user.l ends here

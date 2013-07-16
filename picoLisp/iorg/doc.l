@@ -1,9 +1,28 @@
-# 28may13abu
-# (c) Software Lab. Alexander Burger
+## * iorg/er.l --- Entity/Relations for iOrg
+## ** MetaData 
+##   :PROPERTIES:
+##   :copyright: Alexander_Burger Thorsten_Jolitz
+##   :copyright-since: 2011
+##   :version:  0.9
+##   :licence:  GPL3+
+##   :licence-url: http://www.gnu.org/licenses/
+##   :authors: Alexander_Burger Thorsten_Jolitz
+##   :contact: <abu@software-lab.de> <tjolitz@gmail.com>
+##   :git-repo: https://github.com/tj64/iorg
+##   :git-clone: git@github.com:tj64/iorg.git
+##   :keywords: emacs org-mode picolisp wiki
+##   :END:
 
-# *MupTxt
+## ** Comments
+## * Code
+## ** Variables
+## - *MupTxt :: Boolean
+
+## ** Permissions
 
 (must "Document" Iorg)
+
+## ** Functions
 
 (de _newMup ()
    (apply 'newMup> (: home mup) (: home obj))
@@ -54,4 +73,4 @@
          (docFields)
          (<spread> NIL (editButton '(may Iorg) '(_newMup))) ) ) )
 
-# vi:et:ts=3:sw=3
+## vi:et:ts=3:sw=3

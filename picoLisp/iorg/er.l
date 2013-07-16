@@ -1,35 +1,53 @@
-# 30may13abu
-# (c) Software Lab. Alexander Burger
+## * iorg/er.l --- Entity/Relations for iOrg
+## ** MetaData 
+##   :PROPERTIES:
+##   :copyright: Alexander_Burger Thorsten_Jolitz
+##   :copyright-since: 2011
+##   :version:  0.9
+##   :licence:  GPL3+
+##   :licence-url: http://www.gnu.org/licenses/
+##   :authors: Alexander_Burger Thorsten_Jolitz
+##   :contact: <abu@software-lab.de> <tjolitz@gmail.com>
+##   :git-repo: https://github.com/tj64/iorg
+##   :git-clone: git@github.com:tj64/iorg.git
+##   :keywords: emacs org-mode picolisp wiki
+##   :END:
 
-### Entity/Relations ###
-#
-#    nm                      nm   pw  name
-#     |                       |   |   |
-#  +--*--------+           +--*---*---*--+
-#  |           |           |             |
-#  |           | usr       |             *-- em
-#  |   Role    @-----------*    User     |
-#  |           |      role |             *-- jpg
-#  |           |           |             |
-#  +--------@--+           +--*---+---*--+
-#           |                 |   |   |
-#           perm             ca   |   new
-#                                 |
-#                                 |
-#        nm                     u |   d   t                  nm
-#        |                        |   |   |                  |
-#     +--*------+              +--*---*---*--------+        +--*------+
-#     |         | mup      doc |                   | bin    |         |
-#     |         *--------------*                   @--------+   Bin   |
-#     |   Doc   |              |        Mup        |        |         |
-#     |         +--------------@                   *--+ >   +--*---*--+
-#     |         |          rpl |                   |  |        |   |
-#     +---------+              +--*---*---*-----*--+  |        d   mt
-#                                 |   |   |     |     |
-#                               txt  sum  min   +-----+
-#                                               <
+## ** Comments
 
-### Markup index ###
+## Graphical depiction
+
+## #+begin_ascii
+##   nm                      nm   pw  name
+##    |                       |   |   |
+## +--*--------+           +--*---*---*--+
+## |           |           |             |
+## |           | usr       |             *-- em
+## |   Role    @-----------*    User     |
+## |           |      role |             *-- jpg
+## |           |           |             |
+## +--------@--+           +--*---+---*--+
+##          |                 |   |   |
+##          perm             ca   |   new
+##                                |
+##                                |
+##       nm                     u |   d   t                  nm
+##       |                        |   |   |                  |
+##    +--*------+              +--*---*---*--------+        +--*------+
+##    |         | mup      doc |                   | bin    |         |
+##    |         *--------------*                   @--------+   Bin   |
+##    |   Doc   |              |        Mup        |        |         |
+##    |         +--------------@                   *--+ >   +--*---*--+
+##    |         |          rpl |                   |  |        |   |
+##    +---------+              +--*---*---*-----*--+  |        d   mt
+##                                |   |   |     |     |
+##                              txt  sum  min   +-----+
+##                                              <
+## #+end_ascii
+
+## * Code
+
+## ** Markup index
 (class +MupIdx +index)
 
 (dm has> (Val Mup)
@@ -67,7 +85,7 @@
             (splitWords (in (blob Mup 'txt) (till))) ) ) ) )
 
 
-### Role/User ###
+## ** Role/User
 (extend +Role)
 
 (dm url> (Tab)
@@ -88,7 +106,7 @@
    (and (may Iorg) (list "iorg/user.l" '*ID This)) )
 
 
-### Document ###
+## ** Document
 (class +Doc +Entity)
 (rel nm (+Key +String))                # Document title
 (rel mup (+MupIdx +Joint)              # Current markup
@@ -124,7 +142,7 @@
          (commit 'upd) ) ) )
 
 
-# Markup
+## ** Markup
 (class +Mup +Entity)
 (rel doc (+Joint) mup (+Doc))          # Document
 (rel u (+Aux +Ref +Link) (d t)         # User
@@ -149,7 +167,7 @@
    (and (may Iorg) (list "iorg/diff.l" '*ID This)) )
 
 
-# Binary data
+## ** Binary data
 (class +Bin +Entity)
 (rel nm (+String))                     # Name
 (rel mt (+String))                     # Mime type
@@ -160,7 +178,7 @@
       (put> This 'mt (mimetype (blob This 'd))) ) )
 
 
-### Database sizes ###
+## * Database sizes
 (dbs
    (3 +Role +User (+User pw))          # 512 Prevalent objects
    (0 +Doc +Bin)                       # A:64 Tiny objects
@@ -172,4 +190,4 @@
    (4 (+Mup d))                        # G:1024
    (6 (+Doc mup)) )                    # H:4096 Full-text index
 
-# vi:et:ts=3:sw=3
+## iorg/er.l ends here

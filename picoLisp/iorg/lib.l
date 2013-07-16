@@ -1,12 +1,28 @@
-# 20jul12abu
-# (c) Software Lab. Alexander Burger
+## * iorg/lib.l --- Library for iOrg
+## ** MetaData 
+##   :PROPERTIES:
+##   :copyright: Alexander_Burger Thorsten_Jolitz
+##   :copyright-since: 2011
+##   :version:  0.9
+##   :licence:  GPL3+
+##   :licence-url: http://www.gnu.org/licenses/
+##   :authors: Alexander_Burger Thorsten_Jolitz
+##   :contact: <abu@software-lab.de> <tjolitz@gmail.com>
+##   :git-repo: https://github.com/tj64/iorg
+##   :git-clone: git@github.com:tj64/iorg.git
+##   :keywords: emacs org-mode picolisp wiki
+##   :END:
 
-# Download blob
+## ** Comments
+
+## * Code
+
+## ** Download blob
 (de download (This)
    (httpHead (: mt) 60 (: nm))
    (in (blob This 'd) (ht:Out *Chunked (echo))) )
 
-# Retrieve document history
+## ** Retrieve document history
 (be history (@Doc @Mup)
    (val @Mup @Doc mup) )
 
@@ -18,7 +34,7 @@
 (be _history (@C @Prv) (@Prv set (-> @C) (; (val (-> @C)) <)))
 (repeat)
 
-# Search field hint list
+## ** Search field hint list
 (def 'search 'hint
    '((Str)
       (make
@@ -31,13 +47,13 @@
                (cons (setq Str (fold Str)))
                (cons (pack Str `(char T)) T) ) ) ) ) )
 
-# Split list of characters into folded words
+## ** Split list of characters into folded words
 (de splitWords (Lst)
    (extract fold
       (mapcar pack
          (split Lst ~(chop "^J !,-.:;?{}")) ) ) )
 
-# Get markup's title
+## ** Get markup's title
 (dm (title> . +Mup) ()
    (in (blob This 'txt)
       (skip)
@@ -56,7 +72,7 @@
 ##       (echo) ) )
 
 
-# Render document as HTML
+## ** Render document as HTML
 (de render (Bin)
    (let Nest NIL
       (recur (Nest)
@@ -170,7 +186,7 @@
             ("{" (inc 'N))
             ("}" (dec 'N)) ) ) ) )
 
-# Render document as LaTeX
+## ** Render document as LaTeX
 (de renderLatex (This)
    (prinl "% " (datSym (date)))
    (prinl "% " (or (: u name) (: u nm)))
@@ -292,14 +308,14 @@
    (recurse T)
    (prin "}") )
 
-# Produce LaTeX document
+## ** Produce LaTeX document
 (de latex (This)
    (ifn (ext? This)
       (noContent)
       (httpHead "application/x-latex" 20 (pack (or (: doc nm) "untitled") ".tex"))
       (ht:Out *Chunked (renderLatex This)) ) )
 
-# Produce PDF document
+## ** Produce PDF document
 (de pdf (This)
    (ifn (ext? This)
       (noContent)
@@ -309,4 +325,4 @@
             (in (list "pdflatex" "-interaction=batchmode" Nm))
             (httpEcho (pack Nm ".pdf") "application/pdf" 20) ) ) ) )
 
-# vi:et:ts=3:sw=3
+## iorg/lib.l ends here

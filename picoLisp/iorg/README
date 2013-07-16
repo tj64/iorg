@@ -1,11 +1,10 @@
-31jan12abu
-(c) Software Lab. Alexander Burger
+(c) 2011-13 Software Lab. Alexander Burger, Thorsten Jolitz
 
 
-         The PicoLisp Iorg
-         =================
+         iOrg
+       ========
 
-To explore the PicoLisp Iorg, install an up-to-date PicoLisp system (as an OS
+To explore iOrg, install an up-to-date PicoLisp system (as an OS
 distribution package, or from http://software-lab.de/down.html), and unpack the
 tarballs "iorg.tgz" (http://software-lab.de/iorg.tgz) and
 "socialshareprivacy.tgz" (http://software-lab.de/socialshareprivacy.tgz) in some
@@ -31,7 +30,7 @@ or, if you have 'httpGate' running, to
 
    http://localhost/5000
 
-In both cases, you'll see the iorg application GUI (officially at
+In both cases, you'll see the iOrg application GUI (officially at
 http://iorg.picolisp.com). Log in as user "admin" and password "admin".
 
 On the console, the PicoLisp prompt ':' appears.
@@ -40,7 +39,7 @@ On the console, the PicoLisp prompt ':' appears.
 The initial database contains two roles ("Administrator" and "Member"), a single
 user ("admin"), and three documents ("help", "menu" and "home").
 
-A click on the "Iorg" link on the top left switches to the iorg website view
+A click on the "iOrg" link on the top left switches to the iOrg website view
 (officially at http://home.picolisp.com), and from there "My account" will bring
 you back into the application GUI.
 

@@ -1,9 +1,30 @@
-5# 01jun13abu
-# (c) Software Lab. Alexander Burger
+## * iorg/main.l --- Main-file for iOrg
+## ** MetaData 
+##   :PROPERTIES:
+##   :copyright: Alexander_Burger Thorsten_Jolitz
+##   :copyright-since: 2011
+##   :version:  0.9
+##   :licence:  GPL3+
+##   :licence-url: http://www.gnu.org/licenses/
+##   :authors: Alexander_Burger Thorsten_Jolitz
+##   :contact: <abu@software-lab.de> <tjolitz@gmail.com>
+##   :git-repo: https://github.com/tj64/iorg
+##   :git-clone: git@github.com:tj64/iorg.git
+##   :keywords: emacs org-mode picolisp wiki
+##   :END:
+
+## ** Comments
+
+## * Code
+
+
+## ** Permissions
 
 (allowed ("iorg/" "db/iorg/blob/")
    *PW "!start" "!stop" "!iorg" "@lib.css" "!latex" "!pdf" "!psh"
    *PRG *Search "!download" )
+
+## ** Load and Set
 
 (load
    "@lib/http.l" "@lib/xhtml.l" "@lib/form.l" "@lib/tex.l" "@lib/adm.l"
@@ -34,7 +55,8 @@
 
 (mime "d" NIL 120)
 
-# Entry point
+## ** Entry point
+
 (de main ()
    (call 'mkdir "-p" *Pool *Blob)
    (pool *Pool *Dbs *Jnl)
@@ -59,4 +81,4 @@
 ##    (pack "--directory=" "@/iorg/el")
 ##    "--eval='(require 'ox)'" )
 
-# vi:et:ts=3:sw=3
+## iorg/main.l ends here

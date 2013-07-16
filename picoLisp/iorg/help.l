@@ -1,9 +1,29 @@
-# 09aug10abu
-# (c) Software Lab. Alexander Burger
+## * iorg/help.l --- Help-page for iOrg
+## ** MetaData 
+##   :PROPERTIES:
+##   :copyright: Alexander_Burger Thorsten_Jolitz
+##   :copyright-since: 2010
+##   :version:  0.9
+##   :licence:  GPL3+
+##   :licence-url: http://www.gnu.org/licenses/
+##   :authors: Alexander_Burger Thorsten_Jolitz
+##   :contact: <abu@software-lab.de> <tjolitz@gmail.com>
+##   :git-repo: https://github.com/tj64/iorg
+##   :git-clone: git@github.com:tj64/iorg.git
+##   :keywords: emacs org-mode picolisp wiki
+##   :END:
 
-# *TestMarkup
+## ** Comments
+
+## * Code
+## ** Variables
+## - *TestMarkup :: holds a test markup file
+
+## ** Permissions
 
 (must "Help" Iorg)
+
+## ** Functions
 
 (let *Css *IorgCss
    (menu "Help"
@@ -22,4 +42,4 @@
          (in (blob (:  mup) 'txt)
             (render) ) ) ) )
 
-# vi:et:ts=3:sw=3
+## iorg/help.l ends here
