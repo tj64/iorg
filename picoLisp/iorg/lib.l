@@ -15,14 +15,86 @@
 
 ## ** Comments
 
+## *** Calling Emacs
+## With action arguments:
+
+## #+begin_quote
+## `-l FILE'
+## `--load=FILE'
+##      Load a Lisp library named FILE with the function `load'.  If FILE
+##      is not an absolute file name, Emacs first looks for it in the
+##      current directory, then in the directories listed in `load-path'
+##      (*note Lisp Libraries::).
+
+##      *Warning:* If previous command-line arguments have visited files,
+##      the current directory is the directory of the last file visited.
+
+## `--eval=EXPRESSION'
+## `--execute=EXPRESSION'
+##      Evaluate Lisp expression EXPRESSION.
+## #+end_quote
+
+## With initial options:
+
+## #+begin_quote
+## `-batch'
+## `--batch'
+##      Run Emacs in "batch mode".  Batch mode is used for running
+##      programs written in Emacs Lisp from shell scripts, makefiles, and
+##      so on.  To invoke a Lisp program, use the `-batch' option in
+##      conjunction with one or more of `-l', `-f' or `--eval' (*note
+##      Action Arguments::).  *Note Command Example::, for an example.
+
+##      In batch mode, Emacs does not display the text being edited, and
+##      the standard terminal interrupt characters such as `C-z' and `C-c'
+##      have their usual effect.  Emacs functions that normally print a
+##      message in the echo area will print to either the standard output
+##      stream (`stdout') or the standard error stream (`stderr') instead.
+##      (To be precise, functions like `prin1', `princ' and `print' print
+##      to `stdout', while `message' and `error' print to `stderr'.)
+##      Functions that normally read keyboard input from the minibuffer
+##      take their input from the terminal's standard input stream
+##      (`stdin') instead.
+
+##      `--batch' implies `-q' (do not load an initialization file), but
+##      `site-start.el' is loaded nonetheless.  It also causes Emacs to
+##      exit after processing all the command options.  In addition, it
+##      disables auto-saving except in buffers for which auto-saving is
+##      explicitly requested.
+## #+end_quote
+
+
 ## * Code
 
-## ** Download blob
+## ** Utility functions
+
+## generic function for calling Emacs from PicoLisp
+## usage example: (emx '(read) "/path/to/file.el" "(princ \"Hello World\")")
+(de emx (Exe . @)
+   (in
+      (cons 'emacs "--no-site-file" "--batch"
+         (extract
+            '((X)
+              (cond
+                 ((num? (car (info X)))
+                     (pack "--load=" X) )
+                 ((= `(char "(") (char X))
+                     (pack "--eval=" X) ) ) )
+            (rest) ) )
+      (eval Exe) ) )
+
+## Test if symbol S is a keyword-symbol
+(de keyword-symbol? (S)
+   (and
+      (sym? S)
+      (= (car (chop S)) ":") ) )
+
+## Download blob
 (de download (This)
    (httpHead (: mt) 60 (: nm))
    (in (blob This 'd) (ht:Out *Chunked (echo))) )
 
-## ** Retrieve document history
+## Retrieve document history
 (be history (@Doc @Mup)
    (val @Mup @Doc mup) )
 
@@ -34,7 +106,7 @@
 (be _history (@C @Prv) (@Prv set (-> @C) (; (val (-> @C)) <)))
 (repeat)
 
-## ** Search field hint list
+## Search field hint list
 (def 'search 'hint
    '((Str)
       (make
@@ -47,13 +119,13 @@
                (cons (setq Str (fold Str)))
                (cons (pack Str `(char T)) T) ) ) ) ) )
 
-## ** Split list of characters into folded words
+## Split list of characters into folded words
 (de splitWords (Lst)
    (extract fold
       (mapcar pack
          (split Lst ~(chop "^J !,-.:;?{}")) ) ) )
 
-## ** Get markup's title
+## Get markup's title
 (dm (title> . +Mup) ()
    (in (blob This 'txt)
       (skip)
@@ -63,16 +135,10 @@
             (format @N)
             (pack @X) ) ) ) )
 
-## (de render (Bin)
-##    (in
-##       (emacs
-##           (pack
-##              "--no-site-file" "--batch"
-##              "--load="  ) )
-##       (echo) ) )
+## ** Render document
 
+## *** Render document as HTML
 
-## ** Render document as HTML
 (de render (Bin)
    (let Nest NIL
       (recur (Nest)
@@ -186,7 +252,8 @@
             ("{" (inc 'N))
             ("}" (dec 'N)) ) ) ) )
 
-## ** Render document as LaTeX
+## *** Render document as LaTeX
+
 (de renderLatex (This)
    (prinl "% " (datSym (date)))
    (prinl "% " (or (: u name) (: u nm)))
@@ -308,14 +375,17 @@
    (recurse T)
    (prin "}") )
 
-## ** Produce LaTeX document
+## ** Export document
+## *** Produce LaTeX document
+
 (de latex (This)
    (ifn (ext? This)
       (noContent)
       (httpHead "application/x-latex" 20 (pack (or (: doc nm) "untitled") ".tex"))
       (ht:Out *Chunked (renderLatex This)) ) )
 
-## ** Produce PDF document
+## *** Produce PDF document
+
 (de pdf (This)
    (ifn (ext? This)
       (noContent)

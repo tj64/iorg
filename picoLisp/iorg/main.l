@@ -29,8 +29,7 @@
 (load
    "@lib/http.l" "@lib/xhtml.l" "@lib/form.l" "@lib/tex.l" "@lib/adm.l"
    "@lib/socialshareprivacy/lib.l"
-   "@lib/boss.l"
-   "@iorg/lib.l")
+   "@lib/boss.l" )
 
 (setq
    *Scl 2

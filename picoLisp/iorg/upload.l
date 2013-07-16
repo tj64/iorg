@@ -28,9 +28,9 @@
    (form NIL
       (<grid> 2
          (gui '(+UpField) 30)
-         (gui '(+Drop +Button) '(field -1) "Upload Logo (logo.png)"
+         (gui '(+Drop +Button) '(field -1) "Upload Logo (iorg.png)"
             '(when (: drop)
-               (call 'cp @ "iorg/pics/logo.png") ) )
+               (call 'cp @ "iorg/pics/iorg.png") ) )
          (gui '(+UpField) 30)
          (gui '(+Drop +Button) '(field -1) "Upload CSS File (iorg.css)"
             '(when (: drop)

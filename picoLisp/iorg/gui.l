@@ -19,13 +19,14 @@
 
 (de menu (Ttl . Prg)
    (action
-      (html 0 Ttl *Css NIL
+      ## (html 0 Ttl *Css NIL
+      (html 0 Ttl *IorgCss NIL
          (<layout>
             ((180 0 'menu)
                (<div> @
                   (expires)
                   (<menu>
-                     ("Iorg"
+                     ("iOrg"
                         (if *Login
                            (baseHRef NIL *SesId "!iorg?home")
                            (baseHRef *Port1 "!iorg?home") ) )
@@ -43,9 +44,9 @@
 (de start ()
    (setq *Url "!start")
    (and (app) (setq *Menu 3))
-   (menu "PicoLisp Iorg"
-      (<h2> NIL "PicoLisp Iorg")
-      (<img> "iorg/ilogo.png" "PicoLisp Logo")
+   (menu "iOrg"
+      ## (<h2> NIL "iOrg")
+      (<img> "iorg/pics/iorg.png" "iOrg Logo")
       (----)
       (loginForm) ) )
 
@@ -153,11 +154,11 @@
       (setq *Search (get *Cookies 'search)) )
    (unless *SesId (socialshareprivacy.js))
    (action
-      (html NIL (pack "PicoLisp Iorg: " (: nm)) *IorgCss NIL
+      (html NIL (pack "iOrg: " (: nm)) *IorgCss NIL
          (<div> '(id . menu)
             (and (num? *ID) (tell @ 'logout))
             (and *SesId (expires))
-            (<img> "iorg/pics/logo.png" "PicoLisp Logo")
+            (<img> "iorg/pics/wiki.png" "iOrg-Wiki Logo")
             (<div> '(id . searchGrp)  # jk
                (<post> 'search *Url
                   (<js>
@@ -277,17 +278,41 @@
                   (off *MupTxt *MupImg) )
                ((: mup)
                   ## (in (blob @ 'txt) (render (: mup bin)))
-                (let Txt (pack (pwd) "/" (blob @ 'txt))
-                   (emx '(echo)
-                      "(require 'ox)"
-                      (pack
-                         "(with-temp-buffer "
-                         "(insert-file-contents "
-                         "\"" Txt "\")"
-                          "(org-mode)"
-                          "(princ "
-                          "(format \"%s\" "
-                          "(org-export-as 'html nil nil t))))" ) ) )
+                (let (TxtFile (blob @ 'txt)
+                      FileNameSansExt
+                      (text
+                         (car
+                            (tail 2
+                               (split
+                                  (chop TxtFile) '"/" '"." ) ) ) )
+                      AbsPath (pack (pwd) "/" TxtFile)
+                      HtmlFile
+                      (pack "iorg/html/" FileNameSansExt ".html")
+                      Render?
+                      (or
+                         (not (info HtmlFile))
+                         (<
+                            (stamp
+                               (cadr (info HtmlFile))
+                               (cddr (info HtmlFile)) )
+                            (stamp
+                               (cadr (info TxtFile))
+                               (cddr (info TxtFile)) ) ) ) )
+                   ## only render again if .txt is newer than cached .html
+                   (and
+                      Render?
+                      (out HtmlFile
+                         (emx '(echo)
+                            "(require 'ox)"
+                            (pack
+                               "(with-temp-buffer "
+                               "(insert-file-contents "
+                               "\"" AbsPath "\")"
+                               "(org-mode)"
+                               "(princ "
+                               "(format \"%s\" "
+                               "(org-export-as 'html nil nil t))))" ) ) ) )
+                   (in HtmlFile (echo)) )
                   ## (in
                   ##    (blob @ 'txt) (render (: mup bin)) )
                   (if *SesId
