@@ -1,0 +1,37 @@
+* NEXT Version 1.0
+** TODO announce in picolisp mailing list
+   [2013-07-16 Di 02:20]
+** TODO announce in org-mode mailing list
+   [2013-07-16 Di 02:20]
+** TODO set version tag and push to github
+   [2013-07-16 Di 02:20]
+
+
+* NEXT Version 0.9
+** TODO write iorg-minor-mode.el for editing and publishing from Emacs
+   [2013-07-16 Di 02:31]
+** TODO fix javascript
+   [2013-07-16 Di 02:30]
+** TODO cache .l pages produced by ox-iorg.el
+   [2013-07-16 Di 02:30]
+** TODO write ox-iorg.el
+   [2013-07-16 Di 02:30]
+** TODO run picodoc on er.l, fix relations in picodoc
+   [2013-07-16 Di 02:36]
+** TODO define classes
+   [2013-07-16 Di 02:24]
+** TODO cache and serve static .html files produced by ox-html.el
+   [2013-07-16 Di 02:24]
+** TODO fix preview
+   [2013-07-16 Di 02:23]
+** TODO fix internal links
+   [2013-07-16 Di 02:22]
+** TODO merge old-iorg files into iorg files
+   [2013-07-16 Di 02:21]
+** TODO announce in picolisp mailing list
+   [2013-07-16 Di 02:20]
+** TODO announce in org-mode mailing list
+   [2013-07-16 Di 02:20]
+** TODO set version tag and push to github
+   [2013-07-16 Di 02:20]
+
