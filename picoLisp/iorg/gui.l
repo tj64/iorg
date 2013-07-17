@@ -274,8 +274,12 @@
                   (--) ) )
             (cond
                (*MupTxt
-                  (pipe (prinl @) (render *MupImg))
-                  (off *MupTxt *MupImg) )
+                  (let TextMup (tmp "TxtMup")
+                     ## (out TextMup (in @))
+                     (out TextMup (prinl @))
+                     (oxRender TextMup)
+                     ## (pipe (prinl @) (render *MupImg))
+                     (off *MupTxt *MupImg) ) )
                ((: mup)
                   ## (in (blob @ 'txt) (render (: mup bin)))
                 (let (TxtFile (blob @ 'txt)
@@ -301,17 +305,17 @@
                    ## only render again if .txt is newer than cached .html
                    (and
                       Render?
-                      (out HtmlFile
-                         (emx '(echo)
-                            "(require 'ox)"
-                            (pack
-                               "(with-temp-buffer "
-                               "(insert-file-contents "
-                               "\"" AbsPath "\")"
-                               "(org-mode)"
-                               "(princ "
-                               "(format \"%s\" "
-                               "(org-export-as 'html nil nil t))))" ) ) ) )
+                      (out HtmlFile (oxRender AbsPath)) )
+                         ## (emx '(echo)
+                         ##    "(require 'ox)"
+                         ##    (pack
+                         ##       "(with-temp-buffer "
+                         ##       "(insert-file-contents "
+                         ##       "\"" AbsPath "\")"
+                         ##       "(org-mode)"
+                         ##       "(princ "
+                         ##       "(format \"%s\" "
+                         ##       "(org-export-as 'html nil nil t))))" ) ) ) )
                    (in HtmlFile (echo)) )
                   ## (in
                   ##    (blob @ 'txt) (render (: mup bin)) )

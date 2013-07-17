@@ -35,11 +35,19 @@
             '(setq *TestMarkup (: drop)) )
          (--)
          (gui '(+Able +ShowButton) '*TestMarkup NIL
-            '(in *TestMarkup (<hr>) (render)) )
+            ## '(in *TestMarkup (<hr>) (render)) )
+            ## '(let TestMup (tmp "TstMup")
+            ##     (out TestMup *TestMarkup)
+            '(prog
+               (<hr>)
+               (oxRender *TestMarkup) ) )
+            ## '(in *TestMarkup (<hr>) (render)) )
          (gui '(+View +TextField) '(basename *TestMarkup)) )
       (<hr>)
       (with (db 'nm '+Doc "help")
-         (in (blob (:  mup) 'txt)
-            (render) ) ) ) )
+         (let AbsPath (pack (pwd) "/" (blob (:  mup) 'txt))
+            (oxRender AbsPath)) ) ) )
+         ## (in (blob (:  mup) 'txt)
+         ##    (render) ) ) ) )
 
 ## iorg/help.l ends here

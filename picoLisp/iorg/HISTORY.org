@@ -20,13 +20,21 @@
    [2013-07-16 Di 02:36]
 ** TODO define classes
    [2013-07-16 Di 02:24]
-** TODO cache and serve static .html files produced by ox-html.el
+** DONE cache and serve static .html files produced by ox-html.el
+   CLOSED: [2013-07-16 Di 16:57]
+   :LOGBOOK:
+   - State "DONE"       from "TODO"       [2013-07-16 Di 16:57]
+   :END:
    [2013-07-16 Di 02:24]
 ** TODO fix preview
    [2013-07-16 Di 02:23]
 ** TODO fix internal links
    [2013-07-16 Di 02:22]
-** TODO merge old-iorg files into iorg files
+** DONE merge old-iorg files into iorg files
+   CLOSED: [2013-07-16 Di 16:57]
+   :LOGBOOK:
+   - State "DONE"       from "TODO"       [2013-07-16 Di 16:57]
+   :END:
    [2013-07-16 Di 02:21]
 ** TODO announce in picolisp mailing list
    [2013-07-16 Di 02:20]

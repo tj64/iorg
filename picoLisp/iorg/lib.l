@@ -139,6 +139,29 @@
 
 ## *** Render document as HTML
 
+## let ox-html.el render Org-file
+(de oxRender (Path)
+   (emx '(echo)
+      "(require 'ox)"
+      (pack
+         "(princ "
+         "(format \"%s\" "
+         "(with-temp-buffer "
+         "(insert-file-contents "
+         "\"" Path "\")"
+         "(org-mode)"
+         "(org-export-as 'html nil nil t))))" ) ) )
+
+      ## (pack
+      ##    "(with-temp-buffer "
+      ##    "(insert-file-contents "
+      ##    "\"" Path "\")"
+      ##    "(org-mode)"
+      ##    "(princ "
+      ##    "(format \"%s\" "
+      ##    "(org-export-as 'html nil nil t))))" ) ) )
+
+## render original PicoLisp Wiki syntax
 (de render (Bin)
    (let Nest NIL
       (recur (Nest)

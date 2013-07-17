@@ -1,7 +1,7 @@
-1{PicoLisp: The Scalpel of Programming}
+* iOrg Application Framework
 
-A /{Radical Approach} to Software Development
+A /Radical Approach/ to Web Application Development
 
-If some programming languages claim to be the "Swiss Army Knife of Programming",
-then PicoLisp may well be called the "Scalpel of Programming": Sharp, accurate,
-small and lightweight, but also dangerous in the hand of the inexperienced.
+Makes newbies happy who want to build web application by simply using a
+markup language _without any programming_, and pros too who want the power of
+expressive command-line tools. 

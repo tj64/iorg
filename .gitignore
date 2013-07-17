@@ -1,4 +1,5 @@
 picoLisp/*
 !picoLisp/iorg
+picoLisp/iorg/html
 !picoLisp/wiki
 picoLisp/iorg/sandbox

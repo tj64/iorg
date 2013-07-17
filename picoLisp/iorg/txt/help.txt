@@ -1,44 +1,26 @@
-2{PicoLisp Iorg Markup Syntax}
+* Org-mode Markup Syntax
 
-The Iorg Markup has a very simple syntax. It always starts with a single
-character (that specifies the type of markup) followed by an opening brace, and
-extends till the matching closing brace.
+Org-mode Markup has a relatively simple syntax. Some of its most basic
+elements are listed below, for an in-debt coverage please consult the manuals.
 
-Currently, the following markup types are supported:
-:{
-   3{Heading}                 Heading (level 3)
-                              Levels 1 .. 6 are allowed
+These and quite a lot other markup types are supported:
 
-   &{3}                       Insert 3 line breaks
-   &{-3}                      Insert 3 line breaks, clear float style
+# Levels 1 .. 8 are allowed
+** Heading                #  Heading (level 3)
 
-   /{italic}                  Italic font
-   !{bold}                    Bold font
-   _{underline}               Underlined font
+Some /italic/ words mixed with *bold* words look nice, while  _underlined_
+text is a bit overkill sometimes. An unordered list like
 
-   *{                         Unordered list
-      -{List item 1}             List items
-      -{List item 2}
-   }
+# Unordered list
+  - List item 1            #   List items
+  - List item 2
 
-   +{                         Ordered list
-      -{List item 1}             List items
-      -{List item 2}
-   }
+or an ordered list like
 
-   <{content}                 Left-floating content (e.g. image, video)
-   @{content}                 Non-floating content (e.g. image, video)
-   >{content}                 Right-floating content (e.g. image, video)
+# Ordered list
+  1. List item 1            #  List items
+  2. List item 2
 
-   ={Doc Page}                Internal link to the document "Doc"
-                                 The optional label text is "Page"
+look nice too.
 
-   ^{http://ext.org Text}     External link to "http://ext.org"
-                                 The optional label text is "Text"
-
-   :{formatted}               Pre-formatted text
-
-   \{                         Escaped brace
-
-   #{comment}                 Comment
-}
+There is much more information available at the [[http://orgmode.org/][Orgmode]] website.
