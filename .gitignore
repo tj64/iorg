@@ -1,5 +1,7 @@
 picoLisp/*
 !picoLisp/iorg
 picoLisp/iorg/html
+picoLisp/iorg/webpage.l
+picoLisp/iorg/webpage-orig.l
 !picoLisp/wiki
 picoLisp/iorg/sandbox

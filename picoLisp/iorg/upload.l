@@ -30,7 +30,7 @@
          (gui '(+UpField) 30)
          (gui '(+Drop +Button) '(field -1) "Upload Logo (iorg.png)"
             '(when (: drop)
-               (call 'cp @ "iorg/pics/iorg.png") ) )
+               (call 'cp @ "iorg/img/iorg.png") ) )
          (gui '(+UpField) 30)
          (gui '(+Drop +Button) '(field -1) "Upload CSS File (iorg.css)"
             '(when (: drop)

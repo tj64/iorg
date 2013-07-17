@@ -46,7 +46,7 @@
    (and (app) (setq *Menu 3))
    (menu "iOrg"
       ## (<h2> NIL "iOrg")
-      (<img> "iorg/pics/iorg.png" "iOrg Logo")
+      (<img> "iorg/img/iorg.png" "iOrg Logo")
       (----)
       (loginForm) ) )
 
@@ -158,7 +158,7 @@
          (<div> '(id . menu)
             (and (num? *ID) (tell @ 'logout))
             (and *SesId (expires))
-            (<img> "iorg/pics/wiki.png" "iOrg-Wiki Logo")
+            (<img> "iorg/img/wiki.png" "iOrg-Wiki Logo")
             (<div> '(id . searchGrp)  # jk
                (<post> 'search *Url
                   (<js>
