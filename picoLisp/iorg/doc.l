@@ -1,4 +1,4 @@
-## * iorg/er.l --- Entity/Relations for iOrg
+## * iorg/doc.l --- Document management for iOrg
 ## ** MetaData 
 ##   :PROPERTIES:
 ##   :copyright: Alexander_Burger Thorsten_Jolitz
@@ -54,9 +54,14 @@
          (scroll 6)
          (----)
          (when *MupTxt
-            (<hr>)
-            (pipe (prinl (: mup 1))
-               (<div> NIL (render (: mup 4))) )
+            (let MupText (tmp "MupTxt")
+               (<hr>)
+               (out MupText (prinl (: mup 1)))
+               (<div> NIL
+                  (oxRender MupText) ) )
+            ## (render (: mup 4)) ) )
+            ## (pipe (prinl (: mup 1))
+            ##    (<div> NIL (render (: mup 4))) )
             (<hr>)
             (off *MupTxt) )
          (panel '(may Iorg) (pack "Document '@1'")
@@ -73,4 +78,4 @@
          (docFields)
          (<spread> NIL (editButton '(may Iorg) '(_newMup))) ) ) )
 
-## vi:et:ts=3:sw=3
+## iorg/doc.l ends here

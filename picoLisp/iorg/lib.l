@@ -84,7 +84,7 @@
       (eval Exe) ) )
 
 ## Test if symbol S is a keyword-symbol
-(de keyword-symbol? (S)
+(de keywordSymbol? (S)
    (and
       (sym? S)
       (= (car (chop S)) ":") ) )
@@ -144,22 +144,21 @@
    (emx '(echo)
       "(require 'ox)"
       (pack
-         "(princ "
-         "(format \"%s\" "
          "(with-temp-buffer "
          "(insert-file-contents "
          "\"" Path "\")"
          "(org-mode)"
+         "(princ "
+         "(format \"%s\" "
          "(org-export-as 'html nil nil t))))" ) ) )
 
-      ## (pack
-      ##    "(with-temp-buffer "
-      ##    "(insert-file-contents "
-      ##    "\"" Path "\")"
-      ##    "(org-mode)"
-      ##    "(princ "
-      ##    "(format \"%s\" "
-      ##    "(org-export-as 'html nil nil t))))" ) ) )
+         ## "(princ "
+         ## "(format \"%s\" "
+         ## "(with-temp-buffer "
+         ## "(insert-file-contents "
+         ## "\"" Path "\")"
+         ## "(org-mode)"
+         ## "(org-export-as 'html nil nil t))))" ) ) )
 
 ## render original PicoLisp Wiki syntax
 (de render (Bin)
