@@ -148,17 +148,44 @@
          "(insert-file-contents "
          "\"" Path "\")"
          "(org-mode)"
+         "(let ((org-cycle-silently 1))"
          "(princ "
          "(format \"%s\" "
-         "(org-export-as 'html nil nil t))))" ) ) )
+         "(org-export-as 'html nil nil t)))))" ) ) )
 
-         ## "(princ "
-         ## "(format \"%s\" "
-         ## "(with-temp-buffer "
-         ## "(insert-file-contents "
-         ## "\"" Path "\")"
-         ## "(org-mode)"
-         ## "(org-export-as 'html nil nil t))))" ) ) )
+## (de oxRender (Path)
+##    (pipe
+##       (emx '(echo)
+##          "(require 'ox)"
+##          (pack
+##             "(with-temp-buffer "
+##             "(insert-file-contents "
+##             "\"" Path "\")"
+##             "(org-mode)"
+##             "(princ "
+##             "(format \"%s\" "
+##             "(org-export-as 'html nil nil t))))" ) )
+##       (processInternalLinks) ) )
+
+## process internal links (as last rendering step)
+(de processInternalLinks ()
+   (use C
+      (loop
+         (prin (till "=" T))
+         (NIL (setq C (char)))
+         (case (peek)
+            ("^J"
+             (ifn (= "^J" C)
+                (ht:Prin C)
+                (----)
+                (char) ) )
+            ("{"
+             (char)  # Skip "{"
+             (case C
+                ("="  # Internal document link
+                 (iorgLink (split (till "}") " " "^I" "^J" "^M"))
+                 (char) ) ) )
+            (T (ht:Prin C)) ) ) ) )
 
 ## render original PicoLisp Wiki syntax
 (de render (Bin)

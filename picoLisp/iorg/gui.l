@@ -17,6 +17,8 @@
 
 ## * Code
 
+## ** Menu 
+
 (de menu (Ttl . Prg)
    (action
       ## (html 0 Ttl *Css NIL
@@ -41,6 +43,9 @@
                ((NIL NIL 'main)
                   (<div> @ (run Prg 1)) ) ) ) ) ) )
 
+
+## ** Entry Point
+
 (de start ()
    (setq *Url "!start")
    (and (app) (setq *Menu 3))
@@ -59,7 +64,9 @@
       (html> @)
       (http404) ) )
 
-# Choose dialogs
+
+## ** Choose Dialogs
+
 (de choUser (Dst)
    (diaform '(Dst)
       (<grid> "--.-."
@@ -145,7 +152,8 @@
          (newButton T Dst '(+Doc))
          (cancelButton) ) ) )
 
-# Show document HTML page
+## ** Show document HTML page
+
 (dm (html> . +Doc) ()
    (and (== 'login *ID) (app))
    (setq *Url (ext.html This))
@@ -180,8 +188,13 @@
                (<$> "My account" *Login) )
             (----)
             (when *IorgMenu
-               (in (blob (; (id (car @) (cdr @)) mup) 'txt)
-                  (render) ) ) )
+                (let F (blob (; (id (car @) (cdr @)) mup) 'txt)
+                   (renderTxt F) ) ) )
+               ## (let Menu 
+               ##    (pack
+               ##       (pwd) "/"
+               ##       (blob (; (id (car @) (cdr @)) mup) 'txt) )
+               ##       (oxRender Menu) ) ) )
          (<div> '(id . main)
             (cond
                ((== 'login *ID)
@@ -273,50 +286,48 @@
                      (and (: mup) (<this> '*ID 'rpl "Reply")) )
                   (--) ) )
             (cond
+               ## process uploaded testfiles (??)
                (*MupTxt
                   (let TextMup (tmp "TxtMup")
                      ## (out TextMup (in @))
                      (out TextMup (prinl @))
-                     (oxRender TextMup)
+                     (pipe
+                        (oxRender TextMup)
+                        (processInternalLinks) )
                      ## (pipe (prinl @) (render *MupImg))
                      (off *MupTxt *MupImg) ) )
+               ## process DB files
                ((: mup)
+                (let F (blob @ 'txt)
+                   (renderTxt F) )
                   ## (in (blob @ 'txt) (render (: mup bin)))
-                (let (TxtFile (blob @ 'txt)
-                      FileNameSansExt
-                      (text
-                         (car
-                            (tail 2
-                               (split
-                                  (chop TxtFile) '"/" '"." ) ) ) )
-                      AbsPath (pack (pwd) "/" TxtFile)
-                      HtmlFile
-                      (pack "iorg/html/" FileNameSansExt ".html")
-                      Render?
-                      (or
-                         (not (info HtmlFile))
-                         (<
-                            (stamp
-                               (cadr (info HtmlFile))
-                               (cddr (info HtmlFile)) )
-                            (stamp
-                               (cadr (info TxtFile))
-                               (cddr (info TxtFile)) ) ) ) )
-                   ## only render again if .txt is newer than cached .html
-                   (and
-                      Render?
-                      (out HtmlFile (oxRender AbsPath)) )
-                         ## (emx '(echo)
-                         ##    "(require 'ox)"
-                         ##    (pack
-                         ##       "(with-temp-buffer "
-                         ##       "(insert-file-contents "
-                         ##       "\"" AbsPath "\")"
-                         ##       "(org-mode)"
-                         ##       "(princ "
-                         ##       "(format \"%s\" "
-                         ##       "(org-export-as 'html nil nil t))))" ) ) ) )
-                   (in HtmlFile (echo)) )
+                ## (let (TxtFile (blob @ 'txt)
+                ##       FileNameSansExt
+                ##       (text
+                ##          (car
+                ##             (tail 2
+                ##                (split
+                ##                   (chop TxtFile) '"/" '"." ) ) ) )
+                ##       AbsPath (pack (pwd) "/" TxtFile)
+                ##       HtmlFile
+                ##       (pack "iorg/html/" FileNameSansExt ".html")
+                ##       Render?
+                ##       (or
+                ##          (not (info HtmlFile))
+                ##          (<
+                ##             (stamp
+                ##                (cadr (info HtmlFile))
+                ##                (cddr (info HtmlFile)) )
+                ##             (stamp
+                ##                (cadr (info TxtFile))
+                ##                (cddr (info TxtFile)) ) ) ) )
+                ##    ## only render again if .txt is newer than cached .html
+                ##    (and
+                ##       Render?
+                ##       (out HtmlFile (oxRender AbsPath)) )
+                ##    (pipe
+                ##       (in HtmlFile (echo))
+                ##       (processInternalLinks) ) )
                   ## (in
                   ##    (blob @ 'txt) (render (: mup bin)) )
                   (if *SesId
@@ -354,7 +365,39 @@
                                  (and (: mup rpl) (recurse)) ) ) ) ) ) ) ) ) ) )
    (off *ID) )
 
-# Full-text search
+## render DB file
+(de renderTxt (TxtFile)
+   (let (FileNameSansExt
+         (text
+            (car
+               (tail 2
+                  (split
+                     (chop TxtFile) '"/" '"." ) ) ) )
+         AbsPath (pack (pwd) "/" TxtFile)
+         HtmlFile
+         (pack "iorg/html/" FileNameSansExt ".html")
+         Render?
+         (or
+            (not (info HtmlFile))
+            (<
+               (stamp
+                  (cadr (info HtmlFile))
+                  (cddr (info HtmlFile)) )
+               (stamp
+                  (cadr (info TxtFile))
+                  (cddr (info TxtFile)) ) ) ) )
+      ## only render again if .txt is newer than cached .html
+      (and
+         Render?
+         (out HtmlFile (oxRender AbsPath)) )
+      (pipe
+         (in HtmlFile (echo))
+         (processInternalLinks) ) ) )
+
+
+
+## ** Full-text search
+
 (de searchIorg (Words Cnt)
    (<strong> NIL (<br> "Search results:"))
    (let Q
@@ -446,6 +489,8 @@
    (find
       '((This) (= Nm (fold (: nm))))
       Lst ) )
+
+## ** Process Internal Links
 
 (de iorgLink (Lst)
    (let (Nm (pack (car Lst))  Str (or (glue " " (cdr Lst)) (pack (car Lst))))
