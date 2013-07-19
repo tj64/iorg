@@ -6,8 +6,8 @@
    - ={GenForum General}
    - ={DevForum Development}
    - ={BookForum About the book}
-- ={Book}
-- ={Examples}
+- ={Books Lots of Nice Books}
+- ={Examples And many examples}
 - [[http://software-lab.de/down.html][Download]]
 - ={Help}
 - [[http://www.software-lab.de][Legal Details]]

@@ -58,7 +58,9 @@
                (<hr>)
                (out MupText (prinl (: mup 1)))
                (<div> NIL
-                  (oxRender MupText) ) )
+                  (pipe
+                     (oxRender MupText)
+                     (processInternalLinks) ) ) )
             ## (render (: mup 4)) ) )
             ## (pipe (prinl (: mup 1))
             ##    (<div> NIL (render (: mup 4))) )

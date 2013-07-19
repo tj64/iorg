@@ -187,54 +187,50 @@
                (--)
                (<$> "My account" *Login) )
             (----)
+            ## render menu file
             (when *IorgMenu
-                (let F (blob (; (id (car @) (cdr @)) mup) 'txt)
-                   (renderTxt F) ) ) )
-               ## (let Menu 
-               ##    (pack
-               ##       (pwd) "/"
-               ##       (blob (; (id (car @) (cdr @)) mup) 'txt) )
-               ##       (oxRender Menu) ) ) )
+               (let F (blob (; (id (car @) (cdr @)) mup) 'txt)
+                  (renderTxtFile F) ) ) )
          (<div> '(id . main)
             (cond
                ((== 'login *ID)
-                  (form 'login
-                     (<grid> 2
-                        "Name" (gui 'nm '(+Focus +TextField) 20)
-                        "Password" (gui 'pw '(+PwField) 20) )
-                     (--)
-                     (gui '(+Button) "OK"
-                        '(ifn (login (val> (: home nm)) (val> (: home pw)))
-                           (error "Permission denied")
-                           (put!> *Login 'new NIL)
-                           (clr> (: home pw))
-                           (off *ID) ) )
-                     (gui '(+Button) "Cancel" '(off *ID))
-                     (<nbsp> 7)
-                     (gui '(+Tiny +Button) "Create account"
-                        '(dialog NIL
-                           (<h4> NIL "Create account")
-                           (<br> "Please supply at least Login Name and EMail Address.")
-                           (<grid> 2
-                              "Login Name" (gui '(+Focus +Chk +TextField)
-                                 '(let Nm (val> This)
-                                    (cond
-                                       ((not Nm) "Please supply a login name")
-                                       ((db 'nm '+User Nm) "This name is already in use") ) )
-                                 10 )
-                              "EMail Address" (gui '(+Chk +TextField)
-                                 '(and
-                                    *Btn
-                                    (not (val> This))
-                                    "Please supply an email address" )
-                                 30 )
-                              "Full Name (optional)" (gui '(+TextField) 30) )
-                           (<br>)
-                           (<br> "Clicking \"OK\" will create a new account,")
-                           (<br> "and send a password to you by email.")
-                           (<br>)
-                           (okButton
-                              '(with
+                (form 'login
+                   (<grid> 2
+                      "Name" (gui 'nm '(+Focus +TextField) 20)
+                      "Password" (gui 'pw '(+PwField) 20) )
+                   (--)
+                   (gui '(+Button) "OK"
+                      '(ifn (login (val> (: home nm)) (val> (: home pw)))
+                          (error "Permission denied")
+                          (put!> *Login 'new NIL)
+                          (clr> (: home pw))
+                          (off *ID) ) )
+                   (gui '(+Button) "Cancel" '(off *ID))
+                   (<nbsp> 7)
+                   (gui '(+Tiny +Button) "Create account"
+                      '(dialog NIL
+                          (<h4> NIL "Create account")
+                          (<br> "Please supply at least Login Name and EMail Address.")
+                          (<grid> 2
+                             "Login Name" (gui '(+Focus +Chk +TextField)
+                                             '(let Nm (val> This)
+                                                 (cond
+                                                    ((not Nm) "Please supply a login name")
+                                                    ((db 'nm '+User Nm) "This name is already in use") ) )
+                                             10 )
+                             "EMail Address" (gui '(+Chk +TextField)
+                                                '(and
+                                                    *Btn
+                                                    (not (val> This))
+                                                    "Please supply an email address" )
+                                                30 )
+                             "Full Name (optional)" (gui '(+TextField) 30) )
+                          (<br>)
+                          (<br> "Clicking \"OK\" will create a new account,")
+                          (<br> "and send a password to you by email.")
+                          (<br>)
+                          (okButton
+                             '(with
                                  (new! '(+User)
                                     'nm (val> (field -3))
                                     'pw (fmt64 (in "/dev/urandom" (rd 6)))
@@ -249,124 +245,96 @@
                                     (prinl "You can now log in as: " (: nm))
                                     (prinl "With the password: " (: pw)) )
                                  (off *ID) ) )
-                           (cancelButton) ) ) ) )
+                          (cancelButton) ) ) ) )
                ((== 'edit *ID)
-                  (let Obj This
-                     (ifn (lock Obj)
-                        (form 'edit
-                           (=: obj Obj)
-                           (<h3> NIL (ht:Prin (: obj nm)))
-                           (docFields T) )
-                        (<h2> 'red
-                           (prinl
-                              "This document is currently edited by user '"
-                              (cdr (lup *Users @))
-                              "'" ) ) ) ) )
+                (let Obj This
+                   (ifn (lock Obj)
+                      (form 'edit
+                         (=: obj Obj)
+                         (<h3> NIL (ht:Prin (: obj nm)))
+                         (docFields T) )
+                      (<h2> 'red
+                         (prinl
+                            "This document is currently edited by user '"
+                            (cdr (lup *Users @))
+                            "'" ) ) ) ) )
                ((== 'rpl *ID)
-                  (let Org This
-                     (form 'edit
-                        (=: org Org)
-                        (<h3> NIL (ht:Prin "Reply"))
-                        (docFields T) ) ) )
+                (let Org This
+                   (form 'edit
+                      (=: org Org)
+                      (<h3> NIL (ht:Prin "Reply"))
+                      (docFields T) ) ) )
                ((str? *ID)
-                  (if (fetch '(nm . +Doc) @)
-                     (setq This @)  # Created meanwhile
-                     (form 'edit
-                        (=: docNm *ID)
-                        (<h2> NIL "New document '" *ID "'")
-                        (<p> NIL "This document doesn't exist yet")
-                        (gui '(+Button) "Create document"
-                           '(let Doc (new! '(+Doc) 'nm (fold (: home docNm) 0))
-                              (setq *ID 'edit)
-                              (url (ext.html Doc)) ) )
-                        (gui '(+Button) "Cancel" '(off *ID)) ) ) )
+                (if (fetch '(nm . +Doc) @)
+                   (setq This @)  # Created meanwhile
+                   (form 'edit
+                      (=: docNm *ID)
+                      (<h2> NIL "New document '" *ID "'")
+                      (<p> NIL "This document doesn't exist yet")
+                      (gui '(+Button) "Create document"
+                         '(let Doc (new! '(+Doc) 'nm (fold (: home docNm) 0))
+                             (setq *ID 'edit)
+                             (url (ext.html Doc)) ) )
+                      (gui '(+Button) "Cancel" '(off *ID)) ) ) )
                ((may Iorg)
-                  (<spread>
-                     (<this> '*ID 'edit "Edit")
-                     (and (: mup) (<this> '*ID 'rpl "Reply")) )
-                  (--) ) )
+                (<spread>
+                   (<this> '*ID 'edit "Edit")
+                   (and (: mup) (<this> '*ID 'rpl "Reply")) )
+                (--) ) )
             (cond
                ## process uploaded testfiles (??)
                (*MupTxt
                   (let TextMup (tmp "TxtMup")
-                     ## (out TextMup (in @))
                      (out TextMup (prinl @))
                      (pipe
                         (oxRender TextMup)
                         (processInternalLinks) )
-                     ## (pipe (prinl @) (render *MupImg))
                      (off *MupTxt *MupImg) ) )
                ## process DB files
                ((: mup)
                 (let F (blob @ 'txt)
-                   (renderTxt F) )
-                  ## (in (blob @ 'txt) (render (: mup bin)))
-                ## (let (TxtFile (blob @ 'txt)
-                ##       FileNameSansExt
-                ##       (text
-                ##          (car
-                ##             (tail 2
-                ##                (split
-                ##                   (chop TxtFile) '"/" '"." ) ) ) )
-                ##       AbsPath (pack (pwd) "/" TxtFile)
-                ##       HtmlFile
-                ##       (pack "iorg/html/" FileNameSansExt ".html")
-                ##       Render?
-                ##       (or
-                ##          (not (info HtmlFile))
-                ##          (<
-                ##             (stamp
-                ##                (cadr (info HtmlFile))
-                ##                (cddr (info HtmlFile)) )
-                ##             (stamp
-                ##                (cadr (info TxtFile))
-                ##                (cddr (info TxtFile)) ) ) ) )
-                ##    ## only render again if .txt is newer than cached .html
-                ##    (and
-                ##       Render?
-                ##       (out HtmlFile (oxRender AbsPath)) )
-                ##    (pipe
-                ##       (in HtmlFile (echo))
-                ##       (processInternalLinks) ) )
-                  ## (in
-                  ##    (blob @ 'txt) (render (: mup bin)) )
-                  (if *SesId
-                     (----)
-                     (socialshareprivacy) )
-                  (<small>
-                     (with (: mup)
-                        (<spread>
-                           (<tip> "Public URL of this page"
-                              (let U (baseHRef *Port1 "!iorg?" (: doc nm))
-                                 (<href> U U) ) )
-                           (<tip> "Download TeX source"
-                              (<href> "TeX" (pack "!latex?" (ht:Fmt This))) )
-                           (<nbsp> 3)
-                           (<tip> "Download PDF document"
-                              (<href> "PDF" (pack "!pdf?" (ht:Fmt This))) )
-                           (<nbsp> 3)
-                           (prin (datSym (: d)))
-                           (<nbsp> 3)
-                           (prog
-                              (while (: min)
-                                 (setq This (: <)) )
-                              (<$> (: u nm) (: u)) ) ) ) )
-                  (and *SesId (<$> "Revision History" This))
-                  (when (: mup rpl)
-                     (<hr>)
-                     (<h4> NIL "Replies")
-                     (recur ()
-                        (<ul> NIL
-                           (for This (: mup rpl)
-                              (<li> NIL
-                                 (<href> (nm> (: mup)) (ext.html This))
-                                 (<nbsp>)
-                                 (ht:Prin (: mup sum))
-                                 (and (: mup rpl) (recurse)) ) ) ) ) ) ) ) ) ) )
+                   (renderTxtFile F) )
+                ## privacy
+                (if *SesId
+                   (----)
+                   (socialshareprivacy) )
+                ## export
+                (<small>
+                   (with (: mup)
+                      (<spread>
+                         (<tip> "Public URL of this page"
+                            (let U (baseHRef *Port1 "!iorg?" (: doc nm))
+                               (<href> U U) ) )
+                         (<tip> "Download TeX source"
+                            (<href> "TeX" (pack "!latex?" (ht:Fmt This))) )
+                         (<nbsp> 3)
+                         (<tip> "Download PDF document"
+                            (<href> "PDF" (pack "!pdf?" (ht:Fmt This))) )
+                         (<nbsp> 3)
+                         (prin (datSym (: d)))
+                         (<nbsp> 3)
+                         (prog
+                            (while (: min)
+                               (setq This (: <)) )
+                            (<$> (: u nm) (: u)) ) ) ) )
+                ## history
+                (and *SesId (<$> "Revision History" This))
+                ## replies
+                (when (: mup rpl)
+                   (<hr>)
+                   (<h4> NIL "Replies")
+                   (recur ()
+                      (<ul> NIL
+                         (for This (: mup rpl)
+                            (<li> NIL
+                               (<href> (nm> (: mup)) (ext.html This))
+                               (<nbsp>)
+                               (ht:Prin (: mup sum))
+                               (and (: mup rpl) (recurse)) ) ) ) ) ) ) ) ) ) )
    (off *ID) )
 
-## render DB file
-(de renderTxt (TxtFile)
+## render Mup (text) file
+(de renderTxtFile (TxtFile)
    (let (FileNameSansExt
          (text
             (car
@@ -497,7 +465,7 @@
       (cond
          ((fetch '(nm . +Doc) (fold Nm 0))
             (<href> Str (pack "!iorg?" Nm)) )
-         (*Login (<this> '*ID Nm Str))
-         (T (ht:Prin Str)) ) ) )
+         (*Login (<thisLink> '*ID Nm Str))
+         (T (prin Str)) ) ) )
 
 ## iorg/gui.l ends here

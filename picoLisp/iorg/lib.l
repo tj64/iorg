@@ -153,20 +153,6 @@
          "(format \"%s\" "
          "(org-export-as 'html nil nil t)))))" ) ) )
 
-## (de oxRender (Path)
-##    (pipe
-##       (emx '(echo)
-##          "(require 'ox)"
-##          (pack
-##             "(with-temp-buffer "
-##             "(insert-file-contents "
-##             "\"" Path "\")"
-##             "(org-mode)"
-##             "(princ "
-##             "(format \"%s\" "
-##             "(org-export-as 'html nil nil t))))" ) )
-##       (processInternalLinks) ) )
-
 ## process internal links (as last rendering step)
 (de processInternalLinks ()
    (use C
@@ -176,7 +162,7 @@
          (case (peek)
             ("^J"
              (ifn (= "^J" C)
-                (ht:Prin C)
+                (prin C)
                 (----)
                 (char) ) )
             ("{"
@@ -185,111 +171,137 @@
                 ("="  # Internal document link
                  (iorgLink (split (till "}") " " "^I" "^J" "^M"))
                  (char) ) ) )
-            (T (ht:Prin C)) ) ) ) )
+            (T (prin C)) ) ) ) )
 
-## render original PicoLisp Wiki syntax
-(de render (Bin)
-   (let Nest NIL
-      (recur (Nest)
-         (use C
-            (loop
-               (ht:Prin (till "^J123456&/!_*+-<@>=\^:\\#}" T))
-               (NIL (setq C (char)))
-               (T (and Nest (= C "}")))
-               (case (peek)
-                  ("^J"
-                     (ifn (= "^J" C)
-                        (ht:Prin C)
-                        (----)
-                        (char) ) )
-                  ("{"
-                     (char)  # Skip "{"
-                     (case C
-                        (("1" "2" "3" "4" "5" "6")  # Heading
-                           (_render "h" C)
-                           (prinl)
-                           (skip) )
-                        ("&"
-                           (let? N (format (till "}" T))
-                              (prin "<br"
-                                 (and (lt0 N) " class=\"clr\"")
-                                 "/>" )
-                              (do (dec (abs N))
-                                 (prin "<br/>") ) )
-                           (char) )
-                        ("/"  # Italic
-                           (_render "i") )
-                        ("!"  # Bold
-                           (_render "b") )
-                        ("_"  # Underlined
-                           (_render "u") )
-                        ("*"  # Unordered list
-                           (_render "ul") )
-                        ("+"  # Ordered list
-                           (_render "ol") )
-                        ("-"  # List item
-                           (_render "li") )
-                        (("<" "@" ">")  # Binary file
-                           (let Nm (till "}" T)
-                              (char)
-                              (with (! findBin Nm Bin)
-                                 (cond
-                                    ((pre? "image/" (: mt))
-                                       (prin "<img src=\""
-                                          *SesId (blob This 'd)
-                                          "\" alt=\"" )
-                                       (ht:Prin Nm)
-                                       (prin
-                                          "\" class=\""
-                                          (case C
-                                             ("<" "left")
-                                             ("@" "nofloat")
-                                             (">" "right") )
-                                          "\"/>" ) )
-                                    ((pre? "video/" (: mt))
-                                       (prin "<video src=\""
-                                          *SesId (blob This 'd)
-                                          "\" class=\""
-                                          (case C
-                                             ("<" "left")
-                                             ("@" "nofloat")
-                                             (">" "right") )
-                                          "\">" )
-                                       (ht:Prin Nm)
-                                       (prin "</video>") )
-                                    (T
-                                       (<style> (cons 'type (: mt))
-                                          (<href> Nm (pack "!download?" (ht:Fmt This))) ) ) ) ) ) )
-                        ("="  # Internal document link
-                           (iorgLink (split (till "}") " " "^I" "^J" "^M"))
-                           (char) )
-                        ("\^"  # External web link
-                           (let S (split (till "}") " " "^I" "^J" "^M")
-                              (char)
-                              (if
-                                 (member
-                                    (car (split (car S) ":"))
-                                    (quote
-                                       `(chop "http")
-                                       `(chop "https")
-                                       `(chop "irc")
-                                       `(chop "mailto") ) )
-                                 (<href>
-                                    (or (glue " " (cdr S)) (pack (car S)))
-                                    (pack (car S)) )
-                                 (prin "???") ) ) )
-                        (":"  # Pre-formatted
-                           ((if (= "^J" (peek)) <pre> <span>) 'code
-                              (renderBlock ht:Prin)) )
-                        ("\\" (prin "{"))  # Escaped brace
-                        ("#" (renderBlock prog))  # Comment
-                        (T (prin C "{")) ) )
-                  (T (ht:Prin C)) ) ) ) ) ) )
+## redefined <this>
+## print internal links with already html-escaped chars
+(de <thisLink> (Var Val . Prg)
+   (prin
+      "<a href=\""
+      (sesId *Url)
+      '?
+      Var
+      '=
+      (ht:Fmt Val)
+      "\"" )
+   (and *Style (htStyle @))
+   (prin '>)
+   (prinLink Prg 2)
+   (prin "</a>") )
 
-(de _render (C D)
-   (prin "<" C D ">")
-   (recurse T)
-   (prin "</" C D ">") )
+## redefined htPrin
+## print internal links with already html-escaped chars
+(de prinLink (Prg Ofs)
+   (default Ofs 1)
+   (for X Prg
+      (if (atom X)
+         (prin (eval X Ofs))
+         (eval X Ofs) ) ) )
+
+
+## ## render original PicoLisp Wiki syntax
+## (de render (Bin)
+##    (let Nest NIL
+##       (recur (Nest)
+##          (use C
+##             (loop
+##                (ht:Prin (till "^J123456&/!_*+-<@>=\^:\\#}" T))
+##                (NIL (setq C (char)))
+##                (T (and Nest (= C "}")))
+##                (case (peek)
+##                   ("^J"
+##                      (ifn (= "^J" C)
+##                         (ht:Prin C)
+##                         (----)
+##                         (char) ) )
+##                   ("{"
+##                      (char)  # Skip "{"
+##                      (case C
+##                         (("1" "2" "3" "4" "5" "6")  # Heading
+##                            (_render "h" C)
+##                            (prinl)
+##                            (skip) )
+##                         ("&"
+##                            (let? N (format (till "}" T))
+##                               (prin "<br"
+##                                  (and (lt0 N) " class=\"clr\"")
+##                                  "/>" )
+##                               (do (dec (abs N))
+##                                  (prin "<br/>") ) )
+##                            (char) )
+##                         ("/"  # Italic
+##                            (_render "i") )
+##                         ("!"  # Bold
+##                            (_render "b") )
+##                         ("_"  # Underlined
+##                            (_render "u") )
+##                         ("*"  # Unordered list
+##                            (_render "ul") )
+##                         ("+"  # Ordered list
+##                            (_render "ol") )
+##                         ("-"  # List item
+##                            (_render "li") )
+##                         (("<" "@" ">")  # Binary file
+##                            (let Nm (till "}" T)
+##                               (char)
+##                               (with (! findBin Nm Bin)
+##                                  (cond
+##                                     ((pre? "image/" (: mt))
+##                                        (prin "<img src=\""
+##                                           *SesId (blob This 'd)
+##                                           "\" alt=\"" )
+##                                        (ht:Prin Nm)
+##                                        (prin
+##                                           "\" class=\""
+##                                           (case C
+##                                              ("<" "left")
+##                                              ("@" "nofloat")
+##                                              (">" "right") )
+##                                           "\"/>" ) )
+##                                     ((pre? "video/" (: mt))
+##                                        (prin "<video src=\""
+##                                           *SesId (blob This 'd)
+##                                           "\" class=\""
+##                                           (case C
+##                                              ("<" "left")
+##                                              ("@" "nofloat")
+##                                              (">" "right") )
+##                                           "\">" )
+##                                        (ht:Prin Nm)
+##                                        (prin "</video>") )
+##                                     (T
+##                                        (<style> (cons 'type (: mt))
+##                                           (<href> Nm (pack "!download?" (ht:Fmt This))) ) ) ) ) ) )
+##                         ("="  # Internal document link
+##                            (iorgLink (split (till "}") " " "^I" "^J" "^M"))
+##                            (char) )
+##                         ("\^"  # External web link
+##                            (let S (split (till "}") " " "^I" "^J" "^M")
+##                               (char)
+##                               (if
+##                                  (member
+##                                     (car (split (car S) ":"))
+##                                     (quote
+##                                        `(chop "http")
+##                                        `(chop "https")
+##                                        `(chop "irc")
+##                                        `(chop "mailto") ) )
+##                                  (<href>
+##                                     (or (glue " " (cdr S)) (pack (car S)))
+##                                     (pack (car S)) )
+##                                  (prin "???") ) ) )
+##                         (":"  # Pre-formatted
+##                            ((if (= "^J" (peek)) <pre> <span>) 'code
+##                               (renderBlock ht:Prin)) )
+##                         ("\\" (prin "{"))  # Escaped brace
+##                         ("#" (renderBlock prog))  # Comment
+##                         (T (prin C "{")) ) )
+##                   (T (ht:Prin C)) ) ) ) ) ) )
+
+## (de _render (C D)
+##    (prin "<" C D ">")
+##    (recurse T)
+##    (prin "</" C D ">") )
 
 (de renderBlock (Fun)
    (let (N 0  C)
