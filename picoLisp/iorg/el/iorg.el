@@ -89,7 +89,7 @@ There is a mode hook, and a few commands:
   "Return non-nil if LST is a list and its car a keyword."
   (and (listp lst) (keywordp (car lst))))
 
-(defun iorg-retrieve-url(path &optional hostpath &rest args)
+(defun iorg-retrieve-url(path &optional LISP-P hostpath &rest args)
   "Generic function for calling the iOrg server from Emacs.
 
 The PicoLisp application server uses a slightly specialized syntax when
@@ -127,8 +127,9 @@ function. For example
 
 defines a new mime type with a max-age of one minute.
 
-Argument values (ARGS) in URLs, following the path and the question mark, are
-encoded in such a way that Lisp data types are preserved:
+Argument values (ARGS) in URLs, following the path and the
+question mark, are encoded in such a way that Lisp data types are
+preserved:
 
 - An internal symbol starts with a dollar sign ('$')
 
@@ -140,10 +141,16 @@ encoded in such a way that Lisp data types are preserved:
 
 - Otherwise, it is a transient symbol (a plain string)
 
-In that way, high-level data types can be directly passed to functions encoded
-in the URL, or assigned to global variables before a file is loaded. The
-PicoLisp application-framework uses a somewhat specialised syntax when
-communicating URLs."
+In that way, high-level data types can be directly passed to
+functions encoded in the URL, or assigned to global variables
+before a file is loaded. The PicoLisp application-framework uses
+a somewhat specialised syntax when communicating URLs.
+
+If LISP-P is non-nil, it is assumed that the buffer-content of
+the URL buffer is valid Emacs Lisp that can be processed by
+`read-from-string' and can be returned as a lisp
+object (typically a list), otherwise the buffer-content is
+returned 'as-is' as buffer-string without properties."
   (let* ((base-url (or hostpath iorg-default-host-path))
          (url-no-args
           (concat base-url "/" path))
@@ -151,13 +158,14 @@ communicating URLs."
                   (concat url-no-args
                           "?"
                           (mapconcat 'identity args "&"))
-                url-no-args)))
-    (car
-     (read-from-string
-      (with-current-buffer
-          (url-retrieve-synchronously url)
-        (buffer-substring-no-properties
-         (point-min) (point-max)))))))
+                url-no-args))
+         (buf (with-current-buffer
+                  (url-retrieve-synchronously url)
+                (buffer-substring-no-properties
+                 (point-min) (point-max)))))
+    (if LISP-P
+        (car (read-from-string buf))
+      buf)))
 
     ;; (with-current-buffer (url-retrieve url nil)
     ;;   (buffer-string))))
