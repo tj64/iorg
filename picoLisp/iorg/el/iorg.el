@@ -72,10 +72,6 @@ There is a mode hook, and a few commands:
 (defvar iorg-default-host-path "http://localhost:5000"
   "Default path (protocol, host, port) for iOrg server.")
 
-(defvar iorg-default-callback-function
-  '(lambda (CBARGS) (princ (buffer-string)))
-  "Default callback function for calls to the iOrg server.")
-
 ;; FIXME all types covered?
 (defvar iorg-all-types
   (append '(org-data) org-element-all-elements
@@ -366,16 +362,6 @@ is loaded again. In the latter case it will be reset to
 \"http://localhost:5000\"."
  (interactive "sURL (e.g. http://localhost:5000): ")
  (setq iorg-default-host-path path))
-
-
-(defun iorg-set-default-callback-function (fun)
-  "Change `iorg-default-callback-function' temporarily.
-
-The new function FUN will remain valid until set again or until
-`iorg.el' is loaded again. In the latter case it will be reset to
-'(lambda (CBARGS) (prin (buffer-string)))."
- (interactive "xFun: (e.g. (lambda (CBARGS) (prin (buffer-string))): ")
- (setq iorg-default-callback-function fun))
 
 (defun iorg-login ()
   "")
