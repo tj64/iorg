@@ -46,7 +46,8 @@ There is a mode hook, and a few commands:
 \\[iorg-new] iorg-new
 \\[iorg-delete] iorg-delete
 \\[iorg-edit] iorg-edit
-\\[iorg-done] iorg-done"
+\\[iorg-done] iorg-done
+\\[iorg-insert-internal-link] iorg-insert-internal-link"
   :lighter " iOrg")
 
 (define-derived-mode iorg-dired-mode ...)
@@ -68,6 +69,13 @@ There is a mode hook, and a few commands:
   (append org-element-all-elements org-element-all-objects)
   "Default types to be selected by `org-element-map'.")
 
+(defvar iorg-default-host-path "http://localhost:5000"
+  "Default path (protocol, host, port) for iOrg server.")
+
+(defvar iorg-default-callback-function
+  '(lambda (CBARGS) (princ (buffer-string)))
+  "Default callback function for calls to the iOrg server.")
+
 ;; FIXME all types covered?
 (defvar iorg-all-types
   (append '(org-data) org-element-all-elements
@@ -84,6 +92,79 @@ There is a mode hook, and a few commands:
 (defsubst iorg--elisp-plist-p (lst)
   "Return non-nil if LST is a list and its car a keyword."
   (and (listp lst) (keywordp (car lst))))
+
+(defun iorg-retrieve-url(path &optional hostpath &rest args)
+  "Generic function for calling the iOrg server from Emacs.
+
+The PicoLisp application server uses a slightly specialized syntax when
+communicating URLs to and from a client. The PATH part of an URL - which
+remains when
+
+- the preceding protocol, host and port specifications (HOSTPATH)
+
+- and the trailing question mark plus arguments (ARGS)
+
+are stripped off - is interpreted according so some rules. The most prominent
+ones are:
+
+- If a path starts with an exclamation-mark ('!'), the rest (without the '!')
+  is taken as the name of a Lisp function to be called. All arguments
+  following the question mark are passed to that function.
+
+- If a path ends with \".l\" (a dot and a lower case 'L'), it is taken as a
+  Lisp source file name to be (load)ed. This is the most common case, and we
+  use it in our example \"project.l\".
+
+- If the extension of a file name matches an entry in the global mime type
+  table *Mimes, the file is sent to the client with mime-type and max-age
+  values taken from that table.
+
+- Otherwise, the file is sent to the client with a mime-type of
+  \"application/octet-stream\" and a max-age of 1 second.
+
+An application is free to extend or modify the *Mimes table with the mime
+function. For example
+
+#+begin_src picolisp
+ (mime \"doc\" \"application/msword\" 60)
+#+end_src
+
+defines a new mime type with a max-age of one minute.
+
+Argument values (ARGS) in URLs, following the path and the question mark, are
+encoded in such a way that Lisp data types are preserved:
+
+- An internal symbol starts with a dollar sign ('$')
+
+- A number starts with a plus sign ('+')
+
+- An external (database) symbol starts with dash ('-')
+
+- A list (one level only) is encoded with underscores ('_')
+
+- Otherwise, it is a transient symbol (a plain string)
+
+In that way, high-level data types can be directly passed to functions encoded
+in the URL, or assigned to global variables before a file is loaded. The
+PicoLisp application-framework uses a somewhat specialised syntax when
+communicating URLs."
+  (let* ((base-url (or hostpath iorg-default-host-path))
+         (url-no-args
+          (concat base-url "/" path))
+         (url (if args
+                  (concat url-no-args
+                          "?"
+                          (mapconcat 'identity args "&"))
+                url-no-args)))
+    (car
+     (read-from-string
+      (with-current-buffer
+          (url-retrieve-synchronously url)
+        (buffer-substring-no-properties
+         (point-min) (point-max)))))))
+
+    ;; (with-current-buffer (url-retrieve url nil)
+    ;;   (buffer-string))))
 
 ;; (defun kvplist->alist (plist)
 ;;   "Convert PLIST to an alist.
@@ -276,6 +357,60 @@ consult their doc-strings for more information."
   "")
 
 ;; ** Commands
+
+(defun iorg-set-default-host-path (path)
+  "Change `iorg-default-host-path' temporarily.
+
+The new PATH will remain valid until set again or until `iorg.el'
+is loaded again. In the latter case it will be reset to
+\"http://localhost:5000\"."
+ (interactive "sURL (e.g. http://localhost:5000): ")
+ (setq iorg-default-host-path path))
+
+
+(defun iorg-set-default-callback-function (fun)
+  "Change `iorg-default-callback-function' temporarily.
+
+The new function FUN will remain valid until set again or until
+`iorg.el' is loaded again. In the latter case it will be reset to
+'(lambda (CBARGS) (prin (buffer-string)))."
+ (interactive "xFun: (e.g. (lambda (CBARGS) (prin (buffer-string))): ")
+ (setq iorg-default-callback-function fun))
+
+(defun iorg-login ()
+  "")
+
+(defun iorg-logout ()
+  "")
+
+(defun iorg-dired ()
+  "")
+
+(defun iorg-new ()
+  "")
+
+(defun iorg-delete ()
+  "")
+
+(defun iorg-edit ()
+  "")
+
+(defun iorg-done ()
+  "")
+
+(defun iorg-insert-internal-link ()
+  "Insert internal-link in PicoLisp-Wiki syntax.
+
+Such a link can take two forms:
+
+ 1. ={target}
+ 2. ={target label}
+
+where 'target' is the name of the wiki document linked to and
+'label' is the text that will be shown as clickable link when the
+document is rendered in the wiki."
+  (interactive)
+  )
 
 
 ;; * Menus and Keys

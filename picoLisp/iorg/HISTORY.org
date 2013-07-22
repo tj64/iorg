@@ -8,6 +8,8 @@
 
 
 * NEXT Version 0.9
+** TODO fix issues with additional list item in menu
+   [2013-07-20 Sa 00:50]
 ** TODO write iorg-minor-mode.el for editing and publishing from Emacs
    [2013-07-16 Di 02:31]
 ** TODO fix javascript
@@ -26,9 +28,17 @@
    - State "DONE"       from "TODO"       [2013-07-16 Di 16:57]
    :END:
    [2013-07-16 Di 02:24]
-** TODO fix preview
+** DONE fix preview
+   CLOSED: [2013-07-20 Sa 00:50]
+   :LOGBOOK:
+   - State "DONE"       from "TODO"       [2013-07-20 Sa 00:50]
+   :END:
    [2013-07-16 Di 02:23]
-** TODO fix internal links
+** DONE fix internal links
+   CLOSED: [2013-07-20 Sa 00:50]
+   :LOGBOOK:
+   - State "DONE"       from "TODO"       [2013-07-20 Sa 00:50]
+   :END:
    [2013-07-16 Di 02:22]
 ** DONE merge old-iorg files into iorg files
    CLOSED: [2013-07-16 Di 16:57]
