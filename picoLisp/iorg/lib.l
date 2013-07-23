@@ -175,7 +175,7 @@
 
 ## redefined <this>
 ## print internal links with already html-escaped chars
-(de <thisLink> (Var Val . Prg)
+(de <this1> (Var Val . Prg)
    (prin
       "<a href=\""
       (sesId *Url)

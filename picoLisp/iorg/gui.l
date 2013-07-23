@@ -465,7 +465,7 @@
       (cond
          ((fetch '(nm . +Doc) (fold Nm 0))
             (<href> Str (pack "!iorg?" Nm)) )
-         (*Login (<thisLink> '*ID Nm Str))
+         (*Login (<this1> '*ID Nm Str))
          (T (prin Str)) ) ) )
 
 ## iorg/gui.l ends here

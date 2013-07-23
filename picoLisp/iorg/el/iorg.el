@@ -50,11 +50,11 @@ There is a mode hook, and a few commands:
 \\[iorg-insert-internal-link] iorg-insert-internal-link"
   :lighter " iOrg")
 
-(define-derived-mode iorg-dired-mode ...)
+;; (define-derived-mode iorg-dired-mode ...)
 
 ;; ** Exporter backend definitions
 
-(org-export-define-derived-backend 'ihtml 'html ...)
+;; (org-export-define-derived-backend 'ihtml 'html ...)
 
 ;; * Variables
 ;; ** Consts
@@ -357,8 +357,8 @@ consult their doc-strings for more information."
                 dat typ fun inf 1st-match no-recur with-affil)
           dat))))))))
 
-(defun iorg-pico-to-org ()
-  "")
+;; (defun iorg-pico-to-org ()
+;;   "")
 
 ;; ** Commands
 
@@ -371,40 +371,40 @@ is loaded again. In the latter case it will be reset to
  (interactive "sURL (e.g. http://localhost:5000): ")
  (setq iorg-default-host-path path))
 
-(defun iorg-login ()
-  "")
+;; (defun iorg-login ()
+;;   "")
 
-(defun iorg-logout ()
-  "")
+;; (defun iorg-logout ()
+;;   "")
 
-(defun iorg-dired ()
-  "")
+;; (defun iorg-dired ()
+;;   "")
 
-(defun iorg-new ()
-  "")
+;; (defun iorg-new ()
+;;   "")
 
-(defun iorg-delete ()
-  "")
+;; (defun iorg-delete ()
+;;   "")
 
-(defun iorg-edit ()
-  "")
+;; (defun iorg-edit ()
+;;   "")
 
-(defun iorg-done ()
-  "")
+;; (defun iorg-done ()
+;;   "")
 
-(defun iorg-insert-internal-link ()
-  "Insert internal-link in PicoLisp-Wiki syntax.
+;; (defun iorg-insert-internal-link ()
+;;   "Insert internal-link in PicoLisp-Wiki syntax.
 
-Such a link can take two forms:
+;; Such a link can take two forms:
 
- 1. ={target}
- 2. ={target label}
+;;  1. ={target}
+;;  2. ={target label}
 
-where 'target' is the name of the wiki document linked to and
-'label' is the text that will be shown as clickable link when the
-document is rendered in the wiki."
-  (interactive)
-  )
+;; where 'target' is the name of the wiki document linked to and
+;; 'label' is the text that will be shown as clickable link when the
+;; document is rendered in the wiki."
+;;   (interactive)
+;;   )
 
 
 ;; * Menus and Keys
