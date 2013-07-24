@@ -24,6 +24,8 @@
 
 ;; * Requires
 
+(require 'inferior-picolisp)
+
 (eval-when-compile (require 'cl))
 
 ;; * Mode and Exporter definitions
@@ -31,7 +33,12 @@
 ;; ** Exporter backend definitions
 ;; * Variables
 ;; ** Consts
+
+
 ;; ** Vars
+
+(defvar iorg-scrape-connection nil
+  "Holds the process object of the scrape connection.")
 
 (defvar iorg-scrape-scr-host nil
   "Server host")
@@ -62,8 +69,68 @@
 ;; *** Custom Groups
 ;; *** Custom Vars
 ;; * Functions
+
 ;; ** Non-interactive Functions
 
+;; ** Commands
+
+(defun iorg-scrape-connect
+  (&optional name buffer-or-name program host port how)
+  "Setup connection or return existing connection to iOrg host."
+  (if (and (processp iorg-scrape-connection)
+           (process-live-p iorg-scrape-connection))
+      iorg-scrape-connection
+    (let ((nm (or name "iorg-scrape"))
+          (buf (or buffer-or-name
+                   (generate-new-buffer-name "*iorg-scrape*")))
+          (prg (or program "pil"))
+          (hst (or host "localhost"))
+          (prt (or port 5000))
+          (process-connection-type nil))
+      (setq iorg-scrape-connection
+            (start-process nm buf prg
+                           "-load \"@lib/http.l\" \"@lib/scrape.l\""
+                           ;; (and args (mapconcat 'car args " "))
+                           (format "-scrape \"%s\" %s %s"
+                                   hst prt (or how "")))))))
+
+;; workhorse function
+(defun iorg-scrape-go (&optional how fun host port &rest args)
+  "Call FUN on webpage accessed with HOW request at HOST:PORT"
+  (interactive "sHow: \nsFun: \nsHost: \nsPort: \nArgs: ")
+  (let ((hst (or host "localhost"))
+        (prt (or port 5000))
+        (fn (or fun "display")))
+    ;; (call-process "pil"
+    ;;               nil t nil
+    ;;               (format "-%s %s %s %s" fun host port
+    ;;                       how)))
+    (call-process "pil"  nil t nil
+                  "-load \"@lib/http.l\" \"@lib/scrape.l\""
+                  ;; "-debug 'click"
+                  ;; "-trace 'display"
+                  (format "-scrape \"%s\" %s" ;  \"%s\""
+                          hst prt); how)
+                  "-display"
+                  ;; "-enter 2 \"admin\""
+                  ;; "-enter 3 \"admin\""
+                  ;; "-press \"login\""
+                  "-bye")))
+
+                  ;; (format "-scrape \"%s\" %s \"%s\""
+                  ;;         host port how)
+
+                  (format "-%s %s"
+                          fun
+                          (mapconcat
+                           (lambda (arg)
+                             (concat "\"" arg "\""))
+                           args " "))
+                  ;; "-scrape \"localhost\" 5000 \"!iorg?home\""
+                  "-bye")))
+
+
+;; convenience user commands
 (defun iorg-scrape-expect (cons-cell)
     "Check expected result")
 
@@ -88,12 +155,6 @@
 (defun iorg-scrape--field (fld cnt)
     "Find field")
 
-
-;; ** Commands
-
-(defun iorg-scrape-go (host port how)
-  "Scape webpage accessed with HOW request at HOST:PORT"
-  (interactive "sHost: \nsPort: \nsHow: ") )
 
 
 ;; * Menus and Keys
