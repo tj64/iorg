@@ -29,12 +29,62 @@
 ;; (require 'kv)
 ;; (require 'paredit)
 (require 'org-element)
+(require 'inferior-picolisp)
+(require 'outorg)
 
 (eval-when-compile (require 'cl))
 
 ;; * Mode and Exporter definitions
 
 ;; ** Mode definitions
+
+;; *** iOrg Scrape Mode
+
+(define-derived-mode iorg-scrape-mode
+  inferior-picolisp-mode "iOrg Scrape"
+  "Major-mode for GUI-scripting via an inferior PicoLisp process.
+
+The following commands are available:
+\\{iorg-scrape-mode-map}
+\\{iorg-scrape-run}
+\\{iorg-scrape-expect}
+\\{iorg-scrape-click}
+\\{iorg-scrape-press}
+\\{iorg-scrape-value}
+\\{iorg-scrape-enter}
+\\{iorg-scrape-display}
+\\{iorg-scrape-display-fields}
+\\{iorg-scrape-display-all}
+
+See docstring of `inferior-picolisp-mode' for more information.")
+  ;; Customize in inferior-iorg-scrape-mode-hook
+  ;; (setq comint-input-filter (function iorg-scrape-input-filter)))
+
+;; *** Quick Scrape Mode
+
+(define-derived-mode iorg-quick-scrape-mode
+  iorg-scrape-mode "Quick Scrape"
+  ;; inferior-picolisp-mode "Quick Scrape"
+  "Major-mode for quick GUI-scripting via inferior PicoLisp process.
+
+The following commands are available:
+\\{iorg-quick-scrape-mode-map}
+\\{iorg-scrape-run}
+\\{iorg-scrape-expect}
+\\{iorg-scrape-click}
+\\{iorg-scrape-press}
+\\{iorg-scrape-value}
+\\{iorg-scrape-enter}
+\\{iorg-scrape-display}
+\\{iorg-scrape-display-fields}
+\\{iorg-scrape-display-all}
+
+See docstring of `inferior-picolisp-mode' for more information.")
+  ;; Customize in inferior-iorg-scrape-mode-hook
+  ;; (setq comint-input-filter (function iorg-quick-scrape-input-filter)))
+(put 'quick-scrape-mode 'mode-class 'special)
+
+;; *** iOrg Minor Mode
 
 ;; FIXME  \\[iorg-link] iorg-link ??
 (define-minor-mode iorg-minor-mode
@@ -88,6 +138,13 @@ There is a mode hook, and a few commands:
 (defsubst iorg--elisp-plist-p (lst)
   "Return non-nil if LST is a list and its car a keyword."
   (and (listp lst) (keywordp (car lst))))
+
+(defun iorg-scrape-input-filter ()
+  "Input filter for `iorg-scrape-mode'.")
+
+(defun iorg-quick-scrape-input-filter ()
+  "Input filter for `iorg-quick-scrape-mode'.")
+
 
 (defun iorg-retrieve-url(path &optional LISP-P hostpath &rest args)
   "Generic function for calling the iOrg server from Emacs.
@@ -362,6 +419,113 @@ consult their doc-strings for more information."
 
 ;; ** Commands
 
+;; *** iOrg Scrape Mode
+
+(defun iorg-scrape-run (&optional local host port how)
+  "Run inferior Picolisp and setup process for GUI-scripting.
+
+The _XXX_ separators in some of the PicoLisp command-line
+arguments will be replaced later with blanks while being
+processed in the `run-picolisp' commands. More precisely, the
+replacement takes place after the formatted command-string has
+been splitted by blanks. Otherwise, multi-word arguments like
+-'scrape \"localhost\" 5000' would be splitted into several
+undefined individual arguments that cause errors when given to
+PicoLisp. This is a hack necessary because of the way the
+`run-picolisp' functions are implemented in
+`inferior-picolisp.el'."
+  (let* ((hst (or host "localhost"))
+         (prt (or port 5000))
+         (cmd (format
+               "%s %s %s %s %s"
+               (if local "./pil" "pil") 
+               "@lib/http.l"
+               "@lib/scrape.l"
+               (format "%s_XXX_%S_XXX_%s_XXX_%S"
+                       "-scrape"
+                       hst
+                       prt
+                       (or how ""))
+               "+")))
+    (run-picolisp-new cmd 'IORG-SCRAPE-MODE-P)))
+
+
+(defun iorg-scrape-expect (cons-cell &optional proc)
+  "Send `expect' to inferior PicoLisp process."
+  (interactive "")
+  (let ((process (or proc
+                  (get-buffer-process (current-buffer)))))
+    (comint-simple-send
+     process
+     (format "(expect %s)" cons-cell))))
+
+(defun iorg-scrape-click (lbl cnt &optional proc)
+  "Send `click' to inferior PicoLisp process."
+  (interactive "")
+  (let ((process (or proc
+                     (get-buffer-process (current-buffer)))))
+    (comint-simple-send
+     process
+     (format "(click %s %s)" (or lbl "") (or cnt "")))))
+
+(defun iorg-scrape-press (lbl cnt &optional proc)
+  "Send `press' to inferior PicoLisp process."
+  (interactive "")
+  (let ((process (or proc
+                  (get-buffer-process (current-buffer)))))
+    (comint-simple-send
+     process
+     (format "(press %s %s)" (or lbl "") (or cnt "")))))
+
+(defun iorg-scrape-value (fld cnt &optional proc)
+  "Send `value' to inferior PicoLisp process."
+  (interactive "")
+  (let ((process (or proc
+                  (get-buffer-process (current-buffer)))))
+    (comint-simple-send
+     process
+     (format "(value %s %s)" (or fld "") (or cnt "")))))
+
+(defun iorg-scrape-enter (fld str cnt &optional proc)
+  "Send `enter' to inferior PicoLisp process."
+  (interactive "")
+  (let ((process (or proc
+                  (get-buffer-process (current-buffer)))))
+    (comint-simple-send
+     process
+     (format "(click %s %s %s)" (or fld "") str (or cnt "")))))
+
+(defun iorg-scrape-display (&optional proc)
+  "Send `display' to inferior PicoLisp process."
+  (interactive)
+  (let ((process (or proc
+                  (get-buffer-process (current-buffer)))))
+    (comint-simple-send
+     process
+     (format "%s" '(display)))))
+
+(defun iorg-scrape-display-fields (&optional proc)
+  "Send `displayFields' to inferior PicoLisp process."
+  (interactive)
+  (let ((process (or proc
+                  (get-buffer-process (current-buffer)))))
+    (comint-simple-send
+     process
+     (format "%s" '(displayFields)))))
+
+(defun iorg-scrape-display-all (&optional process)
+  "Send `displayAll' to inferior PicoLisp process."
+  (interactive)
+  (let ((proc (get-buffer-process (current-buffer))))
+    (comint-simple-send
+     proc
+     (format "%s" '(displayAll)))))
+
+(defun iorg-scrape--target (lst lbl cnt))
+
+(defun iorg-scrape--field (fld cnt))
+
+ 
 (defun iorg-set-default-host-path (path)
   "Change `iorg-default-host-path' temporarily.
 
@@ -411,4 +575,88 @@ is loaded again. In the latter case it will be reset to
 ;; ** Menus
 ;; ** Keys
 ;; *** Mode Keys
+
+  (let ((map iorg-scrape-mode-map))
+    (define-key map "\C-c\C-c" nil)
+    (define-key map "\C-c\C-g"
+      'comint-interrupt-subjob)
+    (define-key map "\C-c\C-cd"
+      'iorg-scrape-display)
+    (define-key map "\C-c\C-cf"
+      'iorg-scrape-display-fields)
+    (define-key map "\C-c\C-ca"
+      'iorg-scrape-display-all)
+    (define-key map "\C-c\C-cx"
+      'iorg-scrape-expect)
+    (define-key map "\C-c\C-cc"
+      'iorg-scrape-click)
+    (define-key map "\C-c\C-cp"
+      'iorg-scrape-press)
+    (define-key map "\C-c\C-cv"
+      'iorg-scrape-value)
+    (define-key map "\C-c\C-cm"
+      'iorg-scrape-enter)
+    (define-key map "\C-c\C-ci"
+      'iorg-dired)
+    (define-key map "\C-c\C-ce"
+      'iorg-edit)
+    (define-key map "\C-c\C-c\C-d"
+      'iorg-scrape-display)
+    (define-key map "\C-c\C-c\C-f"
+      'iorg-scrape-display-fields)
+    (define-key map "\C-c\C-c\C-a"
+      'iorg-scrape-display-all)
+    (define-key map "\C-c\C-c\C-x"
+      'iorg-scrape-expect)
+    (define-key map "\C-c\C-c\C-c"
+      'iorg-scrape-click)
+    (define-key map "\C-c\C-c\C-p"
+      'iorg-scrape-press)
+    (define-key map "\C-c\C-c\C-v"
+      'iorg-scrape-value)
+    (define-key map "\C-c\C-c\C-m"
+      'iorg-scrape-enter)
+    (define-key map "\C-c\C-c\C-i"
+      'iorg-dired)
+    (define-key map "\C-c\C-c\C-e"
+      'iorg-edit)
+
+    ;; (define-key map [menu-bar iorg-scrape]
+    ;;   (cons (purecopy "iOrg-Scrape") iorg-scrape-menu-map))
+    map)
+
+  (let ((map iorg-quick-scrape-mode-map))
+    (suppress-keymap map)
+    (define-key map "d"
+      'iorg-scrape-display)
+    (define-key map "f"
+      'iorg-scrape-display-fields)
+    (define-key map "a"
+      'iorg-scrape-display-all)
+    (define-key map "x"
+       'iorg-scrape-expect)
+    (define-key map "c"
+      'iorg-scrape-click)
+    (define-key map "p"
+      'iorg-scrape-press)
+    (define-key map "v"
+      'iorg-scrape-value)
+    (define-key map "m"
+      'iorg-scrape-enter)
+    (define-key map "i"
+      'iorg-dired)
+    (define-key map "e"
+      'iorg-edit)
+    ;; (define-key map [menu-bar iorg-quick-scrape]
+    ;;   (cons (purecopy "Quick-Scrape") iorg-quick-0
+    ;;         scrape-menu-map))
+    map)
+
+;; (unless iorg-quick-scrape-mode-map
+;;   (setq iorg-scrape-mode-map (make-keymap))
+;;   (supress-keymap iorg-quick-scrape-mode-map)
+
+
 ;; * Run hooks and provide
+
+;; iorg.el ends here
