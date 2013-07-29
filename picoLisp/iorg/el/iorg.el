@@ -418,44 +418,6 @@ consult their doc-strings for more information."
 ;;   "")
 
 
-;; (defun iorg-scrape--get-button-labels (&optional proc-buf)
-;;   "Return list of link-labels for current iOrg page.
-;; If PROC-BUF is nil, current-buffer is used."
-;;   (let* ((process-buffer (or proc-buf (current-buffer)))
-;;          (lbls (mapcar
-;;                 '(lambda (--elem)
-;;                    (format "%s" --elem)))
-;;                 (split-string
-;;                    (car 
-;;                         (with-current-buffer process-buffer
-;;                           (comint-redirect-results-list
-;;                            "(display)"
-;;                            (concat
-;;                             "\\(^click \\)"
-;;                             "\\(.*$\\)")
-;;                            2)))
-;;                    " " 'OMIT-NULLS))))
-;;     lbls)
-
-(defun iorg-scrape--get-link-labels (&optional proc-buf)
-  "Return list of link-labels for current iOrg page.
-If PROC-BUF is nil, current-buffer is used."
-  (let* ((process-buffer (or proc-buf (current-buffer)))
-         (lbls (mapcar
-                '(lambda (--elem)
-                   (format "%s" --elem)))
-                (split-string
-                   (car 
-                        (with-current-buffer process-buffer
-                          (comint-redirect-results-list
-                           "(display)"
-                           (concat
-                            "\\(^click \\)"
-                            "\\(.*$\\)")
-                           2)))
-                   " " 'OMIT-NULLS))))
-    lbls))
-
 ;; ** Commands
 
 ;; *** iOrg Scrape Mode
@@ -509,6 +471,41 @@ PicoLisp. This is a hack necessary because of the way the
                "+")))
     (run-picolisp-new cmd 'IORG-SCRAPE-MODE-P)))
 
+(defun iorg-scrape-get-labels (type &optional proc-buf)
+  "Return list of TYPE-labels for current iOrg page.
+If PROC-BUF is nil, current-buffer is used as process buffer. TYPE is either
+'click' (for links) or 'press' (for buttons)."
+  (interactive
+   (cond
+    ((equal current-prefix-arg nil)
+     (list (completing-read "Label Type: "
+                            '("click" "press"))))
+    (t
+     (list
+      (completing-read "Label Type: "
+                       '("click" "press"))
+      (read-buffer "Process Buffer: ")))))
+  (let* ((process-buffer (or proc-buf (current-buffer))))
+    (mapcar
+     'identity
+     (split-string
+      (car 
+       (with-current-buffer process-buffer
+         (comint-redirect-results-list
+          "(display)"
+          (concat
+           "\\(^" type " \\)"
+           "\\(.*$\\)")
+          2)))
+      " ?\" ?" 'OMIT-NULLS))))
+
+(defun iorg-scrape-get-links (&optional proc-buf)
+  "Get link labels of current page."
+  (interactive "bProcess Buffer: ")
+  (iorg-scrape-get-labels
+   "click"
+   (or proc-buf (current-buffer))))
+
 (defun iorg-scrape-expect (cons-cell &optional proc-buf)
   "Send `expect' to inferior PicoLisp process."
   (interactive
@@ -529,20 +526,26 @@ PicoLisp. This is a hack necessary because of the way the
 
 (defun iorg-scrape-click (lbl &optional proc-buf cnt)
   "Send `click' to inferior PicoLisp process."
-  (interactive
-   (cond
-    ((equal current-prefix-arg nil)
-     (list
-      (completing-read "Label: " ))
-    ((equal current-prefix-arg '(4))
-     (list
-      (read-string "Label: ")
-      (read-buffer "Process Buffer: ")))
-    (t
-     (list
-      (read-string "Label: ")
-      (read-buffer "Process Buffer: ")
-      (read-number "Count: ")))))
+  (interactive)
+  (let ((lbls (call-interactively 'iorg-scrape-get-links)))
+    
+  
+   ;; (cond
+   ;;  ((equal current-prefix-arg nil)
+   ;;   (let ((labels (iorg-scrape-get-labels "click"))
+   ;;   ;; (list
+   ;;   ;;  (completing-read "Label: "
+   ;;                     (
+
+   ;;  ((equal current-prefix-arg '(4))
+   ;;   (list
+   ;;    (read-string "Label: ")
+   ;;    (read-buffer "Process Buffer: ")))
+   ;;  (t
+   ;;   (list
+   ;;    (read-string "Label: ")
+   ;;    (read-buffer "Process Buffer: ")
+   ;;    (read-number "Count: ")))))
   (let ((process (if proc-buf
                      (get-buffer-process proc-buf)
                    (get-buffer-process (current-buffer)))))
