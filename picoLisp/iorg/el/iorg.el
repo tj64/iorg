@@ -417,11 +417,50 @@ consult their doc-strings for more information."
 ;; (defun iorg-pico-to-org ()
 ;;   "")
 
+
+;; (defun iorg-scrape--get-button-labels (&optional proc-buf)
+;;   "Return list of link-labels for current iOrg page.
+;; If PROC-BUF is nil, current-buffer is used."
+;;   (let* ((process-buffer (or proc-buf (current-buffer)))
+;;          (lbls (mapcar
+;;                 '(lambda (--elem)
+;;                    (format "%s" --elem)))
+;;                 (split-string
+;;                    (car 
+;;                         (with-current-buffer process-buffer
+;;                           (comint-redirect-results-list
+;;                            "(display)"
+;;                            (concat
+;;                             "\\(^click \\)"
+;;                             "\\(.*$\\)")
+;;                            2)))
+;;                    " " 'OMIT-NULLS))))
+;;     lbls)
+
+(defun iorg-scrape--get-link-labels (&optional proc-buf)
+  "Return list of link-labels for current iOrg page.
+If PROC-BUF is nil, current-buffer is used."
+  (let* ((process-buffer (or proc-buf (current-buffer)))
+         (lbls (mapcar
+                '(lambda (--elem)
+                   (format "%s" --elem)))
+                (split-string
+                   (car 
+                        (with-current-buffer process-buffer
+                          (comint-redirect-results-list
+                           "(display)"
+                           (concat
+                            "\\(^click \\)"
+                            "\\(.*$\\)")
+                           2)))
+                   " " 'OMIT-NULLS))))
+    lbls))
+
 ;; ** Commands
 
 ;; *** iOrg Scrape Mode
 
-(defun iorg-scrape-run (&optional local host port how)
+(defun iorg-scrape-run (&optional port host how local)
   "Run inferior Picolisp and setup process for GUI-scripting.
 
 The _XXX_ separators in some of the PicoLisp command-line
@@ -434,6 +473,27 @@ undefined individual arguments that cause errors when given to
 PicoLisp. This is a hack necessary because of the way the
 `run-picolisp' functions are implemented in
 `inferior-picolisp.el'."
+  (interactive
+   (cond
+    ((equal current-prefix-arg nil) nil)
+    ((equal current-prefix-arg '(4))
+     (list
+      (read-number "Port: ")))
+    ((equal current-prefix-arg '(16))
+     (list
+      (read-number "Port: ")
+      (read-string "Host: ")))
+    ((equal current-prefix-arg '(32))
+     (list
+      (read-number "Port: ")
+      (read-string "Host: ")
+      (read-string "How: ")))
+    (t
+     (list
+      (read-number "Port: ")
+      (read-string "Host: ")
+      (read-string "How: ")
+      (read-string "Local: ")))))
   (let* ((hst (or host "localhost"))
          (prt (or port 5000))
          (cmd (format
@@ -449,81 +509,148 @@ PicoLisp. This is a hack necessary because of the way the
                "+")))
     (run-picolisp-new cmd 'IORG-SCRAPE-MODE-P)))
 
-
-(defun iorg-scrape-expect (cons-cell &optional proc)
+(defun iorg-scrape-expect (cons-cell &optional proc-buf)
   "Send `expect' to inferior PicoLisp process."
-  (interactive "")
-  (let ((process (or proc
-                  (get-buffer-process (current-buffer)))))
+  (interactive
+   (cond
+    ((equal current-prefix-arg nil)
+     (list
+      (read-string "Cons Cell: ")))
+    (t
+     (list
+      (read-string "Cons Cell: ")
+      (read-buffer "Process Buffer: ")))))
+  (let ((process (if proc-buf
+                     (get-buffer-process proc-buf)
+                   (get-buffer-process (current-buffer)))))
     (comint-simple-send
      process
      (format "(expect %s)" cons-cell))))
 
-(defun iorg-scrape-click (lbl cnt &optional proc)
+(defun iorg-scrape-click (lbl &optional proc-buf cnt)
   "Send `click' to inferior PicoLisp process."
-  (interactive "")
-  (let ((process (or proc
-                     (get-buffer-process (current-buffer)))))
+  (interactive
+   (cond
+    ((equal current-prefix-arg nil)
+     (list
+      (completing-read "Label: " ))
+    ((equal current-prefix-arg '(4))
+     (list
+      (read-string "Label: ")
+      (read-buffer "Process Buffer: ")))
+    (t
+     (list
+      (read-string "Label: ")
+      (read-buffer "Process Buffer: ")
+      (read-number "Count: ")))))
+  (let ((process (if proc-buf
+                     (get-buffer-process proc-buf)
+                   (get-buffer-process (current-buffer)))))
     (comint-simple-send
      process
      (format "(click %s %s)" (or lbl "") (or cnt "")))))
 
-(defun iorg-scrape-press (lbl cnt &optional proc)
+(defun iorg-scrape-press (lbl &optional proc-buf cnt)
   "Send `press' to inferior PicoLisp process."
-  (interactive "")
-  (let ((process (or proc
-                  (get-buffer-process (current-buffer)))))
+  (interactive
+   (cond
+    ((equal current-prefix-arg nil)
+     (list
+      (read-string "Label: ")))
+    ((equal current-prefix-arg '(4))
+     (list
+      (read-string "Label: ")
+      (read-buffer "Process Buffer: ")))
+    (t
+     (list
+      (read-string "Label: ")
+      (read-buffer "Process Buffer: ")
+      (read-number "Count: ")))))
+  (let ((process (if proc-buf
+                     (get-buffer-process proc-buf)
+                   (get-buffer-process (current-buffer)))))
     (comint-simple-send
      process
      (format "(press %s %s)" (or lbl "") (or cnt "")))))
 
-(defun iorg-scrape-value (fld cnt &optional proc)
+(defun iorg-scrape-value (cnt &optional proc-buf fld)
   "Send `value' to inferior PicoLisp process."
-  (interactive "")
-  (let ((process (or proc
-                  (get-buffer-process (current-buffer)))))
+  (interactive
+   (cond
+    ((equal current-prefix-arg nil)
+     (list
+      (read-number "Count: ")))
+    ((equal current-prefix-arg '(4))
+     (list
+      (read-number "Count: ")
+      (read-buffer "Process Buffer: ")))
+    (t
+     (list
+      (read-number "Count: ")
+      (read-buffer "Process Buffer: ")
+      (read-string "Field: ")))))
+  (let ((process (if proc-buf
+                     (get-buffer-process proc-buf)
+                   (get-buffer-process (current-buffer)))))
     (comint-simple-send
      process
      (format "(value %s %s)" (or fld "") (or cnt "")))))
 
-(defun iorg-scrape-enter (fld str cnt &optional proc)
+(defun iorg-scrape-enter (str cnt &optional proc-buf fld)
   "Send `enter' to inferior PicoLisp process."
-  (interactive "")
-  (let ((process (or proc
-                  (get-buffer-process (current-buffer)))))
+  (interactive
+   (cond
+    ((equal current-prefix-arg nil)
+     (list
+      (read-string "String: ")
+      (read-number "Count: ")))
+    ((equal current-prefix-arg '(4))
+     (list
+      (read-string "String: ")
+      (read-number "Count: ")
+      (read-buffer "Process Buffer: ")))
+    (t
+     (list
+      (read-string "String: ")
+      (read-number "Count: ")
+      (read-buffer "Process Buffer: ")
+      (read-string "Field: ")))))
+  (let ((process (if proc-buf
+                     (get-buffer-process proc-buf)
+                   (get-buffer-process (current-buffer)))))
     (comint-simple-send
      process
      (format "(click %s %s %s)" (or fld "") str (or cnt "")))))
 
 (defun iorg-scrape-display (&optional proc)
   "Send `display' to inferior PicoLisp process."
-  (interactive)
-  (let ((process (or proc
-                  (get-buffer-process (current-buffer)))))
+  (interactive
+   (cond
+    ((equal current-prefix-arg nil) nil)
+    (t (list (read-buffer "Process Buffer: ")))))
+  (let ((process (if proc-buf
+                     (get-buffer-process proc-buf)
+                   (get-buffer-process (current-buffer)))))
     (comint-simple-send
      process
      (format "%s" '(display)))))
 
-(defun iorg-scrape-display-fields (&optional proc)
-  "Send `displayFields' to inferior PicoLisp process."
-  (interactive)
-  (let ((process (or proc
-                  (get-buffer-process (current-buffer)))))
+(defun iorg-scrape-display-all (&optional proc)
+  "Send `displayAll' to inferior PicoLisp process."
+  (interactive
+   (cond
+    ((equal current-prefix-arg nil) nil)
+    (t (list (read-buffer "Process Buffer: ")))))
+  (let ((process (if proc-buf
+                     (get-buffer-process proc-buf)
+                   (get-buffer-process (current-buffer)))))
     (comint-simple-send
      process
-     (format "%s" '(displayFields)))))
-
-(defun iorg-scrape-display-all (&optional process)
-  "Send `displayAll' to inferior PicoLisp process."
-  (interactive)
-  (let ((proc (get-buffer-process (current-buffer))))
-    (comint-simple-send
-     proc
      (format "%s" '(displayAll)))))
 
-(defun iorg-scrape--target (lst lbl cnt))
+;; (defun iorg-scrape--target (lst lbl cnt))
 
-(defun iorg-scrape--field (fld cnt))
+;; (defun iorg-scrape--field (fld cnt))
 
  
 (defun iorg-set-default-host-path (path)

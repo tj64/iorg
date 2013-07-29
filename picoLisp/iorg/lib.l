@@ -89,6 +89,24 @@
       (sym? S)
       (= (car (chop S)) ":") ) )
 
+
+## scrape: display all fields, not only those with values
+(de displayAll ()
+   (prinl "###############")
+   (apply println (mapcar car *Links) 'click)
+   (prinl)
+   (apply println (mapcar car *Buttons) 'press)
+   (prinl)
+   ## (apply println (trim (mapcar fin *Fields)) 'value)
+   (printsp 'value/enter)
+   (for (I . F) *Fields
+      (if (lst? F)
+         (print (trim (cons I F)))
+         (print (trim (car F))) ) )
+   (prinl)
+   *Title )
+
+
 ## Download blob
 (de download (This)
    (httpHead (: mt) 60 (: nm))
