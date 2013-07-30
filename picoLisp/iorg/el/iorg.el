@@ -471,40 +471,60 @@ PicoLisp. This is a hack necessary because of the way the
                "+")))
     (run-picolisp-new cmd 'IORG-SCRAPE-MODE-P)))
 
-(defun iorg-scrape-get-labels (type &optional proc-buf)
-  "Return list of TYPE-labels for current iOrg page.
+(defun iorg-scrape-get-labels (&optional type proc-buf)
+  "Return list of TYPE-labels for currently visited iOrg page.
 If PROC-BUF is nil, current-buffer is used as process buffer. TYPE is either
 'click' (for links) or 'press' (for buttons)."
   (interactive
    (cond
     ((equal current-prefix-arg nil)
-     (list (completing-read "Label Type: "
-                            '("click" "press"))))
-    (t
-     (list
-      (completing-read "Label Type: "
-                       '("click" "press"))
-      (read-buffer "Process Buffer: ")))))
-  (let* ((process-buffer (or proc-buf (current-buffer))))
-    (mapcar
-     'identity
-     (split-string
-      (car 
-       (with-current-buffer process-buffer
-         (comint-redirect-results-list
-          "(display)"
-          (concat
-           "\\(^" type " \\)"
-           "\\(.*$\\)")
-          2)))
-      " ?\" ?" 'OMIT-NULLS))))
+     (list (ido-completing-read  "Label Type: " '("click" "press"))))
+    ((equal current-prefix-arg '(4))
+     (list (ido-completing-read  "Label Type: " '("click" "press"))
+           (ido-read-buffer "Process Buffer: " "*iorg-scrape*")))))
+  (let* ((process-buffer (or proc-buf (current-buffer)))
+         (label-list (mapcar
+                      'identity
+                      ;; '(lambda (--lbl)
+                      ;;    (format "%s" --lbl))
+                      (split-string 
+                       (car 
+                        (with-current-buffer process-buffer
+                          (comint-redirect-results-list
+                           "(display)"
+                           (concat
+                            "\\(^" type " \\)"
+                            "\\(.*$\\)")
+                           2)))
+                       "\" ?\"?" 'OMIT-NULLS))))
+                       ;; " " 'OMIT-NULLS))))
+    (list process-buffer type label-list)))
 
-(defun iorg-scrape-get-links (&optional proc-buf)
-  "Get link labels of current page."
-  (interactive "bProcess Buffer: ")
-  (iorg-scrape-get-labels
-   "click"
-   (or proc-buf (current-buffer))))
+;; (defun iorg-scrape-get-link-labels (&optional proc-buf)
+;;   "Get link labels of current page."
+;;   (interactive
+;;    (unless (equal current-prefix-arg nil)
+;;      (list
+;;       (read-buffer "Process Buffer: " nil t))))
+;;   (condition-case err
+;;       (let* ((proc (if (and proc-buf (not (string= proc-buf "")))
+;;                        proc-buf
+;;                      (current-buffer)))
+;;              (lbls (iorg-scrape-get-labels "click" proc)))
+;;         (cons proc lbls))
+;;     (error (error "Could not get link labels: %s" err))))
+
+;; (defun iorg-scrape-get-button-labels (&optional proc-buf)
+;;   "Get button labels of current page."
+;;   (interactive
+;;    (unless (equal current-prefix-arg nil)
+;;      (list
+;;       (read-buffer "Process Buffer: "))))
+;;   (condition-case err
+;;       (let* ((proc (or proc-buf (current-buffer)))
+;;              (lbls (iorg-scrape-get-labels "press" proc)))
+;;         (list lbls proc))
+;;     (error (error "Could not get button labels: %s" err))))
 
 (defun iorg-scrape-expect (cons-cell &optional proc-buf)
   "Send `expect' to inferior PicoLisp process."
@@ -524,34 +544,57 @@ If PROC-BUF is nil, current-buffer is used as process buffer. TYPE is either
      process
      (format "(expect %s)" cons-cell))))
 
+(defun iorg-scrape-click-or-press (&optional cnt) 
+  ;; (lbl &optional proc-buf cnt)
+  "Send `click' or `press' to inferior PicoLisp process."
+  (interactive "P")
+  (let* ((lst ;(let ((current-prefix-arg '(4)))
+                (call-interactively 'iorg-scrape-get-labels));)
+         (proc (and lst (car lst)))
+         (type (and lst (cadr lst)))
+         (lbls (and lst (caddr lst)))
+         ;; TODO better mini-buffer completion
+         (lbl (ido-completing-read
+               (cond
+                ((string-equal type "click")
+                   "Link Label: ")
+                ((string-equal type "press")
+                   "Button Label: ")
+                (t (error "No valid label type!")))
+                 lbls))
+         (cnt (and (equal current-prefix-arg '(16))
+                   (read-number "Count: "))))
+    (comint-simple-send
+     proc
+     (format "(%s %s%s)"
+           (if (string-equal type "click") "click" "press")
+           (or lbl "")
+           (if cnt (concat " " cnt) "")))))
+
+
 (defun iorg-scrape-click (lbl &optional proc-buf cnt)
   "Send `click' to inferior PicoLisp process."
-  (interactive)
-  (let ((lbls (call-interactively 'iorg-scrape-get-links)))
-    
-  
-   ;; (cond
-   ;;  ((equal current-prefix-arg nil)
-   ;;   (let ((labels (iorg-scrape-get-labels "click"))
-   ;;   ;; (list
-   ;;   ;;  (completing-read "Label: "
-   ;;                     (
-
-   ;;  ((equal current-prefix-arg '(4))
-   ;;   (list
-   ;;    (read-string "Label: ")
-   ;;    (read-buffer "Process Buffer: ")))
-   ;;  (t
-   ;;   (list
-   ;;    (read-string "Label: ")
-   ;;    (read-buffer "Process Buffer: ")
-   ;;    (read-number "Count: ")))))
+  (interactive
+   (cond
+    ((equal current-prefix-arg nil)
+     (list
+      (read-string "Label: ")))
+    ((equal current-prefix-arg '(4))
+     (list
+      (read-string "Label: ")
+      (read-buffer "Process Buffer: ")))
+    (t
+     (list
+      (read-string "Label: ")
+      (read-buffer "Process Buffer: ")
+      (read-number "Count: ")))))
   (let ((process (if proc-buf
                      (get-buffer-process proc-buf)
                    (get-buffer-process (current-buffer)))))
     (comint-simple-send
      process
      (format "(click %s %s)" (or lbl "") (or cnt "")))))
+
 
 (defun iorg-scrape-press (lbl &optional proc-buf cnt)
   "Send `press' to inferior PicoLisp process."
