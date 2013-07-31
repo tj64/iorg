@@ -24,7 +24,7 @@
 
 ;; * Requires
 
-;; ;; get it from ELPA 
+;; ;; get it from ELPA
 ;; ;; or from the [[https://github.com/nicferrier/emacs-kv][github-repo]]
 ;; (require 'kv)
 ;; (require 'paredit)
@@ -139,8 +139,28 @@ There is a mode hook, and a few commands:
   "Return non-nil if LST is a list and its car a keyword."
   (and (listp lst) (keywordp (car lst))))
 
-(defun iorg-scrape-input-filter ()
-  "Input filter for `iorg-scrape-mode'.")
+(defun iorg-scrape-write-and-return-filter (proc string)
+  "Write output STRING to process buffer of PROC an return it."
+  (when (buffer-live-p (process-buffer proc))
+    (with-current-buffer (process-buffer proc)
+      (let ((moving (= (point) (process-mark proc))))
+        (save-excursion
+          ;; Insert the text, advancing the process marker.
+          (goto-char (process-mark proc))
+          (insert string)
+          (set-marker (process-mark proc) (point)))
+        (if moving (goto-char (process-mark proc))))))
+  string)
+
+
+(defun iorg-scrape-return-as-lisp-filter (proc lisp-obj-as-string)
+  "Return output STRING of process PROC."
+  (condition-case err
+      ;; (message "PROC: %s\n STRING: %s\n"
+      ;;          proc lisp-obj-as-string)
+      (car (read-from-string lisp-obj-as-string))))  
+    ;; (error (message
+    ;;         "An error happened when reading-from-string: %s" err))))
 
 (defun iorg-quick-scrape-input-filter ()
   "Input filter for `iorg-quick-scrape-mode'.")
@@ -237,6 +257,10 @@ returned 'as-is' as buffer-string without properties."
 ;;     (destructuring-bind (key value &rest plist) plist
 ;;       (cons `(,(keyword->symbol key) . ,value)
 ;;             (kvplist->alist plist)))))
+
+;; (defun iorg-scrape-add-to-output-filters (filter)
+;;   "Cons FILTER function to `comint-output-filter-functions'."
+
 
 (defun iorg--add-elem-id (tree)
   "Add ':elem-id' property to each element of parse TREE."
@@ -360,7 +384,7 @@ pairs (here given with example values):
   :granularity 'object
   :visible-only t
   :types '(append org-element-all-elements
-           org-element-all-objects) 
+           org-element-all-objects)
   :fun '(lambda (L) (list (car L) (kvplist->alist (cadr L))))
   :info '(:option1 value1 :option2 value2)
   :first-match t
@@ -401,8 +425,8 @@ consult their doc-strings for more information."
                   iorg-all-types))
          (fun (or (and args (plist-get args :fun)) 'identity))
          (inf (and args (plist-get args :info)))
-         (1st-match (and args (plist-get args :first-match))) 
-         (no-recur (and args (plist-get args :no-recursion))) 
+         (1st-match (and args (plist-get args :first-match)))
+         (no-recur (and args (plist-get args :no-recursion)))
          (with-affil (and args (plist-get args :with-affiliated))))
     (iorg--nil-and-t-to-uppercase
      (format "%s"
@@ -460,7 +484,7 @@ PicoLisp. This is a hack necessary because of the way the
          (prt (or port 5000))
          (cmd (format
                "%s %s %s %s %s"
-               (if local "./pil" "pil") 
+               (if local "./pil" "pil")
                "@lib/http.l"
                "@lib/scrape.l"
                (format "%s_XXX_%S_XXX_%s_XXX_%S"
@@ -478,27 +502,44 @@ If PROC-BUF is nil, current-buffer is used as process buffer. TYPE is either
   (interactive
    (cond
     ((equal current-prefix-arg nil)
-     (list (ido-completing-read  "Label Type: " '("click" "press"))))
+     (list (ido-completing-read  "Label Type: " '("*Links" "*Buttons"))))
     ((equal current-prefix-arg '(4))
-     (list (ido-completing-read  "Label Type: " '("click" "press"))
+     (list (ido-completing-read  "Label Type: " '("*Links" "*Buttons"))
            (ido-read-buffer "Process Buffer: " "*iorg-scrape*")))))
   (let* ((process-buffer (or proc-buf (current-buffer)))
-         (label-list (mapcar
-                      'identity
-                      ;; '(lambda (--lbl)
-                      ;;    (format "%s" --lbl))
-                      (split-string 
-                       (car 
-                        (with-current-buffer process-buffer
-                          (comint-redirect-results-list
-                           "(display)"
-                           (concat
-                            "\\(^" type " \\)"
-                            "\\(.*$\\)")
-                           2)))
-                       "\" ?\"?" 'OMIT-NULLS))))
-                       ;; " " 'OMIT-NULLS))))
-    (list process-buffer type label-list)))
+         (proc (get-buffer-process process-buffer))
+         ;; save old process-filter
+         (old-process-filter (process-filter proc))
+         label-list)
+    (and (process-live-p proc)
+         ;; set new process-filter that returns output as lisp object
+         (unwind-protect
+             (progn
+               (set-process-filter proc 'iorg-scrape-return-as-lisp-filter)
+               (setq label-list (comint-simple-send
+                                 process-buffer
+                                 (format "(mapcar car %s)" type))))
+           ;; restore old process-filter
+           (set-process-filter proc old-process-filter))
+         (message "%s" label-list))))
+
+    ;;       (mapcar
+    ;;                   'identity
+    ;;                    ;; (lambda (--lbl)
+    ;;                    ;;    (format "%S" --lbl))
+    ;;                   (split-string
+    ;;                    (car
+    ;;                     (with-current-buffer process-buffer
+    ;;                       ;; TODO fixme
+    ;;                       (comint-redirect-results-list-1
+    ;;                        "(display)"
+    ;;                        (concat
+    ;;                         "\\(^" type " \\)"
+    ;;                         "\\(.*$\\)")
+    ;;                        2)))
+    ;;                    "\" ?\"?" 'OMIT-NULLS)))
+    ;;                    ;; " " 'OMIT-NULLS))))
+    ;; (list process-buffer type label-list)))
 
 ;; (defun iorg-scrape-get-link-labels (&optional proc-buf)
 ;;   "Get link labels of current page."
@@ -544,7 +585,7 @@ If PROC-BUF is nil, current-buffer is used as process buffer. TYPE is either
      process
      (format "(expect %s)" cons-cell))))
 
-(defun iorg-scrape-click-or-press (&optional cnt) 
+(defun iorg-scrape-click-or-press (&optional cnt)
   ;; (lbl &optional proc-buf cnt)
   "Send `click' or `press' to inferior PicoLisp process."
   (interactive "P")
@@ -698,7 +739,7 @@ If PROC-BUF is nil, current-buffer is used as process buffer. TYPE is either
 
 ;; (defun iorg-scrape--field (fld cnt))
 
- 
+
 (defun iorg-set-default-host-path (path)
   "Change `iorg-default-host-path' temporarily.
 
