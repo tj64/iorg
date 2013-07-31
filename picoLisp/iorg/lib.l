@@ -101,8 +101,8 @@
    (printsp 'value/enter)
    (for (I . F) *Fields
       (if (lst? F)
-         (print (trim (cons I F)))
-         (print (trim (car F))) ) )
+         (printsp (trim (cons I F)))
+         (printsp (trim (car F))) ) )
    (prinl)
    *Title )
 
