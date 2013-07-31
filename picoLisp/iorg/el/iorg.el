@@ -56,9 +56,12 @@ The following commands are available:
 \\{iorg-scrape-display-fields}
 \\{iorg-scrape-display-all}
 
-See docstring of `inferior-picolisp-mode' for more information.")
+See docstring of `inferior-picolisp-mode' for more information."
   ;; Customize in inferior-iorg-scrape-mode-hook
   ;; (setq comint-input-filter (function iorg-scrape-input-filter)))
+  ;; (setq comint-prompt-regexp "^[^\n:?!]*[?!:]+ *"))
+  (setq comint-prompt-regexp "^[?!:]+ *"))
+
 
 ;; *** Quick Scrape Mode
 
@@ -503,25 +506,28 @@ PicoLisp. This is a hack necessary because of the way the
    (cond
     ((equal current-prefix-arg nil)
      (list (ido-completing-read "Label Type: "
-                            '("click" "press"))))
+                                '("click" "press"))))
     (t
      (list
       (ido-completing-read "Label Type: "
-                       '("click" "press"))
+                           '("click" "press"))
       (ido-read-buffer "Process Buffer: " "*iorg-scrape*")))))
-  (let ((process-buffer (or proc-buf (current-buffer))))
-    (mapcar
-     'identity
-     (split-string
-      (car 
-       (with-current-buffer process-buffer
-         (comint-redirect-results-list
-          "(display)"
-          (concat
-           "\\(^" type " \\)"
-           "\\(.*$\\)")
-          2)))
-      "\" ?\"?" 'OMIT-NULLS))))
+  ;; (let ((process-buffer (or proc-buf (current-buffer))))
+  (let* ((process-buffer (or proc-buf (current-buffer)))
+         (proc (get-buffer-process process-buffer))
+         (label-list (mapcar
+                      'identity
+                      (split-string
+                       (car 
+                        (with-current-buffer process-buffer
+                          (comint-redirect-results-list-1
+                           "(display)"
+                           (concat
+                            "\\(^" type " \\)"
+                            "\\(.*$\\)")
+                           2)))
+                       "\" ?\"?" 'OMIT-NULLS))))
+    (list proc type label-list)))
       ;; " ?\" ?" 'OMIT-NULLS))))
 
 ;; (defun iorg-scrape-get-labels (&optional type proc-buf)
