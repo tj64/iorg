@@ -497,31 +497,60 @@ PicoLisp. This is a hack necessary because of the way the
 
 (defun iorg-scrape-get-labels (&optional type proc-buf)
   "Return list of TYPE-labels for currently visited iOrg page.
-If PROC-BUF is nil, current-buffer is used as process buffer. TYPE is either
-'click' (for links) or 'press' (for buttons)."
+ If PROC-BUF is nil, current-buffer is used as process buffer. TYPE is either
+ 'click' (for links) or 'press' (for buttons)."
   (interactive
    (cond
     ((equal current-prefix-arg nil)
-     (list (ido-completing-read  "Label Type: " '("*Links" "*Buttons"))))
-    ((equal current-prefix-arg '(4))
-     (list (ido-completing-read  "Label Type: " '("*Links" "*Buttons"))
-           (ido-read-buffer "Process Buffer: " "*iorg-scrape*")))))
-  (let* ((process-buffer (or proc-buf (current-buffer)))
-         (proc (get-buffer-process process-buffer))
-         ;; save old process-filter
-         (old-process-filter (process-filter proc))
-         label-list)
-    (and (process-live-p proc)
-         ;; set new process-filter that returns output as lisp object
-         (unwind-protect
-             (progn
-               (set-process-filter proc 'iorg-scrape-return-as-lisp-filter)
-               (setq label-list (comint-simple-send
-                                 process-buffer
-                                 (format "(mapcar car %s)" type))))
-           ;; restore old process-filter
-           (set-process-filter proc old-process-filter))
-         (message "%s" label-list))))
+     (list (ido-completing-read "Label Type: "
+                            '("click" "press"))))
+    (t
+     (list
+      (ido-completing-read "Label Type: "
+                       '("click" "press"))
+      (ido-read-buffer "Process Buffer: " "*iorg-scrape*")))))
+  (let ((process-buffer (or proc-buf (current-buffer))))
+    (mapcar
+     'identity
+     (split-string
+      (car 
+       (with-current-buffer process-buffer
+         (comint-redirect-results-list
+          "(display)"
+          (concat
+           "\\(^" type " \\)"
+           "\\(.*$\\)")
+          2)))
+      "\" ?\"?" 'OMIT-NULLS))))
+      ;; " ?\" ?" 'OMIT-NULLS))))
+
+;; (defun iorg-scrape-get-labels (&optional type proc-buf)
+;;   "Return list of TYPE-labels for currently visited iOrg page.
+;; If PROC-BUF is nil, current-buffer is used as process buffer. TYPE is either
+;; 'click' (for links) or 'press' (for buttons)."
+;;   (interactive
+;;    (cond
+;;     ((equal current-prefix-arg nil)
+;;      (list (ido-completing-read  "Label Type: " '("*Links" "*Buttons"))))
+;;     ((equal current-prefix-arg '(4))
+;;      (list (ido-completing-read  "Label Type: " '("*Links" "*Buttons"))
+;;            (ido-read-buffer "Process Buffer: " "*iorg-scrape*")))))
+;;   (let* ((process-buffer (or proc-buf (current-buffer)))
+;;          (proc (get-buffer-process process-buffer))
+;;          ;; save old process-filter
+;;          (old-process-filter (process-filter proc))
+;;          label-list)
+;;     (and (process-live-p proc)
+;;          ;; set new process-filter that returns output as lisp object
+;;          (unwind-protect
+;;              (progn
+;;                (set-process-filter proc 'iorg-scrape-return-as-lisp-filter)
+;;                (setq label-list (comint-simple-send
+;;                                  process-buffer
+;;                                  (format "(mapcar car %s)" type))))
+;;            ;; restore old process-filter
+;;            (set-process-filter proc old-process-filter))
+;;          (message "%s" label-list))))
 
     ;;       (mapcar
     ;;                   'identity
