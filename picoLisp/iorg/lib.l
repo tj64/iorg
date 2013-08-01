@@ -117,11 +117,14 @@
    (val @Mup @Doc mup) )
 
 (be history (@Doc @Mup)
-   (@C box (; (-> @Doc) mup))
+   ## (@C box (; (-> @Doc) mup))
+   (^ @C (box (; (-> @Doc) mup)))
    (_history @C @Mup) )
 
-(be _history (@C @Prv) (@ not (; (val (-> @C)) <)) T (fail))
-(be _history (@C @Prv) (@Prv set (-> @C) (; (val (-> @C)) <)))
+## (be _history (@C @Prv) (@ not (; (val (-> @C)) <)) T (fail))
+## (be _history (@C @Prv) (@Prv set (-> @C) (; (val (-> @C)) <)))
+(be _history (@C @Prv) (^ @ (not (; (val (-> @C)) <))) T (fail))
+(be _history (@C @Prv) (^ @Prv (set (-> @C) (; (val (-> @C)) <))))
 (repeat)
 
 ## Search field hint list

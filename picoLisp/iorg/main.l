@@ -35,7 +35,8 @@
 (patch login `(* 3600 1000) `(* 4 3600 1000))
 
 (setq
-   *Scl 2
+   ## *Scl 2
+   (scl 2)
    *Pool "db/iorg/"
    *Blob "db/iorg/blob/"
    *Jnl (and (info "key/iorg") "fifo/iorg")

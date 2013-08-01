@@ -230,10 +230,13 @@
                           (<br> "and send a password to you by email.")
                           (<br>)
                           (okButton
-                             '(with
+                             ## '(with
+                            '(let Pw (fmt64 (in "/dev/urandom" (rd 6)))
+                               (with
                                  (new! '(+User)
                                     'nm (val> (field -3))
-                                    'pw (fmt64 (in "/dev/urandom" (rd 6)))
+                                    ## 'pw (fmt64 (in "/dev/urandom" (rd 6)))
+                                    'pw (passwd Pw)
                                     'role (db 'nm '+Role "Member")
                                     'em (val> (field -2))
                                     'name (val> (field -1)) )
@@ -243,8 +246,10 @@
                                     "A new account on picolisp.com was created for you."
                                     NIL
                                     (prinl "You can now log in as: " (: nm))
-                                    (prinl "With the password: " (: pw)) )
-                                 (off *ID) ) )
+                                 ##    (prinl "With the password: " (: pw)) )
+                                 ## (off *ID) ) )
+                                    (prinl "With the password: " Pw) )
+                                  (off *ID) ) ) )
                           (cancelButton) ) ) ) )
                ((== 'edit *ID)
                 (let Obj This
@@ -378,8 +383,15 @@
                   '((W) (list 'mup '+Doc W))
                   Words )
                (mapcar
-                  '((W) (fill '(@ fetch '(mup . +Doc) (cons W (-> @@))) 'W))
+                  '((W)
+                     (cons '^
+                        (fill
+                           '(@ (fetch '(mup . +Doc) (cons W (-> @@))))
+                           'W ) ) )
                   Words ) ) ) )
+               ## (mapcar
+               ##    '((W) (fill '(@ fetch '(mup . +Doc) (cons W (-> @@))) 'W))
+               ##    Words ) ) ) )
       (loop
          (NIL (prove Q))
          (T (lt0 (dec 'Cnt)) (<br> "(More results)"))
