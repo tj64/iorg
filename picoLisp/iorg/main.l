@@ -31,6 +31,9 @@
    "@lib/socialshareprivacy/lib.l"
    "@lib/boss.l" )
 
+## FIXME during development, set session timeout to 4h
+(patch login `(* 3600 1000) `(* 4 3600 1000))
+
 (setq
    *Scl 2
    *Pool "db/iorg/"

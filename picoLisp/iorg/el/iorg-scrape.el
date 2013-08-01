@@ -1,4 +1,4 @@
-;; * iorg-scrape.el --- Emacs Lisp glue code for `picoLisp/lib/scrape.l'
+;; * iorg-scrape.el --- elisp glue code for `picoLisp/lib/scrape.l'
 ;; ** MetaData
 ;;   :PROPERTIES:
 ;;   :copyright: Thorsten_Jolitz
