@@ -51,7 +51,7 @@ The following commands are available:
 \\{iorg-scrape-display-all}
 
 See docstring of `inferior-picolisp-mode' for more information."
-  ;; Customize in inferior-iorg-scrape-mode-hook
+  ;; Customize in iorg-scrape-mode-hook
   ;; (setq comint-input-filter (function iorg-scrape-input-filter)))
   ;; (setq comint-prompt-regexp "^[^\n:?!]*[?!:]+ *"))
   (setq comint-prompt-regexp "^[?!:]+ *"))
@@ -77,7 +77,7 @@ The following commands are available:
 \\{iorg-scrape-display-all}
 
 See docstring of `inferior-picolisp-mode' for more information.")
-  ;; Customize in inferior-iorg-scrape-mode-hook
+  ;; Customize in iorg-scrape-mode-hook
   ;; (setq comint-input-filter (function iorg-quick-scrape-input-filter)))
 (put 'quick-scrape-mode 'mode-class 'special)
 
@@ -97,7 +97,22 @@ There is a mode hook, and a few commands:
 \\[iorg-insert-internal-link] iorg-insert-internal-link"
   :lighter " iOrg")
 
+;; * Variables
 ;; ** Hooks
+;; ** Vars
+
+(defvar page-links nil
+  "Stores a list with labels from page links.")
+
+(defvar page-buttons nil)
+  "Stores a list with labels from page buttons.")
+
+(defvar page-value-fields nil)
+  "Stores a list with labels from page fields with values.")
+
+(defvar page-enter-fields nil)
+  "Stores a list with labels from page fields that accept input.")
+
 ;; ** Customs
 ;; *** Custom Groups
 ;; *** Custom Vars
@@ -129,6 +144,14 @@ There is a mode hook, and a few commands:
 (defun iorg-quick-scrape-input-filter ()
   "Input filter for `iorg-quick-scrape-mode'.")
 
+(defun iorg-scrape--split-label-string (label-string)
+  "Split LABEL-STRING and return a list of labels."
+  (and label-string
+       (stringp label-string)
+       (not (string= label-string ""))
+       (mapcar 'identity (split-string
+                            label-string
+                            "\" ?\"?" 'OMIT-NULLS))))
 
 ;; ** Commands
 
@@ -183,12 +206,10 @@ PicoLisp. This is a hack necessary because of the way the
                "+")))
     (run-picolisp-new cmd 'IORG-SCRAPE-MODE-P)))
 
-(defun iorg-scrape-run (&optional port host how local)
-  "Start minimal PicoLisp server that allows iOrg web scraping."
-  
+;; (defun iorg-scrape-run (&optional port host how local)
+;;   "Start minimal PicoLisp server that allows iOrg web scraping."
 
-
-(defun iorg-scrape-get-labels (&optional type proc-buf)
+(defun iorg-scrape-get-labels (&optional type proc-buf output-string)
   "Return list of TYPE-labels for currently visited iOrg page.
  If PROC-BUF is nil, current-buffer is used as process buffer. TYPE is either
  'click' (for links) or 'press' (for buttons)."
@@ -205,14 +226,16 @@ PicoLisp. This is a hack necessary because of the way the
   ;; (let ((process-buffer (or proc-buf (current-buffer))))
   (let* ((process-buffer (or proc-buf (current-buffer)))
          (proc (get-buffer-process process-buffer))
-         (label-strg (car 
-                      (with-current-buffer process-buffer
-                        (comint-redirect-results-list
-                         "(display)"
-                         (concat
-                          "\\(^" type " \\)"
-                          "\\(.*$\\)")
-                         2))))
+         (label-strg (if output-string
+                         ()
+                       (car 
+                        (with-current-buffer process-buffer
+                          (comint-redirect-results-list
+                           "(display)"
+                           (concat
+                            "\\(^" type " \\)"
+                            "\\(.*$\\)")
+                           2)))))
          (label-list (and label-strg
                           (mapcar
                            'identity
@@ -220,6 +243,34 @@ PicoLisp. This is a hack necessary because of the way the
                             label-strg
                             "\" ?\"?" 'OMIT-NULLS)))))
     (list proc type label-list)))
+
+
+(defun iorg-scrape-set-labels (output-string)
+  "Assign lists with field, button and link labels to variables.
+To be added to the `comint-preoutput-filter-functions', with the
+set variables to be used by `ido-completing-read'. Recieves the
+output string of `displayAll' and parses the contained labels
+into four different categories, storing them as lists in these
+four related global variables:
+
+ - click :: page-links 
+ - press :: page-buttons
+ - value :: page-value-fields
+ - enter :: page-enter-fields
+
+Returns the original unchanged output-string."
+(let* (;; (process-buffer (current-buffer))
+       ;; (proc (get-buffer-process process-buffer))
+       (label-list
+        (iorg-scrape--split-label-string output-string)))
+    (list proc type label-list)))
+  )
+
+;; (add-hook 'comint-preoutput-filter-functions
+;;           'iorg-scrape-set-completing-read-choices)
+
+(remove-hook 'comint-preoutput-filter-functions
+          'iorg-scrape-set-completing-read-choices)
 
 ;; (defun iorg-scrape-get-link-labels (&optional proc-buf)
 ;;   "Get link labels of current page."

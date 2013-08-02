@@ -97,12 +97,17 @@
    (prinl)
    (apply println (mapcar car *Buttons) 'press)
    (prinl)
-   ## (apply println (trim (mapcar fin *Fields)) 'value)
-   (printsp 'value/enter)
-   (for (I . F) *Fields
+   (apply println (trim (mapcar fin *Fields)) 'value)
+   (prinl)
+   (printsp 'enter)
+   (for (I . F)  *Fields
       (if (lst? F)
-         (printsp (trim (cons I F)))
-         (printsp (trim (car F))) ) )
+         (printsp (trim (cons I F))) ) )
+         ## (printsp (trim (car F))) )
+   ## (for (I . F) *Fields
+   ##    (if (lst? F)
+   ##       (printsp (trim (cons I F)))
+   ##       (printsp (trim (car F))) ) )
    (prinl)
    *Title )
 
@@ -117,12 +122,9 @@
    (val @Mup @Doc mup) )
 
 (be history (@Doc @Mup)
-   ## (@C box (; (-> @Doc) mup))
    (^ @C (box (; (-> @Doc) mup)))
    (_history @C @Mup) )
 
-## (be _history (@C @Prv) (@ not (; (val (-> @C)) <)) T (fail))
-## (be _history (@C @Prv) (@Prv set (-> @C) (; (val (-> @C)) <)))
 (be _history (@C @Prv) (^ @ (not (; (val (-> @C)) <))) T (fail))
 (be _history (@C @Prv) (^ @Prv (set (-> @C) (; (val (-> @C)) <))))
 (repeat)

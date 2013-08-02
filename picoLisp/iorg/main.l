@@ -17,7 +17,6 @@
 
 ## * Code
 
-
 ## ** Permissions
 
 (allowed ("iorg/" "db/iorg/blob/")
@@ -25,6 +24,8 @@
    *PRG *Search "!download" )
 
 ## ** Load and Set
+
+(scl 2)
 
 (load
    "@lib/http.l" "@lib/xhtml.l" "@lib/form.l" "@lib/tex.l" "@lib/adm.l"
@@ -35,8 +36,7 @@
 (patch login `(* 3600 1000) `(* 4 3600 1000))
 
 (setq
-   ## *Scl 2
-   (scl 2)
+   *Scl 2
    *Pool "db/iorg/"
    *Blob "db/iorg/blob/"
    *Jnl (and (info "key/iorg") "fifo/iorg")
