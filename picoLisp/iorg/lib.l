@@ -93,23 +93,63 @@
 ## scrape: display all fields, not only those with values
 (de displayAll ()
    (prinl "###############")
-   (apply println (mapcar car *Links) 'click)
-   (prinl)
-   (apply println (mapcar car *Buttons) 'press)
-   (prinl)
-   (apply println (trim (mapcar fin *Fields)) 'value)
-   (prinl)
-   (printsp 'enter)
+   (println 'click)
+   (for (I . L) *Links
+      (space)
+      (print I (car L)) )
+   (prinl) (prinl)
+   (println 'press)
+   (for (I . B) *Buttons
+      (space)
+      (print I (car B)) )
+   (prinl) (prinl)
+   (println 'value)
+   (for (I . F) *Fields
+      (case (fin F)
+         ((NIL " " "@"))
+         (T (space)
+            (print I (trim (fin F))) ) ) )
+   (prinl) (prinl)
+   (println 'enter)
    (for (I . F)  *Fields
-      (if (lst? F)
-         (printsp (trim (cons I F))) ) )
-         ## (printsp (trim (car F))) )
-   ## (for (I . F) *Fields
-   ##    (if (lst? F)
-   ##       (printsp (trim (cons I F)))
-   ##       (printsp (trim (car F))) ) )
-   (prinl)
+      (and
+         (lst? F)
+         (space)
+         (print I (trim F)) ) )
+   (prinl) (prinl)
    *Title )
+
+## (de displayAll ()
+##    (prinl "###############")
+##    (apply println
+##           (make
+##             (for (I . L) *Links
+##                (link (cons I (car L))) ) ) 'click )
+##    (prinl)
+##    (apply println
+##           (make
+##             (for (I . B) *Buttons
+##                (link (cons I (car B))) ) ) 'press )
+##    (prinl)
+##    (apply println
+##       (filter
+##          '((V) (and
+##                   (bool (cdr V))
+##                   (not (or (= (cdr V) " ")
+##                            (= (cdr V)  "@" ) ) ) ) )
+##          (make
+##             (for (I . F)  *Fields
+##                ## (printsp
+##                (link
+##                   (trim (cons I (fin F))) ) ) ) )
+##    'value )
+##    (prinl)
+##    (printsp 'enter)
+##    (for (I . F)  *Fields
+##       (if (lst? F)
+##          (printsp (trim (cons I F))) ) )
+##    (prinl)
+##    *Title )
 
 
 ## Download blob
