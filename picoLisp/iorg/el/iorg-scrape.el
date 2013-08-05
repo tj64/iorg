@@ -119,43 +119,11 @@ There is a mode hook, and a few commands:
 ;; * Functions
 ;; ** Non-interactive Functions
 
-(defun iorg-scrape-write-and-return-filter (proc string)
-  "Write output STRING to process buffer of PROC an return it."
-  (when (buffer-live-p (process-buffer proc))
-    (with-current-buffer (process-buffer proc)
-      (let ((moving (= (point) (process-mark proc))))
-        (save-excursion
-          ;; Insert the text, advancing the process marker.
-          (goto-char (process-mark proc))
-          (insert string)
-          (set-marker (process-mark proc) (point)))
-        (if moving (goto-char (process-mark proc))))))
-  string)
-
-(defun iorg-scrape-return-as-lisp-filter (proc lisp-obj-as-string)
-  "Return output STRING of process PROC."
-  (condition-case err
-      ;; (message "PROC: %s\n STRING: %s\n"
-      ;;          proc lisp-obj-as-string)
-      (car (read-from-string lisp-obj-as-string))))  
-    ;; (error (message
-    ;;         "An error happened when reading-from-string: %s" err))))
-
-(defun iorg-quick-scrape-input-filter ()
-  "Input filter for `iorg-quick-scrape-mode'.")
-
-(defun iorg-scrape--split-label-string (label-string)
-  "Split LABEL-STRING and return a list of labels."
-  (and label-string
-       (stringp label-string)
-       (not (string= label-string ""))
-       (mapcar 'identity (split-string
-                            label-string
-                            "\" ?\"?" 'OMIT-NULLS))))
+;; *** Label/Field-Count Based Functions
 
 (defun iorg-scrape-generic (cmd cnt &optional strg proc)
-  "Generic function for iOrg scrape.
-COMMAND is the function from `scrape.l' to be called, CNT is the
+  "Generic workhorse function for iOrg scrape.
+CMD is the function from `scrape.l' to be called, CNT is the
 number of the label/field to be addressed, STRG is the string to
 enter in a field, and PROC is the PicoLisp process to use."
   (let ((process (or proc (get-buffer-process (current-buffer))))
@@ -179,10 +147,49 @@ enter in a field, and PROC is the PicoLisp process to use."
          process
          (format "%s" '(displayAll)))))))
 
+
+;; ;; *** Label/Field-Name Based Functions
+
+;; (defun iorg-scrape--split-label-string (label-string)
+;;   "Split LABEL-STRING and return a list of labels."
+;;   (and label-string
+;;        (stringp label-string)
+;;        (not (string= label-string ""))
+;;        (mapcar 'identity (split-string
+;;                             label-string
+;;                             "\" ?\"?" 'OMIT-NULLS))))
+
+;; (defun iorg-scrape-write-and-return-filter (proc string)
+;;   "Write output STRING to process buffer of PROC an return it."
+;;   (when (buffer-live-p (process-buffer proc))
+;;     (with-current-buffer (process-buffer proc)
+;;       (let ((moving (= (point) (process-mark proc))))
+;;         (save-excursion
+;;           ;; Insert the text, advancing the process marker.
+;;           (goto-char (process-mark proc))
+;;           (insert string)
+;;           (set-marker (process-mark proc) (point)))
+;;         (if moving (goto-char (process-mark proc))))))
+;;   string)
+
+;; (defun iorg-scrape-return-as-lisp-filter (proc lisp-obj-as-string)
+;;   "Return output STRING of process PROC."
+;;   (condition-case err
+;;       ;; (message "PROC: %s\n STRING: %s\n"
+;;       ;;          proc lisp-obj-as-string)
+;;       (car (read-from-string lisp-obj-as-string))))  
+;;     ;; (error (message
+;;     ;;         "An error happened when reading-from-string: %s" err))))
+
+;; (defun iorg-quick-scrape-input-filter ()
+;;   "Input filter for `iorg-quick-scrape-mode'.")
+
+
 ;; ** Commands
 
-;; *** iOrg Scrape Mode
+;; *** Start Scrape Process
 
+;; Start a REPL
 (defun iorg-scrape-repl (&optional port host how local)
   "Run inferior Picolisp and setup process for GUI-scripting.
 
@@ -232,105 +239,19 @@ PicoLisp. This is a hack necessary because of the way the
                "+")))
     (run-picolisp-new cmd 'IORG-SCRAPE-MODE-P)))
 
-;; (defun iorg-scrape-run (&optional port host how local)
-;;   "Start minimal PicoLisp server that allows iOrg web scraping."
+;; start a non-interactive TCP process
+(defun iorg-scrape-run (&optional port host how local)
+  "Start minimal PicoLisp server that allows iOrg web scraping.")
 
-(defun iorg-scrape-get-labels (&optional type proc-buf output-string)
-  "Return list of TYPE-labels for currently visited iOrg page.
- If PROC-BUF is nil, current-buffer is used as process buffer. TYPE is either
- 'click' (for links) or 'press' (for buttons)."
+;; *** Label/Field-Count Based Commands
+
+(defun iorg-scrape-display-all (&optional proc)
+  "Send `displayAll' to inferior PicoLisp process."
   (interactive
    (cond
-    ((equal current-prefix-arg nil)
-     (list (ido-completing-read "Label Type: "
-                                '("click" "press"))))
-    (t
-     (list
-      (ido-completing-read "Label Type: "
-                           '("click" "press"))
-      (ido-read-buffer "Process Buffer: " "*iorg-scrape*")))))
-  ;; (let ((process-buffer (or proc-buf (current-buffer))))
-  (let* ((process-buffer (or proc-buf (current-buffer)))
-         (proc (get-buffer-process process-buffer))
-         (label-strg (if output-string
-                         ()
-                       (car 
-                        (with-current-buffer process-buffer
-                          (comint-redirect-results-list
-                           "(display)"
-                           (concat
-                            "\\(^" type " \\)"
-                            "\\(.*$\\)")
-                           2)))))
-         (label-list (and label-strg
-                          (mapcar
-                           'identity
-                           (split-string
-                            label-strg
-                            "\" ?\"?" 'OMIT-NULLS)))))
-    (list proc type label-list)))
-
-
-(defun iorg-scrape--set-labels (output-string)
-  "Assign lists with field, button and link labels to variables.
-To be added to the `comint-preoutput-filter-functions', with the
-set variables to be used by `ido-completing-read'. Recieves the
-output string of `displayAll' and parses the contained labels
-into four different categories, storing them as lists in these
-four related global variables:
-
- - click :: page-links 
- - press :: page-buttons
- - value :: page-value-fields
- - enter :: page-enter-fields
-
-Returns the original unchanged output-string."
-  ;; (let* (;; (process-buffer (current-buffer))
-  ;;        ;; (proc (get-buffer-process process-buffer))
-  ;;        (label-list
-  ;;         (iorg-scrape--split-label-string output-string)))
-  (string-match
-    "\\(^\\(click: \\|press: \\|value: \\|enter: \\)\\)\\(.*$\\)"
-     output-string)
-  (message "sub1: %s sub2: %s"
-           (match-string 1 output-string)
-           (match-string 2 output-string)))
-
-;; "\(^\(click: \|press: \|value: \|enter: \)\)\(.*$\)\(^$\)"
-  ;;   (list proc type label-list)))
-  ;; )
-
-;; (add-hook 'comint-preoutput-filter-functions
-;;           'iorg-scrape-set-completing-read-choices)
-
-;; (remove-hook 'comint-preoutput-filter-functions
-;;           'iorg-scrape-set-completing-read-choices)
-
-;; (defun iorg-scrape-get-link-labels (&optional proc-buf)
-;;   "Get link labels of current page."
-;;   (interactive
-;;    (unless (equal current-prefix-arg nil)
-;;      (list
-;;       (read-buffer "Process Buffer: " nil t))))
-;;   (condition-case err
-;;       (let* ((proc (if (and proc-buf (not (string= proc-buf "")))
-;;                        proc-buf
-;;                      (current-buffer)))
-;;              (lbls (iorg-scrape-get-labels "click" proc)))
-;;         (cons proc lbls))
-;;     (error (error "Could not get link labels: %s" err))))
-
-;; (defun iorg-scrape-get-button-labels (&optional proc-buf)
-;;   "Get button labels of current page."
-;;   (interactive
-;;    (unless (equal current-prefix-arg nil)
-;;      (list
-;;       (read-buffer "Process Buffer: "))))
-;;   (condition-case err
-;;       (let* ((proc (or proc-buf (current-buffer)))
-;;              (lbls (iorg-scrape-get-labels "press" proc)))
-;;         (list lbls proc))
-;;     (error (error "Could not get button labels: %s" err))))
+    ((equal current-prefix-arg nil) nil)
+    (t (list (read-buffer "Process Buffer: ")))))
+  (iorg-scrape-generic "displayAll" nil nil proc))
 
 (defun iorg-scrape-expect (cons-cell &optional proc-buf)
   "Send `expect' to inferior PicoLisp process."
@@ -349,40 +270,6 @@ Returns the original unchanged output-string."
     (comint-simple-send
      process
      (format "(expect %s)" cons-cell))))
-
-(defun iorg-scrape-click-or-press (&optional cnt)
-  ;; (lbl &optional proc-buf cnt)
-  "Send `click' or `press' to inferior PicoLisp process."
-  (interactive "P")
-  (let* ((lst ;(let ((current-prefix-arg '(4)))
-          (call-interactively 'iorg-scrape-get-labels));)
-         (proc (and lst (car lst)))
-         (type (and lst (cadr lst)))
-         (lbls (and lst (caddr lst)))
-         ;; TODO better mini-buffer completion
-         (lbl (and lbls
-                   (ido-completing-read
-                    (cond
-                     ((string-equal type "click")
-                      "Link Label: ")
-                     ((string-equal type "press")
-                      "Button Label: ")
-                     (t (error "No valid label type!")))
-                    lbls)))
-         (cnt (and (equal current-prefix-arg '(16))
-                   (read-number "Count: "))))
-    (if (or lbl cnt)
-      (condition-case err
-          (comint-simple-send
-           proc
-           (format "(%s %S%s)"
-                   (if (string-equal type "click") "click" "press")
-                   (or lbl "")
-                   (if cnt (concat " " cnt) "")))
-        (error (message "An error happened when doing \"%s\": %s"
-                        type err)))
-      (message "Nothing to \"%s\" found." type))))
-
 
 ;; (defun iorg-scrape-click (lbl &optional proc-buf cnt)
 ;;   "Send `click' to inferior PicoLisp process."
@@ -487,7 +374,10 @@ Returns the original unchanged output-string."
     ((equal current-prefix-arg nil)
      (list
       (read-number "Count: ")))
-    ((equal current-prefix-arg '(4))
+    ((numberp current-prefix-arg)
+     (list
+      (abs current-prefix-arg)))
+    (t
      (list
       (read-number "Count: ")
       (read-buffer "Process Buffer: ")))))
@@ -500,7 +390,10 @@ Returns the original unchanged output-string."
     ((equal current-prefix-arg nil)
      (list
       (read-number "Count: ")))
-    ((equal current-prefix-arg '(4))
+    ((numberp current-prefix-arg)
+     (list
+      (abs current-prefix-arg)))
+    (t
      (list
       (read-number "Count: ")
       (read-buffer "Process Buffer: ")))))
@@ -513,7 +406,10 @@ Returns the original unchanged output-string."
     ((equal current-prefix-arg nil)
      (list
       (read-number "Count: ")))
-    ((equal current-prefix-arg '(4))
+    ((numberp current-prefix-arg)
+     (list
+      (abs current-prefix-arg)))
+    (t
      (list
       (read-number "Count: ")
       (read-buffer "Process Buffer: ")))))
@@ -527,12 +423,149 @@ Returns the original unchanged output-string."
      (list
       (read-number "Count: ")
       (read-string "String: ")))
-    ((equal current-prefix-arg '(4))
+    ((numberp current-prefix-arg)
+     (list
+      (abs current-prefix-arg)
+      (read-string "String: ")))
+    (t
      (list
       (read-number "Count: ")
       (read-string "String: ")
       (read-buffer "Process Buffer: ")))))
   (iorg-scrape-generic "enter" cnt strg proc-buf))
+
+;; *** Label/Field-Name Based Commands
+
+(defun iorg-scrape-click-or-press (&optional cnt)
+  ;; (lbl &optional proc-buf cnt)
+  "Send `click' or `press' to inferior PicoLisp process."
+  (interactive "P")
+  (let* ((lst ;(let ((current-prefix-arg '(4)))
+          (call-interactively 'iorg-scrape-get-labels));)
+         (proc (and lst (car lst)))
+         (type (and lst (cadr lst)))
+         (lbls (and lst (caddr lst)))
+         ;; TODO better mini-buffer completion
+         (lbl (and lbls
+                   (ido-completing-read
+                    (cond
+                     ((string-equal type "click")
+                      "Link Label: ")
+                     ((string-equal type "press")
+                      "Button Label: ")
+                     (t (error "No valid label type!")))
+                    lbls)))
+         (cnt (and (equal current-prefix-arg '(16))
+                   (read-number "Count: "))))
+    (if (or lbl cnt)
+      (condition-case err
+          (comint-simple-send
+           proc
+           (format "(%s %S%s)"
+                   (if (string-equal type "click") "click" "press")
+                   (or lbl "")
+                   (if cnt (concat " " cnt) "")))
+        (error (message "An error happened when doing \"%s\": %s"
+                        type err)))
+      (message "Nothing to \"%s\" found." type))))
+
+(defun iorg-scrape-get-labels (&optional type proc-buf output-string)
+  "Return list of TYPE-labels for currently visited iOrg page.
+ If PROC-BUF is nil, current-buffer is used as process buffer. TYPE is either
+ 'click' (for links) or 'press' (for buttons)."
+  (interactive
+   (cond
+    ((equal current-prefix-arg nil)
+     (list (ido-completing-read "Label Type: "
+                                '("click" "press"))))
+    (t
+     (list
+      (ido-completing-read "Label Type: "
+                           '("click" "press"))
+      (ido-read-buffer "Process Buffer: " "*iorg-scrape*")))))
+  ;; (let ((process-buffer (or proc-buf (current-buffer))))
+  (let* ((process-buffer (or proc-buf (current-buffer)))
+         (proc (get-buffer-process process-buffer))
+         (label-strg (if output-string
+                         ()
+                       (car 
+                        (with-current-buffer process-buffer
+                          (comint-redirect-results-list
+                           "(display)"
+                           (concat
+                            "\\(^" type " \\)"
+                            "\\(.*$\\)")
+                           2)))))
+         (label-list (and label-strg
+                          (mapcar
+                           'identity
+                           (split-string
+                            label-strg
+                            "\" ?\"?" 'OMIT-NULLS)))))
+    (list proc type label-list)))
+
+
+(defun iorg-scrape--set-labels (output-string)
+  "Assign lists with field, button and link labels to variables.
+To be added to the `comint-preoutput-filter-functions', with the
+set variables to be used by `ido-completing-read'. Recieves the
+output string of `displayAll' and parses the contained labels
+into four different categories, storing them as lists in these
+four related global variables:
+
+ - click :: page-links 
+ - press :: page-buttons
+ - value :: page-value-fields
+ - enter :: page-enter-fields
+
+Returns the original unchanged output-string."
+  ;; (let* (;; (process-buffer (current-buffer))
+  ;;        ;; (proc (get-buffer-process process-buffer))
+  ;;        (label-list
+  ;;         (iorg-scrape--split-label-string output-string)))
+  (string-match
+    "\\(^\\(click: \\|press: \\|value: \\|enter: \\)\\)\\(.*$\\)"
+     output-string)
+  (message "sub1: %s sub2: %s"
+           (match-string 1 output-string)
+           (match-string 2 output-string)))
+
+;; "\(^\(click: \|press: \|value: \|enter: \)\)\(.*$\)\(^$\)"
+  ;;   (list proc type label-list)))
+  ;; )
+
+;; (add-hook 'comint-preoutput-filter-functions
+;;           'iorg-scrape-set-completing-read-choices)
+
+;; (remove-hook 'comint-preoutput-filter-functions
+;;           'iorg-scrape-set-completing-read-choices)
+
+;; (defun iorg-scrape-get-link-labels (&optional proc-buf)
+;;   "Get link labels of current page."
+;;   (interactive
+;;    (unless (equal current-prefix-arg nil)
+;;      (list
+;;       (read-buffer "Process Buffer: " nil t))))
+;;   (condition-case err
+;;       (let* ((proc (if (and proc-buf (not (string= proc-buf "")))
+;;                        proc-buf
+;;                      (current-buffer)))
+;;              (lbls (iorg-scrape-get-labels "click" proc)))
+;;         (cons proc lbls))
+;;     (error (error "Could not get link labels: %s" err))))
+
+;; (defun iorg-scrape-get-button-labels (&optional proc-buf)
+;;   "Get button labels of current page."
+;;   (interactive
+;;    (unless (equal current-prefix-arg nil)
+;;      (list
+;;       (read-buffer "Process Buffer: "))))
+;;   (condition-case err
+;;       (let* ((proc (or proc-buf (current-buffer)))
+;;              (lbls (iorg-scrape-get-labels "press" proc)))
+;;         (list lbls proc))
+;;     (error (error "Could not get button labels: %s" err))))
+
 
 (defun iorg-scrape-display (&optional proc)
   "Send `display' to inferior PicoLisp process."
@@ -547,23 +580,6 @@ Returns the original unchanged output-string."
      process
      (format "%s" '(display)))))
 
-(defun iorg-scrape-display-all (&optional proc)
-  "Send `displayAll' to inferior PicoLisp process."
-  (interactive
-   (cond
-    ((equal current-prefix-arg nil) nil)
-    (t (list (read-buffer "Process Buffer: ")))))
-  (let ((process (if proc-buf
-                     (get-buffer-process proc-buf)
-                   (get-buffer-process (current-buffer)))))
-    (comint-simple-send
-     process
-     (format "%s" '(displayAll)))))
-
-;; (defun iorg-scrape--target (lst lbl cnt))
-
-;; (defun iorg-scrape--field (fld cnt))
-
 
 (defun iorg-set-default-host-path (path)
   "Change `iorg-default-host-path' temporarily.
@@ -573,6 +589,9 @@ is loaded again. In the latter case it will be reset to
 \"http://localhost:5000\"."
  (interactive "sURL (e.g. http://localhost:5000): ")
  (setq iorg-default-host-path path))
+
+
+;; ;; *** Higher Level Commands
 
 ;; (defun iorg-login ()
 ;;   "")

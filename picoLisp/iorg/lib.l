@@ -103,20 +103,20 @@
       (space)
       (print I (car B)) )
    (prinl) (prinl)
-   (print 'value:)
+   (print 'enter/value:)
    (for (I . F) *Fields
       (case (fin F)
-         ((NIL " " "@"))
+         ((" " "@"))
          (T (space)
-            (print I (trim (fin F))) ) ) )
+            (print I (trim F)) ) ) )
    (prinl) (prinl)
-   (print 'enter:)
-   (for (I . F)  *Fields
-      (and
-         (lst? F)
-         (space)
-         (print I (trim F)) ) )
-   (prinl) (prinl)
+   ## (print 'enter/value:)
+   ## (for (I . F)  *Fields
+   ##    (and
+   ##       (lst? F)
+   ##       (space)
+   ##       (print I (trim F)) ) )
+   ## (prinl) (prinl)
    *Title )
 
 
