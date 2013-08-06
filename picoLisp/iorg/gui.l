@@ -177,7 +177,7 @@
                      (<style> '(id . "search")
                         (<field> 24 '*Search) ) )
                   (<hidden> '*PRG T)
-                  (<submit> "Search") )
+                  (<submit> "Search" "searchButton") )
                (and *Search (searchIorg (splitWords (chop @)) 24)) )
             (--)
             (ifn *Login

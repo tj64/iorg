@@ -142,7 +142,10 @@ enter in a field, and PROC is the PicoLisp process to use."
                (if fld cnt "NIL")
                (or (concat "\"" strg "\"") "")
                (if fld "" cnt)))
-      (unless (string= cmd "value")
+      (unless
+          (or
+           (string= cmd "value")
+           (string= cmd "displayAll"))
         (comint-simple-send
          process
          (format "%s" '(displayAll)))))))
@@ -271,101 +274,6 @@ PicoLisp. This is a hack necessary because of the way the
      process
      (format "(expect %s)" cons-cell))))
 
-;; (defun iorg-scrape-click (lbl &optional proc-buf cnt)
-;;   "Send `click' to inferior PicoLisp process."
-;;   (interactive
-;;    (cond
-;;     ((equal current-prefix-arg nil)
-;;      (list
-;;       (read-string "Label: ")))
-;;     ((equal current-prefix-arg '(4))
-;;      (list
-;;       (read-string "Label: ")
-;;       (read-buffer "Process Buffer: ")))
-;;     (t
-;;      (list
-;;       (read-string "Label: ")
-;;       (read-buffer "Process Buffer: ")
-;;       (read-number "Count: ")))))
-;;   (let ((process (if proc-buf
-;;                      (get-buffer-process proc-buf)
-;;                    (get-buffer-process (current-buffer)))))
-;;     (comint-simple-send
-;;      process
-;;      (format "(click %s %s)" (or lbl "") (or cnt "")))))
-
-
-;; (defun iorg-scrape-press (lbl &optional proc-buf cnt)
-;;   "Send `press' to inferior PicoLisp process."
-;;   (interactive
-;;    (cond
-;;     ((equal current-prefix-arg nil)
-;;      (list
-;;       (read-string "Label: ")))
-;;     ((equal current-prefix-arg '(4))
-;;      (list
-;;       (read-string "Label: ")
-;;       (read-buffer "Process Buffer: ")))
-;;     (t
-;;      (list
-;;       (read-string "Label: ")
-;;       (read-buffer "Process Buffer: ")
-;;       (read-number "Count: ")))))
-;;   (let ((process (if proc-buf
-;;                      (get-buffer-process proc-buf)
-;;                    (get-buffer-process (current-buffer)))))
-;;     (comint-simple-send
-;;      process
-;;      (format "(press %s %s)" (or lbl "") (or cnt "")))))
-
-;; (defun iorg-scrape-value (cnt &optional proc-buf fld)
-;;   "Send `value' to inferior PicoLisp process."
-;;   (interactive
-;;    (cond
-;;     ((equal current-prefix-arg nil)
-;;      (list
-;;       (read-number "Count: ")))
-;;     ((equal current-prefix-arg '(4))
-;;      (list
-;;       (read-number "Count: ")
-;;       (read-buffer "Process Buffer: ")))
-;;     (t
-;;      (list
-;;       (read-number "Count: ")
-;;       (read-buffer "Process Buffer: ")
-;;       (read-string "Field: ")))))
-;;   (let ((process (if proc-buf
-;;                      (get-buffer-process proc-buf)
-;;                    (get-buffer-process (current-buffer)))))
-;;     (comint-simple-send
-;;      process
-;;      (format "(value %s %s)" (or fld "") (or cnt "")))))
-
-;; (defun iorg-scrape-enter (str cnt &optional proc-buf fld)
-;;   "Send `enter' to inferior PicoLisp process."
-;;   (interactive
-;;    (cond
-;;     ((equal current-prefix-arg nil)
-;;      (list
-;;       (read-string "String: ")
-;;       (read-number "Count: ")))
-;;     ((equal current-prefix-arg '(4))
-;;      (list
-;;       (read-string "String: ")
-;;       (read-number "Count: ")
-;;       (read-buffer "Process Buffer: ")))
-;;     (t
-;;      (list
-;;       (read-string "String: ")
-;;       (read-number "Count: ")
-;;       (read-buffer "Process Buffer: ")
-;;       (read-string "Field: ")))))
-;;   (let ((process (if proc-buf
-;;                      (get-buffer-process proc-buf)
-;;                    (get-buffer-process (current-buffer)))))
-;;     (comint-simple-send
-;;      process
-;;      (format "(click %s %s %s)" (or fld "") str (or cnt "")))))
 
 (defun iorg-scrape-click (cnt &optional proc-buf)
   "Send `click' to inferior PicoLisp process."
@@ -567,6 +475,102 @@ Returns the original unchanged output-string."
 ;;     (error (error "Could not get button labels: %s" err))))
 
 
+;; (defun iorg-scrape-click (lbl &optional proc-buf cnt)
+;;   "Send `click' to inferior PicoLisp process."
+;;   (interactive
+;;    (cond
+;;     ((equal current-prefix-arg nil)
+;;      (list
+;;       (read-string "Label: ")))
+;;     ((equal current-prefix-arg '(4))
+;;      (list
+;;       (read-string "Label: ")
+;;       (read-buffer "Process Buffer: ")))
+;;     (t
+;;      (list
+;;       (read-string "Label: ")
+;;       (read-buffer "Process Buffer: ")
+;;       (read-number "Count: ")))))
+;;   (let ((process (if proc-buf
+;;                      (get-buffer-process proc-buf)
+;;                    (get-buffer-process (current-buffer)))))
+;;     (comint-simple-send
+;;      process
+;;      (format "(click %s %s)" (or lbl "") (or cnt "")))))
+
+
+;; (defun iorg-scrape-press (lbl &optional proc-buf cnt)
+;;   "Send `press' to inferior PicoLisp process."
+;;   (interactive
+;;    (cond
+;;     ((equal current-prefix-arg nil)
+;;      (list
+;;       (read-string "Label: ")))
+;;     ((equal current-prefix-arg '(4))
+;;      (list
+;;       (read-string "Label: ")
+;;       (read-buffer "Process Buffer: ")))
+;;     (t
+;;      (list
+;;       (read-string "Label: ")
+;;       (read-buffer "Process Buffer: ")
+;;       (read-number "Count: ")))))
+;;   (let ((process (if proc-buf
+;;                      (get-buffer-process proc-buf)
+;;                    (get-buffer-process (current-buffer)))))
+;;     (comint-simple-send
+;;      process
+;;      (format "(press %s %s)" (or lbl "") (or cnt "")))))
+
+;; (defun iorg-scrape-value (cnt &optional proc-buf fld)
+;;   "Send `value' to inferior PicoLisp process."
+;;   (interactive
+;;    (cond
+;;     ((equal current-prefix-arg nil)
+;;      (list
+;;       (read-number "Count: ")))
+;;     ((equal current-prefix-arg '(4))
+;;      (list
+;;       (read-number "Count: ")
+;;       (read-buffer "Process Buffer: ")))
+;;     (t
+;;      (list
+;;       (read-number "Count: ")
+;;       (read-buffer "Process Buffer: ")
+;;       (read-string "Field: ")))))
+;;   (let ((process (if proc-buf
+;;                      (get-buffer-process proc-buf)
+;;                    (get-buffer-process (current-buffer)))))
+;;     (comint-simple-send
+;;      process
+;;      (format "(value %s %s)" (or fld "") (or cnt "")))))
+
+;; (defun iorg-scrape-enter (str cnt &optional proc-buf fld)
+;;   "Send `enter' to inferior PicoLisp process."
+;;   (interactive
+;;    (cond
+;;     ((equal current-prefix-arg nil)
+;;      (list
+;;       (read-string "String: ")
+;;       (read-number "Count: ")))
+;;     ((equal current-prefix-arg '(4))
+;;      (list
+;;       (read-string "String: ")
+;;       (read-number "Count: ")
+;;       (read-buffer "Process Buffer: ")))
+;;     (t
+;;      (list
+;;       (read-string "String: ")
+;;       (read-number "Count: ")
+;;       (read-buffer "Process Buffer: ")
+;;       (read-string "Field: ")))))
+;;   (let ((process (if proc-buf
+;;                      (get-buffer-process proc-buf)
+;;                    (get-buffer-process (current-buffer)))))
+;;     (comint-simple-send
+;;      process
+;;      (format "(click %s %s %s)" (or fld "") str (or cnt "")))))
+
 (defun iorg-scrape-display (&optional proc)
   "Send `display' to inferior PicoLisp process."
   (interactive
@@ -624,11 +628,11 @@ is loaded again. In the latter case it will be reset to
     (define-key map "\C-c\C-g"
       'comint-interrupt-subjob)
     (define-key map "\C-c\C-cd"
-      'iorg-scrape-display)
-    (define-key map "\C-c\C-cf"
-      'iorg-scrape-display-fields)
-    (define-key map "\C-c\C-ca"
       'iorg-scrape-display-all)
+    ;; (define-key map "\C-c\C-cf"
+    ;;   'iorg-scrape-display-fields)
+    ;; (define-key map "\C-c\C-ca"
+    ;;   'iorg-scrape-display-all)
     (define-key map "\C-c\C-cx"
       'iorg-scrape-expect)
     (define-key map "\C-c\C-cc"
@@ -637,18 +641,20 @@ is loaded again. In the latter case it will be reset to
       'iorg-scrape-press)
     (define-key map "\C-c\C-cv"
       'iorg-scrape-value)
-    (define-key map "\C-c\C-cm"
-      'iorg-scrape-enter)
-    (define-key map "\C-c\C-ci"
-      'iorg-dired)
     (define-key map "\C-c\C-ce"
+      'iorg-scrape-enter)
+    ;; (define-key map "\C-c\C-ci"
+    ;;   'iorg-dired)
+    (define-key map "\C-c\C-cE"
       'iorg-edit)
+    (define-key map "\C-c\C-cQ"
+      'iorg-quick-scrape-mode)
     (define-key map "\C-c\C-c\C-d"
-      'iorg-scrape-display)
-    (define-key map "\C-c\C-c\C-f"
-      'iorg-scrape-display-fields)
-    (define-key map "\C-c\C-c\C-a"
       'iorg-scrape-display-all)
+    ;; (define-key map "\C-c\C-c\C-f"
+    ;;   'iorg-scrape-display-fields)
+    ;; (define-key map "\C-c\C-c\C-a"
+    ;;   'iorg-scrape-display-all)
     (define-key map "\C-c\C-c\C-x"
       'iorg-scrape-expect)
     (define-key map "\C-c\C-c\C-c"
@@ -657,13 +663,14 @@ is loaded again. In the latter case it will be reset to
       'iorg-scrape-press)
     (define-key map "\C-c\C-c\C-v"
       'iorg-scrape-value)
-    (define-key map "\C-c\C-c\C-m"
-      'iorg-scrape-enter)
-    (define-key map "\C-c\C-c\C-i"
-      'iorg-dired)
     (define-key map "\C-c\C-c\C-e"
+      'iorg-scrape-enter)
+    ;; (define-key map "\C-c\C-c\C-i"
+    ;;   'iorg-dired)
+    (define-key map "\C-c\C-c\C-E"
       'iorg-edit)
-
+    (define-key map "\C-c\C-c\C-Q"
+      'iorg-quick-scrape-mode)
     ;; (define-key map [menu-bar iorg-scrape]
     ;;   (cons (purecopy "iOrg-Scrape") iorg-scrape-menu-map))
     map)
@@ -671,11 +678,11 @@ is loaded again. In the latter case it will be reset to
   (let ((map iorg-quick-scrape-mode-map))
     (suppress-keymap map)
     (define-key map "d"
-      'iorg-scrape-display)
+      'iorg-scrape-display-all)
     (define-key map "f"
       'iorg-scrape-display-fields)
-    (define-key map "a"
-      'iorg-scrape-display-all)
+    ;; (define-key map "a"
+    ;;   'iorg-scrape-display-all)
     (define-key map "x"
        'iorg-scrape-expect)
     (define-key map "c"
@@ -684,12 +691,14 @@ is loaded again. In the latter case it will be reset to
       'iorg-scrape-press)
     (define-key map "v"
       'iorg-scrape-value)
-    (define-key map "m"
-      'iorg-scrape-enter)
-    (define-key map "i"
-      'iorg-dired)
     (define-key map "e"
+      'iorg-scrape-enter)
+    ;; (define-key map "i"
+    ;;   'iorg-dired)
+    (define-key map "E"
       'iorg-edit)
+    (define-key map "S"
+      'iorg-scrape-mode)
     ;; (define-key map [menu-bar iorg-quick-scrape]
     ;;   (cons (purecopy "Quick-Scrape") iorg-quick-0
     ;;         scrape-menu-map))
