@@ -101,6 +101,9 @@ There is a mode hook, and a few commands:
 ;; ** Hooks
 ;; ** Vars
 
+(defvar iorg-scrape-server-process nil
+  "Holds the process of the scrape-server.")
+
 (defvar page-links nil
   "Stores a list with labels from page links.")
 
@@ -243,8 +246,62 @@ PicoLisp. This is a hack necessary because of the way the
     (run-picolisp-new cmd 'IORG-SCRAPE-MODE-P)))
 
 ;; start a non-interactive TCP process
-(defun iorg-scrape-run (&optional port host how local)
-  "Start minimal PicoLisp server that allows iOrg web scraping.")
+(defun iorg-scrape-start-server (&optional port host how) 
+  "Start minimal PicoLisp server that allows iOrg web scraping."
+  (interactive
+   (cond
+    ((equal current-prefix-arg nil) nil)
+    ((equal current-prefix-arg '(4))
+     (list
+      (read-number "Port: ")))
+    ((equal current-prefix-arg '(16))
+     (list
+      (read-number "Port: ")
+      (read-string "Host: ")))
+    (t
+     (list
+      (read-string "Host: ")
+      (read-number "Port: ")
+      (read-string "How: ")))))
+  (let ((prt (or port 5001))
+        (hst (or host "localhost"))
+        (hw (or how "")))
+    (async-shell-command "iorg-scrape-server")
+    (setq iorg-scrape-server-process
+          (make-comint "*iorg-scrape-server*"
+                       ("localhost" . 6789)))
+    (comint-simple-send
+     iorg-scrape-server-process
+     (format "(scrape %S %s %s)" hst prt hw))))
+
+;; call a non-interactive TCP process
+(defun iorg-scrape-call-server (cmd cnt &optional strg proc-name)
+  "Call iOrg scrape-server.
+Process is either `iorg-scrape-server-process' or PROC."
+  (interactive
+   (cond
+    ((equal current-prefix-arg nil)
+     (list
+      (read-string "Command: ")
+      (read-number "Count: ")))
+    ((numberp current-prefix-arg)
+     (list
+      (read-string "Command: ")
+      (abs current-prefix-arg)))
+    ((equal current-prefix-arg '(4))
+     (list
+      (read-string "Command: ")
+      (read-number "Count: ")
+      (read-string "String: ")))
+    (t
+     (list
+      (read-string "Command: ")
+      (read-number "Count: ")
+      (read-string "String: ")
+      (read-string "Process Name: ")))))
+   (let ((process (or (get-process proc-name)
+                      iorg-scrape-server-process)))
+     (iorg-scrape-generic cmd cnt strg process)))
 
 ;; *** Label/Field-Count Based Commands
 
