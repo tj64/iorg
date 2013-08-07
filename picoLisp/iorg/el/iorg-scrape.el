@@ -451,11 +451,11 @@ be entered if CMD is `enter'."
       (read-buffer "Process Buffer: ")))))
   (iorg-scrape-generic "enter" cnt strg proc-buf))
 
-(defun iorg-scrape-kbd-macro-to-picolisp (&optional kbd-macro-as-vector)
-  "Convert KBD-MACRO-AS-VECTOR to PicoLisp code.
+(defun iorg-scrape-kbd-macro-to-picolisp (&optional kbd-macro)
+  "Convert KBD-MACRO to PicoLisp code.
 
-Unless KBD-MACRO-AS-VECTOR is given, `last-kbd-macro' is used.
-Otherwise the name of a variable that holds a vector with
+Unless KBD-MACRO is given, `last-kbd-macro' is used. Otherwise
+the name of a variable that holds a vector or string with
 keystrokes, recorded during a iOrg quick-scrape session in the
 REPL, should be entered.
 
@@ -477,51 +477,48 @@ display the current page anyway when they are finished."
      (list last-kbd-macro))
     (t
      (list
-      read-string
-      "Variable that holds vector with key sequence: "))))
-  (let* ((kbd-macro-as-lst
-          (mapcar 'identity kbd-macro-as-vector))
-         (key-lst (mapcar
-                   (lambda (key)
-                     (and (numberp key)
-                          (make-string 1 key)))
-                   kbd-macro-as-lst))
-         (cnt nil)
-         (result (concat
-                  "(prog "
-                  (mapconcat
-                   (lambda (key)
-                     (let ((pico-expr ""))
+      (eval (intern (read-string
+      "Variable that holds vector/string with key sequence: ")))))))
+  (let* ;; ((kbd-macro-as-lst
+      ;;   (mapcar 'identity kbd-macro))
+      ((key-lst (mapcar
+                 (lambda (key)
+                   (and (numberp key)
+                        (make-string 1 key)))
+                 kbd-macro))
+       (cnt nil)
+       (result (concat
+                "(prog "
+                (mapconcat
+                 (lambda (key)
+                   (let ((pico-expr ""))
+                     (cond
+                      ((and (string-match "[0-9]" key) (not cnt))
+                       (setq cnt key) nil)
+                      ((and (string-match "[0-9]" key) cnt)
+                       (setq cnt (concat cnt key)) nil)
+                      ((and (string-match "[cp]" key) cnt)
                        (cond
-                        ((and (string-match "[0-9]" key) (not cnt))
-                         (setq cnt key) nil)
-                        ((and (string-match "[0-9]" key) cnt)
-                         (setq cnt (concat cnt key)) nil)
-                        ((and (string-match "[cp]" key) cnt)
-                         (cond
-                          ((string= key "c")
-                           (setq pico-expr (format "(click NIL %s)" cnt)))
-                          ((string= key "p")
-                           (setq pico-expr (format "(press NIL %s)" cnt))))
-                         (setq cnt nil)
-                         pico-expr)
-                        ((and (string-match "[ev]" key) cnt)
-                         (cond
-                          ((string= key "v")
-                           (setq pico-expr (format "(value %s)" cnt)))
-                          ((string= key "e")
-                           (setq pico-expr (format "(enter %s %s)" cnt ""))))
-                         (setq cnt nil)
-                         pico-expr))))
-                   ;; ((and (string-match "[[:word:]]" key) (not cnt))
-                   ;;  (concat strg key)))
-                   (delq nil key-lst) "")
-                  ")")))
-    (message "%s" result)
+                        ((string= key "c")
+                         (setq pico-expr (format "(click NIL %s)" cnt)))
+                        ((string= key "p")
+                         (setq pico-expr (format "(press NIL %s)" cnt))))
+                       (setq cnt nil)
+                       pico-expr)
+                      ((and (string-match "[ev]" key) cnt)
+                       (cond
+                        ((string= key "v")
+                         (setq pico-expr (format "(value %s)" cnt)))
+                        ((string= key "e")
+                         (setq pico-expr (format "(enter %s %s)" cnt ""))))
+                       (setq cnt nil)
+                       pico-expr))))
+                 ;; ((and (string-match "[[:word:]]" key) (not cnt))
+                 ;;  (concat strg key)))
+                 (delq nil key-lst) "")
+                ")")))
+    ;; (message "%s" result)
     result))
-
-    ;; (message "%S" key-lst)))
-
 
 ;; *** Label/Field-Name Based Commands
 
