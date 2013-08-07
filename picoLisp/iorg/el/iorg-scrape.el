@@ -104,6 +104,10 @@ There is a mode hook, and a few commands:
 (defvar iorg-scrape-server-process nil
   "Holds the process of the scrape-server.")
 
+(defvar iorg-scrape-commands
+ '("click" "press" "enter" "value" "expect" "scrape" "display" "displayAll")
+  "Possible values for valid iOrg scrape commands.")
+
 (defvar page-links nil
   "Stores a list with labels from page links.")
 
@@ -154,7 +158,11 @@ enter in a field, and PROC is the PicoLisp process to use."
          (format "%s" '(displayAll)))))))
 
 
-;; ;; *** Label/Field-Name Based Functions
+(defun iorg-scrape-server-filter (process output)
+  "Filter function for iorg-scrape-server."
+  (message "%s" output))
+
+;; *** Label/Field-Name Based Functions
 
 ;; (defun iorg-scrape--split-label-string (label-string)
 ;;   "Split LABEL-STRING and return a list of labels."
@@ -246,8 +254,14 @@ PicoLisp. This is a hack necessary because of the way the
     (run-picolisp-new cmd 'IORG-SCRAPE-MODE-P)))
 
 ;; start a non-interactive TCP process
-(defun iorg-scrape-start-server (&optional port host how) 
-  "Start minimal PicoLisp server that allows iOrg web scraping."
+(defun iorg-scrape-start-server (&optional port host how local) 
+  "Start minimal PicoLisp server that allows iOrg web scraping.
+To avoid confusion: the optional PORT, HOST and HOW args define
+the iOrg web-app to be scraped, once the scrape server is up. The
+actual (host . port) info for the TCP scrape-server itself is
+hard-coded in `iorg/scrape-server.l' and read from there. The
+LOCAL arg is used to determine if a global or local PicoLisp
+installation is used to start the scrape server."
   (interactive
    (cond
     ((equal current-prefix-arg nil) nil)
@@ -266,44 +280,76 @@ PicoLisp. This is a hack necessary because of the way the
   (let ((prt (or port 5001))
         (hst (or host "localhost"))
         (hw (or how "")))
-    (async-shell-command "iorg-scrape-server")
+    ;; start PicoLisp as Emacs subprocess
+    (start-process
+     "servproc"
+     "*iorg-serv-proc*"
+     (if local "./pil" "pil")
+     ;; start the PicoLisp TCP server from the subprocess
+     ;; FIXME relative pathname!
+     "/home/tj/git/iorg/picoLisp/iorg/scrape-server.l")
+    ;; get a network-connection object for the TCP server
     (setq iorg-scrape-server-process
-          (make-comint "*iorg-scrape-server*"
-                       ("localhost" . 6789)))
-    (comint-simple-send
+          ;; host and port specified in
+          ;; `iorg-scrape-server' shell-script
+          (make-network-process
+           :name "scrape-server"
+           :host "localhost"
+           :service 16789
+           :filter 'iorg-scrape-server-filter))
+    ;; do initial setup of scrape-server for
+    ;; scraping the specified iOrg web-application
+    (process-send-string
      iorg-scrape-server-process
-     (format "(scrape %S %s %s)" hst prt hw))))
+      (cond
+       ((and hst prt hw)
+        (format "(scrape %S %s %s)\n" hst prt hw))
+       ((and hst prt)
+        (format "(scrape %S %s)\n" hst prt))
+       (t (error "No valid scrape command specified."))))))
+
+;; *** Label/Field-Count Based Commands
 
 ;; call a non-interactive TCP process
-(defun iorg-scrape-call-server (cmd cnt &optional strg proc-name)
-  "Call iOrg scrape-server.
-Process is either `iorg-scrape-server-process' or PROC."
+(defun iorg-scrape-server-send-string (cmd &optional cnt strg proc-name)
+  "Call iOrg scrape-server. Only scrape commands are allowed for CMD.
+Process is either `iorg-scrape-server-process' or PROC-NAME. CNT
+is the number of the link, button or field to be addressed, STRG the string to
+be entered if CMD is `enter'."
   (interactive
    (cond
     ((equal current-prefix-arg nil)
      (list
-      (read-string "Command: ")
-      (read-number "Count: ")))
+      (ido-completing-read "Command: " iorg-scrape-commands)))
     ((numberp current-prefix-arg)
      (list
-      (read-string "Command: ")
+      (ido-completing-read "Command: " iorg-scrape-commands)
       (abs current-prefix-arg)))
     ((equal current-prefix-arg '(4))
      (list
-      (read-string "Command: ")
+      (ido-completing-read "Command: " iorg-scrape-commands)
       (read-number "Count: ")
       (read-string "String: ")))
     (t
      (list
-      (read-string "Command: ")
+      (ido-completing-read "Command: " iorg-scrape-commands)
       (read-number "Count: ")
       (read-string "String: ")
       (read-string "Process Name: ")))))
-   (let ((process (or (get-process proc-name)
-                      iorg-scrape-server-process)))
-     (iorg-scrape-generic cmd cnt strg process)))
-
-;; *** Label/Field-Count Based Commands
+   (let ((process (or
+                   (and
+                    proc-name
+                    (get-process proc-name))
+                   iorg-scrape-server-process)))
+     (process-send-string
+      process
+      (cond
+       ((and cmd cnt strg)
+        (format "(%s %s %s)\n" cmd cnt strg))
+       ((and cmd cnt)
+        (format "(%s %s)\n" cmd cnt))
+       (cmd (format "(%s)\n" cmd))
+       (t (error "No valid scrape command specified."))))))
 
 (defun iorg-scrape-display-all (&optional proc)
   "Send `displayAll' to inferior PicoLisp process."
