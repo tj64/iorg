@@ -1,5 +1,10 @@
+(allowed ()
+   "!scrape" "!expect" "!click" "!press" "!value" "!enter"
+   "!display" "!displayAll" )
+
 (load "@lib.l" "@ext.l" "@lib/http.l" "@lib/scrape.l")
-(setq *Port (port 16789))
+
+(setq *Port (port 6789))
 (loop
    (setq *Sock (listen *Port))
    (NIL (fork) (close *Port))

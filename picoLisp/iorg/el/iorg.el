@@ -84,88 +84,11 @@ There is a mode hook, and a few commands:
 ;; *** Custom Vars
 ;; * Functions
 ;; ** Non-interactive Functions
+;; *** Helper Functions 
 
 (defsubst iorg--elisp-plist-p (lst)
   "Return non-nil if LST is a list and its car a keyword."
   (and (listp lst) (keywordp (car lst))))
-
-(defun iorg-retrieve-url(path &optional LISP-P hostpath &rest args)
-  "Generic function for calling the iOrg server from Emacs.
-
-The PicoLisp application server uses a slightly specialized syntax when
-communicating URLs to and from a client. The PATH part of an URL - which
-remains when
-
-- the preceding protocol, host and port specifications (HOSTPATH)
-
-- and the trailing question mark plus arguments (ARGS)
-
-are stripped off - is interpreted according so some rules. The most prominent
-ones are:
-
-- If a path starts with an exclamation-mark ('!'), the rest (without the '!')
-  is taken as the name of a Lisp function to be called. All arguments
-  following the question mark are passed to that function.
-
-- If a path ends with \".l\" (a dot and a lower case 'L'), it is taken as a
-  Lisp source file name to be (load)ed. This is the most common case, and we
-  use it in our example \"project.l\".
-
-- If the extension of a file name matches an entry in the global mime type
-  table *Mimes, the file is sent to the client with mime-type and max-age
-  values taken from that table.
-
-- Otherwise, the file is sent to the client with a mime-type of
-  \"application/octet-stream\" and a max-age of 1 second.
-
-An application is free to extend or modify the *Mimes table with the mime
-function. For example
-
-#+begin_src picolisp
- (mime \"doc\" \"application/msword\" 60)
-#+end_src
-
-defines a new mime type with a max-age of one minute.
-
-Argument values (ARGS) in URLs, following the path and the
-question mark, are encoded in such a way that Lisp data types are
-preserved:
-
-- An internal symbol starts with a dollar sign ('$')
-
-- A number starts with a plus sign ('+')
-
-- An external (database) symbol starts with dash ('-')
-
-- A list (one level only) is encoded with underscores ('_')
-
-- Otherwise, it is a transient symbol (a plain string)
-
-In that way, high-level data types can be directly passed to
-functions encoded in the URL, or assigned to global variables
-before a file is loaded. The PicoLisp application-framework uses
-a somewhat specialised syntax when communicating URLs.
-
-If LISP-P is non-nil, it is assumed that the buffer-content of
-the URL buffer is valid Emacs Lisp that can be processed by
-`read-from-string' and can be returned as a lisp
-object (typically a list), otherwise the buffer-content is
-returned 'as-is' as buffer-string without properties."
-  (let* ((base-url (or hostpath iorg-default-host-path))
-         (url-no-args
-          (concat base-url "/" path))
-         (url (if args
-                  (concat url-no-args
-                          "?"
-                          (mapconcat 'identity args "&"))
-                url-no-args))
-         (buf (with-current-buffer
-                  (url-retrieve-synchronously url)
-                (buffer-substring-no-properties
-                 (point-min) (point-max)))))
-    (if LISP-P
-        (car (read-from-string buf))
-      buf)))
 
 (defun iorg--add-elem-id (tree)
   "Add ':elem-id' property to each element of parse TREE."
@@ -346,6 +269,87 @@ consult their doc-strings for more information."
 ;; (defun iorg-pico-to-org ()
 ;;   "")
 
+;; *** Query Database
+
+(defun iorg-retrieve-url(path &optional LISP-P hostpath &rest args)
+  "Generic function for calling the iOrg server from Emacs.
+
+The PicoLisp application server uses a slightly specialized syntax when
+communicating URLs to and from a client. The PATH part of an URL - which
+remains when
+
+- the preceding protocol, host and port specifications (HOSTPATH)
+
+- and the trailing question mark plus arguments (ARGS)
+
+are stripped off - is interpreted according so some rules. The most prominent
+ones are:
+
+- If a path starts with an exclamation-mark ('!'), the rest (without the '!')
+  is taken as the name of a Lisp function to be called. All arguments
+  following the question mark are passed to that function.
+
+- If a path ends with \".l\" (a dot and a lower case 'L'), it is taken as a
+  Lisp source file name to be (load)ed. This is the most common case, and we
+  use it in our example \"project.l\".
+
+- If the extension of a file name matches an entry in the global mime type
+  table *Mimes, the file is sent to the client with mime-type and max-age
+  values taken from that table.
+
+- Otherwise, the file is sent to the client with a mime-type of
+  \"application/octet-stream\" and a max-age of 1 second.
+
+An application is free to extend or modify the *Mimes table with the mime
+function. For example
+
+#+begin_src picolisp
+ (mime \"doc\" \"application/msword\" 60)
+#+end_src
+
+defines a new mime type with a max-age of one minute.
+
+Argument values (ARGS) in URLs, following the path and the
+question mark, are encoded in such a way that Lisp data types are
+preserved:
+
+- An internal symbol starts with a dollar sign ('$')
+
+- A number starts with a plus sign ('+')
+
+- An external (database) symbol starts with dash ('-')
+
+- A list (one level only) is encoded with underscores ('_')
+
+- Otherwise, it is a transient symbol (a plain string)
+
+In that way, high-level data types can be directly passed to
+functions encoded in the URL, or assigned to global variables
+before a file is loaded. The PicoLisp application-framework uses
+a somewhat specialised syntax when communicating URLs.
+
+If LISP-P is non-nil, it is assumed that the buffer-content of
+the URL buffer is valid Emacs Lisp that can be processed by
+`read-from-string' and can be returned as a lisp
+object (typically a list), otherwise the buffer-content is
+returned 'as-is' as buffer-string without properties."
+  (let* ((base-url (or hostpath iorg-default-host-path))
+         (url-no-args
+          (concat base-url "/" path))
+         (url (if args
+                  (concat url-no-args
+                          "?"
+                          (mapconcat 'identity args "&"))
+                url-no-args))
+         (buf (with-current-buffer
+                  (url-retrieve-synchronously url)
+                (buffer-substring-no-properties
+                 (point-min) (point-max)))))
+    (if LISP-P
+        (car (read-from-string buf))
+      buf)))
+
+;; *** Edit Database Objects
 
 ;; ** Commands
 

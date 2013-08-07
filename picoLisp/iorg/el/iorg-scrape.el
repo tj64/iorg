@@ -128,7 +128,7 @@ There is a mode hook, and a few commands:
 
 ;; *** Label/Field-Count Based Functions
 
-(defun iorg-scrape-generic (cmd cnt &optional strg proc)
+(defun iorg-scrape-generic (cmd &optional cnt strg proc)
   "Generic workhorse function for iOrg scrape.
 CMD is the function from `scrape.l' to be called, CNT is the
 number of the label/field to be addressed, STRG is the string to
@@ -144,19 +144,25 @@ enter in a field, and PROC is the PicoLisp process to use."
           "a string to enter must be given."))
       (comint-simple-send
        process
-       (format "(%s %s %s %s)"
-               cmd
-               (if fld cnt "NIL")
-               (or (concat "\"" strg "\"") "")
-               (if fld "" cnt)))
+       (cond
+        ((and cmd cnt strg fld)
+         (format "(%s %s %S)" cmd cnt strg))
+        ((and cmd cnt fld)
+         (format "(%s %s)" cmd cnt))
+        ((and cmd cnt)
+         (format "(%s NIL %s)" cmd cnt))
+        ((and cmd
+              (member cmd '("scrape" "display" "displayAll")))
+         (format "(%s)" cmd))
+        (t (error "No valid scrape command specified"))))
       (unless
           (or
            (string= cmd "value")
+           (string= cmd "display")
            (string= cmd "displayAll"))
         (comint-simple-send
          process
          (format "%s" '(displayAll)))))))
-
 
 (defun iorg-scrape-server-filter (process output)
   "Filter function for iorg-scrape-server."
@@ -295,7 +301,7 @@ installation is used to start the scrape server."
           (make-network-process
            :name "scrape-server"
            :host "localhost"
-           :service 16789
+           :service 6789
            :filter 'iorg-scrape-server-filter))
     ;; do initial setup of scrape-server for
     ;; scraping the specified iOrg web-application
@@ -444,6 +450,78 @@ be entered if CMD is `enter'."
       (read-string "String: ")
       (read-buffer "Process Buffer: ")))))
   (iorg-scrape-generic "enter" cnt strg proc-buf))
+
+(defun iorg-scrape-kbd-macro-to-picolisp (&optional kbd-macro-as-vector)
+  "Convert KBD-MACRO-AS-VECTOR to PicoLisp code.
+
+Unless KBD-MACRO-AS-VECTOR is given, `last-kbd-macro' is used.
+Otherwise the name of a variable that holds a vector with
+keystrokes, recorded during a iOrg quick-scrape session in the
+REPL, should be entered.
+
+The use-case for this function is 'on-the-fly' creation of a
+PicoLisp program-snippet that does all the necessary navigating
+with `click' and `press' within an iOrg web-application until the
+target page is reached, where another PicoLisp command, like e.g.
+`value' or `enter', is executed. This potential next command
+after recording of the kbd-macro stops should be responsable for
+the real action your want to take. The kbd-macro only records the
+path to the page/form where you want to trigger that action.
+
+Do not use 'd', i.e. `displayAll', when recording the kbd-macro.
+The commands `iorg-scrape-click' and `iorg-scrape-press' will
+display the current page anyway when they are finished."
+  (interactive
+   (cond
+    ((equal current-prefix-arg nil)
+     (list last-kbd-macro))
+    (t
+     (list
+      read-string
+      "Variable that holds vector with key sequence: "))))
+  (let* ((kbd-macro-as-lst
+          (mapcar 'identity kbd-macro-as-vector))
+         (key-lst (mapcar
+                   (lambda (key)
+                     (and (numberp key)
+                          (make-string 1 key)))
+                   kbd-macro-as-lst))
+         (cnt nil)
+         (result (concat
+                  "(prog "
+                  (mapconcat
+                   (lambda (key)
+                     (let ((pico-expr ""))
+                       (cond
+                        ((and (string-match "[0-9]" key) (not cnt))
+                         (setq cnt key) nil)
+                        ((and (string-match "[0-9]" key) cnt)
+                         (setq cnt (concat cnt key)) nil)
+                        ((and (string-match "[cp]" key) cnt)
+                         (cond
+                          ((string= key "c")
+                           (setq pico-expr (format "(click NIL %s)" cnt)))
+                          ((string= key "p")
+                           (setq pico-expr (format "(press NIL %s)" cnt))))
+                         (setq cnt nil)
+                         pico-expr)
+                        ((and (string-match "[ev]" key) cnt)
+                         (cond
+                          ((string= key "v")
+                           (setq pico-expr (format "(value %s)" cnt)))
+                          ((string= key "e")
+                           (setq pico-expr (format "(enter %s %s)" cnt ""))))
+                         (setq cnt nil)
+                         pico-expr))))
+                   ;; ((and (string-match "[[:word:]]" key) (not cnt))
+                   ;;  (concat strg key)))
+                   (delq nil key-lst) "")
+                  ")")))
+    (message "%s" result)
+    result))
+
+    ;; (message "%S" key-lst)))
+
 
 ;; *** Label/Field-Name Based Commands
 

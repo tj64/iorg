@@ -29,8 +29,9 @@
 
 (load
    "@lib/http.l" "@lib/xhtml.l" "@lib/form.l" "@lib/tex.l" "@lib/adm.l"
-   "@lib/socialshareprivacy/lib.l"
-   "@lib/boss.l" )
+   "@lib/socialshareprivacy/lib.l" 
+   "@lib/boss.l"
+   "@iorg/lib.l" )
 
 ## FIXME during development, set session timeout to 4h
 (patch login `(* 3600 1000) `(* 4 3600 1000))
@@ -75,13 +76,5 @@
    (pw 12)
    (rollback)
    (server *IorgPort "!start") )
-
-## # Start Emacs Server named "iorg-server"
-## (call
-##    'emacs
-##    "-Q"
-##    "--daemon=iorg-server"
-##    (pack "--directory=" "@/iorg/el")
-##    "--eval='(require 'ox)'" )
 
 ## iorg/main.l ends here
