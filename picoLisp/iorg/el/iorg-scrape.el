@@ -819,13 +819,13 @@ is loaded again. In the latter case it will be reset to
       'iorg-scrape-press)
     (define-key map "\C-c\C-cv"
       'iorg-scrape-value)
-    (define-key map "\C-c\C-ce"
+    (define-key map "\C-c\C-cm"
       'iorg-scrape-enter)
     ;; (define-key map "\C-c\C-ci"
     ;;   'iorg-dired)
-    (define-key map "\C-c\C-cE"
+    (define-key map "\C-c\C-ce"
       'iorg-edit)
-    (define-key map "\C-c\C-cQ"
+    (define-key map "\C-c\C-cq"
       'iorg-quick-scrape-mode)
     (define-key map "\C-c\C-c\C-d"
       'iorg-scrape-display-all)
@@ -841,13 +841,13 @@ is loaded again. In the latter case it will be reset to
       'iorg-scrape-press)
     (define-key map "\C-c\C-c\C-v"
       'iorg-scrape-value)
-    (define-key map "\C-c\C-c\C-e"
+    (define-key map "\C-c\C-c\C-m"
       'iorg-scrape-enter)
     ;; (define-key map "\C-c\C-c\C-i"
     ;;   'iorg-dired)
-    (define-key map "\C-c\C-c\C-E"
+    (define-key map "\C-c\C-c\C-e"
       'iorg-edit)
-    (define-key map "\C-c\C-c\C-Q"
+    (define-key map "\C-c\C-c\C-q"
       'iorg-quick-scrape-mode)
     ;; (define-key map [menu-bar iorg-scrape]
     ;;   (cons (purecopy "iOrg-Scrape") iorg-scrape-menu-map))
@@ -869,13 +869,13 @@ is loaded again. In the latter case it will be reset to
       'iorg-scrape-press)
     (define-key map "v"
       'iorg-scrape-value)
-    (define-key map "e"
+    (define-key map "m"
       'iorg-scrape-enter)
     ;; (define-key map "i"
     ;;   'iorg-dired)
-    (define-key map "E"
+    (define-key map "e"
       'iorg-edit)
-    (define-key map "S"
+    (define-key map "q"
       'iorg-scrape-mode)
     ;; (define-key map [menu-bar iorg-quick-scrape]
     ;;   (cons (purecopy "Quick-Scrape") iorg-quick-0
