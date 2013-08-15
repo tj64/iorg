@@ -8,7 +8,16 @@
 
 
 * NEXT Version 0.9
-** write ox-iorg.el
+** TODO fix scrape-server issue "IP address already bind"
+   [2013-08-15 Do 22:04]
+
+#+begin_quote
+[/home/tj/git/iorg/picoLisp/iorg/scrape-server.l:7] !? (port 6789)
+IP bind error: Address already in use
+? 
+#+end_quote
+
+** TODO write ox-iorg.el
    [2013-08-15 Do 21:45]
 *** TODO write other templates (table.l, checkboxes.l, plain-list.l ...??)
     [2013-08-15 Do 21:50]
@@ -24,7 +33,11 @@
    [2013-08-15 Do 21:41]
 ** TODO define core-functions: iorg-[login,logout,edit,delete]
    [2013-08-15 Do 21:40]
-** TODO fix issues with calling `iorg-scrape-start-server
+** DONE fix issues with calling `iorg-scrape-start-server
+   CLOSED: [2013-08-16 Fr 00:56]
+   :LOGBOOK:
+   - State "DONE"       from "TODO"       [2013-08-16 Fr 00:56]
+   :END:
    [2013-08-15 Do 21:38]
 ** TODO make *iorg-serv-proc* buffer names unique
    [2013-08-15 Do 21:35]

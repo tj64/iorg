@@ -133,8 +133,20 @@ There is a mode hook, and a few commands:
 CMD is the function from `scrape.l' to be called, CNT is the
 number of the label/field to be addressed, STRG is the string to
 enter in a field, and PROC is the PicoLisp process to use."
-  (let ((process (or proc (get-buffer-process (current-buffer))))
-        (fld (or (string= cmd "enter") (string= cmd "value"))))
+  (let* ((process (or proc (get-buffer-process (current-buffer))))
+         (proc-buf (process-buffer process))
+         (fld (or (string= cmd "enter") (string= cmd "value")))
+         (cmd-strg (cond
+                    ((and cmd cnt strg fld)
+                     (format "(%s %s %S)" cmd cnt strg))
+                    ((and cmd cnt fld)
+                     (format "(%s %s)" cmd cnt))
+                    ((and cmd cnt)
+                     (format "(%s NIL %s)" cmd cnt))
+                    ((and cmd
+                          (member cmd '("scrape" "display" "displayAll")))
+                     (format "(%s)" cmd))
+                    (t (error "No valid scrape command specified")))))
     (if (or
          (and strg (not (string= cmd "enter")))
          (and (not strg) (string= cmd "enter")))
@@ -142,27 +154,19 @@ enter in a field, and PROC is the PicoLisp process to use."
          (concat
           "When command is \"enter\" - and only then - "
           "a string to enter must be given."))
-      (comint-simple-send
-       process
-       (cond
-        ((and cmd cnt strg fld)
-         (format "(%s %s %S)" cmd cnt strg))
-        ((and cmd cnt fld)
-         (format "(%s %s)" cmd cnt))
-        ((and cmd cnt)
-         (format "(%s NIL %s)" cmd cnt))
-        ((and cmd
-              (member cmd '("scrape" "display" "displayAll")))
-         (format "(%s)" cmd))
-        (t (error "No valid scrape command specified"))))
+      (if proc-buf
+          (comint-simple-send process cmd-strg)
+        (process-send-string process cmd-strg))
       (unless
           (or
            (string= cmd "value")
            (string= cmd "display")
            (string= cmd "displayAll"))
-        (comint-simple-send
-         process
-         (format "%s" '(displayAll)))))))
+        (if proc-buf
+            (comint-simple-send
+             process (format "(%s)" "displayAll"))
+          (process-send-string
+           process (format "(%s)" "displayAll")))))))
 
 (defun iorg-scrape-server-filter (process output)
   "Filter function for iorg-scrape-server."
@@ -759,18 +763,18 @@ Returns the original unchanged output-string."
 ;;      process
 ;;      (format "(click %s %s %s)" (or fld "") str (or cnt "")))))
 
-(defun iorg-scrape-display (&optional proc)
-  "Send `display' to inferior PicoLisp process."
-  (interactive
-   (cond
-    ((equal current-prefix-arg nil) nil)
-    (t (list (read-buffer "Process Buffer: ")))))
-  (let ((process (if proc-buf
-                     (get-buffer-process proc-buf)
-                   (get-buffer-process (current-buffer)))))
-    (comint-simple-send
-     process
-     (format "%s" '(display)))))
+;; (defun iorg-scrape-display (&optional proc)
+;;   "Send `display' to inferior PicoLisp process."
+;;   (interactive
+;;    (cond
+;;     ((equal current-prefix-arg nil) nil)
+;;     (t (list (read-buffer "Process Buffer: ")))))
+;;   (let ((process (if proc-buf
+;;                      (get-buffer-process proc-buf)
+;;                    (get-buffer-process (current-buffer)))))
+;;     (comint-simple-send
+;;      process
+;;      (format "%s" '(display)))))
 
 
 (defun iorg-set-default-host-path (path)
