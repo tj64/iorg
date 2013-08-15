@@ -295,6 +295,7 @@ installation is used to start the scrape server."
      ;; FIXME relative pathname!
      "/home/tj/git/iorg/picoLisp/iorg/scrape-server.l")
     ;; get a network-connection object for the TCP server
+    (sit-for 1 'NODISP)
     (setq iorg-scrape-server-process
           ;; host and port specified in
           ;; `iorg-scrape-server' shell-script
@@ -356,6 +357,15 @@ be entered if CMD is `enter'."
         (format "(%s %s)\n" cmd cnt))
        (cmd (format "(%s)\n" cmd))
        (t (error "No valid scrape command specified."))))))
+
+
+(defun iorg-scrape-display (&optional proc)
+  "Send `display' to inferior PicoLisp process."
+  (interactive
+   (cond
+    ((equal current-prefix-arg nil) nil)
+    (t (list (read-buffer "Process Buffer: ")))))
+  (iorg-scrape-generic "display" nil nil proc))
 
 (defun iorg-scrape-display-all (&optional proc)
   "Send `displayAll' to inferior PicoLisp process."
