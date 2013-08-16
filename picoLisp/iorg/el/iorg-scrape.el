@@ -373,7 +373,7 @@ be entered if CMD is `enter'."
   (let ((process (cond
                   ((not proc-or-buf)
                     (get-buffer-process (current-buffer)))
-                  ((buffer-p proc-or-buf)
+                  ((bufferp proc-or-buf)
                    (get-buffer-process proc-or-buf))
                   ((processp proc-or-buf) proc-or-buf)
                   (t (user-error "No process or process-buffer specified")))))
@@ -388,7 +388,7 @@ be entered if CMD is `enter'."
   (let ((process (cond
                   ((not proc-or-buf)
                     (get-buffer-process (current-buffer)))
-                  ((buffer-p proc-or-buf)
+                  ((bufferp proc-or-buf)
                    (get-buffer-process proc-or-buf))
                   ((processp proc-or-buf) proc-or-buf)
                   (t (user-error "No process or process-buffer specified")))))
@@ -408,7 +408,7 @@ be entered if CMD is `enter'."
   (let ((process (cond
                   ((not proc-or-buf)
                     (get-buffer-process (current-buffer)))
-                  ((buffer-p proc-or-buf)
+                  ((bufferp proc-or-buf)
                    (get-buffer-process proc-or-buf))
                   ((processp proc-or-buf) proc-or-buf)
                   (t (error "No process or process-buffer specified")))))
@@ -434,14 +434,14 @@ be entered if CMD is `enter'."
   (let ((process (cond
                   ((not proc-or-buf)
                     (get-buffer-process (current-buffer)))
-                  ((buffer-p proc-or-buf)
+                  ((bufferp proc-or-buf)
                    (get-buffer-process proc-or-buf))
                   ((processp proc-or-buf) proc-or-buf)
                   (t (user-error "No process or process-buffer specified")))))
-  (iorg-scrape-generic "click" nil nil process)))
+  (iorg-scrape-generic "click" cnt nil process)))
 
 
-(defun iorg-scrape-press (cnt &optional proc-or-buf)
+ (defun iorg-scrape-press (cnt &optional proc-or-buf)
   "Send `press' to inferior PicoLisp process."
   (interactive
    (cond
@@ -458,11 +458,11 @@ be entered if CMD is `enter'."
   (let ((process (cond
                   ((not proc-or-buf)
                     (get-buffer-process (current-buffer)))
-                  ((buffer-p proc-or-buf)
+                  ((bufferp proc-or-buf)
                    (get-buffer-process proc-or-buf))
                   ((processp proc-or-buf) proc-or-buf)
                   (t (user-error "No process or process-buffer specified")))))
-  (iorg-scrape-generic "press" nil nil process)))
+  (iorg-scrape-generic "press" cnt nil process)))
 
 (defun iorg-scrape-value (cnt &optional proc-or-buf)
   "Send `value' to inferior PicoLisp process."
@@ -481,11 +481,11 @@ be entered if CMD is `enter'."
   (let ((process (cond
                   ((not proc-or-buf)
                     (get-buffer-process (current-buffer)))
-                  ((buffer-p proc-or-buf)
+                  ((bufferp proc-or-buf)
                    (get-buffer-process proc-or-buf))
                   ((processp proc-or-buf) proc-or-buf)
                   (t (user-error "No process or process-buffer specified")))))
-  (iorg-scrape-generic "value" nil nil process)))
+  (iorg-scrape-generic "value" cnt nil process)))
 
 (defun iorg-scrape-enter (cnt strg &optional proc-or-buf)
   "Send `enter' to inferior PicoLisp process."
@@ -507,7 +507,7 @@ be entered if CMD is `enter'."
   (let ((process (cond
                   ((not proc-or-buf)
                     (get-buffer-process (current-buffer)))
-                  ((buffer-p proc-or-buf)
+                  ((bufferp proc-or-buf)
                    (get-buffer-process proc-or-buf))
                   ((processp proc-or-buf) proc-or-buf)
                   (t (user-error "No process or process-buffer specified")))))
