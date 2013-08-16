@@ -8,6 +8,11 @@
 
 
 * NEXT Version 0.9
+** TODO secure TCP server: ckeck .pw file, check for tty/localhost, cmd memq allowed?
+   [2013-08-16 Fr 16:14]
+
+look at bin/psh and lib/http.l (-> function psh)
+
 ** TODO fix scrape-server issue "IP address already bind"
    [2013-08-15 Do 22:04]
 
