@@ -178,6 +178,39 @@
       (put> This 'mt (mimetype (blob This 'd))) ) )
 
 
+## ** Org elements
+
+(class +iorgElement +Entity)
+(rel :begin (+Number))               # Beginning buffer position
+(rel :end (+Number))                 # Ending buffer position
+(rel :post-blank (+Number))          # number trailing blank lines/spaces
+(rel :parent (+Link))                # number trailing blank lines/spaces
+
+(dm url> ())
+(dm upd> ())
+(dm diff> ())
+(dm interpret> ())
+
+
+(class +Headline +element)
+(rel :raw-value (+String))               # Beginning buffer position
+(rel :title (+String))                 # Ending buffer position
+(rel :alt-title (+String))          # number trailing blank lines/spaces
+(rel :pre-blank (+Number))                # number trailing blank lines/spaces
+(rel :hiddpenp (+Bool))                # number trailing blank lines/spaces
+(rel :contents-begin (+Number))           # number trailing blank lines/spaces
+(rel :contents-end (+Number))           # number trailing blank lines/spaces
+(rel :level (+Number))           # number trailing blank lines/spaces
+(rel :priority (+String))           # number trailing blank lines/spaces
+(rel :contents-begin (+Number))           # number trailing blank lines/spaces
+
+(dm url> ())
+(dm upd> ())
+(dm diff> ())
+(dm interpret> ())
+
+
+
 ## * Database sizes
 (dbs
    (3 +Role +User (+User pw))          # 512 Prevalent objects

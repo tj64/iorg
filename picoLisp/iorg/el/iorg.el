@@ -69,14 +69,20 @@ There is a mode hook, and a few commands:
   (append org-element-all-elements org-element-all-objects)
   "Default types to be selected by `org-element-map'.")
 
-(defvar iorg-default-host-path "http://localhost:5000"
-  "Default path (protocol, host, port) for iOrg server.")
+;; FIXME all types covered?
+(defvar iorg-all-types-no-text
+  (append '(org-data) org-element-all-elements
+  org-element-all-objects)
+  "Types to be selected by `org-element-map'.")
 
 ;; FIXME all types covered?
 (defvar iorg-all-types
   (append '(org-data) org-element-all-elements
   org-element-all-objects '(plain-text))
-  "Default types to be selected by `org-element-map'.")
+  "Types to be selected by `org-element-map'.")
+
+(defvar iorg-default-host-path "http://localhost:5000"
+  "Default path (protocol, host, port) for iOrg server.")
 
 ;; ** Hooks
 ;; ** Customs
@@ -84,29 +90,61 @@ There is a mode hook, and a few commands:
 ;; *** Custom Vars
 ;; * Functions
 ;; ** Non-interactive Functions
-;; *** Helper Functions 
+;; *** Helper Functions
 
 (defsubst iorg--elisp-plist-p (lst)
   "Return non-nil if LST is a list and its car a keyword."
   (and (listp lst) (keywordp (car lst))))
 
-(defun iorg--add-elem-id (tree)
-  "Add ':elem-id' property to each element of parse TREE."
+(defun iorg--add-elem-id (tree buffer)
+  "Add ':elem-id' property to each element of parse TREE.
+While on it, add some environmental properties of the parsed
+BUFFER to element type `org-data'."
   (let ((counter 1))
-    (org-element-map tree (append '(org-data) iorg-default-map-types)
-      (lambda (elem)
-        (unless (eq (org-element-type elem) 'org-data)
-          (org-element-put-property elem :elem-id counter))
-        (setq counter (1+ counter)))))
+    (org-element-map tree iorg-all-types-no-text
+      (lambda (--elem)
+        (if (eq (org-element-type --elem) 'org-data)
+            (progn
+              (org-element-put-property --elem :elem-id 0)
+              (when (require 'ox.el nil 'NOERROR)
+                (let* ((env-attr
+                       (with-current-buffer buffer
+                         (org-export-get-environment)))
+                      (buf-attr
+                       (with-current-buffer buffer
+                         (org-export--get-buffer-attributes)))
+                      (author (plist-get env-attr :author))
+                      (descr (plist-get env-attr :description))
+                      (infile (plist-get buf-attr :input-file)))
+                  (org-element-put-property
+                   --elem :ID (make-temp-name
+                               (file-name-nondirectory
+                                (file-name-sans-extension infile))))
+                  (org-element-put-property
+                   --elem :input-file infile)
+                  (org-element-put-property
+                   --elem :date (plist-get env-attr :date))
+                  (org-element-put-property
+                   --elem :author (when author
+                                    (substring-no-properties author)))
+                  (org-element-put-property
+                   --elem :creator (plist-get env-attr :creator))
+                  (org-element-put-property
+                   --elem :email (plist-get env-attr :email))
+                  (org-element-put-property
+                   --elem :description (when descr
+                                         (substring-no-properties descr))))))
+          (org-element-put-property --elem :elem-id counter)
+          (setq counter (1+ counter))))))
   tree)
 
 (defun iorg--unwind-circular-list (tree)
   "Replace circular links with unique ID's in parse TREE."
     (org-element-map tree iorg-all-types
-      (lambda (elem)
+      (lambda (--elem)
         (org-element-put-property
-         elem :parent
-         (let ((par (org-element-property :parent elem)))
+         --elem :parent
+         (let ((par (org-element-property :parent --elem)))
            (if (eq (org-element-type par) 'org-data)
                0
              (org-element-property :elem-id par))))))
@@ -158,27 +196,28 @@ into a non-circular list by applying `iorg--add-elem-id' and
 compliant form."
   (org-element-map
       tree
-      iorg-all-types
+      iorg-all-types-no-text
       ;; iorg-default-map-types
-    (lambda (elem)
+    (lambda (--elem)
       ;; (let ((type (org-element-type elem)))
       ;;   ;; (and (not (eq type 'plain-text))
       ;;        ;; (not (eq type 'org-data))
-      (let* ((plist (cadr elem))
+      (let* ((plist (cadr --elem))
              (props (if (iorg--elisp-plist-p plist)
                         (iorg--elisp-plist-keys plist)
                       (error "%s is not an Emacs Lisp plist"
                              plist))))
-        (message "%s"
-        (cons (car elem)
+        ;; (message "%s"
+        (cons (car --elem)
               (list
                (mapcar
-                (lambda (prop)
-                  (cons (org-element-property prop elem) prop))
+                (lambda (--prop)
+                  (cons (org-element-property --prop --elem) --prop))
                 props)))))))
   ;; 'iorg--transform-elements-plist-to-picolisp-plist)
-  (message "%s" tree)
-  tree)
+  ;; (message "%s" tree)
+
+  ;; tree)
 
 ;; (defun iorg--transform-elements-plist-to-picolisp-plist (elem)
 ;;   "Convert elisp plist of ELEM into PicoLisp plist."
@@ -201,10 +240,10 @@ compliant form."
   (&optional data buffer-or-file &rest args)
   "Converts an org-element parse-tree into an alist.
 
-Optional argument DATA should should be part of or an entire
-parse-tree as returned by `org-element-parse-buffer', optional
-argument BUFFER-OR-FILE is either the name of an existing
-Org-mode buffer or the name of an Org-mode file.
+Optional argument DATA should be part of or an entire parse-tree
+as returned by `org-element-parse-buffer', optional argument
+BUFFER-OR-FILE is either the name of an existing Org-mode buffer
+or the name of an Org-mode file.
 
 ARGS, if given, can be any combination of the following key/value
 pairs (here given with example values):
@@ -219,9 +258,9 @@ pairs (here given with example values):
   :no-recursion '(headline table)
   :with-affiliated t
 
-Since `iorg-parsetree-to-alist' is just a convenience function
-built on top of `org-element-parse-buffer' and `org-element-map',
-the arguments are the same as for these two functions, so you can
+Since `iorg-org-to-pico' is just a convenience function built on
+top of `org-element-parse-buffer' and `org-element-map', the
+arguments are the same as for these two functions, so you can
 consult their doc-strings for more information."
   (let* ((map? (and args
                     (or
@@ -264,7 +303,8 @@ consult their doc-strings for more information."
         (if map?
             (org-element-map
                 dat typ fun inf 1st-match no-recur with-affil)
-          dat))))))))
+          dat)
+        buf)))))))
 
 ;; (defun iorg-pico-to-org ()
 ;;   "")
@@ -362,6 +402,13 @@ is loaded again. In the latter case it will be reset to
 \"http://localhost:5000\"."
  (interactive "sURL (e.g. http://localhost:5000): ")
  (setq iorg-default-host-path path))
+
+
+;; TODO:
+;; 1. prompt user for target (no prefix) or target and label (with prefix)
+;; 2. prompt user for url (with other prefix)
+;; 3. add var iorg-default-path and fun iorg-set-default-path (for url)
+;; 4. offer completion for target by extracting all unique docs from url
 
 ;; (defun iorg-insert-internal-link ()
 ;;   "Insert internal-link in PicoLisp-Wiki syntax.
