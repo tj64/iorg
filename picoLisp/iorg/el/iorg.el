@@ -180,8 +180,8 @@ environmental properties."
              (org-element-property :elem-id par))))))
     tree)
 
-(defun iorg--elisp-plist-keys (plist)
-  "Return a list with all keywords in PLIST."
+(defun iorg--collect-plist-keys (plist)
+  "Return a list with all keywords in Emacs Lisp PLIST."
   (and (iorg--elisp-plist-p plist)
        (remove
         t
@@ -234,7 +234,7 @@ compliant form."
       ;;        ;; (not (eq type 'org-data))
       (let* ((plist (cadr --elem))
              (props (if (iorg--elisp-plist-p plist)
-                        (iorg--elisp-plist-keys plist)
+                        (iorg--collect-plist-keys plist)
                       (error "%s is not an Emacs Lisp plist"
                              plist))))
         ;; (message "%s"
@@ -257,7 +257,7 @@ compliant form."
 ;;          ;; (not (eq type 'org-data))
 ;;          (let* ((plist (cadr elem))
 ;;                 (props (if (iorg--elisp-plist-p plist)
-;;                            (iorg--elisp-plist-keys plist)
+;;                            (iorg--collect-plist-keys plist)
 ;;                          (error "%s is not an Emacs Lisp plist"
 ;;                                 plist))))
 ;;            (cons (car elem)
