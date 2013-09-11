@@ -96,13 +96,45 @@ There is a mode hook, and a few commands:
   "Return non-nil if LST is a list and its car a keyword."
   (and (listp lst) (keywordp (car lst))))
 
-(defun iorg--add-elem-id (tree buffer)
+(defun iorg--add-elem-id (tree)
   "Add ':elem-id' property to each element of parse TREE."
   (let ((counter 1))
     (org-element-map tree iorg-default-map-types
       (lambda (--elem)
         (org-element-put-property --elem :elem-id counter)
         (setq counter (1+ counter)))))
+  tree)
+
+(defun iorg--collect-children (tree)
+  "Return alist with '(elem-id . parent-id)' pairs.
+The data is collected from parse TREE."
+  (let (child-lst)
+    (org-element-map tree 'headline
+      (lambda (--headline)
+        (push (cons (org-element-property :elem-id --headline)
+                    (org-element-property :parent --headline))
+              child-lst)))
+    child-lst))
+
+(defun iorg--add-children-list (tree)
+  "Add ':children' property to each headline in parse TREE.
+Assumes that all headlines are tagged with an ':elem-id' property
+and that the circular-list read-syntax of the ':parent' attribute
+has been replaced with simple integer values (the :elem-id of the
+elements parent)."
+  (let ((pairs (iorg--collect-children tree)))
+    (org-element-map tree 'headline
+      (lambda (--elem)
+        (org-element-put-property
+         --elem :children
+         (reverse
+          (delq nil 
+                (mapcar
+                 (lambda (--pair)
+                   (and (eq (cdr --pair)
+                            (org-element-property :elem-id --elem))
+                        (car --pair)))
+                 pairs)))))))
   tree)
 
 (defun iorg--tag-org-data-element (tree buffer)
@@ -125,6 +157,7 @@ environmental properties."
                     (concat
                      (file-name-nondirectory
                       (file-name-sans-extension infile)) "_"))
+               :elem-id 0
                :input-file infile
                :date (plist-get env-attr :date)
                :author (when author
