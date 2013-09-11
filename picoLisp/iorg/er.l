@@ -15,7 +15,7 @@
 
 ## ** Comments
 
-## Graphical depiction
+## *** Wiki class hierarchy
 
 ## #+begin_ascii
 ##   nm                      nm   pw  name
@@ -45,8 +45,7 @@
 ##                                              <
 ## #+end_ascii
 
-## * Code
-
+## * PicoLisp Wiki 
 ## ** Markup index
 (class +MupIdx +index)
 
@@ -178,13 +177,14 @@
       (put> This 'mt (mimetype (blob This 'd))) ) )
 
 
+## * iOrg 
 ## ** Org elements
 
-(class +iorgElement +Entity)
+(class +orgElement +Entity)
 (rel :begin (+Number))               # Beginning buffer position
 (rel :end (+Number))                 # Ending buffer position
-(rel :post-blank (+Number))          # number trailing blank lines/spaces
-(rel :parent (+Link))                # number trailing blank lines/spaces
+(rel :post-blank (+Number))          # Number of trailing blank lines/spaces
+(rel :parent (+Link))                # Element/Object containing it
 
 (dm url> ())
 (dm upd> ())
@@ -192,24 +192,33 @@
 (dm interpret> ())
 
 
-(class +Headline +element)
-(rel :raw-value (+String))               # Beginning buffer position
-(rel :title (+String))                 # Ending buffer position
-(rel :alt-title (+String))          # number trailing blank lines/spaces
-(rel :pre-blank (+Number))                # number trailing blank lines/spaces
-(rel :hiddpenp (+Bool))                # number trailing blank lines/spaces
-(rel :contents-begin (+Number))           # number trailing blank lines/spaces
-(rel :contents-end (+Number))           # number trailing blank lines/spaces
-(rel :level (+Number))           # number trailing blank lines/spaces
-(rel :priority (+String))           # number trailing blank lines/spaces
-(rel :contents-begin (+Number))           # number trailing blank lines/spaces
+(class +OrgHeadline +orgElement)
+(rel :raw-value (+String))          # Raw headline text, no stars and tags
+(rel :title (+String))              # Parsed headline text, no stars and tags
+(rel :alt-title (+String))          # Alternative title
+(rel :pre-blank (+Number))          # Number blank lines before content
+(rel :hiddpenp (+Bool))             # Non-nil if headline is hidden
+(rel :contents-begin (+Number)      # Begin content
+(rel :contents-end (+Number))       # End content
+(rel :level (+Number))              # Reduced level of headline
+(rel :priority (+Number))           # Headlines priority as character
+(rel :tags (+List))                 # Headlines tags (without archive tag)
+(rel :todo-keyword (+String))       # TODO keyword without quote/comment
+(rel :todo-type (+String))          # Type of TODO keyword (done or todo)
+(rel :scheduled (+Date))            # SCHEDULED reference (timestamp or NIL)
+(rel :deadline (+Date))             # DEADLINE reference (timestamp or NIL)
+(rel :closed (+Date))               # CLOSED reference (timestamp or NIL)
+(rel :quotedp (+Bool))              # Non-nil if headline contains quote keyword
+(rel :archivedp (+Bool))            # Non-nil if headline has archived tag
+(rel :commentedp (+Bool))           # Non-nil if headline has comment keyword
+(rel :footnote-section-p (+Bool))   # Non-nil if headline is footnote-section
 
 (dm url> ())
 (dm upd> ())
 (dm diff> ())
 (dm interpret> ())
 
-
+## ** iOrg data
 
 ## * Database sizes
 (dbs

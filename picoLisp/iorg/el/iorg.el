@@ -97,46 +97,43 @@ There is a mode hook, and a few commands:
   (and (listp lst) (keywordp (car lst))))
 
 (defun iorg--add-elem-id (tree buffer)
-  "Add ':elem-id' property to each element of parse TREE.
-While on it, add some environmental properties of the parsed
-BUFFER to element type `org-data'."
+  "Add ':elem-id' property to each element of parse TREE."
   (let ((counter 1))
-    (org-element-map tree iorg-all-types-no-text
+    (org-element-map tree iorg-default-map-types
       (lambda (--elem)
-        (if (eq (org-element-type --elem) 'org-data)
-            (progn
-              (org-element-put-property --elem :elem-id 0)
-              (when (require 'ox.el nil 'NOERROR)
-                (let* ((env-attr
-                       (with-current-buffer buffer
-                         (org-export-get-environment)))
-                      (buf-attr
-                       (with-current-buffer buffer
-                         (org-export--get-buffer-attributes)))
-                      (author (plist-get env-attr :author))
-                      (descr (plist-get env-attr :description))
-                      (infile (plist-get buf-attr :input-file)))
-                  (org-element-put-property
-                   --elem :ID (make-temp-name
-                               (file-name-nondirectory
-                                (file-name-sans-extension infile))))
-                  (org-element-put-property
-                   --elem :input-file infile)
-                  (org-element-put-property
-                   --elem :date (plist-get env-attr :date))
-                  (org-element-put-property
-                   --elem :author (when author
-                                    (substring-no-properties author)))
-                  (org-element-put-property
-                   --elem :creator (plist-get env-attr :creator))
-                  (org-element-put-property
-                   --elem :email (plist-get env-attr :email))
-                  (org-element-put-property
-                   --elem :description (when descr
-                                         (substring-no-properties descr))))))
-          (org-element-put-property --elem :elem-id counter)
-          (setq counter (1+ counter))))))
+        (org-element-put-property --elem :elem-id counter)
+        (setq counter (1+ counter)))))
   tree)
+
+(defun iorg--tag-org-data-element (tree buffer)
+  "Add elem-id and some properties to `org-data' element of TREE.
+Added Properties are either related to parsed BUFFER or
+environmental properties."
+  (when (require 'ox nil 'NOERROR)
+    (let* ((env-attr
+            (with-current-buffer buffer
+              (org-export-get-environment)))
+           (buf-attr
+            (with-current-buffer buffer
+              (org-export--get-buffer-attributes)))
+           (author (plist-get env-attr :author))
+           (descr (plist-get env-attr :description))
+           (infile (plist-get buf-attr :input-file)))
+      (setcar (cdr tree)
+              (list
+               :ID (make-temp-name
+                    (concat
+                     (file-name-nondirectory
+                      (file-name-sans-extension infile)) "_"))
+               :input-file infile
+               :date (plist-get env-attr :date)
+               :author (when author
+                         (substring-no-properties (car author)))
+               :creator (plist-get env-attr :creator)
+               :email (plist-get env-attr :email)
+               :description (when descr
+                              (substring-no-properties (car descr))))))
+    tree))
 
 (defun iorg--unwind-circular-list (tree)
   "Replace circular links with unique ID's in parse TREE."
