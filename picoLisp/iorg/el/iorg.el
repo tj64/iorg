@@ -128,7 +128,7 @@ elements parent)."
         (org-element-put-property
          --elem :children
          (reverse
-          (delq nil 
+          (delq nil
                 (mapcar
                  (lambda (--pair)
                    (and (eq (cdr --pair)
@@ -193,40 +193,63 @@ environmental properties."
 (defun iorg--nil-and-t-to-uppercase (tree-as-string)
   "Takes a parse TREE-AS-STRING and upcases nil and t."
   (and (stringp tree-as-string)
-       (replace-regexp-in-string
+        (replace-regexp-in-string
         (concat
-         "\\( t \\|(t \\| t)\\|(t)\\|"
-         " nil \\|(nil \\| nil)\\|(nil)\\)")
-        '(lambda (match)
-           (cond
-            ((string= match " t ")
-             (format "%s" " T "))
-            ((string= match "(t ")
-             (format "%s" "(T "))
-            ((string= match " t)")
-             (format "%s" " T)"))
-            ((string= match "(t)")
-             (format "%s" "(T)"))
-            ((string= match " nil ")
-             (format "%s" " NIL "))
-            ((string= match "(nil ")
-             (format "%s" "(NIL "))
-            ((string= match " nil)")
-             (format "%s" " NIL)"))
-            ((string= match "(nil)")
-             (format "%s" "(NIL)"))))
+         "\\(\\_<t\\_>\\|(t \\| t)\\|(t)\\|^t \\| t$\\|"
+         "\\_<nil\\_>\\|(nil \\| nil)\\|(nil)\\|^nil \\| nil$\\)")
+        'iorg--rep-function-for-nil-and-t
         tree-as-string)))
 
-(defun iorg--fix-text-properties-read-syntax (tree-as-string)
-  "Returns parse TREE-AS-STRING with text-properties read syntax fixed.
-Fixed means, in this case, adjusted for the PicoLisp reader, i.e. with the
-PicoLisp comment character '#' replaced by function `hashtag'."
-  (let ((strg tree-as-string))
-    (and (stringp strg)
-         (setq strg (replace-regexp-in-string
-                     "#(" "(hashtag (" strg))
-         ;; FIXME strg is whole parse-tree!
-         (setq strg (concat strg ")")))))
+(defun iorg--rep-function-for-nil-and-t (match)
+  "Helper function for converting Elisp 'nil' an 't' to PicoLisp syntax.
+MATCH is the match-string to be converted, with 'nil' becoming
+'NIL' and 't' becoming 'T'."
+  (cond
+   ((string= match "t")
+    (format "%s" "T"))
+   ((string= match " t ")
+    (format "%s" " T "))
+   ((string= match " t")
+    (format "%s" " T"))
+   ((string= match "(t ")
+    (format "%s" "(T "))
+   ((string= match " t)")
+    (format "%s" " T)"))
+   ((string= match "(t)")
+    (format "%s" "(T)"))
+   ((string= match "nil")
+    (format "%s" "NIL"))
+   ((string= match " nil ")
+    (format "%s" " NIL "))
+   ((string= match " nil")
+    (format "%s" " NIL"))
+   ((string= match "(nil ")
+    (format "%s" "(NIL "))
+   ((string= match " nil)")
+    (format "%s" " NIL)"))
+   ((string= match "(nil)")
+    (format "%s" "(NIL)"))))
+
+
+(defun iorg--fix-text-properties-read-syntax (tree)
+  "Returns parse TREE as string with text-properties read syntax fixed.
+Fixed means, in this case, adjusted for the PicoLisp reader, i.e.
+with the PicoLisp comment character '#' replaced by PicoLisp
+function `hashtag'. This function, when evaluated in PicoLisp,
+prints a leading '#' in front of its list argument, returning a
+string in the original format of the Emacs Lisp read-syntax for
+text-properties."
+  (let ((txt-prop-regexp
+         (concat
+          "\\([[:space:]]\\|(\\)\\(#(\\)\\(.+?\\)"
+          "\\(:parent #?[[:digit:]]+\\)\\()+\\)")))
+    ;; (with-temp-buffer
+    (with-current-buffer "tmp"
+      (insert (prin1-to-string tree))
+      (goto-char (point-min))
+      (while (re-search-forward txt-prop-regexp nil 'NOERROR)
+        (replace-match "\\1(hashtag '(\\3\\4\\5)"))
+      (buffer-substring-no-properties (point-min) (point-max)))))
 
 ;; FIXME obsolete
 (defun iorg--convert-plists-to-picolisp (tree)
@@ -339,8 +362,6 @@ consult their doc-strings for more information."
          (with-affil (and args (plist-get args :with-affiliated))))
     (iorg--nil-and-t-to-uppercase
      (iorg--fix-text-properties-read-syntax
-      (format
-       "%s"
        (iorg--tag-org-data-element
         (iorg--add-children-list
          ;; (iorg--convert-plists-to-picolisp
@@ -350,7 +371,7 @@ consult their doc-strings for more information."
                (org-element-map
                    dat typ fun inf 1st-match no-recur with-affil)
              dat))))
-        buf))))))
+        buf)))))
 
 ;; (defun iorg-pico-to-org ()
 ;;   "")

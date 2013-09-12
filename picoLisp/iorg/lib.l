@@ -166,10 +166,10 @@
             (format @N)
             (pack @X) ) ) ) )
 
-## Replace Emacs Lisp read syntax for strings with text properties:
-## print a hashtag when evaluated
+## Replacement for Emacs Lisp read syntax for strings with text properties.
+## Print a leading hashtag when evaluated.
 (de hashtag (Lst)
-   (pack "#" Lst) )
+   (pack "#" (sym Lst)) )
 
 ## ** Render document
 
