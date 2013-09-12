@@ -190,9 +190,9 @@ environmental properties."
            (or (not (keywordp --elem)) --elem))
          plist))))
 
-(defun iorg--nil-and-t-to-uppercase (tree)
-  "Takes a parse TREE as string and upcases nil and t."
-  (and (stringp tree)
+(defun iorg--nil-and-t-to-uppercase (tree-as-string)
+  "Takes a parse TREE-AS-STRING and upcases nil and t."
+  (and (stringp tree-as-string)
        (replace-regexp-in-string
         (concat
          "\\( t \\|(t \\| t)\\|(t)\\|"
@@ -215,8 +215,20 @@ environmental properties."
              (format "%s" " NIL)"))
             ((string= match "(nil)")
              (format "%s" "(NIL)"))))
-        tree)))
+        tree-as-string)))
 
+(defun iorg--fix-text-properties-read-syntax (tree-as-string)
+  "Returns parse TREE-AS-STRING with text-properties read syntax fixed.
+Fixed means, in this case, adjusted for the PicoLisp reader, i.e. with the
+PicoLisp comment character '#' replaced by function `hashtag'."
+  (let ((strg tree-as-string))
+    (and (stringp strg)
+         (setq strg (replace-regexp-in-string
+                     "#(" "(hashtag (" strg))
+         ;; FIXME strg is whole parse-tree!
+         (setq strg (concat strg ")")))))
+
+;; FIXME obsolete
 (defun iorg--convert-plists-to-picolisp (tree)
   "Convert all elements plists in TREE to PicosLisp plists.
 
@@ -326,15 +338,19 @@ consult their doc-strings for more information."
          (no-recur (and args (plist-get args :no-recursion)))
          (with-affil (and args (plist-get args :with-affiliated))))
     (iorg--nil-and-t-to-uppercase
-     (format "%s"
-     (iorg--convert-plists-to-picolisp
-      (iorg--unwind-circular-list
-       (iorg--add-elem-id
-        (if map?
-            (org-element-map
-                dat typ fun inf 1st-match no-recur with-affil)
-          dat)
-        buf)))))))
+     (iorg--fix-text-properties-read-syntax
+      (format
+       "%s"
+       (iorg--tag-org-data-element
+        (iorg--add-children-list
+         ;; (iorg--convert-plists-to-picolisp
+         (iorg--unwind-circular-list
+          (iorg--add-elem-id
+           (if map?
+               (org-element-map
+                   dat typ fun inf 1st-match no-recur with-affil)
+             dat))))
+        buf))))))
 
 ;; (defun iorg-pico-to-org ()
 ;;   "")
