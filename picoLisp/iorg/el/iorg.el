@@ -190,16 +190,20 @@ environmental properties."
            (or (not (keywordp --elem)) --elem))
          plist))))
 
+;; FIXME "\\(\\_<t\\_>\\|(t)\\) good enough?
 (defun iorg--nil-and-t-to-uppercase (tree-as-string)
   "Takes a parse TREE-AS-STRING and upcases nil and t."
   (and (stringp tree-as-string)
         (replace-regexp-in-string
         (concat
-         "\\(\\_<t\\_>\\|(t \\| t)\\|(t)\\|^t \\| t$\\|"
-         "\\_<nil\\_>\\|(nil \\| nil)\\|(nil)\\|^nil \\| nil$\\)")
+         ;; "\\(\\_<t\\_>\\|(t \\| t)\\|(t)\\|^t \\| t$\\|"
+         ;; "\\_<nil\\_>\\|(nil \\| nil)\\|(nil)\\|^nil \\| nil$\\)")
+         "\\(\\_<t\\_>\\|(t)\\|"
+         "\\_<nil\\_>\\|(nil)\\)")
         'iorg--rep-function-for-nil-and-t
         tree-as-string)))
 
+;; FIXME all cases with single leading or trailing space redundant?
 (defun iorg--rep-function-for-nil-and-t (match)
   "Helper function for converting Elisp 'nil' an 't' to PicoLisp syntax.
 MATCH is the match-string to be converted, with 'nil' becoming
@@ -207,26 +211,26 @@ MATCH is the match-string to be converted, with 'nil' becoming
   (cond
    ((string= match "t")
     (format "%s" "T"))
-   ((string= match " t ")
-    (format "%s" " T "))
-   ((string= match " t")
-    (format "%s" " T"))
-   ((string= match "(t ")
-    (format "%s" "(T "))
-   ((string= match " t)")
-    (format "%s" " T)"))
+   ;; ((string= match " t ")
+   ;;  (format "%s" " T "))
+   ;; ((string= match " t")
+   ;;  (format "%s" " T"))
+   ;; ((string= match "(t ")
+   ;;  (format "%s" "(T "))
+   ;; ((string= match " t)")
+   ;;  (format "%s" " T)"))
    ((string= match "(t)")
     (format "%s" "(T)"))
    ((string= match "nil")
     (format "%s" "NIL"))
-   ((string= match " nil ")
-    (format "%s" " NIL "))
-   ((string= match " nil")
-    (format "%s" " NIL"))
-   ((string= match "(nil ")
-    (format "%s" "(NIL "))
-   ((string= match " nil)")
-    (format "%s" " NIL)"))
+   ;; ((string= match " nil ")
+   ;;  (format "%s" " NIL "))
+   ;; ((string= match " nil")
+   ;;  (format "%s" " NIL"))
+   ;; ((string= match "(nil ")
+   ;;  (format "%s" "(NIL "))
+   ;; ((string= match " nil)")
+   ;;  (format "%s" " NIL)"))
    ((string= match "(nil)")
     (format "%s" "(NIL)"))))
 
