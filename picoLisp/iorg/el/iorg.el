@@ -69,16 +69,16 @@ There is a mode hook, and a few commands:
   (append org-element-all-elements org-element-all-objects)
   "Default types to be selected by `org-element-map'.")
 
-;; FIXME all types covered?
-(defvar iorg-all-types-no-text
-  (append '(org-data) org-element-all-elements
-  org-element-all-objects)
-  "Types to be selected by `org-element-map'.")
+;; ;; FIXME all types covered?
+;; (defvar iorg-all-types-no-text
+;;   (append '(org-data) org-element-all-elements
+;;   org-element-all-objects)
+;;   "Types to be selected by `org-element-map'.")
 
 ;; FIXME all types covered?
-(defvar iorg-all-types
-  (append '(org-data) org-element-all-elements
-  org-element-all-objects '(plain-text))
+(defvar iorg-default-map-types-plus-text
+  (append org-element-all-elements org-element-all-objects
+  '(plain-text))
   "Types to be selected by `org-element-map'.")
 
 (defvar iorg-default-host-path "http://localhost:5000"
@@ -170,15 +170,15 @@ environmental properties."
 
 (defun iorg--unwind-circular-list (tree)
   "Replace circular links with unique ID's in parse TREE."
-    (org-element-map tree iorg-all-types
-      (lambda (--elem)
-        (org-element-put-property
-         --elem :parent
-         (let ((par (org-element-property :parent --elem)))
-           (if (eq (org-element-type par) 'org-data)
-               0
-             (org-element-property :elem-id par))))))
-    tree)
+  (org-element-map tree iorg-default-map-types-plus-text
+    (lambda (--elem)
+      (org-element-put-property
+       --elem :parent
+       (let ((par (org-element-property :parent --elem)))
+         ;; (if (eq (org-element-type par) 'org-data)
+         ;;     0
+         (org-element-property :elem-id par)))))
+  tree)
 
 (defun iorg--collect-plist-keys (plist)
   "Return a list with all keywords in Emacs Lisp PLIST."
@@ -205,10 +205,10 @@ MATCH is the match-string to be converted, with 'nil' becoming
   (cond
    ((string= match "t")
     (format "%s" "T"))
-   ((string= match "(t)")
-    (format "%s" "(T)"))
    ((string= match "nil")
     (format "%s" "NIL"))
+   ((string= match "(t)")
+    (format "%s" "(T)"))
    ((string= match "(nil)")
     (format "%s" "(NIL)"))))
 
@@ -242,7 +242,7 @@ into a non-circular list by applying `iorg--add-elem-id' and
 compliant form."
   (org-element-map
       tree
-      iorg-all-types-no-text
+      iorg-default-map-types
       ;; iorg-default-map-types
     (lambda (--elem)
       ;; (let ((type (org-element-type elem)))
@@ -335,7 +335,7 @@ consult their doc-strings for more information."
                   (with-current-buffer buf
                     (org-element-parse-buffer gran vis))))
          (typ (or (and args (plist-get args :types))
-                  iorg-all-types))
+                  iorg-default-map-types-plus-text))
          (fun (or (and args (plist-get args :fun)) 'identity))
          (inf (and args (plist-get args :info)))
          (1st-match (and args (plist-get args :first-match)))
