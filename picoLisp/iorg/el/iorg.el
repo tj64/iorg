@@ -81,6 +81,11 @@ There is a mode hook, and a few commands:
   '(plain-text))
   "Types to be selected by `org-element-map'.")
 
+(defvar iorg-all-map-types
+  (append org-element-all-elements org-element-all-objects
+  '(plain-text) '(structure))
+  "Types to be selected by `org-element-map'.")
+
 (defvar iorg-default-host-path "http://localhost:5000"
   "Default path (protocol, host, port) for iOrg server.")
 
@@ -96,13 +101,17 @@ There is a mode hook, and a few commands:
   "Return non-nil if LST is a list and its car a keyword."
   (and (listp lst) (keywordp (car lst))))
 
-(defun iorg--add-elem-id (tree)
+(defun iorg--tag-elems-with-id-attributes (tree)
   "Add ':elem-id' property to each element of parse TREE."
-  (let ((counter 1))
+  (let ((counter 1)
+        (structure 1))
     (org-element-map tree iorg-default-map-types
       (lambda (--elem)
         (org-element-put-property --elem :elem-id counter)
-        (setq counter (1+ counter)))))
+        (setq counter (1+ counter))
+        (and (eq (org-element-type --elem) 'plain-list)
+             (org-element-put-property --elem :structure-id structure)
+             (setq structure (1+ structure))))))
   tree)
 
 (defun iorg--collect-children (tree)
@@ -159,25 +168,35 @@ environmental properties."
                       (file-name-sans-extension infile)) "_"))
                :elem-id 0
                :input-file infile
-               :date (plist-get env-attr :date)
+               ;; :date (plist-get (cadar (plist-get env-attr :date))
+               ;;              :raw-value)
                :author (when author
                          (substring-no-properties (car author)))
+                         ;; (substring-no-properties author))
                :creator (plist-get env-attr :creator)
                :email (plist-get env-attr :email)
+               ;; :description descr
                :description (when descr
-                              (substring-no-properties (car descr))))))
-    tree))
+                              ;; (substring-no-properties (car descr))))
+                              (substring-no-properties descr))))))
+  tree)
 
 (defun iorg--unwind-circular-list (tree)
   "Replace circular links with unique ID's in parse TREE."
-  (org-element-map tree iorg-default-map-types-plus-text
+  (org-element-map tree iorg-all-map-types
     (lambda (--elem)
-      (org-element-put-property
-       --elem :parent
-       (let ((par (org-element-property :parent --elem)))
-         ;; (if (eq (org-element-type par) 'org-data)
-         ;;     0
-         (org-element-property :elem-id par)))))
+      (let ((par (org-element-property :parent --elem)))
+        (and (eq (org-element-type --elem) 'item)
+             (eq (org-element-type par) 'plain-list)
+             (org-element-put-property
+              --elem :structure
+              (org-element-property :structure-id par)))
+        (org-element-put-property
+         --elem :parent
+         (if (eq (org-element-type par) 'org-data)
+             0
+           (org-element-property :elem-id par)))))
+    nil nil nil 'WITH-AFFILIATED)
   tree)
 
 (defun iorg--collect-plist-keys (plist)
@@ -219,13 +238,20 @@ with the PicoLisp comment character '#' replaced by PicoLisp
 function `hashtag'. This function, when evaluated in PicoLisp,
 prints a leading '#' in front of its list argument, returning a
 string in the original format of the Emacs Lisp read-syntax for
-text-properties."
+text with properties."
   (let ((txt-prop-regexp
          (concat
-          "\\([[:space:]]\\|(\\)\\(#(\\)\\(.+?\\)"
-          "\\(:parent #?[[:digit:]]+\\)\\()+\\)")))
-    ;; (with-temp-buffer
-    (with-current-buffer "tmp"
+          ;; 1st
+          "\\([[:space:]]\\|(\\)"
+          ;; 2nd -> replace 
+          "\\(#(\\)"
+          ;; 3rd
+          "\\(.+?\n?.+?\\)"
+          ;; 4th
+          "\\((:parent\s*\n?#?[[:digit:]]+\\)"
+          ;; 5th
+          "\\()+\\)")))
+    (with-temp-buffer 
       (insert (prin1-to-string tree))
       (goto-char (point-min))
       (while (re-search-forward txt-prop-regexp nil 'NOERROR)
@@ -237,7 +263,7 @@ text-properties."
   "Convert all elements plists in TREE to PicosLisp plists.
 
 Assume TREE is a parse-tree produced by `org-element-parse-buffer' and turned
-into a non-circular list by applying `iorg--add-elem-id' and
+into a non-circular list by applying `iorg--tag-elems-with-id-attributes' and
 `iorg--unwind-circular-list' on it. Return the parse-tree in PicoLisp
 compliant form."
   (org-element-map
@@ -282,9 +308,14 @@ compliant form."
 ;;                     (cons (org-element-property prop elem) prop))
 ;;                   props))))))
 
-(defun iorg-org-to-pico
+
+;; *** Core Functions
+
+;; **** Normalize Parse-Tree
+
+(defun iorg-normalize-parse-tree
   (&optional data buffer-or-file &rest args)
-  "Converts an org-element parse-tree into an alist.
+  "Converts an org-element parse-tree into a 'normalized' form.
 
 Optional argument DATA should be part of or an entire parse-tree
 as returned by `org-element-parse-buffer', optional argument
@@ -304,11 +335,21 @@ pairs (here given with example values):
   :no-recursion '(headline table)
   :with-affiliated t
 
-Since `iorg-org-to-pico' is just a convenience function built on
+You can give one additional argument 
+
+  :preserve-nil-and-t-p t
+
+if you don't want that nil and t are converted to uppercase forms
+NIL and T.
+
+Since `iorg-normalize-parse-tree' is just a convenience function built on
 top of `org-element-parse-buffer' and `org-element-map', the
 arguments are the same as for these two functions, so you can
 consult their doc-strings for more information."
-  (let* ((map? (and args
+  ;; get data and arguments
+  (let* ((preserve-nil-and-t-p
+          (and args (plist-get args :preserve-nil-and-t-p)))
+         (map? (and args
                     (or
                      (plist-get args :types)
                      (plist-get args :fun)
@@ -340,24 +381,29 @@ consult their doc-strings for more information."
          (inf (and args (plist-get args :info)))
          (1st-match (and args (plist-get args :first-match)))
          (no-recur (and args (plist-get args :no-recursion)))
-         (with-affil (and args (plist-get args :with-affiliated))))
-    (iorg--nil-and-t-to-uppercase
-     (iorg--fix-text-properties-read-syntax
-       (iorg--tag-org-data-element
-        (iorg--add-children-list
-         ;; (iorg--convert-plists-to-picolisp
-         (iorg--unwind-circular-list
-          (iorg--add-elem-id
-           (if map?
-               (org-element-map
-                   dat typ fun inf 1st-match no-recur with-affil)
-             dat))))
-        buf)))))
+         (with-affil (and args (plist-get args :with-affiliated)))
+         ;; do the transformation
+         (normalized-parse-tree-as-string
+          (iorg--fix-text-properties-read-syntax
+           (iorg--tag-org-data-element
+            (iorg--add-children-list
+             ;; (iorg--convert-plists-to-picolisp
+             (iorg--unwind-circular-list
+              (iorg--tag-elems-with-id-attributes
+               (if map?
+                   (org-element-map
+                       dat typ fun inf 1st-match no-recur with-affil)
+                 dat))))
+            buf))))
+    ;; upcase nil and t?
+    (if preserve-nil-and-t-p
+        normalized-parse-tree-as-string
+      (iorg--nil-and-t-to-uppercase normalized-parse-tree-as-string))))
 
 ;; (defun iorg-pico-to-org ()
 ;;   "")
 
-;; *** Query Database
+;; **** Query Database
 
 (defun iorg-retrieve-url(path &optional LISP-P hostpath &rest args)
   "Generic function for calling the iOrg server from Emacs.
@@ -437,7 +483,7 @@ returned 'as-is' as buffer-string without properties."
         (car (read-from-string buf))
       buf)))
 
-;; *** Edit Database Objects
+;; **** Edit Database Objects
 
 ;; ** Commands
 
