@@ -104,14 +104,22 @@ There is a mode hook, and a few commands:
 (defun iorg--tag-elems-with-id-attributes (tree)
   "Add ':elem-id' property to each element of parse TREE."
   (let ((counter 1)
-        (structure 1))
+        (structure 1)
+        category)
     (org-element-map tree iorg-default-map-types
       (lambda (--elem)
-        (org-element-put-property --elem :elem-id counter)
-        (setq counter (1+ counter))
-        (and (eq (org-element-type --elem) 'plain-list)
-             (org-element-put-property --elem :structure-id structure)
-             (setq structure (1+ structure))))))
+        (let ((headline-category
+               (and (eq (org-element-type --elem) 'headline)
+                    (org-element-property :CATEGORY --elem)))) 
+          (org-element-put-property --elem :elem-id counter)
+          (setq counter (1+ counter))
+          (and (eq (org-element-type --elem) 'plain-list)
+               (org-element-put-property --elem :structure-id structure)
+               (setq structure (1+ structure)))
+          (and (eq (org-element-type --elem) 'headline)
+               (unless category
+                 (org-element-put-property --elem :CATEGORY-ID 1)
+                 (setq category t)))))))
   tree)
 
 (defun iorg--collect-children (tree)
@@ -191,6 +199,12 @@ environmental properties."
              (org-element-put-property
               --elem :structure
               (org-element-property :structure-id par)))
+        (and (eq (org-element-type --elem) 'headline)
+             (listp (org-element-property :CATEGORY --elem))
+             (not (org-element-property :CATEGORY-ID --elem))
+             (org-element-put-property
+              --elem :CATEGORY
+              (org-element-property :CATEGORY-ID par)))
         (org-element-put-property
          --elem :parent
          (if (eq (org-element-type par) 'org-data)
@@ -231,7 +245,7 @@ MATCH is the match-string to be converted, with 'nil' becoming
    ((string= match "(nil)")
     (format "%s" "(NIL)"))))
 
-(defun iorg--fix-text-properties-read-syntax (tree)
+(defun iorg--fix-read-syntax (tree)
   "Returns parse TREE as string with text-properties read syntax fixed.
 Fixed means, in this case, adjusted for the PicoLisp reader, i.e.
 with the PicoLisp comment character '#' replaced by PicoLisp
@@ -250,12 +264,32 @@ text with properties."
           ;; 4th
           "\\((:parent\s*\n?#?[[:digit:]]+\\)"
           ;; 5th
-          "\\()+\\)")))
+          "\\()+\\)"))
+        (obj-ref-regexp
+         (concat
+          ;; 1st
+          "\\(#\\)"
+          ;; 2nd
+          "\\([[:digit:]]+\\)"
+          ;; 3rd
+          "\\(=\\|#\\)"
+          ;; 4th
+          "\\(.*?\\n?.*?\\)"
+          ;; 5th
+          "\\(\s+:\\w+\\|)\s+\\|\s+(\\|\s+*$\\)")))
     (with-temp-buffer 
       (insert (prin1-to-string tree))
       (goto-char (point-min))
       (while (re-search-forward txt-prop-regexp nil 'NOERROR)
         (replace-match "\\1(hashtag '(\\3\\4\\5)"))
+      (goto-char (point-min))
+      (while (re-search-forward obj-ref-regexp nil 'NOERROR)
+        (cond
+         ((string-equal (match-string-no-properties 3) "=")
+          (replace-match "(hashtag-equal '(\\2 \\4))\\5"))
+         ((string-equal (match-string-no-properties 3) "#")
+          (replace-match "(enclosing-hashtags \\2)\\4\\5"))
+         (t (error "Matched subexpression not one of \"=\" or \"#\""))))
       (buffer-substring-no-properties (point-min) (point-max)))))
 
 ;; FIXME obsolete
@@ -384,7 +418,7 @@ consult their doc-strings for more information."
          (with-affil (and args (plist-get args :with-affiliated)))
          ;; do the transformation
          (normalized-parse-tree-as-string
-          (iorg--fix-text-properties-read-syntax
+          (iorg--fix-read-syntax
            (iorg--tag-org-data-element
             (iorg--add-children-list
              ;; (iorg--convert-plists-to-picolisp

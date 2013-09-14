@@ -68,6 +68,8 @@
 
 ## ** Utility functions
 
+## *** Call Emacs
+
 ## generic function for calling Emacs from PicoLisp
 ## usage example: (emx '(read) "/path/to/file.el" "(princ \"Hello World\")")
 (de emx (Exe . @)
@@ -82,6 +84,64 @@
                      (pack "--eval=" X) ) ) )
             (rest) ) )
       (eval Exe) ) )
+
+## *** Retrieve document history
+
+(be history (@Doc @Mup)
+   (val @Mup @Doc mup) )
+
+(be history (@Doc @Mup)
+   (^ @C (box (; (-> @Doc) mup)))
+   (_history @C @Mup) )
+
+(be _history (@C @Prv) (^ @ (not (; (val (-> @C)) <))) T (fail))
+(be _history (@C @Prv) (^ @Prv (set (-> @C) (; (val (-> @C)) <))))
+(repeat)
+
+## *** Replacement functions for Emacs Lisp read syntax
+
+## Strings with text properties
+(de hashtag (Lst)
+   (pack "#" (sym Lst)) )
+
+## Define object reference
+(de hashtag-equal (Lst)
+   (pack "#" (car Lst) "=" (cadr Lst)) )
+
+## Reference object
+(de enclosing-hashtags (Num)
+   (pack "#" Num "#") )
+
+## *** Others
+
+## Search field hint list
+(def 'search 'hint
+   '((Str)
+      (make
+         (catch NIL
+            (scan '(mup . +Doc)
+               '((K V)
+                  (unless (member (car K) (made))
+                     (link (car K))
+                     (and (nth (made) 24) (throw)) ) )
+               (cons (setq Str (fold Str)))
+               (cons (pack Str `(char T)) T) ) ) ) ) )
+
+## Split list of characters into folded words
+(de splitWords (Lst)
+   (extract fold
+      (mapcar pack
+         (split Lst ~(chop "^J !,-.:;?{}")) ) ) )
+
+## Get markup's title
+(dm (title> . +Mup) ()
+   (in (blob This 'txt)
+      (skip)
+      (use (@N @X)
+         (and
+            (match '(@N "{" @X "}" @) (line))
+            (format @N)
+            (pack @X) ) ) ) )
 
 ## Test if symbol S is a keyword-symbol
 (de keywordSymbol? (S)
@@ -119,57 +179,10 @@
    ## (prinl) (prinl)
    *Title )
 
-
 ## Download blob
 (de download (This)
    (httpHead (: mt) 60 (: nm))
    (in (blob This 'd) (ht:Out *Chunked (echo))) )
-
-## Retrieve document history
-(be history (@Doc @Mup)
-   (val @Mup @Doc mup) )
-
-(be history (@Doc @Mup)
-   (^ @C (box (; (-> @Doc) mup)))
-   (_history @C @Mup) )
-
-(be _history (@C @Prv) (^ @ (not (; (val (-> @C)) <))) T (fail))
-(be _history (@C @Prv) (^ @Prv (set (-> @C) (; (val (-> @C)) <))))
-(repeat)
-
-## Search field hint list
-(def 'search 'hint
-   '((Str)
-      (make
-         (catch NIL
-            (scan '(mup . +Doc)
-               '((K V)
-                  (unless (member (car K) (made))
-                     (link (car K))
-                     (and (nth (made) 24) (throw)) ) )
-               (cons (setq Str (fold Str)))
-               (cons (pack Str `(char T)) T) ) ) ) ) )
-
-## Split list of characters into folded words
-(de splitWords (Lst)
-   (extract fold
-      (mapcar pack
-         (split Lst ~(chop "^J !,-.:;?{}")) ) ) )
-
-## Get markup's title
-(dm (title> . +Mup) ()
-   (in (blob This 'txt)
-      (skip)
-      (use (@N @X)
-         (and
-            (match '(@N "{" @X "}" @) (line))
-            (format @N)
-            (pack @X) ) ) ) )
-
-## Replacement for Emacs Lisp read syntax for strings with text properties.
-## Print a leading hashtag when evaluated.
-(de hashtag (Lst)
-   (pack "#" (sym Lst)) )
 
 ## ** Render document
 
