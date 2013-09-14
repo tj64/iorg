@@ -105,22 +105,13 @@ There is a mode hook, and a few commands:
   "Add ':elem-id' property to each element of parse TREE."
   (let ((counter 1)
         (structure 1))
-        ;; category)
     (org-element-map tree iorg-default-map-types
       (lambda (--elem)
-        ;; (let ((headline-category
-        ;;        (and (eq (org-element-type --elem) 'headline)
-        ;;             (org-element-property :CATEGORY --elem)))) 
           (org-element-put-property --elem :elem-id counter)
           (setq counter (1+ counter))
           (and (eq (org-element-type --elem) 'plain-list)
                (org-element-put-property --elem :structure-id structure)
-               (setq structure (1+ structure)))
-          ;; (and (eq (org-element-type --elem) 'headline)
-          ;;      (unless category
-          ;;        (org-element-put-property --elem :CATEGORY-ID 1)
-          ;;        (setq category t)))
-          )))
+               (setq structure (1+ structure))))))
   tree)
 
 (defun iorg--collect-children (tree)
@@ -200,12 +191,6 @@ environmental properties."
              (org-element-put-property
               --elem :structure
               (org-element-property :structure-id par)))
-        ;; (and (eq (org-element-type --elem) 'headline)
-        ;;      (listp (org-element-property :CATEGORY --elem))
-        ;;      (not (org-element-property :CATEGORY-ID --elem))
-        ;;      (org-element-put-property
-        ;;       --elem :CATEGORY
-        ;;       (org-element-property :CATEGORY-ID par)))
         (org-element-put-property
          --elem :parent
          (if (eq (org-element-type par) 'org-data)
@@ -422,7 +407,6 @@ consult their doc-strings for more information."
           (iorg--fix-read-syntax
            (iorg--tag-org-data-element
             (iorg--add-children-list
-             ;; (iorg--convert-plists-to-picolisp
              (iorg--unwind-circular-list
               (iorg--tag-elems-with-id-attributes
                (if map?
