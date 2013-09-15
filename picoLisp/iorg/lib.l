@@ -63,12 +63,9 @@
 ##      explicitly requested.
 ## #+end_quote
 
+## * Utility functions
 
-## * Code
-
-## ** Utility functions
-
-## *** Call Emacs
+## ** Generic Emacs Functon
 
 ## generic function for calling Emacs from PicoLisp
 ## usage example: (emx '(read) "/path/to/file.el" "(princ \"Hello World\")")
@@ -85,7 +82,9 @@
             (rest) ) )
       (eval Exe) ) )
 
-## *** Retrieve document history
+
+
+## ** Retrieve document history
 
 (be history (@Doc @Mup)
    (val @Mup @Doc mup) )
@@ -98,7 +97,7 @@
 (be _history (@C @Prv) (^ @Prv (set (-> @C) (; (val (-> @C)) <))))
 (repeat)
 
-## *** Replacement functions for Emacs Lisp read syntax
+## ** Replacement functions for Emacs Lisp read syntax
 
 ## Strings with text properties
 (de hashtag (Lst)
@@ -112,7 +111,7 @@
 (de enclosing-hashtags (Num)
    (pack "#" Num "#") )
 
-## *** Others
+## ** Others
 
 ## Search field hint list
 (def 'search 'hint
@@ -184,9 +183,32 @@
    (httpHead (: mt) 60 (: nm))
    (in (blob This 'd) (ht:Out *Chunked (echo))) )
 
-## ** Render document
+## * Call Emacs
 
-## *** Render document as HTML
+## ** Read Parse Tree
+
+(de readParseTree (Path)
+    (emx '(read)
+       (pack
+       "(add-to-list 'load-path "
+       ## (path "@iorg/el/")
+       "\"/home/tj/git/iorg/picoLisp/iorg/el/\")" )
+      "(require 'iorg-init)"
+      "(require 'iorg)"
+      ## (path "@iorg/el/iorg-init.el")
+      ## (path "@iorg/el/iorg.el")
+      "(require 'ox)"
+      (pack
+         "(with-current-buffer "
+         "(find-file "
+         "\"" Path "\")"
+         "(org-mode)"
+         "(let ((org-cycle-silently 1))"
+         "(princ (iorg-normalize-parse-tree))))" ) ) )o
+
+## * Render document
+
+## ** Render document as HTML
 
 ## let ox-html.el render Org-file
 (de oxRender (Path)
@@ -362,7 +384,7 @@
             ("{" (inc 'N))
             ("}" (dec 'N)) ) ) ) )
 
-## *** Render document as LaTeX
+## ** Render document as LaTeX
 
 (de renderLatex (This)
    (prinl "% " (datSym (date)))
@@ -485,8 +507,8 @@
    (recurse T)
    (prin "}") )
 
-## ** Export document
-## *** Produce LaTeX document
+## * Export document
+## ** Produce LaTeX document
 
 (de latex (This)
    (ifn (ext? This)
@@ -494,7 +516,7 @@
       (httpHead "application/x-latex" 20 (pack (or (: doc nm) "untitled") ".tex"))
       (ht:Out *Chunked (renderLatex This)) ) )
 
-## *** Produce PDF document
+## ** Produce PDF document
 
 (de pdf (This)
    (ifn (ext? This)

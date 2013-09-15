@@ -626,4 +626,6 @@ is loaded again. In the latter case it will be reset to
 
 ;; * Run hooks and provide
 
+(provide 'iorg)
+
 ;; iorg.el ends here

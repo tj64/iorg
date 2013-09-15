@@ -17,11 +17,16 @@
 
 ;; * Set Load Path
 
-(with-current-buffer (current-buffer)
-  (add-to-list 'load-path
-             (file-name-directory
-              (buffer-file-name)))) 
+  (message "iorg-init entered") 
+
+  ;; (add-to-list 'load-path
+  ;;            (file-name-directory
+  ;;             (buffer-file-name)))
+
+  (message "%s" load-path)
 
 ;; * Run hooks and provide
+
+(provide 'iorg-init)
 
 ;; iorg.el ends here
