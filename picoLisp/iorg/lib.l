@@ -183,20 +183,29 @@
    (httpHead (: mt) 60 (: nm))
    (in (blob This 'd) (ht:Out *Chunked (echo))) )
 
+## FIXME: account for possible "../../"
+## Return absolute path to local (running) PicoLisp installation 
+## Usage example: (absolutePath "@lib/misc.l")
+(de absolutePath (P)
+   (split
+      (or
+         (pre? "/" (path P))
+         (pack (pwd) "/" (path P)) ) ) )
+
 ## * Call Emacs
 
 ## ** Read Parse Tree
 
+## expects absolute PATH to org file
 (de readParseTree (Path)
     (emx '(read)
        (pack
        "(add-to-list 'load-path "
-       ## (path "@iorg/el/")
+       ## ## FIXME! should be:
+       ## "\"" (absolutePath "@iorg/el/") "\"" )
        "\"/home/tj/git/iorg/picoLisp/iorg/el/\")" )
       "(require 'iorg-init)"
       "(require 'iorg)"
-      ## (path "@iorg/el/iorg-init.el")
-      ## (path "@iorg/el/iorg.el")
       "(require 'ox)"
       (pack
          "(with-current-buffer "
@@ -204,7 +213,7 @@
          "\"" Path "\")"
          "(org-mode)"
          "(let ((org-cycle-silently 1))"
-         "(princ (iorg-normalize-parse-tree))))" ) ) )o
+         "(princ (iorg-normalize-parse-tree))))" ) ) )
 
 ## * Render document
 

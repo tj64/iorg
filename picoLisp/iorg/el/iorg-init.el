@@ -17,13 +17,13 @@
 
 ;; * Set Load Path
 
-  (message "iorg-init entered") 
+  (message "iorg-init entered - does nothing yet")
 
   ;; (add-to-list 'load-path
   ;;            (file-name-directory
   ;;             (buffer-file-name)))
 
-  (message "%s" load-path)
+  ;; (message "%s" load-path)
 
 ;; * Run hooks and provide
 

@@ -180,43 +180,122 @@
 ## * iOrg 
 ## ** Org elements
 
-(class +orgElement +Entity)
-(rel :begin (+Number))               # Beginning buffer position
-(rel :end (+Number))                 # Ending buffer position
-(rel :post-blank (+Number))          # Number of trailing blank lines/spaces
-(rel :parent (+Link))                # Element/Object containing it
+
+## (Abstract) Org Base-Element
+(class +orgBaseElement +Entity)
+(rel elem-id: (+Number))            # Element ID (unique for parse-tree)
 
 (dm url> ())
 (dm upd> ())
 (dm diff> ())
 (dm interpret> ())
 
+## (Abstract) Org-Element
+(class +orgElement +orgBaseElement)
+(rel begin (+Number))               # Beginning buffer position
+(rel end (+Number))                 # Ending buffer position
+(rel post-blank (+Number))          # Number of trailing blank lines/spaces
+(rel parent (+Joint) elem-id
+   (+orgBaseElem)                   # Element/Object containing it
 
+
+## Parse-Tree (meta data for containing org file,
+## collected from Emacs environment, plus root elem-id)
+(class +OrgData +orgBaseElement)
+(rel ID (+String))                  # (Globally) unique parse-tree ID
+(rel input-file (+String))          # Absolute path input file
+(rel author (+String))              # Author name
+(rel email (+String))               # Authors email
+(rel creator (+String))             # Version info for Emacs and Org-mode
+(rel description (+String))         # Short description of org file
+
+## Expects partial parse-tree of type '(org-data (:ID ...))' created by
+## `org-element-parse-buffer' and normalized by `iorg-normalize-parse-tree'.
+(dm T (ParseTree)
+   (let Plist (cadr ParseTree)
+      (=: ID (cadr (member ':ID Plist)))
+      (=: elem-id (cadr (member ':elem-id Plist)))
+      (=: input-file (cadr (member ':input-file Plist)))
+      (=: author (cadr (member ':author Plist)))
+      (=: email (cadr (member ':email Plist)))
+      (=: creator (cadr (member ':creator Plist)))
+      (=: description (cadr (member ':description Plist))) ) )
+
+(dm url> ())
+(dm upd> ())
+(dm diff> ())
+
+## Headline
 (class +OrgHeadline +orgElement)
-(rel :raw-value (+String))          # Raw headline text, no stars and tags
-(rel :title (+String))              # Parsed headline text, no stars and tags
-(rel :alt-title (+String))          # Alternative title
-(rel :pre-blank (+Number))          # Number blank lines before content
-(rel :hiddpenp (+Bool))             # Non-nil if headline is hidden
-(rel :contents-begin (+Number)      # Begin content
-(rel :contents-end (+Number))       # End content
-(rel :level (+Number))              # Reduced level of headline
-(rel :priority (+Number))           # Headlines priority as character
-(rel :tags (+List))                 # Headlines tags (without archive tag)
-(rel :todo-keyword (+String))       # TODO keyword without quote/comment
-(rel :todo-type (+String))          # Type of TODO keyword (done or todo)
-(rel :scheduled (+Date))            # SCHEDULED reference (timestamp or NIL)
-(rel :deadline (+Date))             # DEADLINE reference (timestamp or NIL)
-(rel :closed (+Date))               # CLOSED reference (timestamp or NIL)
-(rel :quotedp (+Bool))              # Non-nil if headline contains quote keyword
-(rel :archivedp (+Bool))            # Non-nil if headline has archived tag
-(rel :commentedp (+Bool))           # Non-nil if headline has comment keyword
-(rel :footnote-section-p (+Bool))   # Non-nil if headline is footnote-section
+(rel raw-value (+String))          # Raw headline text, no stars and tags
+(rel title (+List))                # Parsed headline text with properties
+(rel alt-title (+String))          # Alternative title
+(rel category (+List))             # Either name of input file or user attribute
+(rel pre-blank (+Number))          # Number blank lines before content
+(rel hiddpenp (+Symbol))           # Non-nil (symbol) if headline is hidden
+(rel contents-begin (+Number)      # Begin content
+(rel contents-end (+Number))       # End content
+(rel level (+Number))              # Reduced level of headline
+(rel priority (+Number))           # Headlines priority as character
+(rel tags (+List))                 # Headlines tags (without archive tag)
+(rel todo-keyword (+String))       # TODO keyword without quote/comment
+(rel todo-type (+String))          # Type of TODO keyword (done or todo)
+(rel scheduled (+Date))            # SCHEDULED reference (timestamp or NIL)
+(rel deadline (+Date))             # DEADLINE reference (timestamp or NIL)
+(rel closed (+Date))               # CLOSED reference (timestamp or NIL)
+(rel quotedp (+Bool))              # Non-nil if headline contains quote keyword
+(rel archivedp (+Bool))            # Non-nil if headline has archived tag
+(rel commentedp (+Bool))           # Non-nil if headline has comment keyword
+(rel footnote-section-p (+Bool))   # Non-nil if headline is footnote-section
+(rel children (+List +Joint)
+   parent (+orgBaseElem)           # Children
+(rel contents (+List))             # Normalized parse-tree as nested list
+
+
+## Expects partial parse-tree of type '(headline (:raw-value ...))' created by
+## `org-element-parse-buffer' and normalized by `iorg-normalize-parse-tree'.
+(dm T (ParseTree)
+   (let Plist (cadr ParseTree)
+      (=: elem-id (cadr (member ':elem-id Plist)))
+      (=: begin (cadr (member ':begin Plist)))
+      (=: end (cadr (member ':end Plist)))
+      (=: post-blank (cadr (member ':post-blank Plist)))
+      (=: parent (cadr (member ':parent Plist)))
+      (=: raw-value (cadr (member ':raw-value Plist)))
+      (=: title (cadr (member ':title Plist)))
+      (=: alt-title (cadr (member ':alt-title Plist)))
+      (=: category (cadr (member ':category Plist)))
+      (=: pre-blank (cadr (member ':pre-blank Plist)))
+      (=: hiddpenp (cadr (member ':hiddpenp Plist)))
+      (=: contents-begin (cadr (member ':contents-begin Plist)))
+      (=: contents-end (cadr (member ':contents-end Plist)))
+      (=: level (cadr (member ':level Plist)))
+      (=: priority (cadr (member ':priority Plist)))
+      (=: tags (cadr (member ':tags Plist)))
+      (=: todo-keyword (cadr (member ':todo-keyword Plist)))
+      (=: todo-type (cadr (member ':todo-type Plist)))
+      (=: scheduled (cadr (member ':scheduled Plist)))
+      (=: deadline (cadr (member ':deadline Plist)))
+      (=: closed (cadr (member ':closed Plist)))
+      (=: quotedp (cadr (member ':quotedp Plist)))
+      (=: archivedp (cadr (member ':archivedp Plist)))
+      (=: commentedp (cadr (member ':commentedp Plist)))
+      (=: footnote-section-p (cadr (member ':footnote-section-p Plist)))
+      (=: children (cadr (member ':children Plist)))
+      (=: contents (cadr (member ':contents Plist))) ) )
 
 (dm url> ())
 (dm upd> ())
 (dm diff> ())
-(dm interpret> ())
+
+## concat object attributes, converted to elisp-parse-tree syntax, with
+## object's contents string (re-converted to elisp syntax too) and send it to
+## Emacs (using function 'emx) for interpretation (-> creation of textual org
+## file from parse-tree by `org-element-interpret-data'), finally return
+## string with textual representation of headline object or parts of it. If
+## 'ContentsOnly?' is non-nil, return only the textual representation of the
+## headlines' s content.
+(dm interpret> (ContentsOnly?))
 
 ## ** iOrg data
 

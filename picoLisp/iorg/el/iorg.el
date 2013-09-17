@@ -29,8 +29,8 @@
 ;; (require 'kv)
 ;; (require 'paredit)
 (require 'org-element)
-(require 'inferior-picolisp)
-(require 'outorg)
+(require 'inferior-picolisp nil 'NOERROR)
+(require 'outorg nil 'NOERROR)
 
 (eval-when-compile (require 'cl))
 
