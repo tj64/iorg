@@ -1,5 +1,5 @@
 ## * iorg/er.l --- Entity/Relations for iOrg
-## ** MetaData 
+## ** MetaData
 ##   :PROPERTIES:
 ##   :copyright: Alexander_Burger Thorsten_Jolitz
 ##   :copyright-since: 2011
@@ -45,7 +45,7 @@
 ##                                              <
 ## #+end_ascii
 
-## * PicoLisp Wiki 
+## * PicoLisp Wiki
 ## ** Markup index
 (class +MupIdx +index)
 
@@ -177,37 +177,38 @@
       (put> This 'mt (mimetype (blob This 'd))) ) )
 
 
-## * iOrg 
+## * iOrg
 ## ** Org elements
 
 
-## (Abstract) Org Base-Element
+## (Abstract) Org-Base-Element
 (class +orgBaseElement +Entity)
-(rel elem-id: (+Number))            # Element ID (unique for parse-tree)
+(rel elem-id: (+Need +Number))            # Element ID (unique for parse-tree)
 
 (dm url> ())
 (dm upd> ())
 (dm diff> ())
-(dm interpret> ())
+
 
 ## (Abstract) Org-Element
 (class +orgElement +orgBaseElement)
-(rel begin (+Number))               # Beginning buffer position
-(rel end (+Number))                 # Ending buffer position
-(rel post-blank (+Number))          # Number of trailing blank lines/spaces
-(rel parent (+Joint) elem-id
-   (+orgBaseElem)                   # Element/Object containing it
+(rel begin (+Number))                    # Beginning buffer position
+(rel end (+Number))                      # Ending buffer position
+(rel post-blank (+Number))               # Number of trailing blank lines/spaces
+(rel parent (+Joint) elem-id             # Element/Object containing it
+   (+orgBaseElem)
 
+(dm interpret> ())
 
 ## Parse-Tree (meta data for containing org file,
 ## collected from Emacs environment, plus root elem-id)
 (class +OrgData +orgBaseElement)
-(rel ID (+String))                  # (Globally) unique parse-tree ID
-(rel input-file (+String))          # Absolute path input file
-(rel author (+String))              # Author name
-(rel email (+String))               # Authors email
-(rel creator (+String))             # Version info for Emacs and Org-mode
-(rel description (+String))         # Short description of org file
+(rel ID (+Need +Key +String))             # (Globally) unique parse-tree ID
+(rel input-file (+Need +Ref +String))     # Absolute path input-file
+(rel author (+Ref +String))               # Author name
+(rel email (+Ref +String))                # Authors email
+(rel creator (+Sn +Idx +String))           # Version info for Emacs and Org-mode
+(rel description (+Sn +Idx +String))      # Short description of org file
 
 ## Expects partial parse-tree of type '(org-data (:ID ...))' created by
 ## `org-element-parse-buffer' and normalized by `iorg-normalize-parse-tree'.
@@ -227,29 +228,30 @@
 
 ## Headline
 (class +OrgHeadline +orgElement)
-(rel raw-value (+String))          # Raw headline text, no stars and tags
+(rel raw-value (+Sn +Idx +String)) # Raw headline text, no stars and tags
 (rel title (+List))                # Parsed headline text with properties
 (rel alt-title (+String))          # Alternative title
-(rel category (+List))             # Either name of input file or user attribute
+(rel category (+Ref +List))        # Either name of input file or user attribute
 (rel pre-blank (+Number))          # Number blank lines before content
-(rel hiddpenp (+Symbol))           # Non-nil (symbol) if headline is hidden
+(rel hiddpenp (+Ref +Symbol))      # Non-nil (symbol) if headline is hidden
 (rel contents-begin (+Number)      # Begin content
 (rel contents-end (+Number))       # End content
-(rel level (+Number))              # Reduced level of headline
-(rel priority (+Number))           # Headlines priority as character
-(rel tags (+List))                 # Headlines tags (without archive tag)
-(rel todo-keyword (+String))       # TODO keyword without quote/comment
-(rel todo-type (+String))          # Type of TODO keyword (done or todo)
-(rel scheduled (+Date))            # SCHEDULED reference (timestamp or NIL)
-(rel deadline (+Date))             # DEADLINE reference (timestamp or NIL)
-(rel closed (+Date))               # CLOSED reference (timestamp or NIL)
-(rel quotedp (+Bool))              # Non-nil if headline contains quote keyword
-(rel archivedp (+Bool))            # Non-nil if headline has archived tag
-(rel commentedp (+Bool))           # Non-nil if headline has comment keyword
-(rel footnote-section-p (+Bool))   # Non-nil if headline is footnote-section
-(rel children (+List +Joint)
-   parent (+orgBaseElem)           # Children
-(rel contents (+List))             # Normalized parse-tree as nested list
+(rel level (+Need +Ref +Number))   # Reduced level of headline
+(rel priority (+Ref +Number))      # Headlines priority as character
+(rel tags (+Ref +List))            # Headlines tags (without archive tag)
+(rel todo-keyword (+Ref +String))  # TODO keyword without quote/comment
+(rel todo-type (+Ref +String))     # Type of TODO keyword (done or todo)
+(rel scheduled (+Ref +Date))       # SCHEDULED reference (timestamp or NIL)
+(rel deadline (+Ref +Date))        # DEADLINE reference (timestamp or NIL)
+(rel closed (+Ref +Date))          # CLOSED reference (timestamp or NIL)
+(rel quotedp (+Ref +Bool))         # Non-nil if headline contains quote keyword
+(rel archivedp (+Ref +Bool))       # Non-nil if headline has archived tag
+(rel commentedp (+Ref +Bool))      # Non-nil if headline has comment keyword
+(rel footnote-section-p            # Non-nil if headline is footnote-section
+   (+Ref +Bool) )
+(rel children (+List +Joint)       # Children
+   elem-id (+OrgHeadline)
+(rel contents (+List))             # Normalized partial parse-tree
 
 
 ## Expects partial parse-tree of type '(headline (:raw-value ...))' created by
