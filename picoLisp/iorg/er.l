@@ -196,7 +196,7 @@
 (rel end (+Number))                      # Ending buffer position
 (rel post-blank (+Number))               # Number of trailing blank lines/spaces
 (rel parent (+Joint) elem-id             # Element/Object containing it
-   (+orgBaseElem)
+   (+orgBaseElem) )
 
 (dm interpret> ())
 
@@ -231,14 +231,14 @@
 (rel raw-value (+Sn +Idx +String)) # Raw headline text, no stars and tags
 (rel title (+List))                # Parsed headline text with properties
 (rel alt-title (+String))          # Alternative title
-(rel category (+Ref +List))        # Either name of input file or user attribute
+(rel category (+List))             # Either name of input file or user attribute
 (rel pre-blank (+Number))          # Number blank lines before content
 (rel hiddpenp (+Ref +Symbol))      # Non-nil (symbol) if headline is hidden
-(rel contents-begin (+Number)      # Begin content
+(rel contents-begin (+Number))     # Begin content
 (rel contents-end (+Number))       # End content
 (rel level (+Need +Ref +Number))   # Reduced level of headline
 (rel priority (+Ref +Number))      # Headlines priority as character
-(rel tags (+Ref +List))            # Headlines tags (without archive tag)
+(rel tags (+List))                 # Headlines tags (without archive tag)
 (rel todo-keyword (+Ref +String))  # TODO keyword without quote/comment
 (rel todo-type (+Ref +String))     # Type of TODO keyword (done or todo)
 (rel scheduled (+Ref +Date))       # SCHEDULED reference (timestamp or NIL)
@@ -250,7 +250,7 @@
 (rel footnote-section-p            # Non-nil if headline is footnote-section
    (+Ref +Bool) )
 (rel children (+List +Joint)       # Children
-   elem-id (+OrgHeadline)
+   elem-id (+OrgHeadline) )
 (rel contents (+List))             # Normalized partial parse-tree
 
 
@@ -297,7 +297,22 @@
 ## string with textual representation of headline object or parts of it. If
 ## 'ContentsOnly?' is non-nil, return only the textual representation of the
 ## headlines' s content.
-(dm interpret> (ContentsOnly?))
+(dm interpret> (ContentsOnly?)
+   (if ContentsOnly?
+      (writeParseTree
+         (convertParseTree (: contents)) )
+      (writeParseTree
+        (convertParseTree
+           (prepareParseTree This) ) ) ) )
+
+## (de prepareParseTree (Headline)
+##    (let Plst (getl Headline)
+##       (
+
+
+## (de convertParseTree (Tree)
+
+## (de writeParseTree (Tree)
 
 ## ** iOrg data
 
