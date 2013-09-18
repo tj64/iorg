@@ -162,17 +162,17 @@ environmental properties."
            (infile (plist-get buf-attr :input-file)))
       (setcar (cdr tree)
               (list
-               :ID (make-temp-name
-                    (concat
-                     (file-name-nondirectory
-                      (file-name-sans-extension infile)) "_"))
+               :parse-tree-id (make-temp-name
+                               (concat
+                                (file-name-nondirectory
+                                 (file-name-sans-extension infile)) "_"))
                :elem-id 0
                :input-file infile
                ;; :date (plist-get (cadar (plist-get env-attr :date))
                ;;              :raw-value)
                :author (when author
                          (substring-no-properties (car author)))
-                         ;; (substring-no-properties author))
+               ;; (substring-no-properties author))
                :creator (plist-get env-attr :creator)
                :email (plist-get env-attr :email)
                ;; :description descr
@@ -232,13 +232,19 @@ MATCH is the match-string to be converted, with 'nil' becoming
     (format "%s" "(NIL)"))))
 
 (defun iorg--fix-read-syntax (tree)
-  "Returns parse TREE as string with text-properties read syntax fixed.
-Fixed means, in this case, adjusted for the PicoLisp reader, i.e.
-with the PicoLisp comment character '#' replaced by PicoLisp
-function `hashtag'. This function, when evaluated in PicoLisp,
-prints a leading '#' in front of its list argument, returning a
-string in the original format of the Emacs Lisp read-syntax for
-text with properties."
+  "Returns parse TREE as string with read syntax fixed.
+
+Fixed means, in this case, adjusted for the PicoLisp reader:
+
+ - '#(' replaced by PicoLisp function `(hashtag '(....))'
+ - '#1=(' replaced by PicoLisp function `(hashtag-equal '(....))'
+ - '#1#' replaced by PicoLisp function `(enclosing-hashtags 1)'
+
+These functions, when evaluated in PicoLisp, return a string with
+the original Emacs Lisp read-syntax.
+
+Furthermore, the leading ':' are removed from the keywords in the
+parse-tree, and all keywords are converted to lowercase."
   (let ((txt-prop-regexp
          (concat
           ;; 1st
@@ -262,7 +268,17 @@ text with properties."
           ;; 4th
           "\\(.*?\\n?.*?\\)"
           ;; 5th
-          "\\(\s+:\\w+\\|)\s+\\|\s+(\\|\s+*$\\)")))
+          "\\(\s+:\\w+\\|)\s+\\|\s+(\\|\s+*$\\)"))
+        (keyword-regexp
+         (concat
+          ;; 1st
+          "\\([[:space:]]*\\)"
+          ;; 2nd
+          "\\(:\\)"
+          ;; 3rd
+          "\\([[:word:]-_]+\\)"
+          ;; 4th
+          "\\([[:space:]]+\\)")))
     (with-temp-buffer 
       (insert (prin1-to-string tree))
       (goto-char (point-min))
@@ -276,6 +292,12 @@ text with properties."
          ((string-equal (match-string-no-properties 3) "#")
           (replace-match "(enclosing-hashtags \\2)\\4\\5"))
          (t (error "Matched subexpression not one of \"=\" or \"#\""))))
+      (goto-char (point-min))
+      (while (re-search-forward keyword-regexp nil 'NOERROR)
+        ;; (let ((keyword (downcase (match-string-no-properties 3))))
+          (replace-match
+           ;; (concat "\\1" keyword "\\4"))))
+           (concat "\\1\\3\\4")))
       (buffer-substring-no-properties (point-min) (point-max)))))
 
 ;; FIXME obsolete
