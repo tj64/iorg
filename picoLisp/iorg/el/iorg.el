@@ -369,7 +369,7 @@ compliant form."
 
 ;; FIXME mapping does not make sense - what about granularity?
 (defun iorg-normalize-parse-tree
-  (&optional data buffer-or-file &rest args)
+  (&optional data buffer-or-file preserve-nil-and-t-p)
   "Converts an org-element parse-tree into a 'normalized' form.
 
 Optional argument DATA should be part of or an entire parse-tree
@@ -377,41 +377,11 @@ as returned by `org-element-parse-buffer', optional argument
 BUFFER-OR-FILE is either the name of an existing Org-mode buffer
 or the name of an Org-mode file.
 
-ARGS, if given, can be any combination of the following key/value
-pairs (here given with example values):
-
-  :granularity 'object
-  :visible-only t
-  :types '(append org-element-all-elements
-           org-element-all-objects)
-  :fun '(lambda (L) (list (car L) (kvplist->alist (cadr L))))
-  :info '(:option1 value1 :option2 value2)
-  :first-match t
-  :no-recursion '(headline table)
-  :with-affiliated t
-
-You can give one additional argument 
-
-  :preserve-nil-and-t-p t
-
-if you don't want that nil and t are converted to uppercase forms
-NIL and T.
-
-Since `iorg-normalize-parse-tree' is just a convenience function built on
-top of `org-element-parse-buffer' and `org-element-map', the
-arguments are the same as for these two functions, so you can
-consult their doc-strings for more information."
+If optional argument PRESERVE-NIL-AND-T-P is non-nil, nil and t
+are not converted to uppercase forms NIL and T."
   ;; get data and arguments
   (let* ((preserve-nil-and-t-p
           (and args (plist-get args :preserve-nil-and-t-p)))
-         ;; (map? (and args
-         ;;            (or
-         ;;             (plist-get args :types)
-         ;;             (plist-get args :fun)
-         ;;             (plist-get args :info)
-         ;;             (plist-get args :first-match)
-         ;;             (plist-get args :no-recursion)
-         ;;             (plist-get args :with-affiliated))))
          (print-circle t)
          (buf (or (and buffer-or-file
                        (or (get-buffer buffer-or-file)
@@ -423,21 +393,9 @@ consult their doc-strings for more information."
                              (error "File %s is not a valid Org file"
                                     buffer-or-file))))
                   (current-buffer)))
-         ;; (gran (or (and args (plist-member args :granularity)
-         ;;                (plist-get args :granularity))
-         ;;           'object))
-         ;; (vis (and args (plist-get args :visible-only)))
          (dat (or data
                   (with-current-buffer buf
-                    ;; (org-element-parse-buffer gran vis))))
                     (org-element-parse-buffer 'object))))
-         ;; (typ (or (and args (plist-get args :types))
-         ;;          iorg-default-map-types-plus-text))
-         ;; (fun (or (and args (plist-get args :fun)) 'identity))
-         ;; (inf (and args (plist-get args :info)))
-         ;; (1st-match (and args (plist-get args :first-match)))
-         ;; (no-recur (and args (plist-get args :no-recursion)))
-         ;; (with-affil (and args (plist-get args :with-affiliated)))
          ;; do the transformation
          (normalized-parse-tree-as-string
           (iorg--fix-read-syntax
@@ -445,10 +403,6 @@ consult their doc-strings for more information."
             (iorg--add-children-list
              (iorg--unwind-circular-list
               (iorg--tag-elems-with-id-attributes dat)))
-               ;; (if map?
-               ;;     (org-element-map
-               ;;         dat typ fun inf 1st-match no-recur with-affil)
-               ;;   dat))))
             buf))))
     ;; upcase nil and t?
     (if preserve-nil-and-t-p
