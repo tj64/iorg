@@ -166,7 +166,7 @@ environmental properties."
                                (concat
                                 (file-name-nondirectory
                                  (file-name-sans-extension infile)) "_"))
-               :elem-id 0
+               ;; :elem-id 0
                :input-file infile
                ;; :date (plist-get (cadar (plist-get env-attr :date))
                ;;              :raw-value)
@@ -231,55 +231,13 @@ MATCH is the match-string to be converted, with 'nil' becoming
    ((string= match "(nil)")
     (format "%s" "(NIL)"))))
 
-(defun iorg--fix-read-syntax (tree)
+(defun iorg--fix-read-syntax2 (tree)
   "Returns parse TREE as string with read syntax fixed.
-
 Fixed means, in this case, adjusted for the PicoLisp reader:
-
- - '#(' replaced by PicoLisp function `(hashtag '(....))'
- - '#1=(' replaced by PicoLisp function `(hashtag-equal '(....))'
- - '#1#' replaced by PicoLisp function `(enclosing-hashtags 1)'
-
-These functions, when evaluated in PicoLisp, return a string with
-the original Emacs Lisp read-syntax.
-
-Furthermore, the leading ':' are removed from the keywords in the
-parse-tree, and all keywords are converted to lowercase."
-  (let ((txt-prop-regexp
-         (concat
-          ;; 1st
-          "\\([[:space:]]\\|(\\)"
-          ;; 2nd -> replace 
-          "\\(#(\\)"
-          ;; 3rd
-          "\\(.+?\n?.+?-id \\)"
-          ;; 4th
-          "\\([[:digit:]]+\\|nil\\)"
-          ;; 5th
-          "\\()+\\)"))
-        ;; (concat
-        ;;  ;; 1st
-        ;;  "\\([[:space:]]\\|(\\)"
-        ;;  ;; 2nd -> replace 
-        ;;  "\\(#(\\)"
-        ;;  ;; 3rd
-        ;;  "\\(.+?\n?.+?\\)"
-        ;;  ;; 4th
-        ;;  "\\() :parent-id[[:space:]]*\n?#?[[:digit:]]+\\)"
-        ;;  ;; 5th
-        ;;  "\\()+\\)"))
-        (obj-ref-regexp
-         (concat
-          ;; 1st
-          "\\(#\\)"
-          ;; 2nd
-          "\\([[:digit:]]+\\)"
-          ;; 3rd
-          "\\(=\\|#\\)"
-          ;; 4th
-          "\\(.*?\\n?.*?\\)"
-          ;; 5th
-          "\\(\s+:\\w+\\|)\s+\\|\s+(\\|\s+*$\\)"))
+backquote all '#' characters. And, although not strictly
+necessary, remove the leading ':' of keywords in the parse-tree
+while on it."
+  (let ((hash-regexp "#")
         (keyword-regexp
          (concat
           ;; 1st
@@ -294,23 +252,94 @@ parse-tree, and all keywords are converted to lowercase."
     (with-current-buffer "tmp<2>"
       (insert (prin1-to-string tree))
       (goto-char (point-min))
-      (while (re-search-forward txt-prop-regexp nil 'NOERROR)
-        (replace-match "\\1(hashtag '(\\3\\4\\5)"))
-      (goto-char (point-min))
-      (while (re-search-forward obj-ref-regexp nil 'NOERROR)
-        (cond
-         ((string-equal (match-string-no-properties 3) "=")
-          (replace-match "(hashtag-equal '(\\2 \\4))\\5"))
-         ((string-equal (match-string-no-properties 3) "#")
-          (replace-match "(enclosing-hashtags \\2)\\4\\5"))
-         (t (error "Matched subexpression not one of \"=\" or \"#\""))))
+      (while (re-search-forward hash-regexp nil 'NOERROR)
+        (replace-match "\\\\\\&"))
       (goto-char (point-min))
       (while (re-search-forward keyword-regexp nil 'NOERROR)
-        ;; (let ((keyword (downcase (match-string-no-properties 3))))
         (replace-match
-         ;; (concat "\\1" keyword "\\4"))))
          (concat "\\1\\3\\4")))
       (buffer-substring-no-properties (point-min) (point-max)))))
+
+;; (defun iorg--fix-read-syntax (tree)
+;;   "Returns parse TREE as string with read syntax fixed.
+
+;; Fixed means, in this case, adjusted for the PicoLisp reader:
+
+;;  - '#(' replaced by PicoLisp function `(hashtag '(....))'
+;;  - '#1=(' replaced by PicoLisp function `(hashtag-equal '(....))'
+;;  - '#1#' replaced by PicoLisp function `(enclosing-hashtags 1)'
+
+;; These functions, when evaluated in PicoLisp, return a string with
+;; the original Emacs Lisp read-syntax.
+
+;; Furthermore, the leading ':' are removed from the keywords in the
+;; parse-tree, and all keywords are converted to lowercase."
+;;   (let ((txt-prop-regexp
+;;          (concat
+;;           ;; 1st
+;;           "\\([[:space:]]\\|(\\)"
+;;           ;; 2nd -> replace 
+;;           "\\(#(\\)"
+;;           ;; 3rd
+;;           "\\(.+?\n?.+?-id \\)"
+;;           ;; 4th
+;;           "\\([[:digit:]]+\\|nil\\)"
+;;           ;; 5th
+;;           "\\()+\\)"))
+;;         ;; (concat
+;;         ;;  ;; 1st
+;;         ;;  "\\([[:space:]]\\|(\\)"
+;;         ;;  ;; 2nd -> replace 
+;;         ;;  "\\(#(\\)"
+;;         ;;  ;; 3rd
+;;         ;;  "\\(.+?\n?.+?\\)"
+;;         ;;  ;; 4th
+;;         ;;  "\\() :parent-id[[:space:]]*\n?#?[[:digit:]]+\\)"
+;;         ;;  ;; 5th
+;;         ;;  "\\()+\\)"))
+;;         (obj-ref-regexp
+;;          (concat
+;;           ;; 1st
+;;           "\\(#\\)"
+;;           ;; 2nd
+;;           "\\([[:digit:]]+\\)"
+;;           ;; 3rd
+;;           "\\(=\\|#\\)"
+;;           ;; 4th
+;;           "\\(.*?\\n?.*?\\)"
+;;           ;; 5th
+;;           "\\(\s+:\\w+\\|)\s+\\|\s+(\\|\s+*$\\)"))
+;;         (keyword-regexp
+;;          (concat
+;;           ;; 1st
+;;           "\\([[:space:]]*\\)"
+;;           ;; 2nd
+;;           "\\(:\\)"
+;;           ;; 3rd
+;;           "\\([[:word:]-_]+\\)"
+;;           ;; 4th
+;;           "\\([[:space:]]+\\)")))
+;;     ;; (with-temp-buffer 
+;;     (with-current-buffer "tmp<2>"
+;;       (insert (prin1-to-string tree))
+;;       (goto-char (point-min))
+;;       (while (re-search-forward txt-prop-regexp nil 'NOERROR)
+;;         (replace-match "\\1(hashtag '(\\3\\4\\5)"))
+;;       (goto-char (point-min))
+;;       (while (re-search-forward obj-ref-regexp nil 'NOERROR)
+;;         (cond
+;;          ((string-equal (match-string-no-properties 3) "=")
+;;           (replace-match "(hashtag-equal '(\\2 \\4))\\5"))
+;;          ((string-equal (match-string-no-properties 3) "#")
+;;           (replace-match "(enclosing-hashtags \\2)\\4\\5"))
+;;          (t (error "Matched subexpression not one of \"=\" or \"#\""))))
+;;       (goto-char (point-min))
+;;       (while (re-search-forward keyword-regexp nil 'NOERROR)
+;;         ;; (let ((keyword (downcase (match-string-no-properties 3))))
+;;         (replace-match
+;;          ;; (concat "\\1" keyword "\\4"))))
+;;          (concat "\\1\\3\\4")))
+;;       (buffer-substring-no-properties (point-min) (point-max)))))
 
 ;; FIXME obsolete
 (defun iorg--convert-plists-to-picolisp (tree)
@@ -380,9 +409,7 @@ or the name of an Org-mode file.
 If optional argument PRESERVE-NIL-AND-T-P is non-nil, nil and t
 are not converted to uppercase forms NIL and T."
   ;; get data and arguments
-  (let* ((preserve-nil-and-t-p
-          (and args (plist-get args :preserve-nil-and-t-p)))
-         (print-circle t)
+  (let* ((print-circle t)
          (buf (or (and buffer-or-file
                        (or (get-buffer buffer-or-file)
                            (if (and
@@ -396,14 +423,18 @@ are not converted to uppercase forms NIL and T."
          (dat (or data
                   (with-current-buffer buf
                     (org-element-parse-buffer 'object))))
+         ;; ;; do the transformation
+         ;; (normalized-parse-tree-as-string
+         ;;  (iorg--fix-read-syntax
+         ;;   (iorg--tag-org-data-element
+         ;;    (iorg--add-children-list
+         ;;     (iorg--unwind-circular-list
+         ;;      (iorg--tag-elems-with-id-attributes dat)))
+         ;;    buf))))
          ;; do the transformation
          (normalized-parse-tree-as-string
-          (iorg--fix-read-syntax
-           (iorg--tag-org-data-element
-            (iorg--add-children-list
-             (iorg--unwind-circular-list
-              (iorg--tag-elems-with-id-attributes dat)))
-            buf))))
+          (iorg--fix-read-syntax2
+           (iorg--tag-org-data-element dat buf))))
     ;; upcase nil and t?
     (if preserve-nil-and-t-p
         normalized-parse-tree-as-string
