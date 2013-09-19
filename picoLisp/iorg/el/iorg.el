@@ -189,10 +189,10 @@ environmental properties."
         (and (eq (org-element-type --elem) 'item)
              (eq (org-element-type par) 'plain-list)
              (org-element-put-property
-              --elem :structure
+              --elem :parent-structure-id
               (org-element-property :structure-id par)))
         (org-element-put-property
-         --elem :parent
+         --elem :parent-id
          (if (eq (org-element-type par) 'org-data)
              0
            (org-element-property :elem-id par)))))
@@ -252,11 +252,22 @@ parse-tree, and all keywords are converted to lowercase."
           ;; 2nd -> replace 
           "\\(#(\\)"
           ;; 3rd
-          "\\(.+?\n?.+?\\)"
+          "\\(.+?\n?.+?-id \\)"
           ;; 4th
-          "\\((:parent\s*\n?#?[[:digit:]]+\\)"
+          "\\([[:digit:]]+\\|nil\\)"
           ;; 5th
           "\\()+\\)"))
+        ;; (concat
+        ;;  ;; 1st
+        ;;  "\\([[:space:]]\\|(\\)"
+        ;;  ;; 2nd -> replace 
+        ;;  "\\(#(\\)"
+        ;;  ;; 3rd
+        ;;  "\\(.+?\n?.+?\\)"
+        ;;  ;; 4th
+        ;;  "\\() :parent-id[[:space:]]*\n?#?[[:digit:]]+\\)"
+        ;;  ;; 5th
+        ;;  "\\()+\\)"))
         (obj-ref-regexp
          (concat
           ;; 1st
@@ -279,7 +290,8 @@ parse-tree, and all keywords are converted to lowercase."
           "\\([[:word:]-_]+\\)"
           ;; 4th
           "\\([[:space:]]+\\)")))
-    (with-temp-buffer 
+    ;; (with-temp-buffer 
+    (with-current-buffer "tmp<2>"
       (insert (prin1-to-string tree))
       (goto-char (point-min))
       (while (re-search-forward txt-prop-regexp nil 'NOERROR)
@@ -295,9 +307,9 @@ parse-tree, and all keywords are converted to lowercase."
       (goto-char (point-min))
       (while (re-search-forward keyword-regexp nil 'NOERROR)
         ;; (let ((keyword (downcase (match-string-no-properties 3))))
-          (replace-match
-           ;; (concat "\\1" keyword "\\4"))))
-           (concat "\\1\\3\\4")))
+        (replace-match
+         ;; (concat "\\1" keyword "\\4"))))
+         (concat "\\1\\3\\4")))
       (buffer-substring-no-properties (point-min) (point-max)))))
 
 ;; FIXME obsolete
@@ -355,6 +367,7 @@ compliant form."
 
 ;; **** Normalize Parse-Tree
 
+;; FIXME mapping does not make sense - what about granularity?
 (defun iorg-normalize-parse-tree
   (&optional data buffer-or-file &rest args)
   "Converts an org-element parse-tree into a 'normalized' form.
@@ -391,14 +404,14 @@ consult their doc-strings for more information."
   ;; get data and arguments
   (let* ((preserve-nil-and-t-p
           (and args (plist-get args :preserve-nil-and-t-p)))
-         (map? (and args
-                    (or
-                     (plist-get args :types)
-                     (plist-get args :fun)
-                     (plist-get args :info)
-                     (plist-get args :first-match)
-                     (plist-get args :no-recursion)
-                     (plist-get args :with-affiliated))))
+         ;; (map? (and args
+         ;;            (or
+         ;;             (plist-get args :types)
+         ;;             (plist-get args :fun)
+         ;;             (plist-get args :info)
+         ;;             (plist-get args :first-match)
+         ;;             (plist-get args :no-recursion)
+         ;;             (plist-get args :with-affiliated))))
          (print-circle t)
          (buf (or (and buffer-or-file
                        (or (get-buffer buffer-or-file)
@@ -410,31 +423,32 @@ consult their doc-strings for more information."
                              (error "File %s is not a valid Org file"
                                     buffer-or-file))))
                   (current-buffer)))
-         (gran (or (and args (plist-member args :granularity)
-                        (plist-get args :granularity))
-                   'object))
-         (vis (and args (plist-get args :visible-only)))
+         ;; (gran (or (and args (plist-member args :granularity)
+         ;;                (plist-get args :granularity))
+         ;;           'object))
+         ;; (vis (and args (plist-get args :visible-only)))
          (dat (or data
                   (with-current-buffer buf
-                    (org-element-parse-buffer gran vis))))
-         (typ (or (and args (plist-get args :types))
-                  iorg-default-map-types-plus-text))
-         (fun (or (and args (plist-get args :fun)) 'identity))
-         (inf (and args (plist-get args :info)))
-         (1st-match (and args (plist-get args :first-match)))
-         (no-recur (and args (plist-get args :no-recursion)))
-         (with-affil (and args (plist-get args :with-affiliated)))
+                    ;; (org-element-parse-buffer gran vis))))
+                    (org-element-parse-buffer 'object))))
+         ;; (typ (or (and args (plist-get args :types))
+         ;;          iorg-default-map-types-plus-text))
+         ;; (fun (or (and args (plist-get args :fun)) 'identity))
+         ;; (inf (and args (plist-get args :info)))
+         ;; (1st-match (and args (plist-get args :first-match)))
+         ;; (no-recur (and args (plist-get args :no-recursion)))
+         ;; (with-affil (and args (plist-get args :with-affiliated)))
          ;; do the transformation
          (normalized-parse-tree-as-string
           (iorg--fix-read-syntax
            (iorg--tag-org-data-element
             (iorg--add-children-list
              (iorg--unwind-circular-list
-              (iorg--tag-elems-with-id-attributes
-               (if map?
-                   (org-element-map
-                       dat typ fun inf 1st-match no-recur with-affil)
-                 dat))))
+              (iorg--tag-elems-with-id-attributes dat)))
+               ;; (if map?
+               ;;     (org-element-map
+               ;;         dat typ fun inf 1st-match no-recur with-affil)
+               ;;   dat))))
             buf))))
     ;; upcase nil and t?
     (if preserve-nil-and-t-p

@@ -184,6 +184,7 @@
 
 ## **** Comments
 
+## - descendants :: joint link to descendant elements
 ## - elem-id :: element ID (unique for parse-tree)
 
 ## **** Code
@@ -195,12 +196,13 @@
 (dm url> ())
 (dm upd> ())
 (dm diff> ())
-
+(dm new> ())
 
 ## *** (Abstract) Org-Element
 
 ## **** Comments
 
+## - ancestor :: joint link to ancestor element
 ## - begin :: beginning buffer position
 ## - end :: ending buffer position
 ## - post-blank :: number of trailing blank lines/spaces
@@ -209,11 +211,12 @@
 ## **** Code
 
 (class +orgElement +orgBaseElement)
+(rel ancestor (+Joint) descendants (+orgBaseElement))
 (rel begin (+Number))
 (rel end (+Number))
 (rel post-blank (+Number))
-(rel parent (+Number))
-(rel ancestor (+Joint) descendants (+orgBaseElement))
+(rel parent-id (+Number))
+(rel parent (+List +Any))
 
 (dm interpret> ())
 
@@ -227,6 +230,7 @@
 ## - email :: authors email
 ## - creator :: version info for Emacs and Org-mode
 ## - description :: short description of org file
+## - contents :: normalized partial parse-tree
 
 ## **** Code
 
@@ -239,23 +243,19 @@
 (rel email (+Ref +String))
 (rel creator (+Sn +Idx +String))
 (rel description (+Sn +Idx +String))
-
-## Expects partial parse-tree of type '(org-data (:ID ...))' created by
-## `org-element-parse-buffer' and normalized by `iorg-normalize-parse-tree'.
-## (dm T (ParseTree)
-##    (let Plist (cadr ParseTree)
-##       (super
-##          'ID (cadr (memq ':ID Plist))
-##          'elem-id (cadr (memq ':elem-id Plist))
-##          'input-file (cadr (memq ':input-file Plist))
-##          'author (cadr (memq ':author Plist))
-##          'email (cadr (memq ':email Plist))
-##          'creator (cadr (memq ':creator Plist))
-##          'description (cadr (memq ':description Plist))) ) )
+(rel contents (+List +Any))
 
 (dm url> ())
 (dm upd> ())
 (dm diff> ())
+
+## expects a partial parse-tree of type 'org-data' as created by
+## `org-element-parse-buffer' and normalized by `iorg-normalize-parse-tree'
+(dm new> (Tree)
+ (and
+    (lst? Tree)
+    (eq (car Tree) 'org-data)
+
 
 ## *** Headline
 
@@ -310,40 +310,6 @@
 (rel children (+List +Number))
 (rel contents (+List +Any))
 
-## Expects partial parse-tree of type '(headline (:raw-value ...))' created by
-## `org-element-parse-buffer' and normalized by `iorg-normalize-parse-tree'.
-
-## (dm T (ParseTree)
-##    (let Plist (cadr ParseTree)
-##       (super
-##          'elem-id (cadr (memq ':elem-id Plist))
-##          'begin (cadr (memq ':begin Plist))
-##          'end (cadr (memq ':end Plist))
-##          'post-blank (cadr (memq ':post-blank Plist))
-##          'parent (cadr (memq ':parent Plist))
-##          'raw-value (cadr (memq ':raw-value Plist))
-##          'title (cadr (memq ':title Plist))
-##          'alt-title (cadr (memq ':alt-title Plist))
-##          'category (cadr (memq ':CATEGORY Plist))
-##          'pre-blank (cadr (memq ':pre-blank Plist))
-##          'hiddpenp (cadr (memq ':hiddpenp Plist))
-##          'contents-begin (cadr (memq ':contents-begin Plist))
-##          'contents-end (cadr (memq ':contents-end Plist))
-##          'level (cadr (memq ':level Plist))
-##          'priority (cadr (memq ':priority Plist))
-##          'tags (cadr (memq ':tags Plist))
-##          'todo-keyword (cadr (memq ':todo-keyword Plist))
-##          'todo-type (cadr (memq ':todo-type Plist))
-##          'scheduled (cadr (memq ':scheduled Plist))
-##          'deadline (cadr (memq ':deadline Plist))
-##          'closed (cadr (memq ':closed Plist))
-##          'quotedp (cadr (memq ':quotedp Plist))
-##          'archivedp (cadr (memq ':archivedp Plist))
-##          'commentedp (cadr (memq ':commentedp Plist))
-##          'footnote-section-p (cadr (memq ':footnote-section-p Plist))
-##          'children (cadr (memq ':children Plist))
-##          'contents (cadr (memq ':contents Plist)) ) ) )
-
 (dm url> ())
 (dm upd> ())
 (dm diff> ())
@@ -383,6 +349,57 @@
        (pack Tree) "))" ) )
 
 ## ** iOrg data
+
+## * Obsolete Stuff FIXME:delete
+
+## Expects partial parse-tree of type '(org-data (:ID ...))' created by
+## `org-element-parse-buffer' and normalized by `iorg-normalize-parse-tree'.
+## (dm T (ParseTree)
+##    (let Plist (cadr ParseTree)
+##       (super
+##          'ID (cadr (memq ':ID Plist))
+##          'elem-id (cadr (memq ':elem-id Plist))
+##          'input-file (cadr (memq ':input-file Plist))
+##          'author (cadr (memq ':author Plist))
+##          'email (cadr (memq ':email Plist))
+##          'creator (cadr (memq ':creator Plist))
+##          'description (cadr (memq ':description Plist))) ) )
+
+## Expects partial parse-tree of type '(headline (:raw-value ...))' created by
+## `org-element-parse-buffer' and normalized by `iorg-normalize-parse-tree'.
+
+## (dm T (ParseTree)
+##    (let Plist (cadr ParseTree)
+##       (super
+##          'elem-id (cadr (memq ':elem-id Plist))
+##          'begin (cadr (memq ':begin Plist))
+##          'end (cadr (memq ':end Plist))
+##          'post-blank (cadr (memq ':post-blank Plist))
+##          'parent (cadr (memq ':parent Plist))
+##          'raw-value (cadr (memq ':raw-value Plist))
+##          'title (cadr (memq ':title Plist))
+##          'alt-title (cadr (memq ':alt-title Plist))
+##          'category (cadr (memq ':CATEGORY Plist))
+##          'pre-blank (cadr (memq ':pre-blank Plist))
+##          'hiddpenp (cadr (memq ':hiddpenp Plist))
+##          'contents-begin (cadr (memq ':contents-begin Plist))
+##          'contents-end (cadr (memq ':contents-end Plist))
+##          'level (cadr (memq ':level Plist))
+##          'priority (cadr (memq ':priority Plist))
+##          'tags (cadr (memq ':tags Plist))
+##          'todo-keyword (cadr (memq ':todo-keyword Plist))
+##          'todo-type (cadr (memq ':todo-type Plist))
+##          'scheduled (cadr (memq ':scheduled Plist))
+##          'deadline (cadr (memq ':deadline Plist))
+##          'closed (cadr (memq ':closed Plist))
+##          'quotedp (cadr (memq ':quotedp Plist))
+##          'archivedp (cadr (memq ':archivedp Plist))
+##          'commentedp (cadr (memq ':commentedp Plist))
+##          'footnote-section-p (cadr (memq ':footnote-section-p Plist))
+##          'children (cadr (memq ':children Plist))
+##          'contents (cadr (memq ':contents Plist)) ) ) )
+
+
 
 ## * Database sizes
 (dbs
