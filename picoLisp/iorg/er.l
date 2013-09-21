@@ -251,10 +251,11 @@
 
 ## expects a partial parse-tree of type 'org-data' as created by
 ## `org-element-parse-buffer' and normalized by `iorg-normalize-parse-tree'
-(dm new> (Tree)
- (and
-    (lst? Tree)
-    (eq (car Tree) 'org-data)
+
+## (dm new> (Tree)
+##  (and
+##     (lst? Tree)
+##     (eq (car Tree) 'org-data) ) )
 
 
 ## *** Headline
@@ -346,7 +347,8 @@
       "(require 'iorg)"
       "(require 'ox)"
       "(princ (org-element-interpret-data "
-       (pack Tree) "))" ) )
+       "\"" (pack Tree) "\""
+       "))" ) )
 
 ## ** iOrg data
 

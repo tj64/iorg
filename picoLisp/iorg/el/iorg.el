@@ -241,15 +241,15 @@ while on it."
         (keyword-regexp
          (concat
           ;; 1st
-          "\\([[:space:]]*\\)"
+          "\\([[:space:]]\\|(\\)"
           ;; 2nd
           "\\(:\\)"
           ;; 3rd
           "\\([[:word:]-_]+\\)"
           ;; 4th
           "\\([[:space:]]+\\)")))
-    ;; (with-temp-buffer 
-    (with-current-buffer "tmp<2>"
+    (with-temp-buffer 
+    ;; (with-current-buffer "tmp<2>"
       (insert (prin1-to-string tree))
       (goto-char (point-min))
       (while (re-search-forward hash-regexp nil 'NOERROR)
@@ -439,6 +439,10 @@ are not converted to uppercase forms NIL and T."
     (if preserve-nil-and-t-p
         normalized-parse-tree-as-string
       (iorg--nil-and-t-to-uppercase normalized-parse-tree-as-string))))
+
+(defun iorg-wrap-parse-tree (tree)
+  "Wrap TREE in PicoLisp function '(processParseTree ...)'."
+  (concat "(processParseTree " tree " )"))
 
 ;; (defun iorg-pico-to-org ()
 ;;   "")

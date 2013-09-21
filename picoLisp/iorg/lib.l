@@ -65,7 +65,7 @@
 
 ## * Utility functions
 
-## ** Generic Emacs Functon
+## ** Call Emacs
 
 ## generic function for calling Emacs from PicoLisp
 ## usage example: (emx '(read) "/path/to/file.el" "(princ \"Hello World\")")
@@ -97,19 +97,79 @@
 (be _history (@C @Prv) (^ @Prv (set (-> @C) (; (val (-> @C)) <))))
 (repeat)
 
-## ** Replacement functions for Emacs Lisp read syntax
+## ## ** Replacement functions for Emacs Lisp read syntax
 
-## Strings with text properties
-(de hashtag (Lst)
-   (pack "#" (sym Lst)) )
+## ## Strings with text properties
+## (de hashtag (Lst)
+##    (pack "#" (sym Lst)) )
 
-## Define object reference
-(de hashtag-equal (Lst)
-   (pack "#" (car Lst) "=" (cadr Lst)) )
+## ## Define object reference
+## (de hashtag-equal (Lst)
+##    (pack "#" (car Lst) "=" (cadr Lst)) )
 
-## Reference object
-(de enclosing-hashtags (Num)
-   (pack "#" Num "#") )
+## ## Reference object
+## (de enclosing-hashtags (Num)
+##    (pack "#" Num "#") )
+
+## ** Make OrgData Objects
+
+## (de makeOrgData (Lst)
+##    (let (data-type (car Lst)
+##          content? (== (caaddr Lst) 'section))
+##       (msg "data-typ is: " data-type "^J")
+##       (msg "content is: " (caaddr Lst) "^J")
+##       (unless (== 'org-data data-type)
+##          (quit "Bad type" data-type) )
+##       (msg "cadr Lst is: " (cadr Lst) "^J")
+##       (msg "caddr Lst is: " (caddr Lst) "^J")
+##       (unless (cadr Lst)
+##          (quit "No properties for type 'org-data' specified") )
+##       (dbSync)
+##       (let Obj
+##          (apply new (cadr Lst) (db: +OrgData) '(+OrgData)
+##             'contents (and content? (caddr Lst)) ) )
+##       (if content?
+##          (makeOrgHeadline (nth Lst 4))
+##          (makeOrgHeadline (nth Lst 3)) ) ) )
+
+## expects a parse-tree as produced by `iorg-normalize-parse-tree' 
+(de processParseTree Tree
+   (makeOrgData (car Tree) (cadr Tree)) )
+
+(de makeOrgData (Val Lst)
+   (let (DataType (car Lst)
+         Content (and (== (caar (nth Lst 4)) 'section) (car (nth Lst 4)))
+         IorgOff (= "nil" (extractOptionValue "iorg" Content ) ) )
+      (unless IorgOff
+         (unless (== 'org-data DataType)
+            (quit "Bad type" DataType) )
+         (unless (cadr Lst)
+            (quit "No properties for type 'org-data' specified") )
+         (dbSync)
+         (let Obj
+            (apply new (cadr Lst) (db: +OrgData) '(+OrgData)
+               'contents Content )
+            (set Obj Val)
+            (commit 'upd)
+            (if Content
+               (makeOrgHeadline (nth Lst 4))
+               (makeOrgHeadline (nth Lst 3)) )
+            Obj ) ) ) )
+
+
+(de makeOrgHeadline (Val Lst)
+   (msg "Length Lst is " (length Lst) "^J (caar Lst) is " (caar Lst)) )
+
+## expects a '(section (...) (keyword (key OPTIONS value "..."))) list
+(de extractOptionValue (Option Lst)
+   (let Strg (glue " "
+                (mapcar
+                   '((X) (and
+                           (== (car X) 'keyword)
+                           (= (car (nth (cadr X) 2)) "OPTIONS")
+                           (car (nth (cadr X) 4)) ) )
+                   Lst ) )
+      (cadr (member Option (mapcar pack (split (chop Strg) ":" " ")))) ) )
 
 ## ** Others
 
@@ -192,7 +252,7 @@
          (pre? "/" (path P))
          (pack (pwd) "/" (path P)) ) ) )
 
-## * Call Emacs
+## * Predefined Emacs Calls
 
 ## ** Read Parse Tree
 
