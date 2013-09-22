@@ -32,88 +32,48 @@
 ;; A publishing function is also provided: `org-iorg-publish-to-org'.
 
 ;;; Require
-(require 'ox)
+;; (eval-when-compile (require 'cl))
+(require 'ox-html)
+
 (declare-function htmlize-buffer "htmlize" (&optional buffer))
 
 ;;; Define Back-End
 
 (org-export-define-derived-backend 'iorg 'html
-  '(
-    ;; (babel-call . identity)
-    ;; (bold . identity)
-    ;; (center-block . identity)
-    ;; (clock . identity)
-    ;; (code . identity)
-    ;; (comment . (lambda (&rest args) ""))
-    ;; (comment-block . (lambda (&rest args) ""))
-    ;; (diary-sexp . identity)
-    ;; (drawer . identity)
-    ;; (dynamic-block . identity)
-    ;; (entity . identity)
-    ;; (example-block . identity)
-    ;; (fixed-width . identity)
-    ;; (footnote-definition . identity)
-    ;; (footnote-reference . identity)
-    ;; (headline . org-iorg-headline)
-    ;; (horizontal-rule . identity)
-    ;; (inline-babel-call . identity)
-    ;; (inline-src-block . identity)
-    ;; (inlinetask . identity)
-    ;; (italic . identity)
-    ;; (item . identity)
-    ;; (keyword . identity)
-    ;; (latex-environment . identity)
-    ;; (latex-fragment . identity)
-    ;; (line-break . identity)
-    ;; (link . identity)
-    ;; (node-property . identity)
-    ;; (paragraph . org-iorg-paragraph)
-    ;; (plain-list . org-iorg-plain-list)
-    ;; (plain-text . org-iorg-plain-text)
-    ;; (planning . identity)
-    ;; (property-drawer . identity)
-    ;; (quote-block . identity)
-    ;; (quote-section . identity)
-    ;; (radio-target . org-iorg-radio-target)
-    ;; (section . org-iorg-section)
-    ;; (special-block . identity)
-    ;; (src-block . identity)
-    ;; (statistics-cookie . identity)
-    ;; (strike-through . identity)
-    ;; (subscript . identity)
-    ;; (superscript . identity)
-    ;; (table . org-iorg-table)
-    ;; (table-cell . org-iorg-table-cell)
-    ;; (table-row . org-iorg-table-row)
-    ;; (target . identity)
-    ;; (template . org-iorg-template)
-    ;; (timestamp . org-iorg-timestamp)
-    ;; (underline . identity)
-    ;; (verbatim . identity)
-    ;; (verse-block . identity)
-    )
+  :translate-alist
+  '((headline . org-iorg-headline)
+    (item . org-iorg-item)
+    (plain-list . org-iorg-plain-list)
+    (table . org-iorg-table)
+    (table-cell . org-iorg-table-cell)
+    (table-row . org-iorg-table-row)
+    (template . org-iorg-template))
   :export-block "IORG"
   :filters-alist '(
                    ;; convert 
                    (:filter-parse-tree
-		    . (ox-iorg--translate-stuff))
+		    . (org-iorg--translate-stuff))
                    ;; change #( read syntax
                    (:filter-plain-text
-		    . (ox-iorg--translate-stuff))
+		    . (org-iorg--translate-stuff))
                    ;; add info and elem-id to org-data
                    (:filter-org-data
-		    . (ox-iorg--translate-stuff))
+		    . (org-iorg--translate-stuff))
                    ;; nil and t to uppercase
                    (:filter-final-output
-		    . (ox-iorg--translate-stuff)))
+		    . (org-iorg--translate-stuff)))
   :menu-entry
-  '(?O "Export to Org"
-       ((?O "As Org buffer" org-iorg-export-as-iorg)
-	(?o "As Org file" org-iorg-export-to-iorg)
-	(?v "As Org file and open"
+  '(?i "Export to iOrg"
+       ((?I "As iOrg buffer" org-iorg-export-as-iorg)
+	(?i "As iOrg file" org-iorg-export-to-iorg)
+	(?o "As Org file and open"
 	    (lambda (a s v b)
 	      (if a (org-iorg-export-to-iorg t s v b)
-		(org-open-file (org-iorg-export-to-iorg nil s v b))))))))
+		(org-open-file (org-iorg-export-to-iorg nil s v b)))))))
+  :options-alist
+  '((:iorg-export-p nil "iorg" t t)
+    (:iorg-data "IORG_DATA" nil nil space)
+    (:iorg-form "IORG_FORM" nil nil space)))
 
 
 ;;; Variables
@@ -151,7 +111,8 @@ setting of `org-html-htmlize-output-type' is 'css."
 (defun org-iorg-template (contents info)
   "Return complete document string after iOrg conversion.
 CONTENTS is the transcoded contents string.  INFO is a plist
-holding export options.")
+holding export options."
+  contents)
 
 ;;;; Transcode Functions
 
@@ -163,52 +124,45 @@ holding export options.")
 (defun org-iorg-headline (headline contents info)
   "Transcode HEADLINE element back into Org syntax.
 CONTENTS is its contents, as a string or nil.  INFO is ignored."
-  (unless (plist-get info :with-todo-keywords)
-    (org-element-put-property headline :todo-keyword nil))
-  (unless (plist-get info :with-tags)
-    (org-element-put-property headline :tags nil))
-  (unless (plist-get info :with-priority)
-    (org-element-put-property headline :priority nil))
-  (org-element-headline-interpreter headline contents))
+(format "%s" contents))
 
-
-(defun org-iorg-section (headline contents info)
-  "Transcode SECTION element into iOrg syntax.
-CONTENTS is its contents, as a string or nil.  INFO is ignored.")
-
-(defun org-iorg-paragraph (headline contents info)
-  "Transcode PARAGRAPH element into iOrg syntax.
-CONTENTS is its contents, as a string or nil.  INFO is ignored.")
+  ;; (unless (plist-get info :with-todo-keywords)
+  ;;   (org-element-put-property headline :todo-keyword nil))
+  ;; (unless (plist-get info :with-tags)
+  ;;   (org-element-put-property headline :tags nil))
+  ;; (unless (plist-get info :with-priority)
+  ;;   (org-element-put-property headline :priority nil))
+  ;; (org-element-headline-interpreter headline contents))
 
 (defun org-iorg-plain-list (headline contents info)
   "Transcode PLAIN-LIST element into iOrg syntax.
-CONTENTS is its contents, as a string or nil.  INFO is ignored.")
+CONTENTS is its contents, as a string or nil.  INFO is ignored."
+  contents)
 
-(defun org-iorg-radio-target (headline contents info)
-  "Transcode RADIO-TARGET element into iOrg syntax.
-CONTENTS is its contents, as a string or nil.  INFO is ignored.")
+(defun org-iorg-item (headline contents info)
+  "Transcode ITEM element into iOrg syntax.
+CONTENTS is its contents, as a string or nil.  INFO is ignored."
+  contents)
 
 (defun org-iorg-table (headline contents info)
   "Transcode TABLE element into iOrg syntax.
-CONTENTS is its contents, as a string or nil.  INFO is ignored.")
+CONTENTS is its contents, as a string or nil.  INFO is ignored."
+  contents)
 
 (defun org-iorg-table-cell (headline contents info)
   "Transcode TABLE-CELL element into iOrg syntax.
-CONTENTS is its contents, as a string or nil.  INFO is ignored.")
+CONTENTS is its contents, as a string or nil.  INFO is ignored."
+  contents)
 
 (defun org-iorg-table-row (headline contents info)
   "Transcode TABLE-ROW element into iOrg syntax.
-CONTENTS is its contents, as a string or nil.  INFO is ignored.")
+CONTENTS is its contents, as a string or nil.  INFO is ignored."
+  contents)
 
-(defun org-iorg-timestamp (headline contents info)
-  "Transcode TIMESTAMP element into iOrg syntax.
-CONTENTS is its contents, as a string or nil.  INFO is ignored.")
-
-(defun org-iorg-plain-text (headline contents info)
-  "Transcode PLAIN-TEXT element into iOrg syntax.
-CONTENTS is its contents, as a string or nil.  INFO is ignored.")
 
 ;;;; Filter Functions
+
+(defun org-iorg--translate-stuff (headline back-end info) )
 
 (defun org-iorg-final-function (contents backend info)
   "Filter to indent the HTML and convert HTML entities."
@@ -266,7 +220,7 @@ non-nil."
 	   (org-export-to-buffer
 	    'iorg "*Org IORG Export*"
             subtreep visible-only nil ext-plist)))
-      (with-current-buffer outbuf (iorg-mode))
+      (with-current-buffer outbuf (org-mode))
       (when org-export-show-temporary-export-buffer
 	(switch-to-buffer-other-window outbuf)))))
 

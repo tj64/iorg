@@ -139,7 +139,7 @@
 (de makeOrgData (Val Lst)
    (let (DataType (car Lst)
          Content (and (== (caar (nth Lst 4)) 'section) (car (nth Lst 4)))
-         IorgOff (= "nil" (extractOptionValue "iorg" Content ) ) )
+         IorgOff (= "nil" (extractOptionValue "iorg" Content)) )
       (unless IorgOff
          (unless (== 'org-data DataType)
             (quit "Bad type" DataType) )
@@ -158,9 +158,11 @@
 
 
 (de makeOrgHeadline (Val Lst)
-   (msg "Length Lst is " (length Lst) "^J (caar Lst) is " (caar Lst)) )
+   )
 
-## expects a '(section (...) (keyword (key OPTIONS value "..."))) list
+
+## expects from a parse-tree a 'section with 'keyword('s) as Lst
+## and a string like "iorg" as Option
 (de extractOptionValue (Option Lst)
    (let Strg (glue " "
                 (mapcar

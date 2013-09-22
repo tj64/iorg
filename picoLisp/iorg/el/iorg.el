@@ -241,7 +241,7 @@ while on it."
         (keyword-regexp
          (concat
           ;; 1st
-          "\\([[:space:]]\\|(\\)"
+          "\\([[:space:]]\\|(\\|\"\\)"
           ;; 2nd
           "\\(:\\)"
           ;; 3rd
