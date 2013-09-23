@@ -137,7 +137,7 @@ CONTENTS is its contents, as a string or nil.  INFO is ignored."
 (defun org-iorg-plain-list (headline contents info)
   "Transcode PLAIN-LIST element into iOrg syntax.
 CONTENTS is its contents, as a string or nil.  INFO is ignored."
-  contents)
+(format "%s" contents))
 
 (defun org-iorg-item (headline contents info)
   "Transcode ITEM element into iOrg syntax.
@@ -147,17 +147,17 @@ CONTENTS is its contents, as a string or nil.  INFO is ignored."
 (defun org-iorg-table (headline contents info)
   "Transcode TABLE element into iOrg syntax.
 CONTENTS is its contents, as a string or nil.  INFO is ignored."
-  contents)
+(format "%s" contents))
 
 (defun org-iorg-table-cell (headline contents info)
   "Transcode TABLE-CELL element into iOrg syntax.
 CONTENTS is its contents, as a string or nil.  INFO is ignored."
-  contents)
+(format "%s" contents))
 
 (defun org-iorg-table-row (headline contents info)
   "Transcode TABLE-ROW element into iOrg syntax.
 CONTENTS is its contents, as a string or nil.  INFO is ignored."
-  contents)
+(format "%s" contents))
 
 
 ;;;; Filter Functions

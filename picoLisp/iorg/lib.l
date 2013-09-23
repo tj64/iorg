@@ -1,5 +1,5 @@
 ## * iorg/lib.l --- Library for iOrg
-## ** MetaData 
+## ** MetaData
 ##   :PROPERTIES:
 ##   :copyright: Alexander_Burger Thorsten_Jolitz
 ##   :copyright-since: 2011
@@ -62,6 +62,7 @@
 ##      disables auto-saving except in buffers for which auto-saving is
 ##      explicitly requested.
 ## #+end_quote
+
 
 ## * Utility functions
 
@@ -132,45 +133,73 @@
 ##          (makeOrgHeadline (nth Lst 4))
 ##          (makeOrgHeadline (nth Lst 3)) ) ) )
 
-## expects a parse-tree as produced by `iorg-normalize-parse-tree' 
+## expects a parse-tree as produced by `iorg-normalize-parse-tree'
 (de processParseTree Tree
    (makeOrgData (car Tree) (cadr Tree)) )
 
 (de makeOrgData (Val Lst)
-   (let (DataType (car Lst)
-         Content (and (== (caar (nth Lst 4)) 'section) (car (nth Lst 4)))
-         IorgOff (= "nil" (extractOptionValue "iorg" Content)) )
+   (let (IorgOff (= "nil" (extractOptionValue "iorg" Lst)) )
       (unless IorgOff
-         (unless (== 'org-data DataType)
+         (unless (== 'org-data (pop 'Lst))
             (quit "Bad type" DataType) )
-         (unless (cadr Lst)
+         (unless (car Lst)
             (quit "No properties for type 'org-data' specified") )
          (dbSync)
          (let Obj
-            (apply new (cadr Lst) (db: +OrgData) '(+OrgData)
-               'contents Content )
+            (apply new (pop 'Lst) (db: +OrgData) '(+OrgData)
+               'contents
+               (and (== 'section (caar Lst) (cdr (pop 'Lst)))) )
             (set Obj Val)
+            (while Lst
+               (makeOrgHeadline
+                  (and
+                     (sym? (car Lst))
+                     (= "#" (char (car Lst)))
+                     (pop 'Lst) )
+                  (cdr (pop 'Lst)) ) )
             (commit 'upd)
-            (if Content
-               (makeOrgHeadline (nth Lst 4))
-               (makeOrgHeadline (nth Lst 3)) )
             Obj ) ) ) )
 
 
-(de makeOrgHeadline (Val Lst)
-   )
+(de makeOrgHeadline (Label Lst Iorg?)
+   (let (Tags (cadr (member 'tags Lst))
+         Tag (and Tags
+                (if (str? Tags)
+                   (and (or (= Tags "iorg") (= Tags "noiorg")) Tags)
+                   (or
+                      (cadr (member "iorg" Tags))
+                      (cadr (member "noiorg" Tags)) ) ) )
+         Prop (cadr (member 'IORG Lst)) )
+      (unless (or (= Tag "noiorg") (= Prop "no"))
+         (and (or Iorg? (= Tag "iorg") (= Prop "yes"))
+            (or Iorg? (on Iorg?))
+            (let Obj
+               (apply new (pop 'Lst) (db: +OrgHeadline) '(+OrgHeadline)
+                  'contents
+                  (and (== 'section (caar Lst) (cdr (pop 'Lst)))) )
+               (and Label (set @ Obj)) ) ) )
+      (while Lst
+         (makeOrgHeadline
+            (and
+               (sym? (car Lst))
+               (= "#" (char (car Lst)))
+               (pop 'Lst) )
+            (cdr (pop 'Lst))
+            Iorg? ) ) ) )
 
-
-## expects from a parse-tree a 'section with 'keyword('s) as Lst
-## and a string like "iorg" as Option
-(de extractOptionValue (Option Lst)
-   (let Strg (glue " "
-                (mapcar
-                   '((X) (and
-                           (== (car X) 'keyword)
-                           (= (car (nth (cadr X) 2)) "OPTIONS")
-                           (car (nth (cadr X) 4)) ) )
-                   Lst ) )
+## expects a parse-tree as produced by `iorg-normalize-parse-tree'
+## and an option as string like e.g. "iorg"
+(de extractOptionValue (Option ParseTree)
+   (let (OrgDataContent (and
+                           (== (caar (nth ParseTree 4)) 'section)
+                           (car (nth ParseTree 4)) )
+         Strg (glue " "
+                 (mapcar
+                    '((X) (and
+                             (== (car X) 'keyword)
+                             (= (car (nth (cadr X) 2)) "OPTIONS")
+                             (car (nth (cadr X) 4)) ) )
+                    OrgDataContent ) ) )
       (cadr (member Option (mapcar pack (split (chop Strg) ":" " ")))) ) )
 
 ## ** Others
@@ -246,7 +275,7 @@
    (in (blob This 'd) (ht:Out *Chunked (echo))) )
 
 ## FIXME: account for possible "../../"
-## Return absolute path to local (running) PicoLisp installation 
+## Return absolute path to local (running) PicoLisp installation
 ## Usage example: (absolutePath "@lib/misc.l")
 (de absolutePath (P)
    (split

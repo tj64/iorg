@@ -288,10 +288,10 @@
 ## **** Code
 
 (class +OrgHeadline +orgElement)
-(rel raw-value (+Sn +Idx +String))
+(rel raw-value (+Idx +String))
 (rel title (+List +Any))
 (rel alt-title (+String))
-(rel CATEGORY (+List +Any))
+(rel CATEGORY (+Any))
 (rel pre-blank (+Number))
 (rel hiddenp (+Ref +Symbol))
 (rel contents-begin (+Number))
@@ -309,7 +309,7 @@
 (rel commentedp (+Ref +Bool))
 (rel footnote-section-p (+Ref +Bool))
 (rel children (+List +Number))
-(rel contents (+List +Any))
+(rel contents (+Any))
 
 (dm url> ())
 (dm upd> ())
