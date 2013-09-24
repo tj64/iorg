@@ -191,7 +191,7 @@
 
 (class +orgBaseElement +Entity)
 (rel descendants (+List +Joint) ancestor (+orgElement))
-(rel elem-id (+Need +Number))
+(rel label (+Symbol))
 
 (dm url> ())
 (dm upd> ())

@@ -122,7 +122,7 @@
 (de processParseTree Tree
    (makeOrgData (car Tree) (cadr Tree)) )
 
-(de makeOrgData (Val Lst)
+(de makeOrgData (Label Lst)
    (msg "makeOrgData entered...")
    (setq *IorgGlobalSwitch (extractOptionValue "iorg" Lst))
       (unless (= "nil" *IorgGlobalSwitch)
@@ -136,20 +136,31 @@
                new
                (make
                   (for (L (pop 'Lst) L)
-                     (link
+                     (if (meta '(+OrgData) (car L))
+                        (link
+                           (pop 'L)
+                           (if (hashSymEqual? (car L))
+                              (cut 2 'L)
+                              (pop 'L) ) )
                         (pop 'L)
-                        (if (hashSymEqual? (car L))
-                           (cut 2 'L)
-                           (pop 'L) ) ) ) )
+                        (and (hashSymEqual? (car L) (pop 'L))) ) ) )
+               ## (make
+               ##    (for (L (pop 'Lst) L)
+               ##       (link
+               ##          (pop 'L)
+               ##          (if (hashSymEqual? (car L))
+               ##             (cut 2 'L)
+               ##             (pop 'L) ) ) ) )
                ## (pop 'Lst)
                (db: +OrgData) '(+OrgData)
                'contents (and
                             (== 'section (caadr Lst))
-                            (cut 2 'Lst) ) )
-            (set Obj Val)
+                            (cut 2 'Lst) )
+               'label Label )
+            ## (and Label (set @ Obj))
             (msg (show Obj) " => New OrgData object created")
             (while Lst
-               (msg "while OrgData...")
+               (msg "while loop OrgData entered ...")
                (makeOrgHeadline
                   (and
                      (hashSymEqual? (car Lst))
@@ -159,79 +170,118 @@
             (off *IorgGlobalSwitch)
             Obj ) ) )
 
-
-(de makeOrgHeadline (Label Lst Iorg?)
+(de makeOrgHeadline (Label Lst)
    (msg "makeOrgHeadline entered...")
-   (msg Lst " =>  Lst")
-   ## (msg Label " => Label")
-   ## (msg Iorg? " => Iorg?")
-   (and Lst
-      (let (Tags (cadr (member 'tags (car Lst)))
-            Tag (and Tags
-                   (if (str? Tags)
-                      (and (or (= Tags "iorg") (= Tags "noiorg")) Tags)
-                      (or
-                         (car (member "iorg" Tags))
-                         (car (member "noiorg" Tags)) ) ) )
-            Prop (cadr (member 'IORG (car Lst))) )
-         ## (and
-         ##    (or
-         ##       (= "t" *IorgGlobalSwitch)
-         ##       (and
-         ##          (not (or (= Tag "noiorg") (= Prop "off")))
-         ##          (and (or Iorg? (= Tag "iorg") (= Prop "on"))) ) )
-         (ifn
-            (or
-               (= "t" *IorgGlobalSwitch)
-               (and
-                  (not (or (= Tag "noiorg") (= Prop "off")))
-                  (and (or Iorg? (= Tag "iorg") (= Prop "on"))) ) )
+   (msg (car Lst) " =>  (car Lst)")
+   (msg Label " => Label")
+   (msg *IorgGlobalSwitch " => *IorgGlobalSwitch")
+   (let Obj
+      (apply
+         new
+         (make
+            (for (L (pop 'Lst) L)
+               (if (meta '(+OrgHeadline) (car L))
+                  (link
+                     (pop 'L)
+                     (if (hashSymEqual? (car L))
+                        (cut 2 'L)
+                        (pop 'L) ) )
+                  (pop 'L)
+                  (and (hashSymEqual? (car L) (pop 'L))) ) ) )
+         ## (make
+         ##    (for (L (pop 'Lst) L)
+         ##       (link
+         ##          (pop 'L)
+         ##          (if (hashSymEqual? (car L))
+         ##             (cut 2 'L)
+         ##             (pop 'L) ) ) ) )
+         (db: +OrgHeadline) '(+OrgHeadline)
+         'contents (and
+                      (== 'section (caadr Lst))
+                      (cut 2 'Lst) )
+        'label Label )
+      ## (and Label (set @ Obj))
+      (msg (show Obj) " => New OrgHeadline object created") )
+(while Lst
+   (msg "while loop OrgHeadline entered ...")
+   (makeOrgHeadline
+      (and
+         (hashSymEqual? (car Lst))
+         (pop 'Lst) )
+      (cdr (pop 'Lst)) ) ) )
 
-            (let (List (make
-                          (for (L (pop 'Lst) L)
-                             (link
-                                (pop 'L)
-                                (if (hashSymEqual? (car L))
-                                   (cut 2 'L)
-                                   (pop 'L) ) ) ) ) )
-               (and (== 'section (caadr Lst)) (cut 2 'Lst) )
-               (makeOrgHeadline
-                  (and
-                     (hashSymEqual? (car List))
-                     (pop 'List) )
-                  (if (str? (car List) NIL (cdr (pop 'List))))
-                  ## (cdr (pop 'List))
-                  Iorg? ) )
+## (de makeOrgHeadline1 (Label Lst Iorg?)
+##    (msg "makeOrgHeadline entered...")
+##    (msg Lst " =>  Lst")
+##    ## (msg Label " => Label")
+##    ## (msg Iorg? " => Iorg?")
+##    (and Lst
+##       (let (Tags (cadr (member 'tags (car Lst)))
+##             Tag (and Tags
+##                    (if (str? Tags)
+##                       (and (or (= Tags "iorg") (= Tags "noiorg")) Tags)
+##                       (or
+##                          (car (member "iorg" Tags))
+##                          (car (member "noiorg" Tags)) ) ) )
+##             Prop (cadr (member 'IORG (car Lst))) )
+##          ## (and
+##          ##    (or
+##          ##       (= "t" *IorgGlobalSwitch)
+##          ##       (and
+##          ##          (not (or (= Tag "noiorg") (= Prop "off")))
+##          ##          (and (or Iorg? (= Tag "iorg") (= Prop "on"))) ) )
+##          (ifn
+##             (or
+##                (= "t" *IorgGlobalSwitch)
+##                (and
+##                   (not (or (= Tag "noiorg") (= Prop "off")))
+##                   (and (or Iorg? (= Tag "iorg") (= Prop "on"))) ) )
 
-            (or Iorg? (on Iorg?))
-            (let Obj
-               (apply
-                  new
-                  (make
-                     (for (L (pop 'Lst) L)
-                        (link
-                           (pop 'L)
-                           (if (hashSymEqual? (car L))
-                              (cut 2 'L)
-                              (pop 'L) ) ) ) )
-                  (db: +OrgHeadline) '(+OrgHeadline)
-                  'contents (and
-                               (== 'section (caadr Lst))
-                               (cut 2 'Lst) ) )
-               (and Label (set @ Obj))
-               (msg (show Obj) " => New OrgHeadline object created") ) )
-         (while Lst
-            ## (msg "while OrgHeadline ...")
-            ## (msg (length Lst) "while OrgHeadline")
-            ## (msg Lst)
-            (makeOrgHeadline
-               (and
-                  (hashSymEqual? (car Lst))
-                  (pop 'Lst) )
-               (or
-                  (cdr (pop 'Lst))
-                  (car (pop 'Lst)) )
-               Iorg? ) ) ) ) )
+##             (let (List (make
+##                           (for (L (pop 'Lst) L)
+##                              (link
+##                                 (pop 'L)
+##                                 (if (hashSymEqual? (car L))
+##                                    (cut 2 'L)
+##                                    (pop 'L) ) ) ) ) )
+##                (and (== 'section (caadr Lst)) (cut 2 'Lst) )
+##                (makeOrgHeadline
+##                   (and
+##                      (hashSymEqual? (car List))
+##                      (pop 'List) )
+##                   (if (str? (car List) NIL (cdr (pop 'List))))
+##                   ## (cdr (pop 'List))
+##                   Iorg? ) )
+
+##             (or Iorg? (on Iorg?))
+##             (let Obj
+##                (apply
+##                   new
+##                   (make
+##                      (for (L (pop 'Lst) L)
+##                         (link
+##                            (pop 'L)
+##                            (if (hashSymEqual? (car L))
+##                               (cut 2 'L)
+##                               (pop 'L) ) ) ) )
+##                   (db: +OrgHeadline) '(+OrgHeadline)
+##                   'contents (and
+##                                (== 'section (caadr Lst))
+##                                (cut 2 'Lst) ) )
+##                (and Label (set @ Obj))
+##                (msg (show Obj) " => New OrgHeadline object created") ) )
+##          (while Lst
+##             ## (msg "while OrgHeadline ...")
+##             ## (msg (length Lst) "while OrgHeadline")
+##             ## (msg Lst)
+##             (makeOrgHeadline
+##                (and
+##                   (hashSymEqual? (car Lst))
+##                   (pop 'Lst) )
+##                (or
+##                   (cdr (pop 'Lst))
+##                   (car (pop 'Lst)) )
+##                Iorg? ) ) ) ) )
 
 (de hashSymEqual? (X)
    (and
