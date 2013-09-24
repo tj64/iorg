@@ -102,20 +102,6 @@
 (be _history (@C @Prv) (^ @Prv (set (-> @C) (; (val (-> @C)) <))))
 (repeat)
 
-## ## ** Replacement functions for Emacs Lisp read syntax
-
-## ## Strings with text properties
-## (de hashtag (Lst)
-##    (pack "#" (sym Lst)) )
-
-## ## Define object reference
-## (de hashtag-equal (Lst)
-##    (pack "#" (car Lst) "=" (cadr Lst)) )
-
-## ## Reference object
-## (de enclosing-hashtags (Num)
-##    (pack "#" Num "#") )
-
 ## ** Make OrgData Objects
 
 ## expects a parse-tree as produced by `iorg-normalize-parse-tree'
@@ -144,20 +130,11 @@
                               (pop 'L) ) )
                         (pop 'L)
                         (and (hashSymEqual? (car L) (pop 'L))) ) ) )
-               ## (make
-               ##    (for (L (pop 'Lst) L)
-               ##       (link
-               ##          (pop 'L)
-               ##          (if (hashSymEqual? (car L))
-               ##             (cut 2 'L)
-               ##             (pop 'L) ) ) ) )
-               ## (pop 'Lst)
                (db: +OrgData) '(+OrgData)
                'contents (and
                             (== 'section (caadr Lst))
                             (cut 2 'Lst) )
                'label Label )
-            ## (and Label (set @ Obj))
             (msg (show Obj) " => New OrgData object created")
             (while Lst
                (msg "while loop OrgData entered ...")
@@ -188,19 +165,11 @@
                         (pop 'L) ) )
                   (pop 'L)
                   (and (hashSymEqual? (car L) (pop 'L))) ) ) )
-         ## (make
-         ##    (for (L (pop 'Lst) L)
-         ##       (link
-         ##          (pop 'L)
-         ##          (if (hashSymEqual? (car L))
-         ##             (cut 2 'L)
-         ##             (pop 'L) ) ) ) )
          (db: +OrgHeadline) '(+OrgHeadline)
          'contents (and
                       (== 'section (caadr Lst))
                       (cut 2 'Lst) )
         'label Label )
-      ## (and Label (set @ Obj))
       (msg (show Obj) " => New OrgHeadline object created") )
 (while Lst
    (msg "while loop OrgHeadline entered ...")
@@ -210,78 +179,6 @@
          (pop 'Lst) )
       (cdr (pop 'Lst)) ) ) )
 
-## (de makeOrgHeadline1 (Label Lst Iorg?)
-##    (msg "makeOrgHeadline entered...")
-##    (msg Lst " =>  Lst")
-##    ## (msg Label " => Label")
-##    ## (msg Iorg? " => Iorg?")
-##    (and Lst
-##       (let (Tags (cadr (member 'tags (car Lst)))
-##             Tag (and Tags
-##                    (if (str? Tags)
-##                       (and (or (= Tags "iorg") (= Tags "noiorg")) Tags)
-##                       (or
-##                          (car (member "iorg" Tags))
-##                          (car (member "noiorg" Tags)) ) ) )
-##             Prop (cadr (member 'IORG (car Lst))) )
-##          ## (and
-##          ##    (or
-##          ##       (= "t" *IorgGlobalSwitch)
-##          ##       (and
-##          ##          (not (or (= Tag "noiorg") (= Prop "off")))
-##          ##          (and (or Iorg? (= Tag "iorg") (= Prop "on"))) ) )
-##          (ifn
-##             (or
-##                (= "t" *IorgGlobalSwitch)
-##                (and
-##                   (not (or (= Tag "noiorg") (= Prop "off")))
-##                   (and (or Iorg? (= Tag "iorg") (= Prop "on"))) ) )
-
-##             (let (List (make
-##                           (for (L (pop 'Lst) L)
-##                              (link
-##                                 (pop 'L)
-##                                 (if (hashSymEqual? (car L))
-##                                    (cut 2 'L)
-##                                    (pop 'L) ) ) ) ) )
-##                (and (== 'section (caadr Lst)) (cut 2 'Lst) )
-##                (makeOrgHeadline
-##                   (and
-##                      (hashSymEqual? (car List))
-##                      (pop 'List) )
-##                   (if (str? (car List) NIL (cdr (pop 'List))))
-##                   ## (cdr (pop 'List))
-##                   Iorg? ) )
-
-##             (or Iorg? (on Iorg?))
-##             (let Obj
-##                (apply
-##                   new
-##                   (make
-##                      (for (L (pop 'Lst) L)
-##                         (link
-##                            (pop 'L)
-##                            (if (hashSymEqual? (car L))
-##                               (cut 2 'L)
-##                               (pop 'L) ) ) ) )
-##                   (db: +OrgHeadline) '(+OrgHeadline)
-##                   'contents (and
-##                                (== 'section (caadr Lst))
-##                                (cut 2 'Lst) ) )
-##                (and Label (set @ Obj))
-##                (msg (show Obj) " => New OrgHeadline object created") ) )
-##          (while Lst
-##             ## (msg "while OrgHeadline ...")
-##             ## (msg (length Lst) "while OrgHeadline")
-##             ## (msg Lst)
-##             (makeOrgHeadline
-##                (and
-##                   (hashSymEqual? (car Lst))
-##                   (pop 'Lst) )
-##                (or
-##                   (cdr (pop 'Lst))
-##                   (car (pop 'Lst)) )
-##                Iorg? ) ) ) ) )
 
 (de hashSymEqual? (X)
    (and
@@ -474,110 +371,6 @@
          (eval X Ofs) ) ) )
 
 
-## ## render original PicoLisp Wiki syntax
-## (de render (Bin)
-##    (let Nest NIL
-##       (recur (Nest)
-##          (use C
-##             (loop
-##                (ht:Prin (till "^J123456&/!_*+-<@>=\^:\\#}" T))
-##                (NIL (setq C (char)))
-##                (T (and Nest (= C "}")))
-##                (case (peek)
-##                   ("^J"
-##                      (ifn (= "^J" C)
-##                         (ht:Prin C)
-##                         (----)
-##                         (char) ) )
-##                   ("{"
-##                      (char)  # Skip "{"
-##                      (case C
-##                         (("1" "2" "3" "4" "5" "6")  # Heading
-##                            (_render "h" C)
-##                            (prinl)
-##                            (skip) )
-##                         ("&"
-##                            (let? N (format (till "}" T))
-##                               (prin "<br"
-##                                  (and (lt0 N) " class=\"clr\"")
-##                                  "/>" )
-##                               (do (dec (abs N))
-##                                  (prin "<br/>") ) )
-##                            (char) )
-##                         ("/"  # Italic
-##                            (_render "i") )
-##                         ("!"  # Bold
-##                            (_render "b") )
-##                         ("_"  # Underlined
-##                            (_render "u") )
-##                         ("*"  # Unordered list
-##                            (_render "ul") )
-##                         ("+"  # Ordered list
-##                            (_render "ol") )
-##                         ("-"  # List item
-##                            (_render "li") )
-##                         (("<" "@" ">")  # Binary file
-##                            (let Nm (till "}" T)
-##                               (char)
-##                               (with (! findBin Nm Bin)
-##                                  (cond
-##                                     ((pre? "image/" (: mt))
-##                                        (prin "<img src=\""
-##                                           *SesId (blob This 'd)
-##                                           "\" alt=\"" )
-##                                        (ht:Prin Nm)
-##                                        (prin
-##                                           "\" class=\""
-##                                           (case C
-##                                              ("<" "left")
-##                                              ("@" "nofloat")
-##                                              (">" "right") )
-##                                           "\"/>" ) )
-##                                     ((pre? "video/" (: mt))
-##                                        (prin "<video src=\""
-##                                           *SesId (blob This 'd)
-##                                           "\" class=\""
-##                                           (case C
-##                                              ("<" "left")
-##                                              ("@" "nofloat")
-##                                              (">" "right") )
-##                                           "\">" )
-##                                        (ht:Prin Nm)
-##                                        (prin "</video>") )
-##                                     (T
-##                                        (<style> (cons 'type (: mt))
-##                                           (<href> Nm (pack "!download?" (ht:Fmt This))) ) ) ) ) ) )
-##                         ("="  # Internal document link
-##                            (iorgLink (split (till "}") " " "^I" "^J" "^M"))
-##                            (char) )
-##                         ("\^"  # External web link
-##                            (let S (split (till "}") " " "^I" "^J" "^M")
-##                               (char)
-##                               (if
-##                                  (member
-##                                     (car (split (car S) ":"))
-##                                     (quote
-##                                        `(chop "http")
-##                                        `(chop "https")
-##                                        `(chop "irc")
-##                                        `(chop "mailto") ) )
-##                                  (<href>
-##                                     (or (glue " " (cdr S)) (pack (car S)))
-##                                     (pack (car S)) )
-##                                  (prin "???") ) ) )
-##                         (":"  # Pre-formatted
-##                            ((if (= "^J" (peek)) <pre> <span>) 'code
-##                               (renderBlock ht:Prin)) )
-##                         ("\\" (prin "{"))  # Escaped brace
-##                         ("#" (renderBlock prog))  # Comment
-##                         (T (prin C "{")) ) )
-##                   (T (ht:Prin C)) ) ) ) ) ) )
-
-## (de _render (C D)
-##    (prin "<" C D ">")
-##    (recurse T)
-##    (prin "</" C D ">") )
-
 (de renderBlock (Fun)
    (let (N 0  C)
       (loop
@@ -730,5 +523,190 @@
          (chdir (tmp)
             (in (list "pdflatex" "-interaction=batchmode" Nm))
             (httpEcho (pack Nm ".pdf") "application/pdf" 20) ) ) ) )
+
+## * Old stuff (for later use)
+
+## ** OrgData
+ 
+## (de makeOrgHeadline1 (Label Lst Iorg?)
+##    (msg "makeOrgHeadline entered...")
+##    (msg Lst " =>  Lst")
+##    ## (msg Label " => Label")
+##    ## (msg Iorg? " => Iorg?")
+##    (and Lst
+##       (let (Tags (cadr (member 'tags (car Lst)))
+##             Tag (and Tags
+##                    (if (str? Tags)
+##                       (and (or (= Tags "iorg") (= Tags "noiorg")) Tags)
+##                       (or
+##                          (car (member "iorg" Tags))
+##                          (car (member "noiorg" Tags)) ) ) )
+##             Prop (cadr (member 'IORG (car Lst))) )
+##          ## (and
+##          ##    (or
+##          ##       (= "t" *IorgGlobalSwitch)
+##          ##       (and
+##          ##          (not (or (= Tag "noiorg") (= Prop "off")))
+##          ##          (and (or Iorg? (= Tag "iorg") (= Prop "on"))) ) )
+##          (ifn
+##             (or
+##                (= "t" *IorgGlobalSwitch)
+##                (and
+##                   (not (or (= Tag "noiorg") (= Prop "off")))
+##                   (and (or Iorg? (= Tag "iorg") (= Prop "on"))) ) )
+
+##             (let (List (make
+##                           (for (L (pop 'Lst) L)
+##                              (link
+##                                 (pop 'L)
+##                                 (if (hashSymEqual? (car L))
+##                                    (cut 2 'L)
+##                                    (pop 'L) ) ) ) ) )
+##                (and (== 'section (caadr Lst)) (cut 2 'Lst) )
+##                (makeOrgHeadline
+##                   (and
+##                      (hashSymEqual? (car List))
+##                      (pop 'List) )
+##                   (if (str? (car List) NIL (cdr (pop 'List))))
+##                   ## (cdr (pop 'List))
+##                   Iorg? ) )
+
+##             (or Iorg? (on Iorg?))
+##             (let Obj
+##                (apply
+##                   new
+##                   (make
+##                      (for (L (pop 'Lst) L)
+##                         (link
+##                            (pop 'L)
+##                            (if (hashSymEqual? (car L))
+##                               (cut 2 'L)
+##                               (pop 'L) ) ) ) )
+##                   (db: +OrgHeadline) '(+OrgHeadline)
+##                   'contents (and
+##                                (== 'section (caadr Lst))
+##                                (cut 2 'Lst) ) )
+##                (and Label (set @ Obj))
+##                (msg (show Obj) " => New OrgHeadline object created") ) )
+##          (while Lst
+##             ## (msg "while OrgHeadline ...")
+##             ## (msg (length Lst) "while OrgHeadline")
+##             ## (msg Lst)
+##             (makeOrgHeadline
+##                (and
+##                   (hashSymEqual? (car Lst))
+##                   (pop 'Lst) )
+##                (or
+##                   (cdr (pop 'Lst))
+##                   (car (pop 'Lst)) )
+##                Iorg? ) ) ) ) )
+
+
+## ** Render
+
+## ## render original PicoLisp Wiki syntax
+## (de render (Bin)
+##    (let Nest NIL
+##       (recur (Nest)
+##          (use C
+##             (loop
+##                (ht:Prin (till "^J123456&/!_*+-<@>=\^:\\#}" T))
+##                (NIL (setq C (char)))
+##                (T (and Nest (= C "}")))
+##                (case (peek)
+##                   ("^J"
+##                      (ifn (= "^J" C)
+##                         (ht:Prin C)
+##                         (----)
+##                         (char) ) )
+##                   ("{"
+##                      (char)  # Skip "{"
+##                      (case C
+##                         (("1" "2" "3" "4" "5" "6")  # Heading
+##                            (_render "h" C)
+##                            (prinl)
+##                            (skip) )
+##                         ("&"
+##                            (let? N (format (till "}" T))
+##                               (prin "<br"
+##                                  (and (lt0 N) " class=\"clr\"")
+##                                  "/>" )
+##                               (do (dec (abs N))
+##                                  (prin "<br/>") ) )
+##                            (char) )
+##                         ("/"  # Italic
+##                            (_render "i") )
+##                         ("!"  # Bold
+##                            (_render "b") )
+##                         ("_"  # Underlined
+##                            (_render "u") )
+##                         ("*"  # Unordered list
+##                            (_render "ul") )
+##                         ("+"  # Ordered list
+##                            (_render "ol") )
+##                         ("-"  # List item
+##                            (_render "li") )
+##                         (("<" "@" ">")  # Binary file
+##                            (let Nm (till "}" T)
+##                               (char)
+##                               (with (! findBin Nm Bin)
+##                                  (cond
+##                                     ((pre? "image/" (: mt))
+##                                        (prin "<img src=\""
+##                                           *SesId (blob This 'd)
+##                                           "\" alt=\"" )
+##                                        (ht:Prin Nm)
+##                                        (prin
+##                                           "\" class=\""
+##                                           (case C
+##                                              ("<" "left")
+##                                              ("@" "nofloat")
+##                                              (">" "right") )
+##                                           "\"/>" ) )
+##                                     ((pre? "video/" (: mt))
+##                                        (prin "<video src=\""
+##                                           *SesId (blob This 'd)
+##                                           "\" class=\""
+##                                           (case C
+##                                              ("<" "left")
+##                                              ("@" "nofloat")
+##                                              (">" "right") )
+##                                           "\">" )
+##                                        (ht:Prin Nm)
+##                                        (prin "</video>") )
+##                                     (T
+##                                        (<style> (cons 'type (: mt))
+##                                           (<href> Nm (pack "!download?" (ht:Fmt This))) ) ) ) ) ) )
+##                         ("="  # Internal document link
+##                            (iorgLink (split (till "}") " " "^I" "^J" "^M"))
+##                            (char) )
+##                         ("\^"  # External web link
+##                            (let S (split (till "}") " " "^I" "^J" "^M")
+##                               (char)
+##                               (if
+##                                  (member
+##                                     (car (split (car S) ":"))
+##                                     (quote
+##                                        `(chop "http")
+##                                        `(chop "https")
+##                                        `(chop "irc")
+##                                        `(chop "mailto") ) )
+##                                  (<href>
+##                                     (or (glue " " (cdr S)) (pack (car S)))
+##                                     (pack (car S)) )
+##                                  (prin "???") ) ) )
+##                         (":"  # Pre-formatted
+##                            ((if (= "^J" (peek)) <pre> <span>) 'code
+##                               (renderBlock ht:Prin)) )
+##                         ("\\" (prin "{"))  # Escaped brace
+##                         ("#" (renderBlock prog))  # Comment
+##                         (T (prin C "{")) ) )
+##                   (T (ht:Prin C)) ) ) ) ) ) )
+
+## (de _render (C D)
+##    (prin "<" C D ">")
+##    (recurse T)
+##    (prin "</" C D ">") )
+
 
 ## iorg/lib.l ends here
