@@ -282,15 +282,14 @@
 ## - archivedp :: non-nil if headline has archived tag
 ## - commentedp :: non-nil if headline has comment keyword
 ## - footnote-section-p :: non-nil if headline is footnote-section
-## - children :: children
 ## - contents :: normalized partial parse-tree
 
 ## **** Code
 
 (class +OrgHeadline +orgElement)
 (rel raw-value (+Idx +String))
-(rel title (+List +Any))
-(rel alt-title (+String))
+(rel title (+Any))
+(rel alt-title (+Any))
 (rel CATEGORY (+Any))
 (rel pre-blank (+Number))
 (rel hiddenp (+Ref +Symbol))
@@ -308,7 +307,6 @@
 (rel archivedp (+Ref +Bool))
 (rel commentedp (+Ref +Bool))
 (rel footnote-section-p (+Ref +Bool))
-(rel children (+List +Number))
 (rel contents (+Any))
 
 (dm url> ())
