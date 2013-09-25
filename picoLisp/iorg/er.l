@@ -178,30 +178,35 @@
 
 
 ## * iOrg
+## ** Org elements
 
-## ** Org Elements
-## *** Abstract Elements
-## **** (Abstract) Org-Base-Element
+## *** (Abstract) Org-Base-Element
 
-## ***** Comments
+## **** Comments
 
 ## - descendants :: joint link to descendant elements
-## - contents :: normalized partial parse-tree
+## - elem-id :: element ID (unique for parse-tree)
 
-## ***** Code
+## **** Code
 
 (class +orgBaseElement +Entity)
 (rel descendants (+List +Joint) ancestor (+orgElement))
-(rel contents (+Any))
+(rel label (+Ref +Symbol))
 
 (dm url> ())
 (dm upd> ())
 (dm diff> ())
 (dm new> ())
+## return label number as string
+(dm lblNum> ()
+   (pack
+      (tail -1
+         (head -1
+            (chop (: label)) ) ) ) )
 
-## **** (Abstract) Org-Element
+## *** (Abstract) Org-Element
 
-## ***** Comments
+## **** Comments
 
 ## - ancestor :: joint link to ancestor element
 ## - begin :: beginning buffer position
@@ -209,50 +214,66 @@
 ## - post-blank :: number of trailing blank lines/spaces
 ## - parent :: element/Object containing it
 
-## ***** Code
+## **** Code
 
 (class +orgElement +orgBaseElement)
 (rel ancestor (+Joint) descendants (+orgBaseElement))
+(rel begin (+Number))
+(rel end (+Number))
 (rel post-blank (+Number))
+(rel parent (+Ref +Symbol))
 
 (dm interpret> ())
+## return parent number as string
+(dm parNum> ()
+   (pack
+      (tail -1
+         (head -1
+            (chop (: parent)) ) ) ) )
 
-## **** Org-data
+## *** Org-data
 
-## ***** Comments
+## **** Comments
 
-## - parse-tree-id :: (globally) unique parse-tree ID
+## - ID :: (globally) unique parse-tree ID
 ## - input-file :: absolute path input-file
 ## - author :: author name
 ## - email :: authors email
 ## - creator :: version info for Emacs and Org-mode
 ## - description :: short description of org file
+## - contents :: normalized partial parse-tree
 
-
-## ***** Code
+## **** Code
 
 ## Parse-Tree (meta data for containing org file,
 ## collected from Emacs environment, plus root elem-id)
 (class +OrgData +orgBaseElement)
-(rel parse-tree-id (+Need +Sn +Key +String))
-(rel input-file (+String))
-(rel author (+String))
-(rel email (+String))
-(rel creator +String))
-(rel description (+Idx +String))
-
+(rel parse-tree-id (+Need +Key +String))
+(rel input-file (+Need +Ref +String))
+(rel author (+Ref +String))
+(rel email (+Ref +String))
+(rel creator (+Sn +Idx +String))
+(rel description (+Sn +Idx +String))
+(rel contents (+Any))
 
 (dm url> (Tab)
-   (and (may OrgData) (list "iorg/orgData.l" '*ID This)) )
+   (and (may Iorg) (list "iorg/orgData.l" '*ID This)) )
 
 (dm upd> ())
 (dm diff> ())
 
-## *** Greater Elements
+## expects a partial parse-tree of type 'org-data' as created by
+## `org-element-parse-buffer' and normalized by `iorg-normalize-parse-tree'
 
-## **** Headline
+## (dm new> (Tree)
+##  (and
+##     (lst? Tree)
+##     (eq (car Tree) 'org-data) ) )
 
-## ***** Comments
+
+## *** Headline
+
+## **** Comments
 
 ## - raw-value :: raw headline text, no stars and tags
 ## - title :: parsed headline text with properties
@@ -260,6 +281,8 @@
 ## - category :: either name of input file or user attribute
 ## - pre-blank :: number blank lines before content
 ## - hiddpenp :: non-nil (symbol) if headline is hidden
+## - contents-begin :: begin content
+## - contents-end :: end content
 ## - level :: reduced level of headline
 ## - priority :: headlines priority as character
 ## - tags :: headlines tags (without archive tag)
@@ -272,8 +295,9 @@
 ## - archivedp :: non-nil if headline has archived tag
 ## - commentedp :: non-nil if headline has comment keyword
 ## - footnote-section-p :: non-nil if headline is footnote-section
+## - contents :: normalized partial parse-tree
 
-## ***** Code
+## **** Code
 
 (class +OrgHeadline +orgElement)
 (rel raw-value (+Idx +String))
@@ -282,6 +306,8 @@
 (rel CATEGORY (+Any))
 (rel pre-blank (+Number))
 (rel hiddenp (+Ref +Symbol))
+(rel contents-begin (+Number))
+(rel contents-end (+Number))
 (rel level (+Need +Ref +Number))
 (rel priority (+Ref +Number))
 (rel tags (+List +String))
@@ -294,164 +320,28 @@
 (rel archivedp (+Ref +Bool))
 (rel commentedp (+Ref +Bool))
 (rel footnote-section-p (+Ref +Bool))
+(rel contents (+Any))
 
 (dm url> (Tab)
-   (and (may OrgData) (list "iorg/orgHeadline.l" '*ID This)) )
+   (and (may Iorg) (list "iorg/orgHeadline.l" '*ID This)) )
 
 (dm upd> ())
 (dm diff> ())
-(dm interpret> ())
 
-## **** Section
-
-## ***** Comments
-
-## ***** Code
-
-(class +OrgSection +orgElement)
-
-(dm url> (Tab)
-   (and (may OrgData) (list "iorg/orgSection.l" '*ID This)) )
-
-(dm upd> ())
-(dm diff> ())
-(dm interpret> ())
-
-
-## **** Dynamic Block
-
-## ***** Comments
-
-## - arguments :: Block's parameters (string).
-## - block-name :: Block's name (string).
-## - drawer-name :: Drawer's name (string).
-## - hiddenp :: Non-nil if the block is hidden (boolean).
-
-## ***** Code
-
-(class +OrgDynamicBlock +orgElement)
-(rel arguments (+String))
-(rel block-name (+String))
-(rel drawer-name (+String))
-(rel hiddenp (+Symbol))
-
-(dm url> (Tab)
-   (and (may OrgData) (list "iorg/orgDynamicBlock.l" '*ID This)) )
-
-(dm upd> ())
-(dm diff> ())
-(dm interpret> ())
-
-## **** Drawer
-
-## ***** Comments
-
-## - drawer-name :: Drawer's name (string)
-## - hiddenp :: Non-nil if the drawer is hidden (boolean)
-
-## ***** Code
-
-(class +OrgDrawer +orgElement)
-(rel drawer-name (+Ref +String))
-(rel hiddenp (+Symbol))
-
-(dm url> (Tab)
-   (and (may OrgData) (list "iorg/orgDrawer.l" '*ID This)) )
-
-(dm upd> ())
-(dm diff> ())
-(dm interpret> ())
-
-
-## **** CenterBlock
-
-## ***** Comments 
-
-## - hiddenp :: Non-nil if the block is hidden (boolean)
-
-## ***** Code
-
-(class +OrgCenterBlock +orgElement)
-(rel hiddenp (+Symbol))
-
-(dm url> (Tab)
-   (and (may OrgData) (list "iorg/orgCenterBlock.l" '*ID This)) )
-
-(dm upd> ())
-(dm diff> ())
-(dm interpret> ())
-
-## **** FootnoteDefinition
-
-## ***** Comments
-
-## - label :: Label used for references (string)
-
-## ***** Code
-
-(class +OrgFootnoteDefinition +orgElement)
-(rel label (+Sn +Ref +String))
-
-(dm url> (Tab)
-   (and (may OrgData) (list "iorg/orgFootnoteDefinition.l" '*ID This)) )
-
-(dm upd> ())
-(dm diff> ())
-(dm interpret> ())
-
-
-## **** Headline
-
-## ***** Comments
-
-## - raw-value :: raw headline text, no stars and tags
-## - title :: parsed headline text with properties
-## - alt-title :: alternative title
-## - category :: either name of input file or user attribute
-## - pre-blank :: number blank lines before content
-## - hiddpenp :: non-nil (symbol) if headline is hidden
-## - level :: reduced level of headline
-## - priority :: headlines priority as character
-## - tags :: headlines tags (without archive tag)
-## - todo-keyword :: todo keyword without quote/comment
-## - todo-type :: type of TODO keyword (done or todo)
-## - scheduled :: scheduled reference (timestamp or NIL)
-## - deadline :: deadline reference (timestamp or NIL)
-## - closed :: closed reference (timestamp or NIL)
-## - quotedp :: non-nil if headline contains quote keyword
-## - archivedp :: non-nil if headline has archived tag
-## - commentedp :: non-nil if headline has comment keyword
-## - footnote-section-p :: non-nil if headline is footnote-section
-
-## ***** Code
-
-(class +OrgHeadline +orgElement)
-(rel raw-value (+Idx +String))
-(rel title (+Any))
-(rel alt-title (+Any))
-(rel CATEGORY (+Any))
-(rel pre-blank (+Number))
-(rel hiddenp (+Ref +Symbol))
-(rel level (+Need +Ref +Number))
-(rel priority (+Ref +Number))
-(rel tags (+List +String))
-(rel todo-keyword (+Ref +String))
-(rel todo-type (+Ref +String))
-(rel scheduled (+Ref +Date))
-(rel deadline (+Ref +Date))
-(rel closed (+Ref +Date))
-(rel quotedp (+Ref +Bool))
-(rel archivedp (+Ref +Bool))
-(rel commentedp (+Ref +Bool))
-(rel footnote-section-p (+Ref +Bool))
-
-(dm url> (Tab)
-   (and (may OrgData) (list "iorg/orgHeadline.l" '*ID This)) )
-
-(dm upd> ())
-(dm diff> ())
-(dm interpret> ())
-
+## concat object attributes, converted to elisp-parse-tree syntax, with
+## object's contents string (re-converted to elisp syntax too) and send it to
+## Emacs (using function 'emx) for interpretation (-> creation of textual org
+## file from parse-tree by `org-element-interpret-data'), finally return
+## string with textual representation of headline object or parts of it. If
+## 'ContentsOnly?' is non-nil, return only the textual representation of the
+## headlines' s content.
+(dm interpret> (ContentsOnly?)
+   (if ContentsOnly?
+      (writeParseTree
+         (convertParseTree (: contents)) )
+      (writeParseTree
+        (convertParseTree
+           (prepareParseTree This) ) ) ) )
 
 ## (de prepareParseTree (Headline)
 ##    (let Plst (getl Headline)
@@ -473,7 +363,7 @@
        "\"" (pack Tree) "\""
        "))" ) )
 
-## **** iOrg data
+## ** iOrg data
 
 ## * Obsolete Stuff FIXME:delete
 
