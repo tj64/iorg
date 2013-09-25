@@ -212,8 +212,6 @@
 ## **** Comments
 
 ## - ancestor :: joint link to ancestor element
-## - begin :: beginning buffer position
-## - end :: ending buffer position
 ## - post-blank :: number of trailing blank lines/spaces
 ## - parent :: element/Object containing it
 
@@ -221,8 +219,6 @@
 
 (class +orgElement +orgBaseElement)
 (rel ancestor (+Joint) descendants (+orgBaseElement))
-(rel begin (+Number))
-(rel end (+Number))
 (rel post-blank (+Number))
 (rel parent (+Ref +Symbol))
 
@@ -282,8 +278,6 @@
 ## - category :: either name of input file or user attribute
 ## - pre-blank :: number blank lines before content
 ## - hiddpenp :: non-nil (symbol) if headline is hidden
-## - contents-begin :: begin content
-## - contents-end :: end content
 ## - level :: reduced level of headline
 ## - priority :: headlines priority as character
 ## - tags :: headlines tags (without archive tag)
@@ -305,21 +299,19 @@
 (rel alt-title (+Any))
 (rel CATEGORY (+Any))
 (rel pre-blank (+Number))
-(rel hiddenp (+Ref +Symbol))
-(rel contents-begin (+Number))
-(rel contents-end (+Number))
-(rel level (+Need +Ref +Number))
+(rel hiddenp (+Symbol))
+(rel level (+Need +Number))
 (rel priority (+Ref +Number))
 (rel tags (+List +String))
 (rel todo-keyword (+Ref +String))
 (rel todo-type (+Ref +String))
-(rel scheduled (+Ref +Date))
-(rel deadline (+Ref +Date))
-(rel closed (+Ref +Date))
-(rel quotedp (+Ref +Bool))
-(rel archivedp (+Ref +Bool))
-(rel commentedp (+Ref +Bool))
-(rel footnote-section-p (+Ref +Bool))
+(rel scheduled (+Date))
+(rel deadline (+Date))
+(rel closed (+Date))
+(rel quotedp (+Bool))
+(rel archivedp (+Bool))
+(rel commentedp (+Bool))
+(rel footnote-section-p (+Bool))
 
 
 (dm url> (Tab)
