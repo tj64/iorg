@@ -101,6 +101,32 @@ There is a mode hook, and a few commands:
   "Return non-nil if LST is a list and its car a keyword."
   (and (listp lst) (keywordp (car lst))))
 
+;; courtesy of Pascal Bourguignon
+(defun iorg--sexp-remove-string-properties (sexp)
+   (cond
+      ((stringp sexp) (substring-no-properties sexp))
+      ((atom sexp) sexp)
+      (t (cons (iorg--sexp-remove-string-properties (car sexp))
+               (iorg--sexp-remove-string-properties (cdr sexp))))))
+
+;; (defun iorg--sexp-remove-string-properties (sexp)
+;;   (mapcar
+;;    (lambda (--elem)
+;;      (cond
+;;       ((stringp --elem) (substring-no-properties --elem))
+;;       ((atom --elem) --elem)
+;;       (t (cons (iorg--sexp-remove-string-properties (car --elem))
+;;               (iorg--sexp-remove-string-properties (cdr --elem))))))
+;;    sexp))
+
+
+;; application example:
+;; (prin1-to-string
+;;   (iorg--sexp-remove-string-properties    
+;;     '(:category "tmp2" :title (#("C2 " 0 3 (:parent nil))))))
+;; --> "(:category \"tmp2\" :title (\"C2 \"))"
+
+
 (defun iorg--tag-elems-with-id-attributes (tree)
   "Add ':elem-id' property to each element of parse TREE."
   (let ((counter 1)
