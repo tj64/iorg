@@ -186,13 +186,16 @@
 
 ## - descendants :: joint link to descendant elements
 ## - elem-id :: element ID (unique for parse-tree)
+## - contents :: normalized partial parse-tree
 
 ## **** Code
 
 (class +orgBaseElement +Entity)
 (rel descendants (+List +Joint) ancestor (+orgElement))
 (rel label (+Ref +Symbol))
+(rel contents (+Any))
 
+(dm url
 (dm url> ())
 (dm upd> ())
 (dm diff> ())
@@ -241,7 +244,6 @@
 ## - email :: authors email
 ## - creator :: version info for Emacs and Org-mode
 ## - description :: short description of org file
-## - contents :: normalized partial parse-tree
 
 ## **** Code
 
@@ -254,7 +256,6 @@
 (rel email (+Ref +String))
 (rel creator (+Sn +Idx +String))
 (rel description (+Sn +Idx +String))
-(rel contents (+Any))
 
 (dm url> (Tab)
    (and (may Iorg) (list "iorg/orgData.l" '*ID This)) )
@@ -295,7 +296,6 @@
 ## - archivedp :: non-nil if headline has archived tag
 ## - commentedp :: non-nil if headline has comment keyword
 ## - footnote-section-p :: non-nil if headline is footnote-section
-## - contents :: normalized partial parse-tree
 
 ## **** Code
 
@@ -320,7 +320,7 @@
 (rel archivedp (+Ref +Bool))
 (rel commentedp (+Ref +Bool))
 (rel footnote-section-p (+Ref +Bool))
-(rel contents (+Any))
+
 
 (dm url> (Tab)
    (and (may Iorg) (list "iorg/orgHeadline.l" '*ID This)) )
