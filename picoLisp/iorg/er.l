@@ -195,7 +195,6 @@
 (rel label (+Ref +Symbol))
 (rel contents (+Any))
 
-(dm url
 (dm url> ())
 (dm upd> ())
 (dm diff> ())
@@ -254,7 +253,7 @@
 (rel description (+Sn +Idx +String))
 
 (dm url> (Tab)
-   (and (may Iorg) (list "iorg/orgData.l" '*ID This)) )
+   (and (may OrgData) (list "iorg/orgData.l" '*ID This)) )
 
 (dm upd> ())
 (dm diff> ())
@@ -294,7 +293,6 @@
 ## **** Code
 
 (class +OrgHeadline +orgElement)
-(rel raw-value (+Idx +String))
 (rel title (+Any))
 (rel alt-title (+Any))
 (rel CATEGORY (+Any))
@@ -304,7 +302,6 @@
 (rel priority (+Ref +Number))
 (rel tags (+List +String))
 (rel todo-keyword (+Ref +String))
-(rel todo-type (+Ref +String))
 (rel scheduled (+Date))
 (rel deadline (+Date))
 (rel closed (+Date))
@@ -315,7 +312,7 @@
 
 
 (dm url> (Tab)
-   (and (may Iorg) (list "iorg/orgHeadline.l" '*ID This)) )
+   (and (may OrgData) (list "iorg/orgHeadline.l" '*ID This)) )
 
 (dm upd> ())
 (dm diff> ())
