@@ -27,7 +27,7 @@
 ## ** Create two roles, one for admins and one for normal members
 
 (obj ((+Role) nm "Administrator") perm `*Perms)
-(obj ((+Role) nm "Member") perm (Iorg))
+(obj ((+Role) nm "Member") perm (Iorg OrgData))
 (commit)
 
 ## ** Create the admin user

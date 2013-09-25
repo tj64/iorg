@@ -48,7 +48,8 @@
 (load "iorg/er.l" "iorg/lib.l" "iorg/gui.l")
 
 (permission
-   Iorg        "Edit Iorg Documents"
+   OrgData     "Edit Org Element Objects"
+   Iorg        "Edit Iorg Wiki Documents"
    System      "Edit System Data"
    Upload      "File upload"
    RoleAdmin   "Role Administration"
