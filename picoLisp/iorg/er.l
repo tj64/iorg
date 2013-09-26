@@ -200,7 +200,7 @@
 (dm diff> ())
 (dm new> ())
 ## return label number as string
-(dm hashNum> (Rel)
+(dm hashLblNum> (Rel)
    (pack
       (tail -1
          (head -1
@@ -208,7 +208,9 @@
                (eval
                   (make (link ': Rel)) ) ) ) ) ) )
 ## prepare contents for `org-element-interpret-data'
-(dm prepCont> ())                       # add : to keys
+(dm prepCont> ()
+   (make
+      )                       # add : to keys
 
 
 ## *** (Abstract) Org-Element
