@@ -200,34 +200,33 @@
 (dm diff> ())
 (dm new> ())
 ## return label number as string
-(dm lblNum> ()
+(dm hashNum> (Rel)
    (pack
       (tail -1
          (head -1
-            (chop (: label)) ) ) ) )
+            (chop
+               (eval
+                  (make (link ': Rel)) ) ) ) ) ) )
+## prepare contents for `org-element-interpret-data'
+(dm prepCont> ())                       # add : to keys
+
 
 ## *** (Abstract) Org-Element
 
 ## **** Comments
 
 ## - ancestor :: joint link to ancestor element
-## - post-blank :: number of trailing blank lines/spaces
 ## - parent :: element/Object containing it
+## - post-blank :: number of trailing blank lines/spaces
 
 ## **** Code
 
 (class +orgElement +orgBaseElement)
 (rel ancestor (+Joint) descendants (+orgBaseElement))
-(rel post-blank (+Number))
 (rel parent (+Ref +Symbol))
+(rel post-blank (+Number))
 
 (dm interpret> ())
-## return parent number as string
-(dm parNum> ()
-   (pack
-      (tail -1
-         (head -1
-            (chop (: parent)) ) ) ) )
 
 ## *** Org-data
 
@@ -245,7 +244,7 @@
 ## Parse-Tree (meta data for containing org file,
 ## collected from Emacs environment, plus root elem-id)
 (class +OrgData +orgBaseElement)
-(rel parse-tree-id (+Need +Key +String))
+(rel parse-tree-id (+Need +Sn +Idx +String))
 (rel input-file (+Need +Ref +String))
 (rel author (+Ref +String))
 (rel email (+Ref +String))
@@ -257,21 +256,31 @@
 
 (dm upd> ())
 (dm diff> ())
-
-## expects a partial parse-tree of type 'org-data' as created by
-## `org-element-parse-buffer' and normalized by `iorg-normalize-parse-tree'
-
-## (dm new> (Tree)
-##  (and
-##     (lst? Tree)
-##     (eq (car Tree) 'org-data) ) )
-
+## return parse-tree in its (normalized) original form
+(dm origParseTree> ()
+   (msg "origParseTree> entered ...")
+   (make
+      (link
+         (: label)
+         (list
+            'org-data
+            (list
+               ':parse-tree-id (: parse-tree-id)
+               ':input-file (: input-file)
+               ':author (: author)
+               ':email (: email)
+               ':creator (: creator)
+               ':description (: description) )
+            (prepCont> (: contents))
+            (mapcar
+               'origSubTree>
+               (: descendants) ) ) ) ) )
 
 ## *** Headline
 
 ## **** Comments
 
-## - raw-value :: raw headline text, no stars and tags
+## - ptree :: containing parse-tree object
 ## - title :: parsed headline text with properties
 ## - alt-title :: alternative title
 ## - category :: either name of input file or user attribute
@@ -281,7 +290,6 @@
 ## - priority :: headlines priority as character
 ## - tags :: headlines tags (without archive tag)
 ## - todo-keyword :: todo keyword without quote/comment
-## - todo-type :: type of TODO keyword (done or todo)
 ## - scheduled :: scheduled reference (timestamp or NIL)
 ## - deadline :: deadline reference (timestamp or NIL)
 ## - closed :: closed reference (timestamp or NIL)
@@ -293,6 +301,7 @@
 ## **** Code
 
 (class +OrgHeadline +orgElement)
+(rel ptree (+Ref +Link) NIL (+OrgData))
 (rel title (+Any))
 (rel alt-title (+Any))
 (rel CATEGORY (+Any))
@@ -316,6 +325,34 @@
 
 (dm upd> ())
 (dm diff> ())
+(dm origSubTree> ()
+   (msg "origSubTree> entered ...")
+   (make
+      (link
+         (: label)
+         (list
+            'headline
+            (list
+               ':title (: title)
+               ':alt-title (: alt-title)
+               ':CATEGORY (: CATEGORY)
+               ':pre-blank (: pre-blank)
+               ':hiddenp (: hiddenp)
+               ':level (: level)
+               ':priority (: priority)
+               ':tags (: tags)
+               ':todo-keyword (: todo-keyword)
+               ':scheduled (: scheduled)
+               ':deadline (: deadline)
+               ':closed (: closed)
+               ':quotedp (: quotedp)
+               ':archivedp (: archivedp)
+               ':commentedp (: commentedp)
+               ':footnote-section-p (: footnote-section-p) )
+            (prepCont> (: contents))
+            (mapcar
+               'origSubTree>
+               (: descendants) ) ) ) ) )
 
 ## concat object attributes, converted to elisp-parse-tree syntax, with
 ## object's contents string (re-converted to elisp syntax too) and send it to

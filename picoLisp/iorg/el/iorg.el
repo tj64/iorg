@@ -257,6 +257,28 @@ MATCH is the match-string to be converted, with 'nil' becoming
    ((string= match "(nil)")
     (format "%s" "(NIL)"))))
 
+(defun iorg--NIL-and-T-to-lowercase (tree-as-string)
+  "Downcase NIL and T in TREE-AS-STRING converted from PicoLisp."
+  (and (stringp tree-as-string)
+        (replace-regexp-in-string
+         "\\(\\_<T\\_>\\|(T)\\|\\_<NIL\\_>\\|(NIL)\\)"
+        'iorg--rep-function-for-NIL-and-T
+        tree-as-string)))
+
+(defun iorg--rep-function-for-NIL-and-T (match)
+  "Helper function for converting PicoLisp 'NIL' an 'T' to Elisp syntax.
+MATCH is the match-string to be converted, with 'NIL' becoming
+'nil' and 'T' becoming 't'."
+  (cond
+   ((string= match "T")
+    (format "%s" "t"))
+   ((string= match "NIL")
+    (format "%s" "nil"))
+   ((string= match "(T)")
+    (format "%s" "(t)"))
+   ((string= match "(NIL)")
+    (format "%s" "(nil)"))))
+
 (defun iorg--fix-read-syntax2 (tree)
   "Returns parse TREE as string with read syntax fixed.
 Fixed means, in this case, adjusted for the PicoLisp reader:
@@ -284,6 +306,39 @@ while on it."
       (while (re-search-forward keyword-regexp nil 'NOERROR)
         (replace-match
          (concat "\\1\\3\\4")))
+      (buffer-substring-no-properties (point-min) (point-max)))))
+
+;; TODO: check if necessary - maybe elisp reader does all this as-is?
+(defun iorg--unfix-read-syntax (tree-as-string)
+  "Returns parse TREE-AS-STRING with read syntax unfixed.
+Unfixed means, in this case, adjusted from PicoLisp syntax for
+the Emacs Lisp reader: remove backquotes from all '\#' characters
+and trailing blanks from all labels like 'and\#2= '."
+  (let ((enclosing-hashtags-regexp
+         (concat
+          ;; 1st
+          "\\(\\\\\)"
+          ;; 2nd
+          "\\(#[[:digit::]]+#\\)"))
+        (leading-hashtag-regexp
+         (concat
+          ;; 1st
+          "\\(\\\\\)"
+          ;; 2nd
+          "\\(#"
+          ;; 3rd
+          "\\( \\)"
+          ;; 4th
+          "(\\)")))
+    (with-temp-buffer 
+      ;; (with-current-buffer "tmp<2>"
+      (insert tree-as-string)
+      (goto-char (point-min))
+      (while (re-search-forward enclosing-hashtags-regexp nil 'NOERROR)
+        (replace-match "\\2"))
+      (goto-char (point-min))
+      (while (re-search-forward leading-hashtag-regexp nil 'NOERROR)
+        (replace-match "\\2\\4"))
       (buffer-substring-no-properties (point-min) (point-max)))))
 
 ;; (defun iorg--fix-read-syntax (tree)
@@ -422,10 +477,9 @@ compliant form."
 
 ;; **** Normalize Parse-Tree
 
-;; FIXME mapping does not make sense - what about granularity?
-(defun iorg-normalize-parse-tree
+(defun iorg-convert-parse-tree
   (&optional data buffer-or-file preserve-nil-and-t-p)
-  "Converts an org-element parse-tree into a 'normalized' form.
+  "Converts an org-element parse-tree to PicoLisp syntax.
 
 Optional argument DATA should be part of or an entire parse-tree
 as returned by `org-element-parse-buffer', optional argument
@@ -449,26 +503,24 @@ are not converted to uppercase forms NIL and T."
          (dat (or data
                   (with-current-buffer buf
                     (org-element-parse-buffer 'object))))
-         ;; ;; do the transformation
-         ;; (normalized-parse-tree-as-string
-         ;;  (iorg--fix-read-syntax
-         ;;   (iorg--tag-org-data-element
-         ;;    (iorg--add-children-list
-         ;;     (iorg--unwind-circular-list
-         ;;      (iorg--tag-elems-with-id-attributes dat)))
-         ;;    buf))))
-         ;; do the transformation
-         (normalized-parse-tree-as-string
+         (converted-parse-tree-as-string
           (iorg--fix-read-syntax2
            (iorg--tag-org-data-element dat buf))))
     ;; upcase nil and t?
     (if preserve-nil-and-t-p
-        normalized-parse-tree-as-string
-      (iorg--nil-and-t-to-uppercase normalized-parse-tree-as-string))))
+        converted-parse-tree-as-string
+      (iorg--nil-and-t-to-uppercase converted-parse-tree-as-string))))
 
-(defun iorg-wrap-parse-tree (tree)
-  "Wrap TREE in PicoLisp function '(processParseTree ...)'."
-  (concat "(processParseTree " tree " )"))
+(defun iorg-wrap-parse-tree (tree-as-string)
+  "Wrap TREE-AS-STRING in PicoLisp function '(processParseTree ...)'."
+  (concat "(processParseTree " tree-as-string " )"))
+
+(defun iorg-reconvert-parse-tree (tree-as-string)
+  "Reconvert a parse TREE-AS-STRING stored in a PicoLisp database.
+Convert PicoLisp compliant syntax back to Emacs Lisp syntax."
+  (read-from-string 
+   (iorg--unfix-read-syntax
+    (iorg--NIL-and-T-to-lowercase tree-as-string))))
 
 ;; (defun iorg-pico-to-org ()
 ;;   "")

@@ -128,11 +128,11 @@
                      (if (meta '(+OrgData) (car L))
                         (link
                            (pop 'L)
-                           (if (hashSymEqual? (car L))
+                           (if (hashEqual? (car L))
                               (cut 2 'L)
                               (pop 'L) ) )
                         (pop 'L)
-                        (and (hashSymEqual? (car L) (pop 'L))) ) ) )
+                        (and (hashEqual? (car L) (pop 'L))) ) ) )
                (db: +OrgData) '(+OrgData)
                'contents (and
                             (== 'section (caadr Lst))
@@ -143,15 +143,16 @@
                (msg "while loop OrgData entered ...")
                (makeOrgHeadline
                   (and
-                     (hashSymEqual? (car Lst))
+                     (hashEqual? (car Lst))
                      (pop 'Lst) )
-                  (cdr (pop 'Lst)) ) )
+                  (cdr (pop 'Lst))
+                  Obj ) )
             (commit 'upd)
             (off *IorgGlobalSwitch)
             Obj ) ) )
 
 ## create a new +OrgHeadline object
-(de makeOrgHeadline (Label Lst)
+(de makeOrgHeadline (Label Lst Ptree)
    (msg "makeOrgHeadline entered...")
    (let Obj
       (apply
@@ -161,29 +162,42 @@
                (if (meta '(+OrgHeadline) (car L))
                   (link
                      (pop 'L)
-                     (if (hashSymEqual? (car L))
+                     (if (hashEqual? (car L))
                         (cut 2 'L)
                         (pop 'L) ) )
                   (pop 'L)
-                  (and (hashSymEqual? (car L) (pop 'L))) ) ) )
+                  (and (hashEqual? (car L) (pop 'L))) ) ) )
          (db: +OrgHeadline) '(+OrgHeadline)
          'contents (and
                       (== 'section (caadr Lst))
                       (cut 2 'Lst) )
-        'label Label)
-        ## 'ancestor (db )
-      (msg (show Obj) " => New OrgHeadline object created") )
+         'ptree Ptree
+         'label Label )
+      (put> Obj 'ancestor
+         (db 'label '+orgBaseElement (makeLabel (hashNum> Obj 'parent))) )
+      (msg (hashNum> Obj 'label) " => New OrgHeadline object created") )
 (while Lst
    (msg "while loop OrgHeadline entered ...")
    (makeOrgHeadline
       (and
-         (hashSymEqual? (car Lst))
+         (hashEqual? (car Lst))
          (pop 'Lst) )
-      (cdr (pop 'Lst)) ) ) )
+      (cdr (pop 'Lst))
+      Ptree ) ) )
 
+
+## converts 1 to \#1=
+(de makeLabel (Num)
+   (intern
+      (pack "\#" Num "=") ) )
+
+## converts 1 to \#1#
+(de makeRef (Num)
+   (intern
+      (pack "\#" Num "#") ) )
 
 ## check if symbol is a label like #2= or #12=
-(de hashSymEqual? (X)
+(de hashEqual? (X)
    (and
       (sym? X)
       (let L (chop X)
@@ -562,13 +576,13 @@
 ##                           (for (L (pop 'Lst) L)
 ##                              (link
 ##                                 (pop 'L)
-##                                 (if (hashSymEqual? (car L))
+##                                 (if (hashEqual? (car L))
 ##                                    (cut 2 'L)
 ##                                    (pop 'L) ) ) ) ) )
 ##                (and (== 'section (caadr Lst)) (cut 2 'Lst) )
 ##                (makeOrgHeadline
 ##                   (and
-##                      (hashSymEqual? (car List))
+##                      (hashEqual? (car List))
 ##                      (pop 'List) )
 ##                   (if (str? (car List) NIL (cdr (pop 'List))))
 ##                   ## (cdr (pop 'List))
@@ -582,7 +596,7 @@
 ##                      (for (L (pop 'Lst) L)
 ##                         (link
 ##                            (pop 'L)
-##                            (if (hashSymEqual? (car L))
+##                            (if (hashEqual? (car L))
 ##                               (cut 2 'L)
 ##                               (pop 'L) ) ) ) )
 ##                   (db: +OrgHeadline) '(+OrgHeadline)
@@ -597,7 +611,7 @@
 ##             ## (msg Lst)
 ##             (makeOrgHeadline
 ##                (and
-##                   (hashSymEqual? (car Lst))
+##                   (hashEqual? (car Lst))
 ##                   (pop 'Lst) )
 ##                (or
 ##                   (cdr (pop 'Lst))
