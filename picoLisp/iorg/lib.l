@@ -341,28 +341,77 @@
 
 ## ** Read Parse Tree
 
+## ## expects absolute PATH to org file
+## (de readParseTree (Path)
+##     (emx '(read)
+##        (pack
+##        "(add-to-list 'load-path "
+##        ## ## FIXME! should be:
+##        ## "\"" (absolutePath "@iorg/el/") "\"" )
+##        "\"/home/tj/git/iorg/picoLisp/iorg/el/\")" )
+##       "(require 'iorg-init)"
+##       "(require 'iorg)"
+##       "(require 'ox)"
+##       (pack
+##          "(with-current-buffer "
+##          "(find-file "
+##          "\"" Path "\")"
+##          "(org-mode)"
+##          "(let ((org-cycle-silently 1))"
+##          "(princ (iorg-normalize-parse-tree))))" ) ) )
+
+
 ## expects absolute PATH to org file
+## stores parse-tree and all its headlines in PicoLisp DB
 (de readParseTree (Path)
-    (emx '(read)
-       (pack
-       "(add-to-list 'load-path "
-       ## ## FIXME! should be:
-       ## "\"" (absolutePath "@iorg/el/") "\"" )
-       "\"/home/tj/git/iorg/picoLisp/iorg/el/\")" )
-      "(require 'iorg-init)"
-      "(require 'iorg)"
-      "(require 'ox)"
+   (eval
+      (any
+         (emc '(read)
+            (pack
+               "(with-current-buffer "
+               "(find-file "
+               "\"" Path "\")"
+               "(org-mode)"
+               "(let ((org-cycle-silently 1))"
+               "(princ "
+               "(iorg-wrap-parse-tree "
+               "(iorg-convert-parse-tree)))))" ) ) ) ) )
+
+
+## ** Write Parse Tree
+
+## expects a 'raw' (complete) parse-tree as string, rebuilt from the PicoLisp
+## DB, and returns the textual representation of the parsed Org file
+(de writeParseTree (Ptree)
+   (emc '(echo)
       (pack
          "(with-current-buffer "
          "(find-file "
          "\"" Path "\")"
          "(org-mode)"
          "(let ((org-cycle-silently 1))"
-         "(princ (iorg-normalize-parse-tree))))" ) ) )
+         "(princ "
+         "(iorg-wrap-parse-tree "
+         "(iorg-convert-parse-tree)))))" ) ) )) )
+
 
 ## * Render document
 
 ## ** Render document as HTML
+
+## ## FIXME renders lots of \n in html output
+## ## let ox-html.el render Org-file
+## (de oxRender (Path)
+##    (emc '(echo)
+##       (pack
+##          "(with-temp-buffer "
+##          "(insert-file-contents "
+##          "\"" Path "\")"
+##          "(org-mode)"
+##          "(let ((org-cycle-silently 1))"
+##          "(princ "
+##          "(format \"%s\" "
+##          "(org-export-as 'html nil nil t)))))" ) ) )
 
 ## let ox-html.el render Org-file
 (de oxRender (Path)

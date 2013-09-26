@@ -365,7 +365,7 @@
          Render?
          (out HtmlFile (oxRender AbsPath)) )
       (pipe
-         (in HtmlFile (echo))
+         (! in HtmlFile (echo))
          (processInternalLinks) ) ) )
 
 
