@@ -185,7 +185,7 @@
 ## **** Comments
 
 ## - descendants :: joint link to descendant elements
-## - elem-id :: element ID (unique for parse-tree)
+## - label :: element ID (unique for parse-tree)
 ## - contents :: normalized partial parse-tree
 
 ## **** Code
@@ -199,7 +199,7 @@
 (dm upd> ())
 (dm diff> ())
 (dm new> ())
-## return label number as string
+## return for relation Rel hashLbl number as string 
 (dm hashLblNum> (Rel)
    (pack
       (tail -1
@@ -207,11 +207,11 @@
             (chop
                (eval
                   (make (link ': Rel)) ) ) ) ) ) )
-## prepare contents for `org-element-interpret-data'
-(dm prepCont> ()
-   (make
-      )                       # add : to keys
 
+## ## prepare contents for `org-element-interpret-data'
+## (dm prepCont> ()
+##    (make
+##       )
 
 ## *** (Abstract) Org-Element
 

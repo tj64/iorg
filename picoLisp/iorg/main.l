@@ -61,6 +61,24 @@
 
 ## ** Entry point
 
+## FIXME: account for possible "../../"
+## Return absolute path to local (running) PicoLisp installation
+## Usage example: (absolutePath "@lib/misc.l")
+(de absolutePath (P)
+   (split
+      (or
+         (pre? "/" (path P))
+         (pack (pwd) "/" (path P)) ) ) )
+
+(de startEmacsServer ()
+   (call 'emacs
+      "-Q" "--daemon=iorg-server"
+      "-L" (pack (absolutePath "@iorg/el/")) )
+   (call 'emacsclient "-s" "iorg-server" "-e" "(require 'iorg-init)" ) )
+
+(de killEmacsServer ()
+   (call 'emacsclient "-s" "iorg-server" "-e" "(kill-emacs)") )
+
 (de main ()
    (call 'mkdir "-p" *Pool *Blob)
    (pool *Pool *Dbs *Jnl)
@@ -70,7 +88,8 @@
       (msg "No home document") )
    (if (db 'nm '+Doc "menu")
       (setq *IorgMenu (id @ T))
-      (msg "No menu document") ) )
+      (msg "No menu document") )
+   (start-emacs-server) )
 
 (de go ()
    (pw 12)

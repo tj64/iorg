@@ -951,4 +951,6 @@ is loaded again. In the latter case it will be reset to
 
 ;; * Run hooks and provide
 
+(provide 'iorg-scrape)
+
 ;; iorg-scrape.el ends here

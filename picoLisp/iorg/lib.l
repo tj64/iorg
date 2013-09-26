@@ -206,6 +206,43 @@
             (= `(char "#") (char (car L)))
             (= `(char "=") (char (last L))) ) ) ) )
 
+## check if symbol is a label like #2#= or #12#
+(de hashRef? (X)
+   (and
+      (sym? X)
+      (let L (chop X)
+         (and
+            (= `(char "#") (char (car L)))
+            (= `(char "#") (char (last L))) ) ) ) )
+
+
+## (de processContents (Lst Fun)
+##    (make
+##       (link
+##          (eval
+##             (list Fun Lst) ) ) ) )
+
+## ## add : to keys of (key val) pairs in list
+## (de addColonsToKeys (Lst)
+##       (let L Lst Key? NIL
+##          (cond
+##             ((hashLbl? (car L))
+##              (pop 'L) )
+##             ((lst? (cadr L))
+##              (pop 'L) )
+##             (Key?
+##               (off Key?)
+##               (intern
+##                   (pack ":" (pop 'L)) ) )
+##             (T
+##                (onOff Key?)
+##                (pop 'L) ) )
+##          (addColonsToKeys L) ) )
+
+
+## (de prepCont (PropLst)
+##    )
+
 ## expects a parse-tree as produced by `iorg-normalize-parse-tree'
 ## and an option as string like e.g. "iorg"
 (de extractOptionValue (Option ParseTree)
@@ -293,14 +330,6 @@
    (httpHead (: mt) 60 (: nm))
    (in (blob This 'd) (ht:Out *Chunked (echo))) )
 
-## FIXME: account for possible "../../"
-## Return absolute path to local (running) PicoLisp installation
-## Usage example: (absolutePath "@lib/misc.l")
-(de absolutePath (P)
-   (split
-      (or
-         (pre? "/" (path P))
-         (pack (pwd) "/" (path P)) ) ) )
 
 ## * Predefined Emacs Calls
 

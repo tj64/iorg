@@ -1,4 +1,4 @@
-;; * iorg-init.el --- init file for Emacs calls from iOrg
+;; * iorg-init.el --- init file for Emacs(server) used by iOrg
 ;; ** MetaData
 ;;   :PROPERTIES:
 ;;   :copyright: Thorsten_Jolitz
@@ -15,18 +15,29 @@
 ;;   :keywords: emacs org-mode dhtml interactive_web_applications
 ;;   :END:
 
-;; * Set Load Path
+;; * Requires
 
-  (message "iorg-init entered - does nothing yet")
+(message "iorg-init entered ...")
 
-  ;; (add-to-list 'load-path
-  ;;            (file-name-directory
-  ;;             (buffer-file-name)))
+;; ;; remember this directory
+;; (setq iorg-el-dir
+;;       (file-name-directory (or load-file-name (buffer-file-name))))
 
-  ;; (message "%s" load-path)
+;; (message "iOrg Directory: %s" iorg-el-dir)
+
+;; ;; set load-path
+;; (add-to-list 'load-path iorg-el-dir)
+
+;; require libs
+(require 'iorg)
+(require 'iorg-scrape)
+(require 'ox-iorg)
+;; (require 'iorg-agenda)
+;; (require 'iorg-dired)
+
 
 ;; * Run hooks and provide
 
 (provide 'iorg-init)
 
-;; iorg.el ends here
+;; iorg-init.el ends here

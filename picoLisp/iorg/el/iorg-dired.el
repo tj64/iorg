@@ -472,4 +472,6 @@ they won't work.")
 
 ;; * Run hooks and provide
 
+(provide 'iorg-dired)
+
 ;; iorg-dired.el ends here

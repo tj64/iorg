@@ -125,4 +125,6 @@
 
 ;; * Run hooks and provide
 
+(provide 'iorg-agenda)
+
 ;; iorg-agenda.el ends here

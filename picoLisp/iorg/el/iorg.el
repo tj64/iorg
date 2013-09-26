@@ -28,9 +28,9 @@
 ;; ;; or from the [[https://github.com/nicferrier/emacs-kv][github-repo]]
 ;; (require 'kv)
 ;; (require 'paredit)
-(require 'org-element)
-(require 'inferior-picolisp nil 'NOERROR)
-(require 'outorg nil 'NOERROR)
+;; (require 'inferior-picolisp nil 'NOERROR)
+;; (require 'outorg nil 'NOERROR)
+(require 'ox)
 
 (eval-when-compile (require 'cl))
 
@@ -279,10 +279,10 @@ MATCH is the match-string to be converted, with 'NIL' becoming
    ((string= match "(NIL)")
     (format "%s" "(nil)"))))
 
-(defun iorg--fix-read-syntax2 (tree)
+(defun iorg--fix-read-syntax (tree)
   "Returns parse TREE as string with read syntax fixed.
 Fixed means, in this case, adjusted for the PicoLisp reader:
-backquote all '#' characters. And, although not strictly
+backquote leading '#' characters. And, although not strictly
 necessary, remove the leading ':' of keywords in the parse-tree
 while on it."
   (let ((hash-regexp "#")
@@ -341,7 +341,11 @@ and trailing blanks from all labels like 'and\#2= '."
         (replace-match "\\2\\4"))
       (buffer-substring-no-properties (point-min) (point-max)))))
 
-;; (defun iorg--fix-read-syntax (tree)
+
+(defun iorg--add-colons-to-keys (tree-as-string)
+  "Add a colon : in from of every keyword in TREE-AS-STRING.")
+
+;; (defun iorg--fix-read-syntax-old (tree)
 ;;   "Returns parse TREE as string with read syntax fixed.
 
 ;; Fixed means, in this case, adjusted for the PicoLisp reader:
@@ -504,7 +508,7 @@ are not converted to uppercase forms NIL and T."
                   (with-current-buffer buf
                     (org-element-parse-buffer 'object))))
          (converted-parse-tree-as-string
-          (iorg--fix-read-syntax2
+          (iorg--fix-read-syntax
            (iorg--tag-org-data-element dat buf))))
     ;; upcase nil and t?
     (if preserve-nil-and-t-p
