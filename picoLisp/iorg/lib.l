@@ -87,7 +87,15 @@
             (rest) ) )
       (eval Exe) ) )
 
-
+## generic function for calling Emacsclient from PicoLisp
+## usage example: (emc '(read) "server-name" "(princ \"Hello World\")")
+(de emc (Exe . @)
+   (in
+      (cons 'emacsclient "-s" "iorg-server" 
+         (extract
+            '((X) (pack "--eval=" X) )
+            (rest) ) )
+      (eval Exe) ) )
 
 ## ** Retrieve document history
 
