@@ -91,10 +91,8 @@
 ## usage example: (emc '(read) "server-name" "(princ \"Hello World\")")
 (de emc (Exe . @)
    (in
-      (cons 'emacsclient "-s" "iorg-server" 
-         (extract
-            '((X) (pack "--eval=" X) )
-            (rest) ) )
+      (cons 'emacsclient
+         "-s" "iorg-server" "-e" (mapcar and (rest)) )
       (eval Exe) ) )
 
 ## ** Retrieve document history

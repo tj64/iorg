@@ -89,7 +89,7 @@
    (if (db 'nm '+Doc "menu")
       (setq *IorgMenu (id @ T))
       (msg "No menu document") )
-   (start-emacs-server) )
+   (startEmacsServer) )
 
 (de go ()
    (pw 12)
