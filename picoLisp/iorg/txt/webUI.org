@@ -96,7 +96,7 @@ accessible from text-browsers like (emacs-)w3m.
 
     #+begin_src picolisp
       (call 'emacsclient "-s" "iorg-server" "-c"
-         (pack (absolutePath "@iorg/txt/test.org")) )
+         (pack (absolutePath "@iorg/txt/test-files/small.org")) )
     #+end_src
 
     Cycle visibility or edit the file, and exit with ~C-x C-c~
@@ -135,7 +135,7 @@ accessible from text-browsers like (emacs-)w3m.
        $ ./pil iorg/main.l -main -go -wait >>logfile 2>&1 &
      #+end_src
 
-    This time you don't see a PicoLisp prompt (':'), and thats ok, since the
+    This time you don't see a PicoLisp prompt (:), and thats ok, since the
      process is not in debug-mode.
  5. Launch a 'normal' webbrowser like FireFox, Chromium or whatever and go to
     URL http://localhost:5001 - you should see the iOrg login page.

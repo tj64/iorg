@@ -1,6 +1,6 @@
 - ={home Start Page}
 - ={faq FAQ}
-- ={Tutorial}
+- ={tutorial Tutorial}
    - ={assumpt Assumptions}
    - ={webUI Web UI}
    - ={emacsUI Emacs UI}

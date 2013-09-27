@@ -1,5 +1,5 @@
 #+OPTIONS: toc:nil num:nil
-#+DESCRIPTION: Minimal Org-mode Testfile
+#+DESCRIPTION: A small simple Org-mode file
 
 * A
   Text A

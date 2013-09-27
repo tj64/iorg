@@ -1,0 +1,46 @@
+#+options: toc:nil iorg:t
+#+options: tags:t
+#+DESCRIPTION: A medium, syntax-rich Org-mode file
+
+* A1 :home:iorg:
+
+B1
+
+** [#A] B1
+
+Text B1
+
+** [#C] B2 :office:noiorg:
+
+Text B2
+
+#+ATTR_HTML: :iorg data
+* A2
+  :PROPERTIES:
+  :IORG:     on
+  :END:
+
+B2
+
+** WAITING C1 :WAITING:
+   DEADLINE: <2013-09-29 So 20:00>
+   :LOGBOOK:
+   - State "WAITING"    from ""           [2013-09-24 Di 23:24] \\
+     callback
+   :END:
+
+Text C1
+
+#+CAPTION: My minimal table
+#+ATTR_HTML: :border 2 :rules all :frame border
+| col1 | col2 |
+|------+------|
+| val1 | val2 |
+
+** TODO C2 <2013-09-24 Di 12:00>
+   :PROPERTIES:
+   :IORG:     off
+   :CUSTOM_ID: 321Meins
+   :END:
+
+Text C2
