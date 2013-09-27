@@ -1,5 +1,5 @@
 - ={home Start Page}
-- ={intro Introduction to iOrg}
+- ={faq FAQ}
 - ={Tutorial}
    - ={assumpt Assumptions}
    - ={webUI Web UI}
@@ -9,5 +9,5 @@
 - [[http://orgmode.org/][Org-mode Home]]
 - [[http://orgmode.org/worg/][Org-mode Wiki]]
 - [[http://picolisp.com/5000/!wiki?home][PicoLisp Wiki]]
-- ={help}
+- ={help Help}
 

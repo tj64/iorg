@@ -1,0 +1,33 @@
+#+OPTIONS: toc:nil num:nil
+#+DESCRIPTION: FAQ
+
+* Why another web application framework?
+
+iOrg is special, because its pure Lisp from the bottom to the top, and it
+brings together the probably most efficient system for web application
+development (PicoLisp) with the probably most efficient system for content
+creation out there (Org-mode). 
+
+* What a typical use case?
+
+When you need only static HTML pages, use Org-mode. When you build dynamic web
+apps with many forms, but barely any text except on the field labels, use
+PicoLisp. 
+
+But when you create dynamic web apps that need lots of content, like wikis,
+blogs, schools, online newspapers etc., iOrg is just perfect for you.
+
+* Can I write PicoLisp code in Org-mode files?
+
+Yes, there is [[http://orgmode.org/worg/org-contrib/babel/languages/ob-doc-picolisp.html][ob-picolisp]] allowing you to write and evaluate PicoLisp source
+blocks in Org-mode files. And there are [[http://orgmode.org/worg/dev/org-export-reference.html][export blocks]] for PicoLisp too. 
+
+* What is it about this famous 'hundred year language'?
+
+Well, read /Paul Graham's/ essay [[http://paulgraham.com/hundred.html][The Hundred Year Language]] first, and then
+learn more about PicoLisp, and it might open your eyes.
+
+* is iOrg already Beta?
+
+Not yet, but since both its components are ripe and stable software systems,
+the switch from Alpha state to Beta state will hopefully happen soon. 

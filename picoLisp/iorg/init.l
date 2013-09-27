@@ -87,10 +87,10 @@
       u `(db 'nm '+User "admin")
       d `(date)
       t `(time)
-      sum "Introduction"
-      txt "iorg/txt/intro.org" )
+      sum "FAQ"
+      txt "iorg/txt/faq.org" )
    'doc
-   (db 'nm '+Doc "intro") )
+   (db 'nm '+Doc "faq") )
 
 (put>
    (obj ((+Mup))

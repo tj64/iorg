@@ -1,2 +1,0 @@
-#+OPTIONS: toc:nil num:nil
-#+DESCRIPTION: Introduction to iOrg
