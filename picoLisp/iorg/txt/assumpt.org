@@ -1,0 +1,66 @@
+#+OPTIONS: toc:nil num:nil
+#+DESCRIPTION: Assumptions for Tutorial
+
+* OS
+
+This tutorial assumes that you are using *GNU/Linux*. Both Emacs and PicoLisp
+run on MS Windows systems too somehow, but iOrg was developed (and tested
+only) with the 64bit versions of Emacs and PicoLisp on Archlinux.
+
+* Emacs
+
+This tutorial assumes that you have a fairly recent *GNU Emacs* installed on
+your machine, and that your OS knows where to find it (i.e. commands like
+'emacs -Q' work on the shell). iOrg has been developed and tested with GNU
+Emacs 24, but it /might/ work with earlier versions too.
+
+** Org-mode
+
+This tutorial assumes that you have Version 8 (or newer) of *Org-mode*
+installed. This is mandatory: iOrg depends on the new Org-mode exporter
+introduced with version 8, and will not work with earlier versions.
+
+** TODO Emacs-w3m
+
+PicoLisp webapplication are designed to be fully functional without JavaScript
+(with just plain html), thus they are a perfect match for the text-based
+(Emacs-)W3M web-brower.
+
+But there was a bug in *emacs-w3m* that made it impossible to work with forms
+and thus use PicoLisp apps interactively from inside Emacs. I reported this
+bug on the w3m-mailing list and it was fixed on <2013-08-01 Do>:
+
+: ,------------------------------------------------------------------------------
+: | Subject: [emacs-w3m:12109] Re: [BUG] in url-construction in `w3m-form-submit'
+: | Newsgroups: gmane.emacs.w3m
+: | To: emacs-w3m@namazu.org
+: | Date: Thu, 01 Aug 2013 11:59:56 +0200 (8 weeks, 15 hours, 9 minutes ago)
+: | Reply-To: emacs-w3m@namazu.org
+: `------------------------------------------------------------------------------
+
+Thus you need a later version of emacs-w3m to be able to explore an iOrg app
+from within Emacs. Alternatively you can load the file 'w3m-form-patched.el'
+from the /picoLisp/iorg/el/ directory of the iOrg distribution in you working
+Emacs instance.
+
+* PicoLisp
+
+** TODO Installation
+
+The iOrg distribution includes a complete *PicoLisp* distribution. Go to the
+/picoLisp/ directory and do in a shell
+
+#+begin_src sh
+ (cd src64; make)
+#+end_src
+
+for a local installation. Read /picoLisp/INSTALL for detailled instructions.
+
+Test your installation by doing
+
+#+begin_src sh
+    $ ./pil +     # Local invocation, debug mode
+   
+    : (+ 1 2 3)
+    -> 6
+#+end_src

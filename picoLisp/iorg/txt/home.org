@@ -3,8 +3,58 @@
 
 * iOrg Application Framework
 
-A /Radical Approach/ to Web Application Development
+Merging two of the /most exciting/ Lisp applications around into one powerful
+Web Application Framework.
 
-Makes newbies happy who want to build web application by simply using a
-markup language _without any programming_, and pros too who want the power of
-expressive command-line tools. 
+*iOrg* is based on the [[http://picolisp.com/5000/!wiki?home][PicoLisp Wiki]], a rather small but highly functional
+web-application developed with the incredibly expressive [[http://software-lab.de/doc/app.html][PicoLisp Application
+Framework]]. By replacing the original PicoLisp Wiki markup with [[http://orgmode.org/][Org-mode]]
+markup, significant synergy effects are produced.
+
+From the *PicoLisp* point of view, the merge with Org-mode has the following
+advantages:
+
+ - Expert UI :: with GNU Emacs (Org-mode), a highly efficient user interface for
+                programmers, scientists, writers and other computer experts is
+                offered additionally to the browser based web interface.
+ - Content & Reports :: Org-mode is probably best-in-class when it comes to
+      the creation and export of (dynamic) documents and reports.
+ - Intelligent Markup :: in contrast to other markup languages, Org-mode has
+      depth. Its not only about the syntax and the nice looks - there is a
+      huge number of Emacs Lisp libraries in the background that provide tons
+      of functionality associated with the markup.
+ - Parser and Export Framework :: Org-mode has a sophisticated framework for
+      parsing Org-mode files into Lisp objects (nested lists) which allow the
+      creation of many export backends (like HTML and LaTeX).
+ - Big and active Community :: nowadays Org-mode is the brightest star in the
+      Emacs universe, with lots of followers and contributors from all over
+      the planet, many of them (Emacs) Lisp programmers and thus potential
+      admirers of PicoLisp's simplicity, purity and expressivity.
+
+From the *Org-mode* point of view, the merge with PicoLisp seems quite
+advantageous too:
+
+ - Interactivity :: iOrg stands for interactive Org-mode, because with
+                    PicoLisp in the background HTML forms can be used too
+                    instead of only static HTML export.
+ - Speed & Scalability :: a key feature of PicoLisp is its inbuilt database -
+      with database objects that are (external) Lisp symbols and with a Lisp
+      implementation of Prolog (Pilog) as query language. iOrg makes it
+      possible to read and store Org elements (e.g. whole files or single
+      headlines) as PicoLisp database objects, providing the speed and
+      scalability of a real database (in contrast to regular expression
+      searches in plain text files).
+ - Security :: its much easier to secure a PicoLisp server than an Emacs
+               server.
+ - Lisp :: PicoLisp is only about Lisp code - no XML configuration files, no
+           relational database in the background, no server-tags for the
+           views etc. The Emacs user with some Emacs Lisp experience will feel
+           right at home, and the communication between the two systems is
+           relatively easy - they both speak Lisp, so to say.
+
+
+Merged together into *iOrg*, these two systems achieve something unusual: they
+provide a dream environment for the professional hacker (always looking for
+the best tools and maximal efficiency) and they offer an intuitive markup
+language to the average computer users that is so powerful that very complex
+documents and even interactive HTML pages can be specified with it.
