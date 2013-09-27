@@ -1,3 +1,6 @@
+#+OPTIONS: toc:nil num:nil
+#+DESCRIPTION: start page
+
 * iOrg Application Framework
 
 A /Radical Approach/ to Web Application Development

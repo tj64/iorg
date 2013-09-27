@@ -382,17 +382,17 @@
 
 ## expects a 'raw' (complete) parse-tree as string, rebuilt from the PicoLisp
 ## DB, and returns the textual representation of the parsed Org file
-(de writeParseTree (Ptree)
-   (emc '(echo)
-      (pack
-         "(with-current-buffer "
-         "(find-file "
-         "\"" Path "\")"
-         "(org-mode)"
-         "(let ((org-cycle-silently 1))"
-         "(princ "
-         "(iorg-wrap-parse-tree "
-         "(iorg-convert-parse-tree)))))" ) ) )) )
+## (de writeParseTree (Ptree)
+##    (emc '(echo)
+##       (pack
+##          "(with-output-to-string "
+##          "(find-file "
+##          "\"" Path "\")"
+##          "(org-mode)"
+##          "(let ((org-cycle-silently 1))"
+##          "(princ "
+##          "(iorg-wrap-parse-tree "
+##          "(iorg-convert-parse-tree)))))" ) ) )) )
 
 
 ## * Render document

@@ -17,11 +17,17 @@
 
 ## * Wiki
 
-## ** Create the first three documents in the root DB file
+## ** Create the first documents in the root DB file
 
 (new T '(+Doc) 'nm "home")
 (new T '(+Doc) 'nm "menu")
 (new T '(+Doc) 'nm "help")
+(new T '(+Doc) 'nm "intro")
+(new T '(+Doc) 'nm "assumpt")
+(new T '(+Doc) 'nm "webUI")
+(new T '(+Doc) 'nm "emacsUI")
+(new T '(+Doc) 'nm "picoDB")
+(new T '(+Doc) 'nm "dhtmlMup")
 (commit)
 
 ## ** Create two roles, one for admins and one for normal members
@@ -30,9 +36,18 @@
 (obj ((+Role) nm "Member") perm (Iorg OrgData))
 (commit)
 
-## ** Create the admin user
+## ** Create the admin and member users
 
-(obj ((+User) nm "admin") pw `(passwd "admin") role `(db 'nm '+Role "Administrator"))
+(obj
+   ((+User) nm "admin")
+   pw `(passwd "admin")
+   role `(db 'nm '+Role "Administrator") )
+
+(obj
+   ((+User) nm "member")
+   pw `(passwd "member")
+   role `(db 'nm '+Role "Member") )
+
 (commit)
 
 ## ** Create some initial markup texts
@@ -43,7 +58,7 @@
       d `(date)
       t `(time)
       sum "Initial start page"
-      txt "iorg/txt/home.txt" )
+      txt "iorg/txt/home.org" )
    'doc
    (db 'nm '+Doc "home") )
 
@@ -53,7 +68,7 @@
       d `(date)
       t `(time)
       sum "Initial menu"
-      txt "iorg/txt/menu.txt" )
+      txt "iorg/txt/menu.org" )
    'doc
    (db 'nm '+Doc "menu") )
 
@@ -63,25 +78,73 @@
       d `(date)
       t `(time)
       sum "Help text"
-      txt "iorg/txt/help.txt" )
+      txt "iorg/txt/help.org" )
    'doc
    (db 'nm '+Doc "help") )
 
+(put>
+   (obj ((+Mup))
+      u `(db 'nm '+User "admin")
+      d `(date)
+      t `(time)
+      sum "Introduction"
+      txt "iorg/txt/intro.org" )
+   'doc
+   (db 'nm '+Doc "intro") )
+
+(put>
+   (obj ((+Mup))
+      u `(db 'nm '+User "admin")
+      d `(date)
+      t `(time)
+      sum "Assumptions"
+      txt "iorg/txt/assumpt.org" )
+   'doc
+   (db 'nm '+Doc "assumpt") )
+
+(put>
+   (obj ((+Mup))
+      u `(db 'nm '+User "admin")
+      d `(date)
+      t `(time)
+      sum "Web UI"
+      txt "iorg/txt/webUI.org" )
+   'doc
+   (db 'nm '+Doc "webUI") )
+
+(put>
+   (obj ((+Mup))
+      u `(db 'nm '+User "admin")
+      d `(date)
+      t `(time)
+      sum "Emacs UI"
+      txt "iorg/txt/emacsUI.org" )
+   'doc
+   (db 'nm '+Doc "emacsUI") )
+
+(put>
+   (obj ((+Mup))
+      u `(db 'nm '+User "admin")
+      d `(date)
+      t `(time)
+      sum "PicoLisp DB"
+      txt "iorg/txt/picoDB.org" )
+   'doc
+   (db 'nm '+Doc "picoDB") )
+
+(put>
+   (obj ((+Mup))
+      u `(db 'nm '+User "admin")
+      d `(date)
+      t `(time)
+      sum "Markup for DHTML"
+      txt "iorg/txt/dhtmlMup.org" )
+   'doc
+   (db 'nm '+Doc "dhtmlMup") )
+
+
 (commit)
 
-## * iOrg
-
-## ** Create some initial Org Headlines
-
-## FIXME does not work
-(setq Plst '(:raw-value "Second Level 2" :begin 412 :end 1046 :pre-blank
-0 :hiddenp outline :contents-begin 430 :contents-end 1046 :level 2 :priority
-NIL :tags NIL :todo-keyword NIL :todo-type NIL :post-blank
-0 :footnote-section-p NIL :archivedp NIL :commentedp NIL :quotedp
-NIL :CATEGORY (enclosing-hashtags 1) :title ((hashtag '("Second Level 2" 0
-14 (:parent 20)))) :parent 5 :elem-id 20 :children (42 65)) )
-
-(apply new! PLst '(+OrgHeadline))
 
 ## iorg/init.l ends here
 

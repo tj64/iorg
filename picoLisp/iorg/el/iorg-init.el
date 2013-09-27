@@ -32,6 +32,7 @@
 (require 'iorg)
 (require 'iorg-scrape)
 (require 'ox-iorg)
+(require 'w3m-form-patched nil 'NOERROR)
 ;; (require 'iorg-agenda)
 ;; (require 'iorg-dired)
 

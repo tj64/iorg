@@ -1,3 +1,7 @@
+#+OPTIONS: toc:nil num:nil
+#+DESCRIPTION: Help page
+
+
 * Org-mode Markup Syntax
 
 Org-mode Markup has a relatively simple syntax. Some of its most basic

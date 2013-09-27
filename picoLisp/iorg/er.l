@@ -273,7 +273,8 @@
                ':email (: email)
                ':creator (: creator)
                ':description (: description) )
-            (prepCont> (: contents))
+            ## (prepCont> (: contents))
+            (: contents)
             (mapcar
                'origSubTree>
                (: descendants) ) ) ) ) )
@@ -351,7 +352,8 @@
                ':archivedp (: archivedp)
                ':commentedp (: commentedp)
                ':footnote-section-p (: footnote-section-p) )
-            (prepCont> (: contents))
+            ## (prepCont> (: contents))
+            (: contents)
             (mapcar
                'origSubTree>
                (: descendants) ) ) ) ) )
