@@ -1,2 +1,193 @@
 #+OPTIONS: toc:nil num:nil
 #+DESCRIPTION: Web UI
+
+{={assumpt Back}}
+
+* The iOrg Web UI
+
+The web user-interface (webUI) is inherited from the [[%20http://software-lab.de/doc/app.html][PicoLisp Application
+Framework]] (but uses some JavaScript and CSS -and of course the wonderful
+exporter framework- from Org-mode too). Its a powerful
+and very responsive UI, besides the fact that it is explicitly designed to
+work *too* without JavaScript, Cookies and other fancy stuff, and thus is easily
+accessible from text-browsers like (emacs-)w3m.
+
+** Lets get Started
+
+*** Check is everything is working
+
+ 1. Open a shell and type
+
+    #+begin_src sh
+      $ cd /my/path/to/local/picoLisp/
+    #+end_src
+
+ 2. Locally start up the PicoLisp http-server in debug mode
+
+    #+begin_src sh
+    $ ./pil iorg/main.l -main +
+    #+end_src
+
+    You should see something like
+
+    #+begin_src sh
+      Warning: due to a long standing Gtk+ bug
+      http://bugzilla.gnome.org/show_bug.cgi?id=85715
+      Emacs might crash when run in daemon mode and the X11 connection is unexpectedly lost.
+      Using an Emacs configured with --with-x-toolkit=lucid does not have this problem.
+      ("emacs" "-L" "/home/tj/git/iorg/picoLisp/iorg/el/")
+      Starting Emacs daemon.
+      Unable to start daemon: Emacs server named "iorg-server" already running
+      Error: server did not start correctly
+      iorg-init
+      :
+    #+end_src
+
+    you will see the
+
+    :    ,-------------------------------------------------------------------------
+    :   | Unable to start daemon: Emacs server named "iorg-server" already running
+    :   | Error: server did not start correctly
+    :   `-------------------------------------------------------------------------
+
+    part only when your "iorg-server" is already up-and-running, and can then
+    safely ignore the message.
+
+ 3. Now try the following PicoLisp expressions in the PicoLisp REPL, i.e. enter
+    them behind the ':' and send them with ~RET~:
+
+    #+begin_src picolisp
+      (em)    # enable emacs key-bindings (default is vi-bindings)
+      (+ 1 1) # -> 2
+      (call 'emacsclient "-s" "iorg-server" "-e"  "server-name") # -> "iorg-server"
+    #+end_src
+
+    If this works, your PicoLisp server is running and communicating with its
+    associated Emacs server (with --socket-name="iorg-server").
+
+ 4. Now try killing and restarting the Emacs server with ~(killEmacsServer)~
+    and ~(startEmacsServer)~. You should see something like this:
+
+    #+begin_src sh
+      : (killEmacsServer)
+      -> T
+      : (call 'emacsclient "-s" "iorg-server" "-e"  "server-name")
+      emacsclient: can't find socket; have you started the server?
+      To start the server in Emacs, type "M-x server-start".
+      emacsclient: error accessing socket "iorg-server"
+      -> NIL
+      : (startEmacsServer)
+
+      Warning: due to a long standing Gtk+ bug
+      http://bugzilla.gnome.org/show_bug.cgi?id=85715
+      Emacs might crash when run in daemon mode and the X11 connection is unexpectedly lost.
+      Using an Emacs configured with --with-x-toolkit=lucid does not have this problem.
+      ("emacs" "-L" "/home/tj/git/iorg/picoLisp/iorg/el/")
+      Starting Emacs daemon.
+      iorg-init
+      -> T
+      : (call 'emacsclient "-s" "iorg-server" "-e"  "server-name")
+      "iorg-server"
+      -> T
+      :
+    #+end_src
+
+ 5. (optional) Lets edit a minimal Org-mode test file with emacsclient:
+
+    #+begin_src picolisp
+      (call 'emacsclient "-s" "iorg-server" "-c"
+         (pack (absolutePath "@iorg/txt/test.org")) )
+    #+end_src
+
+    Cycle visibility or edit the file, and exit with ~C-x C-c~
+
+    BTW, you can easily add directories to the Emacs load-path from the
+    PicoLisp command-line with
+
+    #+begin_src picolisp
+      (addToEmacsLoadPath
+         (absolutePath "/my/absolute/path/to/dir/") )
+    #+end_src
+
+*** I can't get started
+
+    You might like the [[http://www.youtube.com/watch?v%3D5daFwnvcmdg][song]] - but not the feeling of being stuck. Please
+    consult the PicoLisp and Org-mode documentation in case of problems and
+    maybe ask in the relevant mailing list or IRC channel for help.
+
+
+
+** Browse the iOrg Wiki
+*** Start the PicoLisp http-server in production mode
+
+ 1. kill the Emacs server with ~(killEmacsServer)~
+ 2. Kill the running PicoLisp server with ~C-q~ (maybe ~C-c~ and ~C-d~ too) or
+    with ~(bye)~
+ 3. make sure the process is really killed with the following shell commands
+
+    #+begin_src sh
+    $ killall -KILL pil
+    $ killall -KILL picolisp
+    #+end_src
+ 4. restart the PicoLisp server in production mode
+
+     #+begin_src sh
+       $ ./pil iorg/main.l -main -go -wait >>logfile 2>&1 &
+     #+end_src
+
+    This time you don't see a PicoLisp prompt (':'), and thats ok, since the
+     process is not in debug-mode.
+ 5. Launch a 'normal' webbrowser like FireFox, Chromium or whatever and go to
+    URL http://localhost:5001 - you should see the iOrg login page.
+
+
+*** Explore the Wiki Part 1: member role
+
+ 1. login with /Name = member/ and /Password = member/
+ 2. look at the menu: this role does not allow for /role administration/ or
+    /uploads/
+ 3. click on /user administration/, then on the @ marks before admin and
+    member, and try to edit both - you can't, only your own user data is
+    editable for you.
+ 4. click on /documents/ in the menu, and you'll see all docs contained in the
+    iOrg Wiki so far, all last edited by admin. However, its a wiki, and these
+    docs are editable for the (registered) world. Click on the @ before Help,
+    then press the edit button, and add the following sentence at the end:
+
+    #+begin_example
+
+    This help section will be extended in the future.
+    #+end_example
+
+    Add a summary like "Future outlook added", evtl. mark the minor-edit
+    checkbox, and then press the preview button. If you like what you see,
+    save the document by pressing the done button and have a look at the
+    revision history.
+ 5. click on Home in the menu, you will be shown that 'member' is logged in
+    when the session will time-out when inactive.
+
+So far you explored the administration section of the Wiki, only accessible by
+registered users after login. Now we will have a look at the actual Wiki, that
+can be viewed by the general public and edited by registered users after
+login.
+
+ 6.[@6] click on iOrg in the menu, and you will see the start page with a high
+    level introduction to iOrg. Read it, or try the edit link right away - but
+    don't edit anything, just press cancel and return.
+ 7. leave a reply - whats your first impression of iOrg? Click the reply link
+    and write something (nice!) - in Org-mode syntax of course. After saving,
+    you will find the link to your reply at the bottom of the page.
+ 8. If you are new to PicoLisp and/or Org-mode, try the external links in the
+    menu, they will bring to the project's home-pages or wikis with lots of
+    further information.
+
+*** Explore the Wiki Part 2: admin role
+
+ 1. logout
+ 2. login again with name=admin and password=admin
+ 3. look at the menu - everything is accessible for you now.
+
+The admin role is a powerful role that should only be granted to trustworthy
+contributors of the iOrg Wiki.
+
+{={emacsUI Next}}

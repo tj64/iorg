@@ -40,8 +40,8 @@
 (eval-when-compile
   (require 'cl))
 
-(require 'w3m-util)
-(require 'w3m)
+(require 'w3m-util nil 'NOERROR)
+(require 'w3m nil 'NOERROR)
 
 (eval-when-compile
   (defvar w3m-current-forms))
@@ -1893,6 +1893,6 @@ selected rather than \(as usual\) some other window.  See
 		       (next-single-property-change pos 'w3m-action)))))))
 
 
-(provide 'w3m-form)
+(provide 'w3m-form-patched)
 
 ;;; w3m-form.el ends here

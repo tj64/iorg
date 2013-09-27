@@ -1,6 +1,8 @@
 #+OPTIONS: toc:nil num:nil
 #+DESCRIPTION: Assumptions for Tutorial
 
+{={tutorial Back}}
+
 * OS
 
 This tutorial assumes that you are using *GNU/Linux*. Both Emacs and PicoLisp
@@ -22,9 +24,9 @@ introduced with version 8, and will not work with earlier versions.
 
 ** TODO Emacs-w3m
 
-PicoLisp webapplication are designed to be fully functional without JavaScript
-(with just plain html), thus they are a perfect match for the text-based
-(Emacs-)W3M web-brower.
+PicoLisp web-applications are designed to be fully functional without
+JavaScript (with just plain html), thus they are a perfect match for the
+text-based *w3m* web-brower.
 
 But there was a bug in *emacs-w3m* that made it impossible to work with forms
 and thus use PicoLisp apps interactively from inside Emacs. I reported this
@@ -39,9 +41,22 @@ bug on the w3m-mailing list and it was fixed on <2013-08-01 Do>:
 : `------------------------------------------------------------------------------
 
 Thus you need a later version of emacs-w3m to be able to explore an iOrg app
-from within Emacs. Alternatively you can load the file 'w3m-form-patched.el'
-from the /picoLisp/iorg/el/ directory of the iOrg distribution in you working
-Emacs instance.
+from within Emacs. Alternatively, you can first load your older emacs-w3m
+version and then load the file ~w3m-form-patched.el~ from the
+/picoLisp/iorg/el/ directory of the iOrg distribution. 
+
+You might want to use emacs-w3m from the Emacs server that is started during
+start-up of the iOrg http-server (with socket-name "iorg-server"). Uncomment
+the following lines in ~/picoLisp/iorg/el/iorg-init.el~ and modify the path to
+your settings before starting the iOrg server:
+
+#+begin_src emacs-lisp
+;; set load-path for 'emacs-w3m'
+(add-to-list 'load-path (expand-file-name "~/path/to/emacs-w3m/"))
+(require 'w3m-form-patched nil 'NOERROR)
+#+end_src
+
+
 
 * PicoLisp
 
@@ -64,3 +79,5 @@ Test your installation by doing
     : (+ 1 2 3)
     -> 6
 #+end_src
+
+{={webUI Next}}

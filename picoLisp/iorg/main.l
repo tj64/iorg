@@ -76,6 +76,13 @@
       "-L" (pack (absolutePath "@iorg/el/")) )
    (call 'emacsclient "-s" "iorg-server" "-e" "(require 'iorg-init)" ) )
 
+## (de startEmacsServer ()
+##    (call 'emacs
+##       "-Q"
+##       "--batch"
+##       "-L" (pack (absolutePath "@iorg/el/"))
+##       "-l" (pack (absolutePath "@iorg/el/iorg-init.el")) ) )
+
 (de killEmacsServer ()
    (call 'emacsclient "-s" "iorg-server" "-e" "(kill-emacs)") )
 

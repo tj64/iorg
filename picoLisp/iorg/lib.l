@@ -394,12 +394,23 @@
 ##          "(iorg-wrap-parse-tree "
 ##          "(iorg-convert-parse-tree)))))" ) ) )) )
 
+## ** Set Path
+
+(de addToEmacsLoadPath (AbsolutePath)
+  (call
+     'emacsclient
+     "-s" "iorg-server"
+     "-e"
+     (pack
+        "(add-to-list 'load-path "
+        "(expand-file-name "
+        "\"" AbsolutePath "\" ) )" ) ) )
 
 ## * Render document
 
 ## ** Render document as HTML
 
-## ## FIXME renders lots of \n in html output
+## ## FIXME fast, but renders lots of \n in html output
 ## ## let ox-html.el render Org-file
 ## (de oxRender (Path)
 ##    (emc '(echo)

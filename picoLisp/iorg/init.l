@@ -23,6 +23,7 @@
 (new T '(+Doc) 'nm "menu")
 (new T '(+Doc) 'nm "help")
 (new T '(+Doc) 'nm "intro")
+(new T '(+Doc) 'nm "tutorial")
 (new T '(+Doc) 'nm "assumpt")
 (new T '(+Doc) 'nm "webUI")
 (new T '(+Doc) 'nm "emacsUI")
@@ -91,6 +92,16 @@
       txt "iorg/txt/faq.org" )
    'doc
    (db 'nm '+Doc "faq") )
+
+(put>
+   (obj ((+Mup))
+      u `(db 'nm '+User "admin")
+      d `(date)
+      t `(time)
+      sum "Tutorial"
+      txt "iorg/txt/tutorial.org" )
+   'doc
+   (db 'nm '+Doc "tutorial") )
 
 (put>
    (obj ((+Mup))
