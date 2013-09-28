@@ -1,6 +1,6 @@
-(allowed ()
-   "!scrape" "!expect" "!click" "!press" "!value" "!enter"
-   "!display" "!displayAll" )
+## (allowed ()
+##    "!scrape" "!expect" "!click" "!press" "!value" "!enter"
+##    "!display" "!displayAll" )
 
 (load "@lib.l" "@ext.l" "@lib/http.l" "@lib/scrape.l")
 
@@ -12,5 +12,10 @@
 (in *Sock 
    (while (read)
       (out *Sock
-         (println (eval @)) ) ) )
+         (and
+            (fun? (car @))
+            (memq (car @)
+               '(scrape expect click press value enter display displayAll) )
+            (println
+               (eval @) ) ) ) ) )
 (bye)
