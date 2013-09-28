@@ -117,7 +117,7 @@
 ## create a new +OrgData object and trigger creation of +OrgHeadline objects
 ## for the parse-tree's headlines
 (de makeOrgData (Label Lst)
-   (msg "makeOrgData entered...")
+   ## (msg "makeOrgData entered...")
    (setq *IorgGlobalSwitch (extractOptionValue "iorg" Lst))
    (msg *IorgGlobalSwitch " => *IorgGlobalSwitch ")
       (unless (= "nil" *IorgGlobalSwitch)
@@ -144,9 +144,9 @@
                             (== 'section (caadr Lst))
                             (cut 2 'Lst) )
                'label Label )
-            (msg (show Obj) " => New OrgData object created")
+            (msg Obj " => New OrgData object created")
             (while Lst
-               (msg "while loop OrgData entered ...")
+               ## (msg "while loop OrgData entered ...")
                (makeOrgHeadline
                   (and
                      (hashLbl? (car Lst))
@@ -159,7 +159,7 @@
 
 ## create a new +OrgHeadline object
 (de makeOrgHeadline (Label Lst Ptree)
-   (msg "makeOrgHeadline entered...")
+   ## (msg "makeOrgHeadline entered...")
    (let Obj
       (apply
          new
@@ -182,9 +182,9 @@
       (put> Obj 'ancestor
          (db 'label '+orgBaseElement
             (makeHashLbl (hashLblNum> Obj 'parent)) ) )
-      (msg (hashLblNum> Obj 'label) " => New OrgHeadline object created") )
+      (msg Obj " => New OrgHeadline object created") )
 (while Lst
-   (msg "while loop OrgHeadline entered ...")
+   ## (msg "while loop OrgHeadline entered ...")
    (makeOrgHeadline
       (and
          (hashLbl? (car Lst))
@@ -347,7 +347,7 @@
 ##        (pack
 ##        "(add-to-list 'load-path "
 ##        ## ## FIXME! should be:
-##        ## "\"" (absolutePath "@iorg/el/") "\"" )
+##        ## "\"" (absPath "@iorg/el/") "\"" )
 ##        "\"/home/tj/git/iorg/picoLisp/iorg/el/\")" )
 ##       "(require 'iorg-init)"
 ##       "(require 'iorg)"
@@ -396,7 +396,8 @@
 
 ## ** Set Path
 
-(de addToEmacsLoadPath (AbsolutePath)
+## expects an absolute path
+(de addToEmacsLoadPath (Path)
   (call
      'emacsclient
      "-s" "iorg-server"
@@ -404,7 +405,7 @@
      (pack
         "(add-to-list 'load-path "
         "(expand-file-name "
-        "\"" AbsolutePath "\" ) )" ) ) )
+        "\"" Path "\" ) )" ) ) )
 
 ## * Render document
 

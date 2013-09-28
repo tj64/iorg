@@ -63,8 +63,8 @@
 
 ## FIXME: account for possible "../../"
 ## Return absolute path to local (running) PicoLisp installation
-## Usage example: (absolutePath "@lib/misc.l")
-(de absolutePath (P)
+## Usage example: (absPath "@lib/misc.l")
+(de absPath (P)
    (split
       (or
          (pre? "/" (path P))
@@ -73,15 +73,15 @@
 (de startEmacsServer ()
    (call 'emacs
       "-Q" "--daemon=iorg-server"
-      "-L" (pack (absolutePath "@iorg/el/")) )
+      "-L" (pack (absPath "@iorg/el/")) )
    (call 'emacsclient "-s" "iorg-server" "-e" "(require 'iorg-init)" ) )
 
 ## (de startEmacsServer ()
 ##    (call 'emacs
 ##       "-Q"
 ##       "--batch"
-##       "-L" (pack (absolutePath "@iorg/el/"))
-##       "-l" (pack (absolutePath "@iorg/el/iorg-init.el")) ) )
+##       "-L" (pack (absPath "@iorg/el/"))
+##       "-l" (pack (absPath "@iorg/el/iorg-init.el")) ) )
 
 (de killEmacsServer ()
    (call 'emacsclient "-s" "iorg-server" "-e" "(kill-emacs)") )

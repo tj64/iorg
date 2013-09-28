@@ -96,7 +96,7 @@ accessible from text-browsers like (emacs-)w3m.
 
     #+begin_src picolisp
       (call 'emacsclient "-s" "iorg-server" "-c"
-         (pack (absolutePath "@iorg/txt/test-files/small.org")) )
+         (pack (absPath "@iorg/txt/test-files/small.org")) )
     #+end_src
 
     Cycle visibility or edit the file, and exit with ~C-x C-c~
@@ -106,7 +106,7 @@ accessible from text-browsers like (emacs-)w3m.
 
     #+begin_src picolisp
       (addToEmacsLoadPath
-         (absolutePath "/my/absolute/path/to/dir/") )
+         (absPath "/my/absolute/path/to/dir/") )
     #+end_src
 
 *** I can't get started

@@ -3,4 +3,286 @@
 
 {={emacsUI Back}}
 
+* Storing Org-mode files as PicoLisp database objects
+
+The short description of Org-mode on top of its [[http://orgmode.org/][home page]] reads like this:
+
+#+begin_center
+Org mode is for keeping notes, maintaining TODO lists, planning projects, and
+authoring documents with a fast and effective plain-text system
+#+end_center
+
+Being a *plain-text* system has tremendous advantages with regards to
+flexibility, hackability and version control. Things are lightweight and
+generally fast. But there are scalability and performance limits when it comes
+to searching and filtering (or selecting from) big (collections of) Org files.
+These limits are most obvious when building the /agenda/, i.e. selecting
+certain headlines from a list of Org files that meet certain criteria (w.r.t.
+date, todo-keyword, tags etc.) and present them to the user as his
+daily/weekly/monthly agenda entries.
+
+These limits are due to the fact that selection is done by regular expression
+based free-text search in Org-mode. What would be needed when Org-files grow
+to thousands of lines is the scalability and speed of a real database, with
+index based selection at lightning speed.
+
+PicoLisp offers such a database that is not only fast and scalable, but has
+the unique characteristic of being part of the language. (External) database
+objects are Lisp symbols and thus first-class members of the PicoLisp
+language, making the development of real web-applications with databases so
+much easier.
+
+With iOrg, Org-mode files can be read from PicoLisp and stored as a collection
+of entities in the database, namely:
+
+ - ~+OrgData~ :: Object that represents the Org file. Has meta-data about the
+                file and links to the first-level headlines, as well as
+                 (optional) content.
+ - ~+OrgHeadline~ :: Object that represents a headline. Has all headline
+                     attributes and the (optional) content, as well as links
+                     to ancestors and descendats and the containing OrgData
+                     object.
+
+Lets read and store an Org file now, so that we have some data for the next
+section about querying the database.
+
+First, lets start from scratch, i.e. kill the still running PicoLisp and Emacs
+servers as described before, and start-up the PicoLisp server again in debug
+mode [fn:1]:
+
+#+begin_src sh
+ $ ./pil iorg/main.l -main +
+#+end_src
+
+Then send this command in the PicoLisp REPL (after the colon-prompt):
+
+#+begin_src picolisp
+  (readParseTree (absPath "@iorg/txt/testFiles/medium.org"))
+#+end_src
+
+and you should see something like this:
+
+#+begin_src sh
+  : (readParseTree (absPath "@iorg/txt/testFiles/medium.org"))
+  "T" => *IorgGlobalSwitch
+  {26} => New OrgData object created
+  {46} => New OrgHeadline object created
+  {53} => New OrgHeadline object created
+  {55} => New OrgHeadline object created
+  {56} => New OrgHeadline object created
+  {57} => New OrgHeadline object created
+  {60} => New OrgHeadline object created
+  -> {26}
+#+end_src
+
+The output first informs you that the global variable ~*IorgGlobalSwitch~ is
+"T". If you haven't yet, now is the moment to take a look at the Org file we
+parsed and stored with the above command:
+
+: ,---------------------------------------
+: | /picoLisp/iorg/txt/testFiles/medium.org
+: `---------------------------------------
+
+The first two lines are export options, and the first one contains the
+argument ~iorg:~ with value ~t~, meaning that iOrg will consider this Org file
+as data to be stored in the database when used as argument to ~(readParseTree
+...)~. With ~iorg:nil~ or any other value other than ~t~, or with ~iorg:~ not
+set at all, ~(readParseTree ...)~ will ignore the file. Thus, to declare an
+Org file as a data-store for iOrg, you must put a
+
+#+begin_src org
+: #+OPTIONS: iorg:t
+#+end_src
+
+line on top of the file.
+
+The next lines of the output tell us that 7 new PicoLisp database objects have
+been created, one of type ~+OrgData~ and six of type ~+OrgHeadline~.
+
+
+* Exploring the PicoLisp Database
+
+The [[http://software-lab.de/doc/ref.html][PicoLisp Reference]] and the [[http://software-lab.de/doc/tut.html][PicoLisp Tutorial]] both contain sections about
+PicoLisp database programming, and [[http://software-lab.de/dbui.html][this essay]] (a bit dated, unfortunately)
+describes the concepts behind the fully integrated /PicoLisp Application
+Framework/.
+
+We won't repeat anything from the cited references here and directly start to
+explore and query our database now.
+
+ 1. with ~(show *DB)~ you get high-level info about the database:
+
+    #+begin_src sh
+      : (show *DB)
+      {1} NIL
+         +orgBaseElement {27}
+         +orgElement {51}
+         +OrgHeadline {47}
+         +OrgData {31}
+         +Doc {3}
+         +Mup {25}
+         +User {21}
+         +Role {16}
+      -> {1}
+    #+end_src
+
+    Besides the objects related to the parsed Org file there are other objects
+    from the iOrg Wiki: Doc's (like this one you currently read), User's etc.
+
+    Don't worry about the
+
+    : ,-------------------------
+    : | +orgBaseElement {27}
+    : | +orgElement {51}
+    :  `-------------------------
+
+    part, these are the abstract superclasses of +OrgHeadline and +OrgData.
+
+    Object {1} represents the whole DB, thus ~(show '{1})~ yields the same
+    output as above. Looking at the objects shown above gives some meta-data
+    that is not relevant right now.
+
+ 2. lets rather have a look at the +OrgData object created before:
+
+    #+begin_src sh
+      : (show '{26})
+      {26} (+OrgData)
+         descendants ({56} {46})
+         label \#1=
+         description "A medium, syntax-rich Org-mode file"
+         email "tj@hostname"
+         creator "Emacs 24.3.1 (Org mode 8.0.6)"
+         author "Thorsten Jolitz"
+         input-file "/home/tj/git/iorg/picoLisp/iorg/txt/testFiles/medium.org"
+         parse-tree-id "medium_3124JkD"
+
+         contents (\#2= (section (begin 1 end 97 contents-begin 1 contents-end 96
+         post-blank 1 parent \#1#) (keyword (key "OPTIONS" value "toc:NIL iorg:T"
+         begin 1 end 27 post-blank 0 post-affiliated 1 parent \#2#)) (keyword (key
+         "OPTIONS" value "tags:T" begin 27 end 45 post-blank 0 post-affiliated 27
+         parent \#2#)) (keyword (key "DESCRIPTION" value "A medium, syntax-rich
+         Org-mode file" begin 45 end 96 post-blank 0 post-affiliated 45 parent
+         \#2))))
+
+      -> {26}
+    #+end_src
+
+    There are several attributes with meta-data about the parsed Org file, two
+    links to descendant objects (in this case the two top-level headlines of
+    the file that have the containing +OrgData object as parent), and a
+    ~contents~ attribute that holds the section before the first headline in
+    the file in a slightly modified parse-tree format.
+
+ 3. the two descendants of the +OrgData object,  ~{46}~ ~{56}~, are in the
+    list of the 6 +OrgHeadline objects created before:
+
+    #+begin_src sh
+      : (show '{46})
+      {46} (+OrgHeadline)
+         ancestor {26}
+         descendants ({55} {53})
+         label \#3=
+         parent \#1#
+         title (\# ("A1" 0 2 (parent \#3#)))
+         CATEGORY (\#6= "medium")
+         post-blank 1
+         tags ("home" "iorg")
+         level 1
+         hiddenp outline
+         pre-blank 1
+         ptree {26}
+         contents (\#4= (section (begin 115 end 119 contents-begin 115 contents-end
+         118 post-blank 1 parent \#3#) \#5= (paragraph (begin 115 end 118
+         contents-begin 115 contents-end 118 post-blank 0 post-affiliated 115 parent
+         \#4#) \# ("B1n" 0 3 (parent \#5#)))))
+      -> {46}
+
+    #+end_src
+
+    Again, there is a list of attributes with the final one (~contents~)
+    containing the headline's content in modified parse-tree format. You can
+    see that this headline has two subtrees (or sub-headlines) by looking at
+    ~descendants~, and that its ~ancestor~ is the +OrgData object we just
+    looked at. The other attributes are a subset of the headline-attribute
+    contained in a parse-tree produced by the Org-mode experter. Attributes
+    that are derived and contain duplicated information (like ~raw-value~) and
+    attributes that are ignored when interpreting the parse-tree (all those
+    ~begin~ and ~end~ attributes) were omitted. Note that in this case ~ptree~
+    and ~ancestor~ are identical, but more often than not the ancestor of a
+    headline is another headline, while all headlines of an Org file share the
+    same *OrgData object as ~ptree~ attribute.
+
+* Querying the PicoLisp Database
+
+Now that we have seen some examples of Org elements stored in the PicoLisp DB,
+lets try to query the database.
+
+ 1. (select +orgBaseElement)
+
+    #+begin_src sh
+      : (select label +orgBaseElement)
+      \#10= {55}
+      \#13= {56}
+      \#17= {57}
+      \#1= {26}
+      \#33= {60}
+      \#3= {46}
+      \#7= {53}
+      -> NIL
+    #+end_src
+
+    Since ~+orgBaseElement~ is the (abstract) root class of the iOrg class
+    hierarchy, this shows [fn:2] the value of the label attribute of all Org
+    elements in the DB, both of type +OrgData and +OrgHeadline. Note that
+    '{26} and '{46}, inspected above, are both selected.
+
+ 2. (select label +OrgData parse-tree-id "medium")
+
+    #+begin_src sh
+      : (select label +OrgData parse-tree-id "medium")
+      \#1= {26}
+      -> NIL
+    #+end_src
+
+    Only the +OrgData class has attribute ~parse-tree-id~, and its actual
+    value is ~"medium_3124JkD"~. It is found anyway because for this attribute
+    a full-text index with fuzzy matching is defined.
+
+ 3. (db 'priority '+OrgHeadline 65 'level 2)
+
+    #+begin_src sh
+      :  (db 'priority '+OrgHeadline 65 'level 2)
+      -> {53}
+    #+end_src
+
+    Select a single database object by a tree search on first value
+    (priority 65) and filtering on all other (optional) attributes.
+
+ 4. (collect 'priority '+OrgHeadline 60 70)
+
+    #+begin_src sh
+      : (collect 'priority '+OrgHeadline 60 70)
+      -> ({53} {55})
+    #+end_src
+
+    Return a list of values that fall into a range of index values. Here, both
+    returned objects are headlines with priority cookies ~[#A]~ and ~[#C]~.
+    These priority cookies are actually parsed as numerical ascii-codes, thus
+    65 (-> A) and 67 (-> C) both fall into range 60 -70.
+
+More complicated (and possibly more efficient) queries are possible using
+[[http://software-lab.de/doc/ref.html#pilog][Pilog]], the PicoLisp implementation of Prolog.
+
+
 {={dhtmlMup Next}}
+
+* Footnotes
+
+[fn:1] Note that due to another amazing characteristic of the PicoLisp system,
+its start-up time in milliseconds, killing and restarting PicoLisp is a
+frequent and normal part of the development cycle. The delay you notice when
+starting the PicoLisp server is actually caused by PicoLisp waiting for the
+Emacs server to start-up.
+
+[fn:2] It actually shows only the first match, you need to type ~RET~ to see
+more matches (or type ~. RET~ to terminate).

@@ -384,7 +384,7 @@
        (pack
        "(add-to-list 'load-path "
        ## ## FIXME! should be:
-       ## "\"" (absolutePath "@iorg/el/") "\"" )
+       ## "\"" (absPath "@iorg/el/") "\"" )
        "\"/home/tj/git/iorg/picoLisp/iorg/el/\")" )
       "(require 'iorg-init)"
       "(require 'iorg)"
