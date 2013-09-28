@@ -4,7 +4,7 @@
 
 * A1 :home:iorg:
 
-B1
+Text A1
 
 ** [#A] B1
 
@@ -20,7 +20,7 @@ Text B2
   :IORG:     on
   :END:
 
-B2
+Text A2
 
 ** WAITING C1 :WAITING:
    DEADLINE: <2013-09-29 So 20:00>

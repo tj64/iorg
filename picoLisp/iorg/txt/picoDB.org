@@ -1,5 +1,6 @@
 #+OPTIONS: toc:nil num:nil
 #+DESCRIPTION: The PicoLisp DB
+#+TITLE: Org Elements as PicoLisp Database Objects
 
 {={emacsUI Back}}
 
@@ -8,8 +9,11 @@
 The short description of Org-mode on top of its [[http://orgmode.org/][home page]] reads like this:
 
 #+begin_center
-Org mode is for keeping notes, maintaining TODO lists, planning projects, and
-authoring documents with a fast and effective plain-text system
+#+begin_verse
+Org mode is for keeping notes, maintaining TODO lists,
+planning projects, and authoring documents with a
+fast and effective plain-text system
+#+end_verse
 #+end_center
 
 Being a *plain-text* system has tremendous advantages with regards to
@@ -33,7 +37,7 @@ language, making the development of real web-applications with databases so
 much easier.
 
 With iOrg, Org-mode files can be read from PicoLisp and stored as a collection
-of entities in the database, namely:
+of entities in the database. The following classes are defined:
 
  - ~+OrgData~ :: Object that represents the Org file. Has meta-data about the
                 file and links to the first-level headlines, as well as
@@ -44,7 +48,7 @@ of entities in the database, namely:
                      object.
 
 Lets read and store an Org file now, so that we have some data for the next
-section about querying the database.
+sections about exploring and querying the database.
 
 First, lets start from scratch, i.e. kill the still running PicoLisp and Emacs
 servers as described before, and start-up the PicoLisp server again in debug
@@ -204,13 +208,13 @@ explore and query our database now.
     see that this headline has two subtrees (or sub-headlines) by looking at
     ~descendants~, and that its ~ancestor~ is the +OrgData object we just
     looked at. The other attributes are a subset of the headline-attribute
-    contained in a parse-tree produced by the Org-mode experter. Attributes
+    contained in a parse-tree produced by the Org-mode exporter. Attributes
     that are derived and contain duplicated information (like ~raw-value~) and
     attributes that are ignored when interpreting the parse-tree (all those
     ~begin~ and ~end~ attributes) were omitted. Note that in this case ~ptree~
     and ~ancestor~ are identical, but more often than not the ancestor of a
     headline is another headline, while all headlines of an Org file share the
-    same *OrgData object as ~ptree~ attribute.
+    same +OrgData object as ~ptree~ attribute.
 
 * Querying the PicoLisp Database
 
@@ -245,7 +249,7 @@ lets try to query the database.
     #+end_src
 
     Only the +OrgData class has attribute ~parse-tree-id~, and its actual
-    value is ~"medium_3124JkD"~. It is found anyway because for this attribute
+    value is "medium\_3124JkD". It is found anyway because for this attribute
     a full-text index with fuzzy matching is defined.
 
  3. (db 'priority '+OrgHeadline 65 'level 2)
@@ -282,7 +286,8 @@ More complicated (and possibly more efficient) queries are possible using
 its start-up time in milliseconds, killing and restarting PicoLisp is a
 frequent and normal part of the development cycle. The delay you notice when
 starting the PicoLisp server is actually caused by PicoLisp waiting for the
-Emacs server to start-up.
+Emacs server to start-up. [NOTE too that footnote links are set by the
+Org-mode exporter and do not yet work in the iOrg Wiki environment]
 
 [fn:2] It actually shows only the first match, you need to type ~RET~ to see
 more matches (or type ~. RET~ to terminate).

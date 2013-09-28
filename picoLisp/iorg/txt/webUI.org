@@ -1,5 +1,6 @@
 #+OPTIONS: toc:nil num:nil
 #+DESCRIPTION: Web UI
+#+TITLE: Getting Started and Exploring the Web UI
 
 {={assumpt Back}}
 
@@ -14,7 +15,7 @@ accessible from text-browsers like (emacs-)w3m.
 
 ** Lets get Started
 
-*** Check is everything is working
+*** Check if everything is working
 
  1. Open a shell and type
 
@@ -63,7 +64,7 @@ accessible from text-browsers like (emacs-)w3m.
     #+end_src
 
     If this works, your PicoLisp server is running and communicating with its
-    associated Emacs server (with --socket-name="iorg-server").
+    associated Emacs server (with socket-name "iorg-server").
 
  4. Now try killing and restarting the Emacs server with ~(killEmacsServer)~
     and ~(startEmacsServer)~. You should see something like this:
@@ -123,10 +124,9 @@ accessible from text-browsers like (emacs-)w3m.
  1. kill the Emacs server with ~(killEmacsServer)~
  2. Kill the running PicoLisp server with ~C-q~ (maybe ~C-c~ and ~C-d~ too) or
     with ~(bye)~
- 3. make sure the process is really killed with the following shell commands
+ 3. make sure the process is really killed with the following shell command
 
     #+begin_src sh
-    $ killall -KILL pil
     $ killall -KILL picolisp
     #+end_src
  4. restart the PicoLisp server in production mode
@@ -171,7 +171,7 @@ registered users after login. Now we will have a look at the actual Wiki, that
 can be viewed by the general public and edited by registered users after
 login.
 
- 6.[@6] click on iOrg in the menu, and you will see the start page with a high
+ 6. [@6] click on iOrg in the menu, and you will see the start page with a high
     level introduction to iOrg. Read it, or try the edit link right away - but
     don't edit anything, just press cancel and return.
  7. leave a reply - whats your first impression of iOrg? Click the reply link

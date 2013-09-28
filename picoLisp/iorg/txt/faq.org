@@ -1,5 +1,7 @@
-#+OPTIONS: toc:nil num:nil
+#+OPTIONS: H:4 num:nil toc:nil \n:nil @:t ::t |:t ^:t -:t f:t *:t
+#+OPTIONS: TeX:t LaTeX:t skip:nil d:(HIDE) 
 #+DESCRIPTION: FAQ
+#+TITLE: Frequently Asked Questions (FAQ) about iOrg 
 
 * Why another web application framework?
 
@@ -8,7 +10,7 @@ brings together the probably most efficient system for web application
 development (PicoLisp) with the probably most efficient system for content
 creation out there (Org-mode). 
 
-* What a typical use case?
+* What is a typical use case?
 
 When you need only static HTML pages, use Org-mode. When you build dynamic web
 apps with many forms, but barely any text except on the field labels, use
@@ -22,12 +24,12 @@ blogs, schools, online newspapers etc., iOrg is just perfect for you.
 Yes, there is [[http://orgmode.org/worg/org-contrib/babel/languages/ob-doc-picolisp.html][ob-picolisp]] allowing you to write and evaluate PicoLisp source
 blocks in Org-mode files. And there are [[http://orgmode.org/worg/dev/org-export-reference.html][export blocks]] for PicoLisp too. 
 
-* What is it about this famous 'hundred year language'?
+* What is a '100 year language'?
 
 Well, read /Paul Graham's/ essay [[http://paulgraham.com/hundred.html][The Hundred Year Language]] first, and then
 learn more about PicoLisp, and it might open your eyes.
 
-* is iOrg already Beta?
+* Is iOrg already Beta?
 
 Not yet, but since both its components are ripe and stable software systems,
 the switch from Alpha state to Beta state will hopefully happen soon. 

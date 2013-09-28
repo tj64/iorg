@@ -1,7 +1,8 @@
 #+OPTIONS: toc:nil num:nil
 #+DESCRIPTION: A little iOrg tutorial
+#+TITLE: iOrg Tutorial
 
-* Explore iOrg in 15 (or rather 45?) Minutes 
+* Exploring iOrg
 
 This tutorial try's to give you an impression of what iOrg is all about by
 demonstrating its use from a users perspective (web-browser) as well as from a
@@ -15,9 +16,10 @@ It has 5 Parts:
    4. ={picoDB PicoLisp Database}
    5. ={dhtmlMup Markup for DHTML}
 
-Please note that *iOrg* is still in /alpha/ stage, besides the fact that both
-underlying systems, *PicoLisp* and *GNU Emacs Org-mode*, are seasoned and
-production-ready. Therefore, in some occasions, the tutorial rather sketches
-the possibilities of iOrg than showing a full-fledged implementation.
+Please note that *iOrg* is still in a relatively /early/ development stage,
+besides the fact that both underlying systems, *PicoLisp* as well as *GNU
+Emacs Org-mode*, are seasoned and production-ready software products.
+Therefore, in some occasions, the tutorial rather sketches the possibilities
+of iOrg than showing a full-fledged implementation.
 
 {={assumpt Next}}

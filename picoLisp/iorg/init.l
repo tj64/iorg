@@ -22,7 +22,7 @@
 (new T '(+Doc) 'nm "home")
 (new T '(+Doc) 'nm "menu")
 (new T '(+Doc) 'nm "help")
-(new T '(+Doc) 'nm "intro")
+(new T '(+Doc) 'nm "faq")
 (new T '(+Doc) 'nm "tutorial")
 (new T '(+Doc) 'nm "assumpt")
 (new T '(+Doc) 'nm "webUI")

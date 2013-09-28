@@ -1,5 +1,6 @@
 #+OPTIONS: toc:nil num:nil
 #+DESCRIPTION: Emacs UI
+#+TITLE: Emacs as Expert User Interface for iOrg
 
 {={webUI Back}}
 
