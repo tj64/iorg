@@ -116,7 +116,52 @@ Now lets explore whats already possible right now:
     edit iOrg content via emacs-w3m.
 
 ** iOrg (Quick) Scrape Mode
+
+Besides emacs-w3m, the PicoLisp REPL (based on inferior-picolisp.el) is
+another powerful way to access iOrg web apps from within Emacs.
+
 ** iOrg Minor Mode
+
+There is only a limited need for an =iorg-minor-mode=, since interaction with
+a session-based webapplication is not necessarily something implemented on the
+fly in a minor-mode, but rather a task for a specialised and extended
+major-mode like emacs-w3m or for a PicoLisp REPL started as Emacs subprocess,
+like described above.
+
+However, there are at least two tasks an iorg-minor-mode could take care of
+when activated for an Org-mode buffer:
+
+ - Insert iorg-wiki-local links
+
+   Due to the dynamic way URLs are created in the PicoLisp framework, these
+   internal links depend on a port-number and session-id that can't be known
+   in advance, thus there is no way to insert these links like normal static
+   weblinks in Org-mode - in must be done in very last momemt before rendering
+   the HTML page containing the local link.
+
+   Therefore one new syntax element was introduced into Org-mode (identical to the
+   original syntax for local links in the PicoLisp wiki markup):
+
+   #+begin_src org
+     # iOrg wiki-local link
+     ={name Label}
+   #+end_src
+
+   These links are just text for Org-mode, and should not be shown as links in
+   Org-mode files, since they are just that - plain text without any
+   associated functionality.
+
+   However, it would be convenient to have an iorg-minor-mode command with
+   keybinding available thats prompts the user with completion for the
+   document-name, letting him choose between all documents currently stored in
+   the iOrg database. Thus a command that queries the iOrg database for all
+   document names, reads the result list as Emacs Lisp object, and uses it for
+   the completing-read function. 
+
+ - add a new Org file to the iOrg wiki
+   
+   After giving it a second thought, I decided not to implement this since
+   this is easier done with the visual support of a (text) brower. 
 
 ** iOrg Agenda Mode
 ** iOrg Dired Mode
