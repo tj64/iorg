@@ -2,6 +2,8 @@
 #+DESCRIPTION: Help page
 #+TITLE: Help Page
 
+/{{{title}}}/
+
 * Org-mode Markup Syntax
 
 Org-mode Markup has an intuitive, but rather rich markup syntax. Instead of
@@ -12,7 +14,7 @@ of Org-mode's [[http://orgmode.org/manual/Structural-markup-elements.html#Struct
 
 The /medium.org/ file contains the following syntactical elements:
 
- - export options 
+ - export options
  - headlines
  - priority tags
  - tags
@@ -35,7 +37,7 @@ containing /Help Page/ is exported from Org to HTML, the contents of
 #+end_src
 
 
-source block against export to HTML. 
+source block against export to HTML.
 
 #+begin_src org
   ,#+options: toc:nil iorg:t
@@ -44,7 +46,7 @@ source block against export to HTML.
 
   ,* A1 :home:iorg:
 
-  B1
+  Text A1
 
   ,** [#A] B1
 
@@ -60,7 +62,7 @@ source block against export to HTML.
     :IORG:     on
     :END:
 
-  B2
+  Text A2
 
   ,** WAITING C1 :WAITING:
      DEADLINE: <2013-09-29 So 20:00>
@@ -84,5 +86,4 @@ source block against export to HTML.
      :END:
 
   Text C2
-
 #+end_src

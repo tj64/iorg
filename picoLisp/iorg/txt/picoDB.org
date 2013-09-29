@@ -4,15 +4,17 @@
 
 {={emacsUI Back}}
 
+/{{{title}}}/
+
 * Storing Org-mode files as PicoLisp database objects
 
 The short description of Org-mode on top of its [[http://orgmode.org/][home page]] reads like this:
 
 #+begin_center
 #+begin_verse
-Org mode is for keeping notes, maintaining TODO lists,
-planning projects, and authoring documents with a
-fast and effective plain-text system
+"/Org mode is for keeping notes, maintaining TODO lists/
+ /planning projects, and authoring documents with a/
+ /fast and effective plain-text system/"
 #+end_verse
 #+end_center
 
@@ -27,7 +29,7 @@ daily/weekly/monthly agenda entries.
 
 These limits are due to the fact that selection is done by regular expression
 based free-text search in Org-mode. What would be needed when Org-files grow
-to thousands of lines is the scalability and speed of a real database, with
+to thousands of lines is the scalability and speed of a real *database*, with
 index based selection at lightning speed.
 
 PicoLisp offers such a database that is not only fast and scalable, but has
@@ -89,9 +91,9 @@ parsed and stored with the above command:
 
 The first two lines are export options, and the first one contains the
 argument ~iorg:~ with value ~t~, meaning that iOrg will consider this Org file
-as data to be stored in the database when used as argument to ~(readParseTree
-...)~. With ~iorg:nil~ or any other value other than ~t~, or with ~iorg:~ not
-set at all, ~(readParseTree ...)~ will ignore the file. Thus, to declare an
+as data to be stored in the database when used as argument to =(readParseTree
+...)=. With ~iorg:nil~ or any other value other than ~t~, or with ~iorg:~ not
+set at all, =(readParseTree ...)= will ignore the file. Thus, to declare an
 Org file as a data-store for iOrg, you must put a
 
 #+begin_src org
@@ -114,7 +116,7 @@ Framework/.
 We won't repeat anything from the cited references here and directly start to
 explore and query our database now.
 
- 1. with ~(show *DB)~ you get high-level info about the database:
+ 1. with =(show *DB)= you get high-level info about the database:
 
     #+begin_src sh
       : (show *DB)
@@ -142,7 +144,7 @@ explore and query our database now.
 
     part, these are the abstract superclasses of +OrgHeadline and +OrgData.
 
-    Object {1} represents the whole DB, thus ~(show '{1})~ yields the same
+    Object {1} represents the whole DB, thus =(show '{1})= yields the same
     output as above. Looking at the objects shown above gives some meta-data
     that is not relevant right now.
 
@@ -249,7 +251,7 @@ lets try to query the database.
     #+end_src
 
     Only the +OrgData class has attribute ~parse-tree-id~, and its actual
-    value is "medium\_3124JkD". It is found anyway because for this attribute
+    value is ~medium_3124JkD~". It is found anyway because for this attribute
     a full-text index with fuzzy matching is defined.
 
  3. (db 'priority '+OrgHeadline 65 'level 2)

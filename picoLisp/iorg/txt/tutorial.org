@@ -2,6 +2,8 @@
 #+DESCRIPTION: A little iOrg tutorial
 #+TITLE: iOrg Tutorial
 
+/{{{title}}}/
+
 * Exploring iOrg
 
 This tutorial try's to give you an impression of what iOrg is all about by

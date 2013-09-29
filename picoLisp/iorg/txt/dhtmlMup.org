@@ -4,4 +4,7 @@
 
 {={picoDB Back}}
 
+/{{{title}}}/
+
+
 {={tutorial Up}}

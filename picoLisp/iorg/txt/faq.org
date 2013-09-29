@@ -3,6 +3,8 @@
 #+DESCRIPTION: FAQ
 #+TITLE: Frequently Asked Questions (FAQ) about iOrg 
 
+/{{{title}}}/
+
 * Why another web application framework?
 
 iOrg is special, because its pure Lisp from the bottom to the top, and it

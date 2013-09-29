@@ -1,10 +1,18 @@
 #+OPTIONS: toc:nil num:nil
 #+DESCRIPTION: start page
+#+TITLE: High Level Introduction to iOrg
+
+/{{{title}}}/
 
 * iOrg Application Framework
 
-Merging two of the /most exciting/ Lisp applications around into one powerful
-Web Application Framework.
+
+#+begin_center
+#+begin_verse
+/Merging two of the most exciting Lisp applications around/
+/into one powerful Web Application Framework/
+#+end_verse
+#+end_center
 
 *iOrg* is based on the [[http://picolisp.com/5000/!wiki?home][PicoLisp Wiki]], a rather small but highly functional
 web-application developed with the incredibly expressive [[http://software-lab.de/doc/app.html][PicoLisp Application

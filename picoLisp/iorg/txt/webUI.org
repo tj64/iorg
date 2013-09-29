@@ -4,14 +4,16 @@
 
 {={assumpt Back}}
 
+/{{{title}}}/
+
 * The iOrg Web UI
 
 The web user-interface (webUI) is inherited from the [[%20http://software-lab.de/doc/app.html][PicoLisp Application
-Framework]] (but uses some JavaScript and CSS -and of course the wonderful
-exporter framework- from Org-mode too). Its a powerful
-and very responsive UI, besides the fact that it is explicitly designed to
-work *too* without JavaScript, Cookies and other fancy stuff, and thus is easily
-accessible from text-browsers like (emacs-)w3m.
+Framework]] (but uses some JavaScript and CSS and of course the wonderful
+exporter framework from Org-mode too). Its a powerful and very responsive UI,
+besides the fact that it is explicitly designed to work *too* without
+JavaScript, Cookies and other fancy stuff, and thus is easily accessible from
+text-browsers like (emacs-)w3m.
 
 ** Lets get Started
 

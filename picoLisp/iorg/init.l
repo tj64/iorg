@@ -29,6 +29,7 @@
 (new T '(+Doc) 'nm "emacsUI")
 (new T '(+Doc) 'nm "picoDB")
 (new T '(+Doc) 'nm "dhtmlMup")
+(new T '(+Doc) 'nm "referer")
 (commit)
 
 ## ** Create two roles, one for admins and one for normal members
@@ -152,6 +153,16 @@
       txt "iorg/txt/dhtmlMup.org" )
    'doc
    (db 'nm '+Doc "dhtmlMup") )
+
+(put>
+   (obj ((+Mup))
+      u `(db 'nm '+User "admin")
+      d `(date)
+      t `(time)
+      sum "How did I learn about iOrg?"
+      txt "iorg/txt/referer.org" )
+   'doc
+   (db 'nm '+Doc "referer") )
 
 
 (commit)

@@ -4,6 +4,8 @@
 
 {={tutorial Back}}
 
+/{{{title}}}/
+
 * OS
 
 This tutorial assumes that you are using *GNU/Linux*. Both Emacs and PicoLisp
@@ -57,27 +59,41 @@ your settings before starting the iOrg server:
 (require 'w3m-form-patched nil 'NOERROR)
 #+end_src
 
-
-
 * PicoLisp
 
 ** TODO Installation
 
-The iOrg distribution includes a complete *PicoLisp* distribution. Go to the
-/picoLisp/ directory and do in a shell
+The iOrg distribution includes a complete *PicoLisp* distribution. Follow the
+steps described in /picoLisp/INSTALL/ for a local installation:
 
 #+begin_src sh
- (cd src64; make)
-#+end_src
+      Local Installation
+      ------------------
 
-for a local installation. Read /picoLisp/INSTALL for detailled instructions.
+1. Unpack the distribution
+
+      $ tar xfz iorg-XXX.tgz
+
+2. Change the directory
+
+      $ cd picoLisp
+
+3. Compile the PicoLisp interpreter
+
+      $ (cd src; make)
+
+   or - if you have an x86-64 system (under Linux, FreeBSD or SunOS), or a
+   ppc64 system (under Linux) - build the 64-bit version
+
+      $ (cd src64; make)
+#+end_src
 
 Test your installation by doing
 
 #+begin_src sh
     $ ./pil +     # Local invocation, debug mode
    
-    : (+ 1 2 3)
+    : (+ 1 2 3)   # send with RET
     -> 6
 #+end_src
 
