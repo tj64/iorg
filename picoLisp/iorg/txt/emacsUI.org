@@ -8,15 +8,118 @@
 
 * Emacs UI
 
+Providing a Web UI for editing Org-mode documents and Org elements that are
+stored as entities in the database is a very important feature of iOrg - it
+allows Org-mode to break out of the 'Emacs Ghetto' and conquer the world (at
+least it allows Emacs users to cooperate with the millions of mere mortals
+that use computers too).
+
+On the other hand, Emacs user don't like to do serious editing in HTML text
+areas in the web-browsers, they want to edit in Emacs. Offering an Emacs UI to the
+experts is a core feature of iOrg, and distinguishes it from other tools
+that are designed for the average user but stay way behind the expectations of
+expert users.
+
+There are several ways to access iOrg applications via Emacs, as described in
+the following sections.
+
+** Editing with Emacs from Webbrowsers
+
+With many webbrowsers it is possible to call an external editor for editing
+textareas, and in the case of Emacs this should generally be [[http://www.emacswiki.org/emacs/EmacsClient#toc17][Emacsclient]] due
+to its quick start-up. How this is configurated varies from browser to
+browser, but here are a few links:
+
+ - Conkeror :: [[http://conkeror.org/ExternalEditing][External Editing]]
+ - Chrome :: [[https://github.com/stsquad/emacs_chrome/network][Emacs_Chrome]]
+ - FireFox :: [[https://addons.mozilla.org/en-US/firefox/addon/its-all-text/?src%3Dsearch][Its all Text]]
+
+and here another link to a general discussion on [[http://superuser.com/questions/488348/edit-any-text-input-shown-by-a-browser-mostly-chrome-with-emacs][Stackoverflow]].
+
 ** Emacs W3M
 
-** iOrg Minor Mode
+Browsing iOrg webapplications with a standard webbrowser and occasionally call
+Emacsclient for some significant external editing (of e.g. a Wiki document) is
+already quite comfortable. However, since another core feature of iOrg
+(inherited from the PicoLisp framework) is full functionality without
+Javascript, Cookies and other fancy stuff, there does already exist an almost
+perferct Emacs UI to iOrg: *emacs-w3m*.
+
+W3M is probably the most popular text-browser around, and emacs-w3m is an
+extended major-mode that fully integrates it into Emacs. Especially with
+
+: ,------------------------------------------------------------------------------
+: | W3m-Lnum minor mode (indicator[ln]):
+: | Minor mode to extend point commands by using Conkeror style number selection.
+: `------------------------------------------------------------------------------
+
+enabled, browsing iOrg apps is fast and convenient, and everything happens in
+plain-text Emacs buffers with the full Emacs editing power at your fingertips.
+
+All interactive functionality is available too - in theory at last. There was
+a rather annoying bug in /w3m-form.el/ that made it impossible to use
+emacs-w3m to fill out iOrg html-forms. It was fixed only recently after a
+bug-report from me, so you _need_ a new version of emacs-w3m to edit html forms
+(see ={assumpt Assumptions} too).  There are a few other things that don't yet
+work as expected, like e.g.:
+
+ - in iOrg, forms are disabled until the =edit= button is pressed, because a
+   database-lock on the object is needed before modifying it. In a standard
+   webbrowser, you simply cannot edit anything before you press the button.
+   emacs-w3m lets you fill out the whole form anyway, only to witness how all
+   your data is lost when you try to submit.
+ - in emacs-w3m, you can successfully edit (one-line) text-fields in the
+   mini-buffer and submit the data. Unfortunately, this does not work with
+   textareas yet even when the =edit= button was pressed. The data is lost and
+   never stored in the database.
+ - when editing a textarea, a decicated text-mode buffer with adjusted size is
+   openend for editing in `w3m-form-input-textarea-mode' and send back and
+   saved on quitting editing. This is quick and convenient for small chunks of
+   text, but not what you want for a web application based on Org-mode markup
+   syntax. It would be much better to edit the text in an Org-mode buffer that
+   is not sized down to minimal dimensions. This is already possible, as
+   demonstrated next, but not yet in a straight-forward way.
+
+These are a few inconveniences at the moment, but they won't be too difficult
+to fix and don't change the fact that emacs-w3m is very well suited as
+interface to iOrg apps. Fixing them might still take a bit longer since code I
+don't own is involved.
+
+Now lets explore whats already possible right now:
+
+ 1. start-up (or reuse) the iOrg http-server in production mode as described
+    in ={webUI Web UI}
+ 2. call =M-x w3m= and then type  =G= and =http://localhost:5001 (remember to
+    patch or update /w3m-form.el/ as described in ={assumpt Assumptions}
+ 3. login with member/member
+ 4. click/select Documents in the menu
+ 5. edit the =name= field (click the =edit= button first!) and notice how
+    edits are stored and preserved when the =done= button is clicked.
+ 6. click the =edit= button again and edit the text area with the document
+    content. Note that a (rather small) dedicated buffer in text-mode is
+    opened, that is ok for editing, but not the best option. It is already
+    possible to edit the content in a normal sized Org-mode buffer, but a few
+    intermediary steps are necessary for this:
+
+    - type =C-u M-x outorg-edit-as-org RET=
+    - when prompted for comment syntax, enter a =# RET= => you should see an
+      *outorg-edit-buffer* in Org-mode now with the textarea's content
+    - edit the content as you like and type =M-x outorg-copy-edits-and-exit=.
+      when prompted for comment-syntax, enter =# RET= again, and you should
+      see the edited text in the small original text-mode buffer now.
+    - from here, you can send the text to the form with =C-c C-c=, and then
+      press the =done= button again. There is no error message, but there must
+      be a bug, since the edits are not stored in the process but rather lost.
+
+    When the bug is fixed and the textarea is presented immediately in an
+    Org-mode buffer for editing, it will be very convenient and efficient to
+    edit iOrg content via emacs-w3m.
 
 ** iOrg (Quick) Scrape Mode
-
-** iOrg Dired Mode
+** iOrg Minor Mode
 
 ** iOrg Agenda Mode
+** iOrg Dired Mode
 
 
 {={picoDB Next}}
