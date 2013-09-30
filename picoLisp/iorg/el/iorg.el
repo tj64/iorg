@@ -47,7 +47,7 @@ There is a mode hook, and a few commands:
 \\[iorg-insert-internal-link] iorg-insert-internal-link"
   :lighter " iOrg")
 
-;; (define-derived-mode iorg-dired-mode ...)
+(add-hook 'org-mode-hook 'iorg-minor-mode)
 
 ;; * Variables
 ;; ** Consts
@@ -418,113 +418,39 @@ Such a link can take two forms:
  1. ={target}
  2. ={target label}
 
-where 'target' is the name of the wiki document linked to and
-'label' is the text that will be shown as clickable link when the
-document is rendered in the wiki."
+where 'target' is the NAME of the wiki document linked to and
+'label' (optional argument LBL) is the text that will be shown as
+clickable link when the document is rendered in the wiki."
   (interactive
-   (cond
-    ((equal current-prefix-arg nil)
-     (list
-      (ido-completing-read "Target: " (iorg-get-wiki-files))))
-    (t
-     (list
-      (ido-completing-read "Target: " (iorg-get-wiki-files))
-      (read-string "Label: ")))))
+   (let ((query "iorg/queries/allDocNames.l"))
+     (cond
+      ((equal current-prefix-arg nil)
+       (list
+        (ido-completing-read
+         "Target: " (iorg-retrieve-url query 'LISP-P))))
+      (t
+       (list
+        (ido-completing-read
+         "Target: " (iorg-retrieve-url query 'LISP-P))
+        (read-string "Label: "))))))
   (insert (format "={%s%s}"
                   name
                   (if lbl (concat " " lbl) ""))))
 
-(defun iorg-get-wiki-files ()
-  "Return a list with names of all current iOrg wiki files."
-  (mapcar
-   #'(lambda (nm) (if (stringp nm) nm (symbol-name nm)))
-  '(assumpt help emacsUI webUI picoDB)))
+;; (defun iorg-get-wiki-files ()
+;;   "Return a list with names of all current iOrg wiki files."
+;;   (mapcar
+;;    #'(lambda (nm) (if (stringp nm) nm (symbol-name nm)))
+;;   (iorg-retrieve-url
+
 
 ;; * Menus and Keys
 ;; ** Menus
 ;; ** Keys
 ;; *** Mode Keys
 
-;;   (let ((map iorg-XXX-mode-map))
-;;     (define-key map "\C-c\C-c" nil)
-;;     (define-key map "\C-c\C-g"
-;;       'comint-interrupt-subjob)
-;;     (define-key map "\C-c\C-cd"
-;;       'iorg-scrape-display)
-;;     (define-key map "\C-c\C-cf"
-;;       'iorg-scrape-display-fields)
-;;     (define-key map "\C-c\C-ca"
-;;       'iorg-scrape-display-all)
-;;     (define-key map "\C-c\C-cx"
-;;       'iorg-scrape-expect)
-;;     (define-key map "\C-c\C-cc"
-;;       'iorg-scrape-click)
-;;     (define-key map "\C-c\C-cp"
-;;       'iorg-scrape-press)
-;;     (define-key map "\C-c\C-cv"
-;;       'iorg-scrape-value)
-;;     (define-key map "\C-c\C-cm"
-;;       'iorg-scrape-enter)
-;;     (define-key map "\C-c\C-ci"
-;;       'iorg-dired)
-;;     (define-key map "\C-c\C-ce"
-;;       'iorg-edit)
-;;     (define-key map "\C-c\C-c\C-d"
-;;       'iorg-scrape-display)
-;;     (define-key map "\C-c\C-c\C-f"
-;;       'iorg-scrape-display-fields)
-;;     (define-key map "\C-c\C-c\C-a"
-;;       'iorg-scrape-display-all)
-;;     (define-key map "\C-c\C-c\C-x"
-;;       'iorg-scrape-expect)
-;;     (define-key map "\C-c\C-c\C-c"
-;;       'iorg-scrape-click)
-;;     (define-key map "\C-c\C-c\C-p"
-;;       'iorg-scrape-press)
-;;     (define-key map "\C-c\C-c\C-v"
-;;       'iorg-scrape-value)
-;;     (define-key map "\C-c\C-c\C-m"
-;;       'iorg-scrape-enter)
-;;     (define-key map "\C-c\C-c\C-i"
-;;       'iorg-dired)
-;;     (define-key map "\C-c\C-c\C-e"
-;;       'iorg-edit)
-
-;;     ;; (define-key map [menu-bar iorg-scrape]
-;;     ;;   (cons (purecopy "iOrg-Scrape") iorg-scrape-menu-map))
-;;     map)
-
-;;   (let ((map iorg-quick-XXX-mode-map))
-;;     (suppress-keymap map)
-;;     (define-key map "d"
-;;       'iorg-scrape-display)
-;;     (define-key map "f"
-;;       'iorg-scrape-display-fields)
-;;     (define-key map "a"
-;;       'iorg-scrape-display-all)
-;;     (define-key map "x"
-;;        'iorg-scrape-expect)
-;;     (define-key map "c"
-;;       'iorg-scrape-click)
-;;     (define-key map "p"
-;;       'iorg-scrape-press)
-;;     (define-key map "v"
-;;       'iorg-scrape-value)
-;;     (define-key map "m"
-;;       'iorg-scrape-enter)
-;;     (define-key map "i"
-;;       'iorg-dired)
-;;     (define-key map "e"
-;;       'iorg-edit)
-;;     ;; (define-key map [menu-bar iorg-quick-scrape]
-;;     ;;   (cons (purecopy "Quick-Scrape") iorg-quick-0
-;;     ;;         scrape-menu-map))
-;;     map)
-
-;; ;; (unless iorg-quick-scrape-mode-map
-;; ;;   (setq iorg-scrape-mode-map (make-keymap))
-;; ;;   (supress-keymap iorg-quick-scrape-mode-map)
-
+  (let ((map iorg-minor-mode-map))
+    (define-key map "\C-c\C-x=" 'iorg-insert-internal-link))
 
 ;; * Obsolete Stuff
 

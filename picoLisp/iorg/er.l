@@ -310,7 +310,7 @@
 (rel CATEGORY (+Any))
 (rel pre-blank (+Number))
 (rel hiddenp (+Symbol))
-(rel level (+Need +Number))
+(rel level (+Need +Ref +Number))
 (rel priority (+Ref +Number))
 (rel tags (+List +String))
 (rel todo-keyword (+Ref +String))

@@ -36,6 +36,7 @@
                      ("logout" (and *Login "!stop"))
                      (NIL (<hr>))
                      ("Documents" (and (may Iorg) "iorg/doc.l"))
+                     ("Org-Elements" (and (may OrgData) "iorg/orgHeadline.l"))
                      ("Role Administration" (and (may RoleAdmin) "iorg/role.l"))
                      ("User Administration" (and (may Iorg) "iorg/user.l"))
                      ("Upload" (and (may Upload) "iorg/upload.l"))

@@ -19,7 +19,7 @@
 
 ## ** Permissions
 
-(allowed ("iorg/" "db/iorg/blob/" "iorg/queries/")
+(allowed ("iorg/" "db/iorg/blob/")
    *PW "!start" "!stop" "!iorg" "@lib.css" "!latex" "!pdf" "!psh" "!login"
    *PRG *Search "!download" )
 

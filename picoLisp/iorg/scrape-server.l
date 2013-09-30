@@ -12,10 +12,10 @@
 (in *Sock 
    (while (read)
       (out *Sock
-         (and
-            (fun? (car @))
-            (memq (car @)
-               '(scrape expect click press value enter display displayAll) )
+         ## (and
+         ##    (fun? (car @))
+         ##    (memq (car @)
+         ##       '(scrape expect click press value enter display displayAll) )
             (println
-               (eval @) ) ) ) ) )
+               (eval @) ) ) ) )
 (bye)

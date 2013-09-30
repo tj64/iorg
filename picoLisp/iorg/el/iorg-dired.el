@@ -347,6 +347,8 @@ they won't work.")
 ;; ** Menus
 ;; ** Keys
 
+(let ((map iorg-dired-mode-map))
+(suppress-keymap map)
 ;; Upper case keys (except !) for operating on the marked files
 (define-key map "A" 'iorg-dired-do-search)
 (define-key map "C" 'iorg-dired-do-copy)
@@ -434,7 +436,7 @@ they won't work.")
 (define-key map "?" 'iorg-dired-summary)
 (define-key map "\177" 'iorg-dired-unmark-backward)
 (define-key map [remap undo] 'iorg-dired-undo)
-(define-key map [remap advertised-undo] 'iorg-dired-undo)
+(define-key map [remap advertised-undo] 'iorg-dired-undo))
 
   ;; (let ((map iorg-dired-mode-map))
   ;;   (suppress-keymap map)
