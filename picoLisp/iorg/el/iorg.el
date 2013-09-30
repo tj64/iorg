@@ -81,7 +81,7 @@ There is a mode hook, and a few commands:
   '(plain-text) '(structure))
   "Types to be selected by `org-element-map'.")
 
-(defvar iorg-default-host-path "http://localhost:5000"
+(defvar iorg-default-host-path "http://localhost:5001"
   "Default path (protocol, host, port) for iOrg server.")
 
 ;; ** Hooks

@@ -52,11 +52,12 @@ emacsclient on X"
 
 ;; * Requires
 
-;; ;; remember this directory
-;; (setq iorg-el-dir
-;;       (file-name-directory (or load-file-name (buffer-file-name))))
+;; remember this directory
+(setq iorg-el-dir
+      (file-name-directory (or load-file-name (buffer-file-name))))
 
-;; (message "iOrg Directory: %s" iorg-el-dir)
+(message "iOrg Directory: %s" iorg-el-dir)
+(add-to-list 'load-path (expand-file-name iorg-el-dir))
 
 ;; require libs
 (require 'iorg)

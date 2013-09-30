@@ -118,12 +118,84 @@ Now lets explore whats already possible right now:
 ** iOrg (Quick) Scrape Mode
 
 Besides emacs-w3m, the PicoLisp REPL (based on inferior-picolisp.el) is
-another powerful way to access iOrg web apps from within Emacs.
+another powerful way to access iOrg web apps from within Emacs. This is made
+possible by the =scrape.l= library included in the PicoLisp distribution and
+described in this [[http://picolisp.com/5000/!wiki?guiScripting][wiki article]].
+
+While it is relatively easy to GET data from a running iOrg web application
+(with function =iorg-retrieve-url=, used e.g. to retrieve a completion list
+for the iorg-minor-mode command =iorg-insert-internal-link= as described in
+the next section), its much more complicated to PUT data. =scrape.l= allows to
+browse an iOrg application on the command-line, get a list of all links,
+fields and buttons, =press= and =click= on them or =enter= and =display= data,
+all with taking care of session-handling, login-permission etc. *Scraping* is
+like web-browsing, on in the REPL on the command-line.
+
+Why is this useful? Well, it makes it very easy to design and write tests that
+involve the webUI, and it provides the necessary core functionality for
+application code that does reading & writing in session contexts.
+
+I did not take the challenge to port =scrape.l= to Emacs Lisp, but I wrote
+=iorg-scrape.el= that makes much of the scraping functionality directly
+available as Emacs Lisp functions, and offers two modes with easy keybindings
+for convenient scraping in an inferior PicoLisp buffer in Emacs:
+
+ - iorg-scrape-mode :: scraping in read&write mode
+ - org-quick-scrape-mode :: quick scraping with single key commands in
+      read-only mode
+
+=iorg-scrape.el= depends on the existing =picolisp-mode= for Emacs that is
+maintained and co-authored by me and had to be modified in several places to
+fit in with iorg-scrape.
+
+Lets try it out:
+
+ 1. load =iorg-scrape.el= in Emacs if not already done
+ 2. make sure the =inferior-picolisp.el= from /picoLisp/iorg/el/ is loaded
+ 3. call =M-x iorg-scrape-repl= -> an *iorg-scrape* buffer should open with a
+    prompt
+ 4. try =(+ 3 3) to check its working
+ 5. check =C-h v iorg-scrape-default-server-dir= and set it if necessary with
+    =iorg-scrape-set-default-server-dir= to the right value for your system
+ 6. in the *iorg-scrape* buffer, load =iorg/lib.l=, e.g. with =(load
+    "/home/tj/git/iorg/picoLisp/iorg/lib.l")= (adjust to your settings)
+ 7. enter =(scrape "localhost" 5001)= (adjust to your settings)
+ 8. type =C-c C-c d= and you should see something like
+
+    #+begin_src sh
+      (scrape "localhost" 5001)
+      -> "iOrg"
+      : ###############
+      click: 1 "iOrg" 2 "Home"
+
+      press: 1 "login"
+
+      enter/value: 1 "TimeOut 19:26 UTC" 2 ("*Gui:1:") 3 ("*Gui:2:")
+
+      -> "iOrg"
+      :
+    #+end_src
+
+ 9. now type =C-h m= to see the different Emacs Lisp scrape commands and their
+    keybindings available
+10. type =M-x iorg-quick-scrape-mode=, and then:
+
+    =c 1 RET= then  =m 3 RET admin RET= then =m 4 RET admin RET=
+    then =p 2 RET= and you should be logged in.
+
+    with =q= you can go back to read&write mode.
+
+ 6. Alternatively, you can fire up an http-scrape-server with =M-x
+    iorg-scrape-start-server=. Note that this is a subprocess of Emacs, a
+    slave to do the scraping work for the Emacs master, and that this is a
+    separate process from the standalone iOrg http-server that runs the iOrg
+    web app that will be scraped (by default on http://localhost:5001). You
+    can then call this http server from you Emacs Lisp program.
 
 ** iOrg Minor Mode
 
 There is only a limited need for an =iorg-minor-mode=, since interaction with
-a session-based webapplication is not necessarily something implemented on the
+a session-based web-application is not necessarily something implemented on the
 fly in a minor-mode, but rather a task for a specialised and extended
 major-mode like emacs-w3m or for a PicoLisp REPL started as Emacs subprocess,
 like described above.
@@ -156,12 +228,55 @@ when activated for an Org-mode buffer:
    document-name, letting him choose between all documents currently stored in
    the iOrg database. Thus a command that queries the iOrg database for all
    document names, reads the result list as Emacs Lisp object, and uses it for
-   the completing-read function. 
+   the completing-read function. This is implemented with
+
+   #+begin_src sh
+     iorg-insert-internal-link is an interactive Lisp function in `iorg.el'.
+
+     It is bound to C-c C-x =.
+
+     (iorg-insert-internal-link NAME &optional LBL)
+
+     Insert internal-link in PicoLisp-Wiki syntax.
+
+     Such a link can take two forms:
+
+      1. ={target}
+      2. ={target label}
+
+     where 'target' is the NAME of the wiki document linked to and
+     'label' (optional argument LBL) is the text that will be shown as
+     clickable link when the document is rendered in the wiki.
+   #+end_src
+
+   With prefix arg, it prompts for target and label, otherwise for label only.
+   =iorg-minor-mode= should be 'hooked' to the =org-mode-hook= to have this
+   available in Org-mode.
 
  - add a new Org file to the iOrg wiki
-   
-   After giving it a second thought, I decided not to implement this since
-   this is easier done with the visual support of a (text) brower. 
 
-** iOrg Agenda Mode
-** iOrg Dired Mode
+   After giving it a second thought, I decided not to implement this right
+   now since this is easier done with the visual support of a (text) brower.
+   However, it would be nice to be able to send and Org file directly from the
+   Org-mode buffer to the iOrg wiki as =new= or =edited= wiki document. On the
+   todo list ...
+
+** TODO iOrg Agenda Mode :NOT_IMPLEMENTED:
+
+Once the basics are there, re-implementing the Org-mode agenda based on
+PicoLisp database queries should be quite easy, and this re-implementation
+would not suffer anymore from the performance and scalability limitations of
+the Org-mode agenda.
+
+** TODO iOrg Dired Mode :NOT_IMPLEMENTED:
+
+A dired-like mode for the documents stored in the iOrg wiki would be a
+nice-to-have feature and not to difficult to implement. iorg-dired buffers
+would be for content-management in iOrg what dired buffers are for managing
+the file system in Emacs.
+
+For now, the =Documents= link in the iOrg wiki menu shows view on all wiki
+docs that is quite similar to a dired (or ls -al) view, and provided viewing
+and editing functionality for the selected documents. When viewed in
+emacs-w3m, it has almost a dired-like look&feel, so that iorg-dired will be an
+optional feature on the todo list.
