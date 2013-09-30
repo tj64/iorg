@@ -370,7 +370,7 @@
             (pack
                "(with-current-buffer "
                "(find-file "
-               "\"" Path "\")"
+               "\"" (absPath Path) "\")"
                "(org-mode)"
                "(let ((org-cycle-silently 1))"
                "(princ "
@@ -395,6 +395,7 @@
 ##          "(iorg-convert-parse-tree)))))" ) ) )) )
 
 ## ** Set Path
+
 
 ## expects an absolute path
 (de addToEmacsLoadPath (Path)
@@ -425,6 +426,7 @@
 ##          "(format \"%s\" "
 ##          "(org-export-as 'html nil nil t)))))" ) ) )
 
+## FIXME: slow, but works - replace with fast emacsclient call
 ## let ox-html.el render Org-file
 (de oxRender (Path)
    (emx '(echo)
