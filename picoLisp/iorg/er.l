@@ -314,8 +314,8 @@
 (rel priority (+Ref +Number))
 (rel tags (+List +String))
 (rel todo-keyword (+Ref +String))
-(rel scheduled (+Date))
-(rel deadline (+Date))
+(rel scheduled (+Any))
+(rel deadline (+Any))
 (rel closed (+Date))
 (rel quotedp (+Bool))
 (rel archivedp (+Bool))
@@ -357,6 +357,11 @@
             (mapcar
                'origSubTree>
                (: descendants) ) ) ) ) )
+
+(dm getCategory>
+   (if (lst? (: category))
+      (last (: category))
+      (geCategory> (: ancestor)) ) )
 
 ## concat object attributes, converted to elisp-parse-tree syntax, with
 ## object's contents string (re-converted to elisp syntax too) and send it to
