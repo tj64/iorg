@@ -192,4 +192,31 @@ login.
 The admin role is a powerful role that should only be granted to trustworthy
 contributors of the iOrg Wiki.
 
+
+** Edit Org Elements 
+
+You can select and edit Org Elements that have been stored as entities in the
+PicoLisp database in the Web UI [fn:1]:
+
+ 1. click on /Org\-Elements/ in the menu
+ 2. type 1 in the number field and click =Search=
+ 3. type 2 in the number field and click =Search=
+ 4. click on the @ before headline "A1"
+ 5. click =Edit=
+ 6. change level to 3, priority to C and todo to TODO
+ 7. click =Done=
+ 8. click =select=
+
+Notice how orden of headlines changed. A =Search= for number 3 shows you only
+headline "A1" now, which was level 1 before. The other fields are not really
+functional right now, but this example should serve as proof of concept and
+show that selecting and editing these Org entities work - with the full
+database functionality of PicoLisp in the background. 
+
 {={emacsUI Next}}
+
+* Footnotes
+
+[fn:1] This feature, although essential, is still incomplete and only /almost/
+funtional due to lack of time for a complete implementation. 
+
