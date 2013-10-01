@@ -6,7 +6,7 @@
 
 * Org-mode Markup Syntax
 
-Org-mode Markup has an intuitive, but rather rich markup syntax. Instead of
+Org-mode has an intuitive, but rather rich markup syntax. Instead of
 duplicating the information found in the manuals and tutorials on [[http://orgmode.org/][orgmode.org]],
 a medium-sized but syntax-rich example Org file is given (its the file used in
 the ={tutorial iOrg Tutorial}) and a link to a page that gives a good overview

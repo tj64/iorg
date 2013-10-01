@@ -31,7 +31,7 @@ to its quick start-up. How this is configurated varies from browser to
 browser, but here are a few links:
 
  - Conkeror :: [[http://conkeror.org/ExternalEditing][External Editing]]
- - Chrome :: [[https://github.com/stsquad/emacs_chrome/network][Emacs_Chrome]]
+ - Chrome :: [[https://github.com/stsquad/emacs_chrome/network][Emacs\_Chrome]]
  - FireFox :: [[https://addons.mozilla.org/en-US/firefox/addon/its-all-text/?src%3Dsearch][Its all Text]]
 
 and here another link to a general discussion on [[http://superuser.com/questions/488348/edit-any-text-input-shown-by-a-browser-mostly-chrome-with-emacs][Stackoverflow]].
@@ -185,7 +185,7 @@ Lets try it out:
 
     with =q= you can go back to read&write mode.
 
- 6. Alternatively, you can fire up an http-scrape-server with =M-x
+11. Alternatively, you can fire up an http-scrape-server with =M-x
     iorg-scrape-start-server=. Note that this is a subprocess of Emacs, a
     slave to do the scraping work for the Emacs master, and that this is a
     separate process from the standalone iOrg http-server that runs the iOrg
@@ -215,8 +215,8 @@ when activated for an Org-mode buffer:
    original syntax for local links in the PicoLisp wiki markup):
 
    #+begin_src org
-     # iOrg wiki-local link
-     ={name Label}
+   # iOrg wiki-local link
+     # ={name Label} # outcommented to avoid interpretation
    #+end_src
 
    These links are just text for Org-mode, and should not be shown as links in
@@ -241,8 +241,8 @@ when activated for an Org-mode buffer:
 
      Such a link can take two forms:
 
-      1. ={target}
-      2. ={target label}
+      1. # ={target}
+      2. # ={target label}
 
      where 'target' is the NAME of the wiki document linked to and
      'label' (optional argument LBL) is the text that will be shown as
