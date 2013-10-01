@@ -35,13 +35,13 @@
 
 ;; window type dependend screen colors
 (defun iorg-set-window-type-dependend-emacsclient-colors ()
-    "Sets emacsclient colors for X.
+  "Sets emacsclient colors for X.
 Background-color is set to black and foreground-color to wheat for
 emacsclient on X"
-    (if (display-graphic-p)
-        (progn
-          (set-background-color "black")
-          (set-foreground-color "wheat"))))
+  (if (display-graphic-p)
+      (progn
+	(set-background-color "black")
+	(set-foreground-color "wheat"))))
 
 (add-hook 'server-visit-hook
           'iorg-set-window-type-dependend-emacsclient-colors)
@@ -49,15 +49,14 @@ emacsclient on X"
 (add-hook 'emacs-startup-hook
           'iorg-set-window-type-dependend-emacsclient-colors)
 
-
 ;; * Requires
 
 ;; remember this directory
 (setq iorg-el-dir
       (file-name-directory (or load-file-name (buffer-file-name))))
 
-(message "iOrg Directory: %s" iorg-el-dir)
-(add-to-list 'load-path (expand-file-name iorg-el-dir))
+;; (message "iOrg Directory: %s" iorg-el-dir)
+;; (add-to-list 'load-path (expand-file-name iorg-el-dir))
 
 ;; require libs
 (require 'iorg)
@@ -65,6 +64,7 @@ emacsclient on X"
 (require 'ox-iorg)
 ;; (require 'iorg-agenda)
 ;; (require 'iorg-dired)
+
 
 ;; set load-path to 'emacs-w3m'
 (add-to-list 'load-path (expand-file-name "~/gitclone/emacs-w3m/"))
