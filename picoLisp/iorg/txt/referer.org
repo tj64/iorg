@@ -1,0 +1,31 @@
+#+OPTIONS: toc:nil num:nil
+#+DESCRIPTION: iOrg Referer
+#+TITLE: How did I learn about iOrg?
+
+/{{{title}}}/
+
+* GNU Emacs Org-mode users
+
+* PicoLisp users
+
+* Org-mode and PicoLisp users
+** Germany
+*** tj :programmer:
+    :PROPERTIES:
+    :job:      freelancer
+    :END:
+
+Org-mode and PicoLisp are my two favorite pieces of software, thus I decided
+to write the glue code that merges both softwares into one single - extremely
+powerful - application programming framework.
+
+I don't remember how I first learned about Emacs, but learning Elisp,
+discovering Org-mode, and finally falling in love with PicoLisp were just
+logical steps in the same direction. 
+
+Since progress often emerges at the interface between already existing
+technologies, I hope that iOrg is more than just the sum of PicoLisp and
+Org-mode - in this case, the much abused term /synergy effects/ seems adequate
+to describe the extra benefits offered by iOrg. 
+
+* Others
