@@ -307,6 +307,7 @@
 (rel ptree (+Ref +Link) NIL (+OrgData))
 (rel title (+Any))
 (rel alt-title (+Any))
+(rel raw-title (+Sn +Idx +String))
 (rel CATEGORY (+Any))
 (rel pre-blank (+Number))
 (rel hiddenp (+Symbol))
@@ -315,8 +316,11 @@
 (rel tags (+List +String))
 (rel todo-keyword (+Ref +String))
 (rel scheduled (+Any))
+(rel raw-scheduled (+String))
 (rel deadline (+Any))
-(rel closed (+Date))
+(rel raw-deadline (+String))
+(rel closed (+Any))
+(rel raw-deadline (+String))
 (rel quotedp (+Bool))
 (rel archivedp (+Bool))
 (rel commentedp (+Bool))
@@ -358,10 +362,15 @@
                'origSubTree>
                (: descendants) ) ) ) ) )
 
-(dm getCategory>
+(dm deadline> ())
+(dm scheduled> ())
+(dm closed> ())
+
+
+(dm category>
    (if (lst? (: category))
       (last (: category))
-      (geCategory> (: ancestor)) ) )
+      (category> (: ancestor)) ) )
 
 ## concat object attributes, converted to elisp-parse-tree syntax, with
 ## object's contents string (re-converted to elisp syntax too) and send it to
@@ -397,6 +406,42 @@
       "(princ (org-element-interpret-data "
        "\"" (pack Tree) "\""
        "))" ) )
+
+## *** Timestamp
+## **** Comments
+
+## (timestamp (type active raw-value
+##    "<2013-09-24 Di 12:00>" year-start 2013 month-start 9 day-start 24
+##    hour-start 12 minute-start 0 year-end 2013 month-end 9 day-end 24 hour-end
+##    12 minute-end 0 begin 4 end 25 post-blank 0 parent \#33#))
+
+## repeater-type cumulate repeater-value 1 repeater-unit week
+
+## **** Code
+
+(class +OrgTimestamp +orgElement)
+(rel type (+Ref +Symbol))
+(rel raw-value (+String))
+(rel year-start (+Number))
+(rel month-start (+Number))
+(rel day-start  (+Number))
+(rel hour-start (+Number))
+(rel minute-start (+Number))
+(rel year-end (+Number))
+(rel month-end (+Number))
+(rel day-end  (+Number))
+(rel hour-end (+Number))
+(rel minute-end (+Number))
+(rel repeater-type (+Ref +Symbol))
+(rel repeater-value (+Number))
+(rel repeater-unit (+Symbol))
+
+## takes an +OrgTimestamp (This) and returns a list with two +Date objects
+## and repeater-info
+(dm timestamp2dates> ())
+
+## takes +Date's and repeater-info and returns an +OrgTimestamp
+(de dates2timestamp (Type Start End Repeater))
 
 ## ** iOrg data
 
