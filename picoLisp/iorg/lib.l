@@ -74,9 +74,23 @@
 
 ## generic function for calling Emacs from PicoLisp
 ## usage example: (emx '(read) "/path/to/file.el" "(princ \"Hello World\")")
+
+## (de emx (Exe . @)
+##    (in
+##       (cons 'emacs "--no-site-file" "--batch"
+##          (extract
+##             '((X)
+##               (cond
+##                  ((num? (car (info X)))
+##                      (pack "--load=" X) )
+##                  ((= `(char "(") (char X))
+##                      (pack "--eval=" X) ) ) )
+##             (rest) ) )
+##       (eval Exe) ) )
+
 (de emx (Exe . @)
    (in
-      (cons 'emacs "--no-site-file" "--batch"
+      (list 'emacs "--no-site-file" "--batch"
          (extract
             '((X)
               (cond
@@ -85,25 +99,32 @@
                  ((= `(char "(") (char X))
                      (pack "--eval=" X) ) ) )
             (rest) ) )
+      ## (out 'emx (echo)) ) )
       (eval Exe) ) )
+
 
 ## generic function for calling Emacsclient from PicoLisp
 ## usage example: (emc '(read) "server-name" "(princ \"Hello World\")")
-## "-s" "iorg-server" "-e" (mapcar and (rest)) )
+
+## pipe fixes issues of emacsclient
+(de emc (Exe . @)
+   (pipe
+      (in
+         (list 'emacsclient
+            "-s" "iorg-server" "-e" (rest) )
+         (while (echo "\\n" "\\\"" "\\#")
+            (case @
+               ("\\n" (prin "^J"))
+               ("\\#" (prin "\#"))
+               ("\\\"" (prin "\"")) ) ) )
+      ## (out 'emc (echo)) ) )
+      (eval Exe) ) )
 
 ## (de emc (Exe . @)
-##    (pipe
-##       (in
-##          (cons 'emacsclient
-##             "-s" "iorg-server" "-e" (rest) )
-##          (while (line) (prinl (replace @ "\\n" "^J"))) )
-##       (eval Exe) )
-
-(de emc (Exe . @)
-   (in
-      (cons 'emacsclient
-         "-s" "iorg-server" "-e" (rest) )
-      (eval Exe) ) )
+##    (in
+##       (cons 'emacsclient
+##          "-s" "iorg-server" "-e" (rest) )
+##       (eval Exe) ) )
 
 ## ** Retrieve document history
 

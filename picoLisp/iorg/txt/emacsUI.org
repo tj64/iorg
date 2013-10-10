@@ -154,7 +154,7 @@ Lets try it out:
  2. make sure the =inferior-picolisp.el= from /picoLisp/iorg/el/ is loaded
  3. call =M-x iorg-scrape-repl= -> an *iorg-scrape* buffer should open with a
     prompt
- 4. try =(+ 3 3) to check its working
+ 4. try =(+ 3 3)= to check its working
  5. check =C-h v iorg-scrape-default-server-dir= and set it if necessary with
     =iorg-scrape-set-default-server-dir= to the right value for your system
  6. in the *iorg-scrape* buffer, load =iorg/lib.l=, e.g. with =(load
