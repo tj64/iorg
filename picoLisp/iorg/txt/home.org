@@ -62,7 +62,7 @@ advantageous too:
 
 
 Merged together into *iOrg*, these two systems achieve something unusual: they
-provide a dream environment for the professional hacker (always looking for
+provide a dream environment for the professional hacker (always looking or
 the best tools and maximal efficiency) and they offer an intuitive markup
 language to the average computer user that is so powerful that very complex
 documents and even interactive HTML pages can be specified with it.

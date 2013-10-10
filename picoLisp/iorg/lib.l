@@ -75,19 +75,7 @@
 ## generic function for calling Emacs from PicoLisp
 ## usage example: (emx '(read) "/path/to/file.el" "(princ \"Hello World\")")
 
-## (de emx (Exe . @)
-##    (in
-##       (cons 'emacs "--no-site-file" "--batch"
-##          (extract
-##             '((X)
-##               (cond
-##                  ((num? (car (info X)))
-##                      (pack "--load=" X) )
-##                  ((= `(char "(") (char X))
-##                      (pack "--eval=" X) ) ) )
-##             (rest) ) )
-##       (eval Exe) ) )
-
+## slow due to emacs startup for every call
 (de emx (Exe . @)
    (in
       (list 'emacs "--no-site-file" "--batch"
@@ -102,12 +90,26 @@
       ## (out 'emx (echo)) ) )
       (eval Exe) ) )
 
+## (de emx (Exe . @)
+##    (in
+##       (cons 'emacs "--no-site-file" "--batch"
+##          (extract
+##             '((X)
+##               (cond
+##                  ((num? (car (info X)))
+##                      (pack "--load=" X) )
+##                  ((= `(char "(") (char X))
+##                      (pack "--eval=" X) ) ) )
+##             (rest) ) )
+##       (eval Exe) ) )
+
 
 ## generic function for calling Emacsclient from PicoLisp
 ## usage example: (emc '(read) "server-name" "(princ \"Hello World\")")
 
 ## pipe fixes issues of emacsclient
-(de emc (Exe . @)
+## use this with (echo) for strings
+(de ems (Exe . @)
    (pipe
       (in
          (list 'emacsclient
@@ -120,11 +122,12 @@
       ## (out 'emc (echo)) ) )
       (eval Exe) ) )
 
-## (de emc (Exe . @)
-##    (in
-##       (cons 'emacsclient
-##          "-s" "iorg-server" "-e" (rest) )
-##       (eval Exe) ) )
+## use this with (read) for lists
+(de emc (Exe . @)
+   (in
+      (cons 'emacsclient
+         "-s" "iorg-server" "-e" (rest) )
+      (eval Exe) ) )
 
 ## ** Retrieve document history
 
@@ -213,7 +216,8 @@
       (put> Obj 'ancestor
          (db 'label '+orgBaseElement
             (makeHashLbl (hashLblNum> Obj 'parent)) ) )
-      (msg Obj " => New OrgHeadline object created") )
+      (msg Obj " => New OrgHeadline object created")
+      (postProcessOrgHeadline Obj) )
 (while Lst
    ## (msg "while loop OrgHeadline entered ...")
    (makeOrgHeadline
@@ -222,6 +226,29 @@
          (pop 'Lst) )
       (cdr (pop 'Lst))
       Ptree ) ) )
+
+##  deadline (timestamp (type active raw-value "<2013-10-16 Mi>" year-start 2013
+## month-start 10 day-start 16 hour-start NIL minute-start NIL year-end 2013
+## month-end 10 day-end 16 hour-end NIL minute-end NIL begin 936 end 951
+## post-blank 0))
+
+(de postProcessOrgHeadline (H)
+   (with H
+      (and (: deadline)
+         (makeOrgTimestamp @ H) )
+      (and (: scheduled)
+         (makeOrgTimestamp @ H) )
+      (and (: closed)
+         (makeOrgTimestamp @ H) )
+      (and (: title)
+         (makeOrgTimestamp @) )
+      (and (: CATEGORY)
+         ( ) )
+      (and (: tags)
+         ( ) ) ) )
+
+(de makeOrgTimestamp (PLst Headline) )
+
 
 
 ## converts 1 to \#1=
@@ -446,7 +473,7 @@
 ## FIXME fast, but renders lots of \n in html output
 ## let ox-html.el render Org-file
 (de oxRender (Path)
-   (emc '(echo)
+   (ems '(echo)
       (pack
          "(with-temp-buffer "
          "(insert-file-contents "
