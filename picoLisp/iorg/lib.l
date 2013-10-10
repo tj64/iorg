@@ -89,10 +89,20 @@
 
 ## generic function for calling Emacsclient from PicoLisp
 ## usage example: (emc '(read) "server-name" "(princ \"Hello World\")")
+## "-s" "iorg-server" "-e" (mapcar and (rest)) )
+
+## (de emc (Exe . @)
+##    (pipe
+##       (in
+##          (cons 'emacsclient
+##             "-s" "iorg-server" "-e" (rest) )
+##          (while (line) (prinl (replace @ "\\n" "^J"))) )
+##       (eval Exe) )
+
 (de emc (Exe . @)
    (in
       (cons 'emacsclient
-         "-s" "iorg-server" "-e" (mapcar and (rest)) )
+         "-s" "iorg-server" "-e" (rest) )
       (eval Exe) ) )
 
 ## ** Retrieve document history
@@ -412,10 +422,26 @@
 
 ## ** Render document as HTML
 
-## ## FIXME fast, but renders lots of \n in html output
+## FIXME fast, but renders lots of \n in html output
+## let ox-html.el render Org-file
+(de oxRender (Path)
+   (emc '(echo)
+      (pack
+         "(with-temp-buffer "
+         "(insert-file-contents "
+         "\"" Path "\")"
+         "(org-mode)"
+         "(let ((org-cycle-silently 1))"
+         "(princ "
+         ## "(prin1 "
+         ## "(format \"%s\" "
+         "(org-export-as 'html nil nil t)))))" ) ) )
+
+## ## FIXME: slow, but works - replace with fast emacsclient call
 ## ## let ox-html.el render Org-file
 ## (de oxRender (Path)
-##    (emc '(echo)
+##    (emx '(echo)
+##       "(require 'ox)"
 ##       (pack
 ##          "(with-temp-buffer "
 ##          "(insert-file-contents "
@@ -425,21 +451,6 @@
 ##          "(princ "
 ##          "(format \"%s\" "
 ##          "(org-export-as 'html nil nil t)))))" ) ) )
-
-## FIXME: slow, but works - replace with fast emacsclient call
-## let ox-html.el render Org-file
-(de oxRender (Path)
-   (emx '(echo)
-      "(require 'ox)"
-      (pack
-         "(with-temp-buffer "
-         "(insert-file-contents "
-         "\"" Path "\")"
-         "(org-mode)"
-         "(let ((org-cycle-silently 1))"
-         "(princ "
-         "(format \"%s\" "
-         "(org-export-as 'html nil nil t)))))" ) ) )
 
 ## process internal links (as last rendering step)
 (de processInternalLinks ()

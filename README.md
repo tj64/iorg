@@ -1,4 +1,4 @@
-iorg
+iOrg
 ====
 
 Interactive Org

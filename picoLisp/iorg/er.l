@@ -305,24 +305,25 @@
 
 (class +OrgHeadline +orgElement)
 (rel ptree (+Ref +Link) NIL (+OrgData))
-(rel title (+Any))
+(rel title (+Any))                      #
 (rel alt-title (+Any))
 (rel raw-title (+Sn +Idx +String))
-(rel CATEGORY (+Any))
+(rel CATEGORY (+Any))                   #
 (rel pre-blank (+Number))
 (rel hiddenp (+Symbol))
 (rel level (+Need +Ref +Number))
 (rel priority (+Ref +Number))
-(rel tags (+List +String))
+(rel tags (+List +String))              #
+(rel raw-tags (+String))
 (rel todo-keyword (+Ref +String))
-(rel scheduled (+Any))
+(rel scheduled (+Any))                  #
 (rel raw-scheduled (+String))
-(rel deadline (+Any))
+(rel deadline (+Any))                   #
 (rel raw-deadline (+String))
-(rel closed (+Any))
-(rel raw-deadline (+String))
+(rel closed (+Any))                     #
+(rel raw-closed (+String))
 (rel quotedp (+Bool))
-(rel archivedp (+Bool))
+(rel archivedp (+Symbol))
 (rel commentedp (+Bool))
 (rel footnote-section-p (+Bool))
 
@@ -407,6 +408,30 @@
        "\"" (pack Tree) "\""
        "))" ) )
 
+## *** Planning
+## **** Comments
+
+## (timestamp (type active raw-value
+##    "<2013-09-24 Di 12:00>" year-start 2013 month-start 9 day-start 24
+##    hour-start 12 minute-start 0 year-end 2013 month-end 9 day-end 24 hour-end
+##    12 minute-end 0 begin 4 end 25 post-blank 0 parent \#33#))
+
+## repeater-type cumulate repeater-value 1 repeater-unit week
+
+## **** Code
+
+(class +OrgPlanning +orgElement)
+(rel closed (+OrgTimestamp))
+(rel deadline (+OrgTimestamp))
+(rel scheduled (+OrgTimestamp))
+
+## takes an +OrgTimestamp (This) and returns a list with two +Date objects
+## and repeater-info
+(dm interpret> ())
+
+
+
+
 ## *** Timestamp
 ## **** Comments
 
@@ -422,19 +447,6 @@
 (class +OrgTimestamp +orgElement)
 (rel type (+Ref +Symbol))
 (rel raw-value (+String))
-(rel year-start (+Number))
-(rel month-start (+Number))
-(rel day-start  (+Number))
-(rel hour-start (+Number))
-(rel minute-start (+Number))
-(rel year-end (+Number))
-(rel month-end (+Number))
-(rel day-end  (+Number))
-(rel hour-end (+Number))
-(rel minute-end (+Number))
-(rel repeater-type (+Ref +Symbol))
-(rel repeater-value (+Number))
-(rel repeater-unit (+Symbol))
 
 ## takes an +OrgTimestamp (This) and returns a list with two +Date objects
 ## and repeater-info
@@ -509,3 +521,5 @@
    (6 (+Doc mup)) )                    # H:4096 Full-text index
 
 ## iorg/er.l ends here
+
+(0)
