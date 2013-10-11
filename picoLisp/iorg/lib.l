@@ -144,6 +144,8 @@
 
 ## ** Make OrgData Objects
 
+## *** Parse Tree
+
 ## expects a parse-tree as produced by `iorg-normalize-parse-tree'
 (de processParseTree Tree
    (makeOrgData (car Tree) (cadr Tree)) )
@@ -191,6 +193,8 @@
             (off *IorgGlobalSwitch)
             Obj ) ) )
 
+## *** Headline
+
 ## create a new +OrgHeadline object
 (de makeOrgHeadline (Label Lst Ptree)
    ## (msg "makeOrgHeadline entered...")
@@ -217,7 +221,7 @@
          (db 'label '+orgBaseElement
             (makeHashLbl (hashLblNum> Obj 'parent)) ) )
       (msg Obj " => New OrgHeadline object created")
-      (postProcessOrgHeadline Obj) )
+      (treatOrgHeadline Obj) )
 (while Lst
    ## (msg "while loop OrgHeadline entered ...")
    (makeOrgHeadline
@@ -232,25 +236,68 @@
 ## month-end 10 day-end 16 hour-end NIL minute-end NIL begin 936 end 951
 ## post-blank 0))
 
-(de postProcessOrgHeadline (H)
+(de treatOrgHeadline (H)
    (with H
-      (and (: deadline)
+      (let (D (: deadline)
+            S (: scheduled)
+            C (: closed)
+            A (: tags) )
+      (and D (put> H 'deadline-stamp (makeOrgTimestamp (pop 'D))))
+      (and S (put> H 'scheduled-stamp (makeOrgTimestamp (pop 'S))))
+      (and C (put> H 'closed-stamp (makeOrgTimestamp (pop 'C))))
+      (and
          (makeOrgTimestamp @ H) )
-      (and (: scheduled)
-         (makeOrgTimestamp @ H) )
-      (and (: closed)
+      (and
          (makeOrgTimestamp @ H) )
       (and (: title)
          (makeOrgTimestamp @) )
       (and (: CATEGORY)
          ( ) )
-      (and (: tags)
-         ( ) ) ) )
+      (and
+         () ) ) )
 
-(de makeOrgTimestamp (PLst Headline) )
+## *** Timestamp
+
+(de makeOrgTimestamp (Lst)
+   (let Obj
+      (apply new Lst (db: +OrgTimestamp) '(+OrgTimestamp))
+      (msg Obj " => New OrgTimestamp object created")
+      (treatOrgTimestamp Obj)
+      Obj ) )
+
+(de treatOrgTimestamp (S)
+    (with S
+       (put> S 'start-dat
+          (date (: year-start)(: month-start)(: day-start)) )
+       (put> S 'start-tim
+          (time (: hour-start)(: minute-start)) )
+       (put> S 'end-dat
+          (date (: year-end)(: month-end)(: day-end)) )
+       (put> S 'end-tim
+          (time (: hour-end)(: minute-end)) )
+       (put> S 'year-start
+          '(car (date (: start-dat))) )
+       (put> S 'month-start
+          '(cadr (date (: start-dat))) )
+       (put> S 'day-start
+          '(last (date (: start-dat))) )
+       (put> S 'hour-start
+          '(car (time (: start-tim))) )
+       (put> S 'minute-start
+          '(cadr (time (: start-tim))) )
+       (put> S 'year-end
+          '(car (date (: end-dat))) )
+       (put> S 'month-end
+          '(cadr (date (: end-dat))) )
+       (put> S 'day-end
+          '(last (date (: end-dat))) )
+       (put> S 'hour-end
+          '(car (time (: end-tim))) )
+       (put> S 'minute-end
+          '(cadr (time (: end-tim))) ) ) )
 
 
-
+ 
 ## converts 1 to \#1=
 (de makeHashLbl (Num)
    (intern
@@ -702,7 +749,7 @@
 ## * Old stuff (for later use)
 
 ## ** OrgData
- 
+
 ## (de makeOrgHeadline1 (Label Lst Iorg?)
 ##    (msg "makeOrgHeadline entered...")
 ##    (msg Lst " =>  Lst")

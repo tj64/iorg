@@ -316,11 +316,12 @@
 (rel tags (+List +String))              #
 (rel raw-tags (+String))
 (rel todo-keyword (+Ref +String))
-(rel scheduled (+Any))                  #
-(rel raw-scheduled (+String))
-(rel deadline (+Any))                   #
-(rel raw-deadline (+String))
-(rel closed (+Any))                     #
+(rel scheduled (+Any))
+(rel scheduled-stamp (+Link +OrgTimestamp))
+(rel deadline (+Any))
+(rel deadline-stamp (+Link +OrgTimestamp))
+(rel closed (+Any))
+(rel closed-stamp (+Link +OrgTimestamp))
 (rel raw-closed (+String))
 (rel quotedp (+Bool))
 (rel archivedp (+Symbol))
@@ -430,6 +431,13 @@
 (dm interpret> ())
 
 
+## *** Stamp
+## **** Comments
+## **** Code
+
+(class +OrgStamp +orgElement)
+(rel type (+Ref +Symbol))
+(rel raw-value (+String))
 
 
 ## *** Timestamp
@@ -446,11 +454,78 @@
 
 (class +OrgTimestamp +orgElement)
 (rel type (+Ref +Symbol))
-(rel raw-value (+String))
+(rel year-start (+Any))
+(rel month-start (+Any))
+(rel day-start (+Any))
+(rel hour-start (+Any))
+(rel minute-start (+Any))
+(rel year-end (+Any))
+(rel month-end (+Any))
+(rel day-end (+Any))
+(rel hour-end (+Any))
+(rel minute-end (+Any))
+(rel start-dat (+Aux +Ref +Date) (start-tim))
+(rel start-tim (+Time))
+(rel end-dat (+Aux +Ref +Date) (end-tim))
+(rel end-tim (+Time))
+(rel repeater-type (+Symbol))
+(rel repeater-value (+Number))
+(rel repeater-unit (+Symbol))
 
-## takes an +OrgTimestamp (This) and returns a list with two +Date objects
-## and repeater-info
-(dm timestamp2dates> ())
+## return repeater-info as string in Org syntax
+(dm repeaterString> ()
+   (let (V (: repeater-value)
+         U (char (char (: repeater-unit))) )
+      (case (: repeater-type)
+         ('cumulate (pack "+" V U))
+         ('catch-up (pack "++" V U))
+         ('restart (pack ".+" V U)) ) ) )
+
+
+
+(dm rawValue> ()
+    (let (Days (mapcar pack
+               (filter '((X)(== (length X) 2))
+                  (split (chop (: raw-value)) ">" " ") ) )
+        StartStamp (pack
+                       (text <@1-@2-@3 @4@5@6>
+                          (: year-start)
+                          (: month-start)
+                          (: day-start)
+                          (car Days)
+                          (or
+                             (and (: hour-start)
+                                (pack " "
+                                   (glue "-"
+                                      (: hour-start)
+                                      (: minute-start) ) ) )
+                             "" )
+                          (or
+                             (and (: repeater-type)
+                                (pack " " (repeaterString> S)) )
+                             "" ) ) )
+         EndStamp (and
+                     (member "range"
+                        (mapcar pack (split (chop (: type)) "-")) )
+                     (= (length Days) 2)
+                     (pack
+                        (text <@1-@2-@3 @4@5>
+                           (: year-end)
+                           (: month-end)
+                           (: day-end)
+                           (last Days)
+                           (or
+                              (and (: hour-end)
+                                 (pack " "
+                                    (glue "-"
+                                       (: hour-end)
+                                       (: minute-end) ) ) )
+                              "" ) ) ) ) )
+      (pack
+         StartStamp
+         (when EndStamp
+            (pack "--" EndStamp) ) ) ) )
+
 
 ## takes +Date's and repeater-info and returns an +OrgTimestamp
 (de dates2timestamp (Type Start End Repeater))
