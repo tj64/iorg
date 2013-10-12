@@ -242,61 +242,78 @@
             S (: scheduled)
             C (: closed)
             A (: tags) )
-      (and D (put> H 'deadline-stamp (makeOrgTimestamp (pop 'D))))
-      (and S (put> H 'scheduled-stamp (makeOrgTimestamp (pop 'S))))
-      (and C (put> H 'closed-stamp (makeOrgTimestamp (pop 'C))))
-      (and
-         (makeOrgTimestamp @ H) )
-      (and
-         (makeOrgTimestamp @ H) )
-      (and (: title)
-         (makeOrgTimestamp @) )
-      (and (: CATEGORY)
-         ( ) )
-      (and
-         () ) ) )
+      (and D (put> H 'deadline-stamp (makeOrgTimestamp (car (tail -1 D)))))
+      (and S (put> H 'scheduled-stamp (makeOrgTimestamp (car (tail -1 S)))))
+      (and C (put> H 'closed-stamp (makeOrgTimestamp (car (tail -1 C))))) ) ) )
+      ## (and
+      ##    (makeOrgTimestamp @ H) )
+      ## (and
+      ##    (makeOrgTimestamp @ H) )
+      ## (and (: title)
+      ##    (makeOrgTimestamp @) )
+      ## (and (: CATEGORY)
+      ##    ( ) )
+      ## (and
+      ##    () ) ) ) )
 
 ## *** Timestamp
 
 (de makeOrgTimestamp (Lst)
    (let Obj
-      (apply new Lst (db: +OrgTimestamp) '(+OrgTimestamp))
+      (apply new
+         (fish atom
+            (make
+               (for (L Lst L)
+                  (if (meta '(+OrgTimestamp) (car L))
+                     (link (cut 2 'L))
+                     (cut 2 'L) ) ) ) )
+         (db: +OrgTimestamp) '(+OrgTimestamp) )
       (msg Obj " => New OrgTimestamp object created")
       (treatOrgTimestamp Obj)
+      (msg (show Obj))
       Obj ) )
 
+## (de makeOrgTimestamp (Lst)
+##    (let Obj
+##          (fish atom
+##             (make
+##             (for (L Lst L)
+##                (if (meta '(+OrgTimestamp) (car L))
+##                   (link (cut 2 'L))
+##                   (cut 2 'L) ) ) ) )
+##       (msg Obj) ) )
+
+
 (de treatOrgTimestamp (S)
-    (with S
-       (put> S 'start-dat
-          (date (: year-start)(: month-start)(: day-start)) )
-       (put> S 'start-tim
-          (time (: hour-start)(: minute-start)) )
-       (put> S 'end-dat
-          (date (: year-end)(: month-end)(: day-end)) )
-       (put> S 'end-tim
-          (time (: hour-end)(: minute-end)) )
-       (put> S 'year-start
-          '(car (date (: start-dat))) )
-       (put> S 'month-start
-          '(cadr (date (: start-dat))) )
-       (put> S 'day-start
-          '(last (date (: start-dat))) )
-       (put> S 'hour-start
-          '(car (time (: start-tim))) )
-       (put> S 'minute-start
-          '(cadr (time (: start-tim))) )
-       (put> S 'year-end
-          '(car (date (: end-dat))) )
-       (put> S 'month-end
-          '(cadr (date (: end-dat))) )
-       (put> S 'day-end
-          '(last (date (: end-dat))) )
-       (put> S 'hour-end
-          '(car (time (: end-tim))) )
-       (put> S 'minute-end
-          '(cadr (time (: end-tim))) ) ) )
-
-
+   (with S
+      (put> S 'start-dat
+         (date (: year-start)(: month-start)(: day-start)) )
+      (put> S 'start-tim
+         (time (: hour-start)(: minute-start)) )
+      (put> S 'end-dat
+         (date (: year-end)(: month-end)(: day-end)) )
+      (put> S 'end-tim
+         (time (: hour-end)(: minute-end)) )
+      (put> S 'year-start
+         '(car (date (: start-dat))) )
+      (put> S 'month-start
+         '(cadr (date (: start-dat))) )
+      (put> S 'day-start
+         '(last (date (: start-dat))) )
+      (put> S 'hour-start
+         '(car (time (: start-tim))) )
+      (put> S 'minute-start
+         '(cadr (time (: start-tim))) )
+      (put> S 'year-end
+         '(car (date (: end-dat))) )
+      (put> S 'month-end
+         '(cadr (date (: end-dat))) )
+      (put> S 'day-end
+         '(last (date (: end-dat))) )
+      (put> S 'hour-end
+         '(car (time (: end-tim))) )
+      (put> S 'minute-end
+         '(cadr (time (: end-tim))) ) ) )
  
 ## converts 1 to \#1=
 (de makeHashLbl (Num)
