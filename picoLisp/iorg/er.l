@@ -426,7 +426,7 @@
 ## - start-tim :: time of start date
 ## - end-dat :: end date 
 ## - end-tim :: time of end date
-## - repeater-type :: cumulative, catch-up, restart
+## - repeater-type :: cumulative, catch-up or restart
 ## - repeater-value :: number
 ## - repeater-unit :: hour, day, week, month, year
 
@@ -463,38 +463,66 @@
 
 
 (dm rawValue> ()
-   (let (StartStamp (pack
+   (let (Range? (member "range"
+                        (mapcar pack (split (chop (: type)) "-")) )
+         SameDate? (and Range? (= (: start-dat) (: end-dat)))
+         StartStamp (pack
                        (text "<@1 @2@3@4>"
                           (dat$ (: start-dat) "-")
                           (pack (head 2 (chop (day (: start-dat)))))
                           (or
                              (and (: hour-start)
-                                (pack " "
-                                   (tim$ (: start-tim)) ) )
+                                (pack " " (tim$ (: start-tim))
+                                   (and Range? SameDate?
+                                      (pack "-" (tim$ (: end-tim))) ) ) )
                              "" )
                           (or
                              (and (: repeater-type)
                                 (pack " " (repeaterString> This)) )
                              "" ) ) )
-         EndStamp (and
-                     (member "range"
-                        (mapcar pack (split (chop (: type)) "-")) )
+         EndStamp (and Range? (not SameDate?)
                      (pack
                         (text "<@1 @2@3>"
-                           (dat$ (: start-dat) "-")
-                           (pack (head 2 (chop (day (: start-dat)))))
+                           (dat$ (: end-dat) "-")
+                           (pack (head 2 (chop (day (: end-dat)))))
                            (or
-                              (and (: hour-start)
+                              (and (: hour-end)
                                  (pack " "
-                                    (tim$ (: start-tim)) ) )
+                                    (tim$ (: end-tim)) ) )
                               "" ) ) ) ) )
-      (pack
-         StartStamp
-         (when EndStamp
-            (pack "--" EndStamp) ) ) ) )
+      (if EndStamp
+         (pack StartStamp "--" EndStamp)
+         StartStamp ) ) )
 
 
 (dm convert2parsetree> () )
+
+## *** Title
+## **** Comments
+
+
+## **** Code
+
+(class +OrgTitle +orgElement)
+(rel type (+Ref +Symbol))
+(rel year-start (+Any))
+(rel month-start (+Any))
+(rel day-start (+Any))
+(rel hour-start (+Any))
+(rel minute-start (+Any))
+(rel year-end (+Any))
+(rel month-end (+Any))
+(rel day-end (+Any))
+(rel hour-end (+Any))
+(rel minute-end (+Any))
+(rel start-dat (+Aux +Ref +Date) (start-tim))
+(rel start-tim (+Time))
+(rel end-dat (+Aux +Ref +Date) (end-tim))
+(rel end-tim (+Time))
+(rel repeater-type (+Symbol))
+(rel repeater-value (+Number))
+(rel repeater-unit (+Symbol))
+
    
 ## ** iOrg data
 

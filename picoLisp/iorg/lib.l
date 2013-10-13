@@ -148,12 +148,13 @@
 
 ## expects a parse-tree as produced by `iorg-normalize-parse-tree'
 (de processParseTree Tree
+   ## (msg "entering processParseTree ...")
    (makeOrgData (car Tree) (cadr Tree)) )
 
 ## create a new +OrgData object and trigger creation of +OrgHeadline objects
 ## for the parse-tree's headlines
 (de makeOrgData (Label Lst)
-   ## (msg "makeOrgData entered...")
+   ## (msg "entering makeOrgData ...")
    (setq *IorgGlobalSwitch (extractOptionValue "iorg" Lst))
    (msg *IorgGlobalSwitch " => *IorgGlobalSwitch ")
       (unless (= "nil" *IorgGlobalSwitch)
@@ -182,7 +183,6 @@
                'label Label )
             (msg Obj " => New OrgData object created")
             (while Lst
-               ## (msg "while loop OrgData entered ...")
                (makeOrgHeadline
                   (and
                      (hashLbl? (car Lst))
@@ -197,7 +197,7 @@
 
 ## create a new +OrgHeadline object
 (de makeOrgHeadline (Label Lst Ptree)
-   ## (msg "makeOrgHeadline entered...")
+   ## (msg "entering makeOrgHeadline ...")
    (let Obj
       (apply
          new
@@ -223,7 +223,6 @@
       (msg Obj " => New OrgHeadline object created")
       (treatOrgHeadline Obj) )
 (while Lst
-   ## (msg "while loop OrgHeadline entered ...")
    (makeOrgHeadline
       (and
          (hashLbl? (car Lst))
@@ -231,12 +230,9 @@
       (cdr (pop 'Lst))
       Ptree ) ) )
 
-##  deadline (timestamp (type active raw-value "<2013-10-16 Mi>" year-start 2013
-## month-start 10 day-start 16 hour-start NIL minute-start NIL year-end 2013
-## month-end 10 day-end 16 hour-end NIL minute-end NIL begin 936 end 951
-## post-blank 0))
 
 (de treatOrgHeadline (H)
+   ## (msg "entering treatOrgHeadline ...")
    (with H
       (let (D (: deadline)
             S (: scheduled)
@@ -259,6 +255,7 @@
 ## *** Timestamp
 
 (de makeOrgTimestamp (Lst)
+   ## (msg "entering makeOrgTimestamp ...")
    (let Obj
       (apply new
          (fish atom
@@ -270,21 +267,10 @@
          (db: +OrgTimestamp) '(+OrgTimestamp) )
       (msg Obj " => New OrgTimestamp object created")
       (treatOrgTimestamp Obj)
-      (msg (show Obj))
       Obj ) )
 
-## (de makeOrgTimestamp (Lst)
-##    (let Obj
-##          (fish atom
-##             (make
-##             (for (L Lst L)
-##                (if (meta '(+OrgTimestamp) (car L))
-##                   (link (cut 2 'L))
-##                   (cut 2 'L) ) ) ) )
-##       (msg Obj) ) )
-
-
 (de treatOrgTimestamp (S)
+   ## (msg "entering treatOrgTimestamp ...")
    (with S
       (put> S 'start-dat
          (date (: year-start)(: month-start)(: day-start)) )
@@ -314,7 +300,9 @@
          '(car (time (: end-tim))) )
       (put> S 'minute-end
          '(cadr (time (: end-tim))) ) ) )
- 
+
+## *** Helper Functions
+
 ## converts 1 to \#1=
 (de makeHashLbl (Num)
    (intern
@@ -486,6 +474,7 @@
 ## expects absolute PATH to org file
 ## stores parse-tree and all its headlines in PicoLisp DB
 (de readParseTree (Path)
+   (msg "entering readParseTree ...")
    (eval
       (any
          (emc '(read)
