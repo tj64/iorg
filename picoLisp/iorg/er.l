@@ -286,6 +286,7 @@
 ## - ptree :: containing parse-tree object
 ## - title :: parsed headline text with properties
 ## - alt-title :: alternative title
+## - raw-value :: title string
 ## - category :: either name of input file or user attribute
 ## - pre-blank :: number blank lines before content
 ## - hiddpenp :: non-nil (symbol) if headline is hidden
@@ -305,9 +306,10 @@
 
 (class +OrgHeadline +orgElement)
 (rel ptree (+Ref +Link) NIL (+OrgData))
-(rel title (+Any))                      #
+(rel title (+Any))
 (rel alt-title (+Any))
-(rel raw-title (+Sn +Idx +String))
+(rel raw-value (+Any))
+(rel title-object (+Ref +Link) NIL (+OrgTitle))
 (rel CATEGORY (+Any))                   #
 (rel pre-blank (+Number))
 (rel hiddenp (+Symbol))
@@ -500,30 +502,20 @@
 ## *** Title
 ## **** Comments
 
+## - title :: title string
+## - timestamp :: optional title +OrgTimestamp object
 
 ## **** Code
 
 (class +OrgTitle +orgElement)
-(rel type (+Ref +Symbol))
-(rel year-start (+Any))
-(rel month-start (+Any))
-(rel day-start (+Any))
-(rel hour-start (+Any))
-(rel minute-start (+Any))
-(rel year-end (+Any))
-(rel month-end (+Any))
-(rel day-end (+Any))
-(rel hour-end (+Any))
-(rel minute-end (+Any))
-(rel start-dat (+Aux +Ref +Date) (start-tim))
-(rel start-tim (+Time))
-(rel end-dat (+Aux +Ref +Date) (end-tim))
-(rel end-tim (+Time))
-(rel repeater-type (+Symbol))
-(rel repeater-value (+Number))
-(rel repeater-unit (+Symbol))
+(rel title (+Ref +String))
+(rel timestamp (+Ref +Link) NIL (+OrgTimestamp))
 
-   
+(dm rawValue> ()
+   (pack
+      (: title)
+      (and (: timestamp) (rawValue> (: timestamp))) ) )
+
 ## ** iOrg data
 
 ## * Obsolete Stuff FIXME:delete

@@ -237,10 +237,12 @@
       (let (D (: deadline)
             S (: scheduled)
             C (: closed)
-            A (: tags) )
+            A (: tags)
+            L (: title) )
       (and D (put> H 'deadline-stamp (makeOrgTimestamp (car (tail -1 D)))))
       (and S (put> H 'scheduled-stamp (makeOrgTimestamp (car (tail -1 S)))))
-      (and C (put> H 'closed-stamp (makeOrgTimestamp (car (tail -1 C))))) ) ) )
+      (and C (put> H 'closed-stamp (makeOrgTimestamp (car (tail -1 C)))))
+      (and L (put> H 'title-object (makeOrgTitle L H))) ) ) )
       ## (and
       ##    (makeOrgTimestamp @ H) )
       ## (and
@@ -300,6 +302,33 @@
          '(car (time (: end-tim))) )
       (put> S 'minute-end
          '(cadr (time (: end-tim))) ) ) )
+
+
+## *** Title
+
+(de makeOrgTitle (Lst Headline)
+   ## (msg "entering makeOrgTimestamp ...")
+   (let (RawValue (; Headline raw-value)
+         TimeStamp (and Lst
+                      (car (fish '((X) (and (lst? X)
+                                     (= (car X) 'timestamp) ) )
+                              Lst ) ) )
+         Obj (new (db: +OrgTitle) '(+OrgTitle)
+                'title RawValue
+                'timestamp (and TimeStamp
+                              (makeOrgTimestamp (car (tail -1 TimeStamp))) ) ) )
+      (msg Obj " => New OrgTitle object created")
+      (treatOrgTitle Obj)
+      Obj ) )
+
+
+## todo: FIXME!
+(de treatOrgTitle (Title)
+   (and (; Title timestamp)
+      (put> Title 'title
+         (pipe (; Title title)
+            (till (pack "<"
+                     (dat$ (; Title timestamp start-dat) "-") ) ) ) ) ) )
 
 ## *** Helper Functions
 
