@@ -307,10 +307,12 @@
 (class +OrgHeadline +orgElement)
 (rel ptree (+Ref +Link) NIL (+OrgData))
 (rel title (+Any))
-(rel alt-title (+Any))
 (rel raw-value (+Any))
 (rel title-object (+Ref +Link) NIL (+OrgTitle))
-(rel CATEGORY (+Any))                   #
+## TODO deal with alt-title (just like with title?)
+(rel alt-title (+Any))
+(rel CATEGORY (+Any))
+(rel category (+Ref +String))
 (rel pre-blank (+Number))
 (rel hiddenp (+Symbol))
 (rel level (+Need +Ref +Number))
@@ -332,6 +334,12 @@
 
 (dm url> (Tab)
    (and (may OrgData) (list "iorg/orgHeadline.l" '*ID This)) )
+
+(dm category>
+   (if (lst? (: category))
+      (last (: category))
+      (category> (: ancestor)) ) )
+
 
 (dm upd> ())
 (dm diff> ())
@@ -365,15 +373,6 @@
                'origSubTree>
                (: descendants) ) ) ) ) )
 
-(dm deadline> ())
-(dm scheduled> ())
-(dm closed> ())
-
-
-(dm category>
-   (if (lst? (: category))
-      (last (: category))
-      (category> (: ancestor)) ) )
 
 ## concat object attributes, converted to elisp-parse-tree syntax, with
 ## object's contents string (re-converted to elisp syntax too) and send it to
@@ -473,7 +472,7 @@
                           (dat$ (: start-dat) "-")
                           (pack (head 2 (chop (day (: start-dat)))))
                           (or
-                             (and (: hour-start)
+                             (and (eval (: hour-start))
                                 (pack " " (tim$ (: start-tim))
                                    (and Range? SameDate?
                                       (pack "-" (tim$ (: end-tim))) ) ) )
@@ -488,7 +487,7 @@
                            (dat$ (: end-dat) "-")
                            (pack (head 2 (chop (day (: end-dat)))))
                            (or
-                              (and (: hour-end)
+                              (and (eval (: hour-end))
                                  (pack " "
                                     (tim$ (: end-tim)) ) )
                               "" ) ) ) ) )
@@ -514,7 +513,8 @@
 (dm rawValue> ()
    (pack
       (: title)
-      (and (: timestamp) (rawValue> (: timestamp))) ) )
+      (and (: timestamp)
+         (pack " " (rawValue> (: timestamp))) ) ) )
 
 ## ** iOrg data
 

@@ -197,7 +197,7 @@
 
 ## create a new +OrgHeadline object
 (de makeOrgHeadline (Label Lst Ptree)
-   ## (msg "entering makeOrgHeadline ...")
+   #### (msg "entering makeOrgHeadline ...")
    (let Obj
       (apply
          new
@@ -232,17 +232,25 @@
 
 
 (de treatOrgHeadline (H)
-   ## (msg "entering treatOrgHeadline ...")
+   #### (msg "entering treatOrgHeadline ...")
    (with H
       (let (D (: deadline)
             S (: scheduled)
             C (: closed)
             A (: tags)
-            L (: title) )
-      (and D (put> H 'deadline-stamp (makeOrgTimestamp (car (tail -1 D)))))
-      (and S (put> H 'scheduled-stamp (makeOrgTimestamp (car (tail -1 S)))))
-      (and C (put> H 'closed-stamp (makeOrgTimestamp (car (tail -1 C)))))
-      (and L (put> H 'title-object (makeOrgTitle L H))) ) ) )
+            L (: title)
+            G (: CATEGORY) )
+      (and D (put> This 'deadline-stamp (makeOrgTimestamp (car (tail -1 D))))
+         (put> This 'deadline '(rawValue> (: deadline-stamp))) )
+      (and S (put> This 'scheduled-stamp (makeOrgTimestamp (car (tail -1 S))))
+         (put> This 'scheduled '(rawValue> (: scheduled-stamp))) )
+      (and C (put> This 'closed-stamp (makeOrgTimestamp (car (tail -1 C))))
+         (put> This 'closed '(rawValue> (: closed-stamp))) )
+      (and L (put> This 'title-object (makeOrgTitle L This))
+         (put> This 'raw-value '(rawValue> (: title-object)))
+         (put> This 'title '(: title-object title)) )
+      (and G (put> This 'category (category> This))
+         (put> This 'CATEGORY '(: category)) ) ) ) )
       ## (and
       ##    (makeOrgTimestamp @ H) )
       ## (and
@@ -257,7 +265,7 @@
 ## *** Timestamp
 
 (de makeOrgTimestamp (Lst)
-   ## (msg "entering makeOrgTimestamp ...")
+   #### (msg "entering makeOrgTimestamp ...")
    (let Obj
       (apply new
          (fish atom
@@ -272,7 +280,7 @@
       Obj ) )
 
 (de treatOrgTimestamp (S)
-   ## (msg "entering treatOrgTimestamp ...")
+   #### (msg "entering treatOrgTimestamp ...")
    (with S
       (put> S 'start-dat
          (date (: year-start)(: month-start)(: day-start)) )
@@ -307,7 +315,7 @@
 ## *** Title
 
 (de makeOrgTitle (Lst Headline)
-   ## (msg "entering makeOrgTimestamp ...")
+   #### (msg "entering makeOrgTitle ...")
    (let (RawValue (; Headline raw-value)
          TimeStamp (and Lst
                       (car (fish '((X) (and (lst? X)
@@ -321,14 +329,22 @@
       (treatOrgTitle Obj)
       Obj ) )
 
-
-## todo: FIXME!
+## FIXME put title too when no timestamp
 (de treatOrgTitle (Title)
-   (and (; Title timestamp)
-      (put> Title 'title
-         (pipe (; Title title)
-            (till (pack "<"
-                     (dat$ (; Title timestamp start-dat) "-") ) ) ) ) ) )
+   #### (msg "entering treatOrgTitle ...")
+   (when (; Title timestamp)
+      (let L (chop (; Title title))
+         (and
+            (seek
+               '((L)
+                  (head
+                     (cons "<" (chop (dat$ (; Title
+                  timestamp start-dat) "-")))
+                     (cdr L) ) )
+               L )
+            (con @) )
+         (put> Title 'title (pack (trim L))) ) ) )
+
 
 ## *** Helper Functions
 
