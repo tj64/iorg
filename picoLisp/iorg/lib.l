@@ -148,13 +148,13 @@
 
 ## expects a parse-tree as produced by `iorg-normalize-parse-tree'
 (de processParseTree Tree
-   ## (msg "entering processParseTree ...")
+   (msg "entering processParseTree ...")
    (makeOrgData (car Tree) (cadr Tree)) )
 
 ## create a new +OrgData object and trigger creation of +OrgHeadline objects
 ## for the parse-tree's headlines
 (de makeOrgData (Label Lst)
-   ## (msg "entering makeOrgData ...")
+   (msg "entering makeOrgData ...")
    (setq *IorgGlobalSwitch (extractOptionValue "iorg" Lst))
    (msg *IorgGlobalSwitch " => *IorgGlobalSwitch ")
       (unless (= "nil" *IorgGlobalSwitch)
@@ -197,7 +197,7 @@
 
 ## create a new +OrgHeadline object
 (de makeOrgHeadline (Label Lst Ptree)
-   #### (msg "entering makeOrgHeadline ...")
+   (msg "entering makeOrgHeadline ...")
    (let Obj
       (apply
          new
@@ -232,14 +232,15 @@
 
 
 (de treatOrgHeadline (H)
-   #### (msg "entering treatOrgHeadline ...")
+  (msg "entering treatOrgHeadline ...")
    (with H
       (let (D (: deadline)
             S (: scheduled)
             C (: closed)
-            A (: tags)
             L (: title)
-            G (: CATEGORY) )
+            ## G (: CATEGORY)
+            N (: contents)
+            Lst (and N (processContents N)) )
       (and D (put> This 'deadline-stamp (makeOrgTimestamp (car (tail -1 D))))
          (put> This 'deadline '(rawValue> (: deadline-stamp))) )
       (and S (put> This 'scheduled-stamp (makeOrgTimestamp (car (tail -1 S))))
@@ -249,23 +250,47 @@
       (and L (put> This 'title-object (makeOrgTitle L This))
          (put> This 'raw-value '(rawValue> (: title-object)))
          (put> This 'title '(: title-object title)) )
-      (and G (put> This 'category (category> This))
-         (put> This 'CATEGORY '(: category)) ) ) ) )
-      ## (and
-      ##    (makeOrgTimestamp @ H) )
-      ## (and
-      ##    (makeOrgTimestamp @ H) )
-      ## (and (: title)
-      ##    (makeOrgTimestamp @) )
-      ## (and (: CATEGORY)
-      ##    ( ) )
-      ## (and
-      ##    () ) ) ) )
+      (and Lst (put> This 'contents (cadr Lst))
+         (put> This 'properties (processProperties (car Lst))) ) ) ) )
+         ## (put> This 'CATEGORY '(: category)) ) ) ) )
+
+
+(de processContents (Lst)
+   (msg "entering processContents ...")
+   (let (Props NIL
+         Cont (make 
+                 (for (L Lst L)
+                    (and (hashLbl? (car L))
+                       (pop 'L) )
+                    (cond
+                       ((= (car L) 'planning)
+                        (msg (car L) " => planning")
+                        (cut 2 'L) )
+                       ((= (car L) 'property-drawer)
+                        (msg (car L) " => property-drawer")
+                        (setq Props (cut 2 'L)) )
+                       (T (msg (car L) " => T ") (link (pop 'L)) ) ) ) ) )
+      (list Props Cont) ) )
+
+(de processProperties (Lst)
+   (msg "entering processProperties ...")
+   (let PropLst (make
+                   (for (L Lst L)
+                      (cond
+                         ((= (car L) 'property-drawer)
+                          (msg (car L) " => car L prop-draw")
+                          (cut 2 'L) )
+                         ((= (car L) 'node-property)
+                          (msg (car L) " => car L node-prop")
+                          (cut 2 'L)
+                          (link (makeOrgProperty (pop 'L) (last cut 2 'L))) )
+                         (T (pop 'L)) ) ) )
+      PropLst) )
 
 ## *** Timestamp
 
 (de makeOrgTimestamp (Lst)
-   #### (msg "entering makeOrgTimestamp ...")
+   (msg "entering makeOrgTimestamp ...")
    (let Obj
       (apply new
          (fish atom
@@ -280,7 +305,7 @@
       Obj ) )
 
 (de treatOrgTimestamp (S)
-   #### (msg "entering treatOrgTimestamp ...")
+   (msg "entering treatOrgTimestamp ...")
    (with S
       (put> S 'start-dat
          (date (: year-start)(: month-start)(: day-start)) )
@@ -315,7 +340,7 @@
 ## *** Title
 
 (de makeOrgTitle (Lst Headline)
-   #### (msg "entering makeOrgTitle ...")
+   (msg "entering makeOrgTitle ...")
    (let (RawValue (; Headline raw-value)
          TimeStamp (and Lst
                       (car (fish '((X) (and (lst? X)
@@ -331,7 +356,7 @@
 
 ## FIXME put title too when no timestamp
 (de treatOrgTitle (Title)
-   #### (msg "entering treatOrgTitle ...")
+   (msg "entering treatOrgTitle ...")
    (when (; Title timestamp)
       (let L (chop (; Title title))
          (and
@@ -345,6 +370,15 @@
             (con @) )
          (put> Title 'title (pack (trim L))) ) ) )
 
+## *** Property
+
+(de makeOrgProperty (Key Val)
+    (msg "entering makeOrgProperty ...")
+         Obj (new (db: +OrgProperty) '(+OrgProperty)
+                'key Key
+                'value Val
+      (msg Obj " => New OrgProperty object created")
+      Obj ) )
 
 ## *** Helper Functions
 

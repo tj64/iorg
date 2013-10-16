@@ -305,19 +305,20 @@
 ## **** Code
 
 (class +OrgHeadline +orgElement)
-(rel ptree (+Ref +Link) NIL (+OrgData))
+(rel ptree (+Aux +Ref +Link) (label) NIL (+OrgData))
 (rel title (+Any))
 (rel raw-value (+Any))
 (rel title-object (+Ref +Link) NIL (+OrgTitle))
 ## TODO deal with alt-title (just like with title?)
 (rel alt-title (+Any))
-(rel CATEGORY (+Any))
+(rel properties (+List +Ref +Link) NIL (+OrgProperty))
+## (rel CATEGORY (+Any))
 (rel category (+Ref +String))
 (rel pre-blank (+Number))
 (rel hiddenp (+Symbol))
 (rel level (+Need +Ref +Number))
 (rel priority (+Ref +Number))
-(rel tags (+List +String))              #
+(rel tags (+List +Ref +String))
 (rel raw-tags (+String))
 (rel todo-keyword (+Ref +String))
 (rel scheduled (+Any))
@@ -335,11 +336,13 @@
 (dm url> (Tab)
    (and (may OrgData) (list "iorg/orgHeadline.l" '*ID This)) )
 
-(dm category>
-   (if (lst? (: category))
-      (last (: category))
-      (category> (: ancestor)) ) )
-
+(dm category> ()
+   (if (lst? (: CATEGORY))
+      (last (: CATEGORY)) )
+     (category> (db 'CATEGORY '+OrgHeadline
+                   (makeHashRef (hashLblNum>
+                                   (car (: CATEGORY)) ) )
+                                   'ptree (: ptree) ) ) )
 
 (dm upd> ())
 (dm diff> ())
@@ -515,6 +518,22 @@
       (: title)
       (and (: timestamp)
          (pack " " (rawValue> (: timestamp))) ) ) )
+
+## *** Node Properties
+## **** Comments
+
+## - key :: property key
+## - value :: property value
+
+## **** Code
+
+(class +OrgNodeProperty +orgElement)
+(rel key (+Ref +String))
+(rel value (+Ref +String))
+
+(dm rawValue> ()
+   (pack (: key) " " (: value)) )
+
 
 ## ** iOrg data
 
