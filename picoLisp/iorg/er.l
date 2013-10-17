@@ -312,6 +312,7 @@
 ## TODO deal with alt-title (just like with title?)
 (rel alt-title (+Any))
 (rel properties (+List +Ref +Link) NIL (+OrgProperty))
+## (rel timestamps (+List +Ref +Link) NIL (+OrgTimestamp))
 ## (rel CATEGORY (+Any))
 (rel category (+Ref +String))
 (rel pre-blank (+Number))
@@ -467,11 +468,16 @@
 
 
 (dm rawValue> ()
-   (let (Range? (member "range"
-                        (mapcar pack (split (chop (: type)) "-")) )
+   (let (TypeLst (mapcar pack (split (chop (: type)) "-"))
+         Range? (member "range" TypeLst)
          SameDate? (and Range? (= (: start-dat) (: end-dat)))
+         Inactive? (member "inactive" TypeLst)
+         Delimiters (if Inactive? (cons "[" "]") (cons "<" ">"))
          StartStamp (pack
-                       (text "<@1 @2@3@4>"
+                       (text (pack
+                                (car Delimiters)
+                                "@1 @2@3@4"
+                                (cdr Delimiters) )
                           (dat$ (: start-dat) "-")
                           (pack (head 2 (chop (day (: start-dat)))))
                           (or
@@ -486,7 +492,10 @@
                              "" ) ) )
          EndStamp (and Range? (not SameDate?)
                      (pack
-                        (text "<@1 @2@3>"
+                        (text (pack
+                                (car Delimiters)
+                                 "@1 @2@3"
+                                (cdr Delimiters) )
                            (dat$ (: end-dat) "-")
                            (pack (head 2 (chop (day (: end-dat)))))
                            (or

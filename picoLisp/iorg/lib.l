@@ -240,7 +240,7 @@
             L (: title)
             ## G (: CATEGORY)
             N (: contents)
-            Lst (and N (processContents N)) )
+            Lst (and N (processContents (cadr N))) )
       (and D (put> This 'deadline-stamp (makeOrgTimestamp (car (tail -1 D))))
          (put> This 'deadline '(rawValue> (: deadline-stamp))) )
       (and S (put> This 'scheduled-stamp (makeOrgTimestamp (car (tail -1 S))))
@@ -250,42 +250,41 @@
       (and L (put> This 'title-object (makeOrgTitle L This))
          (put> This 'raw-value '(rawValue> (: title-object)))
          (put> This 'title '(: title-object title)) )
-      (and Lst (put> This 'contents (cadr Lst))
-         (put> This 'properties (processProperties (car Lst))) ) ) ) )
+      (and Lst (msg Lst " => Lst ") (put> This 'contents (car Lst))
+         (put> This 'properties (processProperties (cdr Lst))) ) ) ) )
          ## (put> This 'CATEGORY '(: category)) ) ) ) )
 
 
+## (processContents (cadr '(\#8= (section ...)))
 (de processContents (Lst)
-   (msg "entering processContents ...")
-   (let (Props NIL
-         Cont (make 
-                 (for (L Lst L)
-                    (and (hashLbl? (car L))
-                       (pop 'L) )
-                    (cond
-                       ((= (car L) 'planning)
-                        (msg (car L) " => planning")
-                        (cut 2 'L) )
-                       ((= (car L) 'property-drawer)
-                        (msg (car L) " => property-drawer")
-                        (setq Props (cut 2 'L)) )
-                       (T (msg (car L) " => T ") (link (pop 'L)) ) ) ) ) )
-      (list Props Cont) ) )
+   (let Props NIL # Stamps NIL
+      (cons
+         (filter
+            '((X)
+              (nor
+                 (and (atom X) (hashLbl? X))
+                 (== 'planning (car X))
+                 (and (== 'property-drawer (car X))
+                    (setq Props X) ) ) )
+                 ## (and (== 'timestamp (car X))
+                 ##    (cons Stamps X) )
+            Lst )
+         ## Props Stamps ) ) )
+         Props ) ) )
 
 (de processProperties (Lst)
    (msg "entering processProperties ...")
-   (let PropLst (make
-                   (for (L Lst L)
-                      (cond
-                         ((= (car L) 'property-drawer)
-                          (msg (car L) " => car L prop-draw")
-                          (cut 2 'L) )
-                         ((= (car L) 'node-property)
-                          (msg (car L) " => car L node-prop")
-                          (cut 2 'L)
-                          (link (makeOrgProperty (pop 'L) (last cut 2 'L))) )
-                         (T (pop 'L)) ) ) )
-      PropLst) )
+   (pop 'Lst)
+   (let Props (make
+                 (mapcar
+                 '((P) (and
+                          (lst? P) (= (car P) 'node-property)
+                          (link
+                             (makeOrgProperty
+                                (car (nth (cadr P) 2))
+                                (car (nth (cadr P) 4)) ) ) ) )
+                 Lst ) )
+      Props ) )
 
 ## *** Timestamp
 
@@ -374,10 +373,11 @@
 
 (de makeOrgProperty (Key Val)
     (msg "entering makeOrgProperty ...")
-         Obj (new (db: +OrgProperty) '(+OrgProperty)
+    (let Obj (new (db: +OrgProperty) '(+OrgProperty)
                 'key Key
-                'value Val
+                'value Val )
       (msg Obj " => New OrgProperty object created")
+      (msg (show Obj))
       Obj ) )
 
 ## *** Helper Functions
