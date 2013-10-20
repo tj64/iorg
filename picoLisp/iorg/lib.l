@@ -124,10 +124,14 @@
 
 ## use this with (read) for lists
 (de emc (Exe . @)
-   (in
-      (cons 'emacsclient
-         "-s" "iorg-server" "-e" (rest) )
-      (eval Exe) ) )
+   (pipe
+      (in
+         (list 'emacsclient
+            "-s" "iorg-server" "-e" (rest) )
+         (while (echo "\\n")
+            (case @
+               ("\\n" (prin "^J")) ) ) )
+         (eval Exe) ) )
 
 ## ** Retrieve document history
 
@@ -177,7 +181,7 @@
                         (pop 'L)
                         (and (hashLbl? (car L) (pop 'L))) ) ) )
                (db: +OrgData) '(+OrgData)
-               'contents (and
+               ':contents (and
                             (== 'section (caadr Lst))
                             (cut 2 'Lst) )
                'label Label )
@@ -212,7 +216,7 @@
                   (pop 'L)
                   (and (hashLbl? (car L) (pop 'L))) ) ) )
          (db: +OrgHeadline) '(+OrgHeadline)
-         'contents (and
+         ':contents (and
                       (== 'section (caadr Lst))
                       (cut 2 'Lst) )
          'ptree Ptree
@@ -234,30 +238,27 @@
 (de treatOrgHeadline (H)
   (msg "entering treatOrgHeadline ...")
    (with H
-      (let (D (: deadline)
-            S (: scheduled)
-            C (: closed)
-            L (: title)
-            ## G (: CATEGORY)
-            N (: contents)
+      (let (D (: :deadline)
+            S (: :scheduled)
+            C (: :closed)
+            L (: :title)
+            N (: :contents)
             Lst (and N (processContents (cadr N))) )
       (and D (put> This 'deadline-stamp (makeOrgTimestamp (car (tail -1 D))))
-         (put> This 'deadline '(rawValue> (: deadline-stamp))) )
+         (put> This ':deadline '(rawValue> (: deadline-stamp))) )
       (and S (put> This 'scheduled-stamp (makeOrgTimestamp (car (tail -1 S))))
-         (put> This 'scheduled '(rawValue> (: scheduled-stamp))) )
+         (put> This ':scheduled '(rawValue> (: scheduled-stamp))) )
       (and C (put> This 'closed-stamp (makeOrgTimestamp (car (tail -1 C))))
-         (put> This 'closed '(rawValue> (: closed-stamp))) )
+         (put> This ':closed '(rawValue> (: closed-stamp))) )
       (and L (put> This 'title-object (makeOrgTitle L This))
-         (put> This 'raw-value '(rawValue> (: title-object)))
-         (put> This 'title '(: title-object title)) )
-      (and Lst (msg Lst " => Lst ") (put> This 'contents (car Lst))
+         (put> This ':raw-value '(rawValue> (: title-object)))
+         (put> This ':title '(: title-object title)) )
+      (and Lst (msg Lst " => Lst ") (put> This ':contents (car Lst))
          (put> This 'properties (processProperties (cdr Lst))) ) ) ) )
-         ## (put> This 'CATEGORY '(: category)) ) ) ) )
-
 
 ## (processContents (cadr '(\#8= (section ...)))
 (de processContents (Lst)
-   (let Props NIL # Stamps NIL
+   (let Props NIL
       (cons
          (filter
             '((X)
@@ -266,11 +267,11 @@
                  (== 'planning (car X))
                  (and (== 'property-drawer (car X))
                     (setq Props X) ) ) )
-                 ## (and (== 'timestamp (car X))
-                 ##    (cons Stamps X) )
             Lst )
-         ## Props Stamps ) ) )
          Props ) ) )
+
+(de convertContents (Lst) )
+   
 
 (de processProperties (Lst)
    (msg "entering processProperties ...")
@@ -307,32 +308,32 @@
    (msg "entering treatOrgTimestamp ...")
    (with S
       (put> S 'start-dat
-         (date (: year-start)(: month-start)(: day-start)) )
+         (date (: :year-start)(: :month-start)(: :day-start)) )
       (put> S 'start-tim
-         (time (: hour-start)(: minute-start)) )
+         (time (: :hour-start)(: :minute-start)) )
       (put> S 'end-dat
-         (date (: year-end)(: month-end)(: day-end)) )
+         (date (: :year-end)(: :month-end)(: :day-end)) )
       (put> S 'end-tim
-         (time (: hour-end)(: minute-end)) )
-      (put> S 'year-start
+         (time (: :hour-end)(: :minute-end)) )
+      (put> S ':year-start
          '(car (date (: start-dat))) )
-      (put> S 'month-start
+      (put> S ':month-start
          '(cadr (date (: start-dat))) )
-      (put> S 'day-start
+      (put> S ':day-start
          '(last (date (: start-dat))) )
-      (put> S 'hour-start
+      (put> S ':hour-start
          '(car (time (: start-tim))) )
-      (put> S 'minute-start
+      (put> S ':minute-start
          '(cadr (time (: start-tim))) )
-      (put> S 'year-end
+      (put> S ':year-end
          '(car (date (: end-dat))) )
-      (put> S 'month-end
+      (put> S ':month-end
          '(cadr (date (: end-dat))) )
-      (put> S 'day-end
+      (put> S ':day-end
          '(last (date (: end-dat))) )
-      (put> S 'hour-end
+      (put> S ':hour-end
          '(car (time (: end-tim))) )
-      (put> S 'minute-end
+      (put> S ':minute-end
          '(cadr (time (: end-tim))) ) ) )
 
 
@@ -410,12 +411,32 @@
             (= `(char "#") (char (car L)))
             (= `(char "#") (char (last L))) ) ) ) )
 
+## (de oldConvertparsetree (Ptree)
+##    (cond
+##       ((hashLbl? (car Ptree))
+##        (pop 'Ptree)
+##        (convertParseTree Ptree) )
+##       ((eq '\# (car Ptree)) ) ) )
 
-## (de processContents (Lst Fun)
-##    (make
-##       (link
-##          (eval
-##             (list Fun Lst) ) ) ) )
+## convert parse-tree back to Emacs Lisp syntax
+(de convertParseTree (Lst)
+   (mapcan
+      '((X)
+         (cond
+            ((num? X) (cons X))
+            ((pair X) (cons (convertParseTree X)))
+            ((not X) (cons 'nil))
+            (T
+               (let L (chop X)
+                  (cond
+                     ((or (== '\# X) (<> "#" (car L)))
+                        (cons X) )
+                     ((= "#" (last L))
+                        (cons 'nil) )
+                     ((= "=" (last L)))
+                     (T (cons X)) ) ) ) ) )
+      Lst ) )
+
 
 ## ## add : to keys of (key val) pairs in list
 ## (de addColonsToKeys (Lst)

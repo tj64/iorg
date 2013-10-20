@@ -81,6 +81,26 @@ There is a mode hook, and a few commands:
   '(plain-text) '(structure))
   "Types to be selected by `org-element-map'.")
 
+;; (defvar iorg-element-shared-properties '(begin end post-blank parent
+;; contents-begin contents-end post-affiliated)
+;;   "Properties shared by all Org elements (with the leading colon
+;;   stripped).")
+
+;; (defvar iorg-element-properties-alist
+;;   '((center-block . '(hiddenp))
+;;     (drawer . '(drawer-name))
+;;     (dynamic-block . '(block-name arguments))
+;;     (footnote-definition . '(label))
+;;     (headline . '(raw-value title alt-title pre-blank level
+;;   priority tags todo-keyword todo-type scheduled deadline closed
+;;   quotedp archivedp commentedp footnote-section-p))
+;;     (inlinetask . '(title hiddenp  
+;;     (bullet checkbox counter tag
+;;   structure type info status value time )
+;;   "Alist of Org element types and their possible keyword
+;;   properties found in an Org-mode parse-tree (with the leading
+;;   colon stripped).")
+
 (defvar iorg-default-host-path "http://localhost:5001"
   "Default path (protocol, host, port) for iOrg server.")
 
@@ -107,7 +127,7 @@ There is a mode hook, and a few commands:
 
 ;; application example:
 ;; (prin1-to-string
-;;   (iorg--sexp-remove-string-properties    
+;;   (iorg--sexp-remove-string-properties
 ;;     '(:category "tmp2" :title (#("C2 " 0 3 (:parent nil))))))
 ;; --> "(:category \"tmp2\" :title (\"C2 \"))"
 
@@ -170,27 +190,28 @@ MATCH is the match-string to be converted, with 'nil' becoming
    ((string= match "(nil)")
     (format "%s" "(NIL)"))))
 
-(defun iorg--NIL-and-T-to-lowercase (tree-as-string)
-  "Downcase NIL and T in TREE-AS-STRING converted from PicoLisp."
-  (and (stringp tree-as-string)
-        (replace-regexp-in-string
-         "\\(\\_<T\\_>\\|(T)\\|\\_<NIL\\_>\\|(NIL)\\)"
-        'iorg--rep-function-for-NIL-and-T
-        tree-as-string)))
+;; ;; done before sending from PicoLisp
+;; (defun iorg--NIL-and-T-to-lowercase (tree-as-string)
+;;   "Downcase NIL and T in TREE-AS-STRING converted from PicoLisp."
+;;   (and (stringp tree-as-string)
+;;         (replace-regexp-in-string
+;;          "\\(\\_<T\\_>\\|(T)\\|\\_<NIL\\_>\\|(NIL)\\)"
+;;         'iorg--rep-function-for-NIL-and-T
+;;         tree-as-string)))
 
-(defun iorg--rep-function-for-NIL-and-T (match)
-  "Helper function for converting PicoLisp 'NIL' an 'T' to Elisp syntax.
-MATCH is the match-string to be converted, with 'NIL' becoming
-'nil' and 'T' becoming 't'."
-  (cond
-   ((string= match "T")
-    (format "%s" "t"))
-   ((string= match "NIL")
-    (format "%s" "nil"))
-   ((string= match "(T)")
-    (format "%s" "(t)"))
-   ((string= match "(NIL)")
-    (format "%s" "(nil)"))))
+;; (defun iorg--rep-function-for-NIL-and-T (match)
+;;   "Helper function for converting PicoLisp 'NIL' an 'T' to Elisp syntax.
+;; MATCH is the match-string to be converted, with 'NIL' becoming
+;; 'nil' and 'T' becoming 't'."
+;;   (cond
+;;    ((string= match "T")
+;;     (format "%s" "t"))
+;;    ((string= match "NIL")
+;;     (format "%s" "nil"))
+;;    ((string= match "(T)")
+;;     (format "%s" "(t)"))
+;;    ((string= match "(NIL)")
+;;     (format "%s" "(nil)"))))
 
 (defun iorg--fix-read-syntax (tree)
   "Returns parse TREE as string with read syntax fixed.
@@ -199,26 +220,27 @@ backquote leading '#' characters. And, although not strictly
 necessary, remove the leading ':' of keywords in the parse-tree
 while on it."
   (let ((hash-regexp "#")
-        (keyword-regexp
-         (concat
-          ;; 1st
-          "\\([[:space:]]\\|(\\|\"\\)"
-          ;; 2nd
-          "\\(:\\)"
-          ;; 3rd
-          "\\([[:word:]-_]+\\)"
-          ;; 4th
-          "\\([[:space:]]+\\)")))
-    (with-temp-buffer 
+        ;; (keyword-regexp
+        ;;  (concat
+        ;;   ;; 1st
+        ;;   "\\([[:space:]]\\|(\\|\"\\)"
+        ;;   ;; 2nd
+        ;;   "\\(:\\)"
+        ;;   ;; 3rd
+        ;;   "\\([[:word:]-_]+\\)"
+        ;;   ;; 4th
+        ;;   "\\([[:space:]]+\\)"))
+        )
+    (with-temp-buffer
     ;; (with-current-buffer "tmp<2>"
       (insert (prin1-to-string tree))
       (goto-char (point-min))
       (while (re-search-forward hash-regexp nil 'NOERROR)
         (replace-match "\\\\\\&"))
-      (goto-char (point-min))
-      (while (re-search-forward keyword-regexp nil 'NOERROR)
-        (replace-match
-         (concat "\\1\\3\\4")))
+      ;; (goto-char (point-min))
+      ;; (while (re-search-forward keyword-regexp nil 'NOERROR)
+      ;;   (replace-match
+      ;;    (concat "\\1\\3\\4")))
       (buffer-substring-no-properties (point-min) (point-max)))))
 
 ;; TODO: check if necessary - maybe elisp reader does all this as-is?
@@ -243,7 +265,7 @@ and trailing blanks from all labels like 'and\#2= '."
           "\\( \\)"
           ;; 4th
           "(\\)")))
-    (with-temp-buffer 
+    (with-temp-buffer
       ;; (with-current-buffer "tmp<2>"
       (insert tree-as-string)
       (goto-char (point-min))
@@ -255,8 +277,8 @@ and trailing blanks from all labels like 'and\#2= '."
       (buffer-substring-no-properties (point-min) (point-max)))))
 
 
-(defun iorg--add-colons-to-keys (tree-as-string)
-  "Add a colon : in from of every keyword in TREE-AS-STRING.")
+;; (defun iorg--add-colons-to-keys (tree-as-string)
+;;   "Add a colon : in from of every keyword in TREE-AS-STRING.")
 
 
 ;; *** Core Functions
@@ -304,12 +326,8 @@ are not converted to uppercase forms NIL and T."
 (defun iorg-reconvert-parse-tree (tree-as-string)
   "Reconvert a parse TREE-AS-STRING stored in a PicoLisp database.
 Convert PicoLisp compliant syntax back to Emacs Lisp syntax."
-  (read-from-string 
-   (iorg--unfix-read-syntax
-    (iorg--NIL-and-T-to-lowercase tree-as-string))))
-
-;; (defun iorg-pico-to-org ()
-;;   "")
+  (read-from-string
+   (iorg--unfix-read-syntax tree-as-string)))
 
 ;; **** Query Database
 
@@ -547,7 +565,7 @@ elements parent)."
 ;;          (concat
 ;;           ;; 1st
 ;;           "\\([[:space:]]\\|(\\)"
-;;           ;; 2nd -> replace 
+;;           ;; 2nd -> replace
 ;;           "\\(#(\\)"
 ;;           ;; 3rd
 ;;           "\\(.+?\n?.+?-id \\)"
@@ -558,7 +576,7 @@ elements parent)."
 ;;         ;; (concat
 ;;         ;;  ;; 1st
 ;;         ;;  "\\([[:space:]]\\|(\\)"
-;;         ;;  ;; 2nd -> replace 
+;;         ;;  ;; 2nd -> replace
 ;;         ;;  "\\(#(\\)"
 ;;         ;;  ;; 3rd
 ;;         ;;  "\\(.+?\n?.+?\\)"
@@ -588,7 +606,7 @@ elements parent)."
 ;;           "\\([[:word:]-_]+\\)"
 ;;           ;; 4th
 ;;           "\\([[:space:]]+\\)")))
-;;     ;; (with-temp-buffer 
+;;     ;; (with-temp-buffer
 ;;     (with-current-buffer "tmp<2>"
 ;;       (insert (prin1-to-string tree))
 ;;       (goto-char (point-min))

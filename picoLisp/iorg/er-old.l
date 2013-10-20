@@ -193,7 +193,7 @@
 (class +orgBaseElement +Entity)
 (rel descendants (+List +Joint) ancestor (+orgElement))
 (rel label (+Ref +Symbol))
-(rel :contents (+Any))
+(rel contents (+Any))
 
 (dm url> ())
 (dm upd> ())
@@ -225,8 +225,8 @@
 
 (class +orgElement +orgBaseElement)
 (rel ancestor (+Joint) descendants (+orgBaseElement))
-(rel :parent (+Ref +Symbol))
-(rel :post-blank (+Number))
+(rel parent (+Ref +Symbol))
+(rel post-blank (+Number))
 
 (dm interpret> ())
 
@@ -258,26 +258,26 @@
 
 (dm upd> ())
 (dm diff> ())
-## ## return parse-tree in its (normalized) original form
-## (dm origParseTree> ()
-##    (msg "origParseTree> entered ...")
-##    (make
-##       (link
-##          (: label)
-##          (list
-##             'org-data
-##             (list
-##                ':parse-tree-id (: parse-tree-id)
-##                ':input-file (: input-file)
-##                ':author (: author)
-##                ':email (: email)
-##                ':creator (: creator)
-##                ':description (: description) )
-##             ## (prepCont> (: contents))
-##             (: contents)
-##             (mapcar
-##                'origSubTree>
-##                (: descendants) ) ) ) ) )
+## return parse-tree in its (normalized) original form
+(dm origParseTree> ()
+   (msg "origParseTree> entered ...")
+   (make
+      (link
+         (: label)
+         (list
+            'org-data
+            (list
+               ':parse-tree-id (: parse-tree-id)
+               ':input-file (: input-file)
+               ':author (: author)
+               ':email (: email)
+               ':creator (: creator)
+               ':description (: description) )
+            ## (prepCont> (: contents))
+            (: contents)
+            (mapcar
+               'origSubTree>
+               (: descendants) ) ) ) ) )
 
 ## *** Headline
 
@@ -306,76 +306,76 @@
 
 (class +OrgHeadline +orgElement)
 (rel ptree (+Aux +Ref +Link) (label) NIL (+OrgData))
-(rel :title (+Any))
-(rel :raw-value (+Any))
+(rel title (+Any))
+(rel raw-value (+Any))
 (rel title-object (+Ref +Link) NIL (+OrgTitle))
 ## TODO deal with alt-title (just like with title?)
-(rel :alt-title (+Any))
+(rel alt-title (+Any))
 (rel properties (+List +Ref +Link) NIL (+OrgProperty))
 ## (rel timestamps (+List +Ref +Link) NIL (+OrgTimestamp))
 ## (rel CATEGORY (+Any))
 (rel category (+Ref +String))
-(rel :pre-blank (+Number))
-(rel :hiddenp (+Symbol))
-(rel :level (+Need +Ref +Number))
-(rel :priority (+Ref +Number))
-(rel :tags (+List +Ref +String))
+(rel pre-blank (+Number))
+(rel hiddenp (+Symbol))
+(rel level (+Need +Ref +Number))
+(rel priority (+Ref +Number))
+(rel tags (+List +Ref +String))
 (rel raw-tags (+String))
-(rel :todo-keyword (+Ref +String))
-(rel :scheduled (+Any))
+(rel todo-keyword (+Ref +String))
+(rel scheduled (+Any))
 (rel scheduled-stamp (+Ref +Link) NIL (+OrgTimestamp))
-(rel :deadline (+Any))
+(rel deadline (+Any))
 (rel deadline-stamp (+Ref +Link) NIL (+OrgTimestamp))
-(rel :closed (+Any))
+(rel closed (+Any))
 (rel closed-stamp (+Ref +Link) NIL (+OrgTimestamp))
-(rel :quotedp (+Bool))
-(rel :archivedp (+Symbol))
-(rel :commentedp (+Bool))
-(rel :footnote-section-p (+Bool))
+(rel quotedp (+Bool))
+(rel archivedp (+Symbol))
+(rel commentedp (+Bool))
+(rel footnote-section-p (+Bool))
 
 
 (dm url> (Tab)
    (and (may OrgData) (list "iorg/orgHeadline.l" '*ID This)) )
 
-## (dm category> ()
-##    (if (lst? (: CATEGORY))
-##       (last (: CATEGORY)) )
-##      (category> (db 'CATEGORY '+OrgHeadline
-##                    (makeHashRef (hashLblNum>
-##                                    (car (: CATEGORY)) ) )
-##                                    'ptree (: ptree) ) ) )
+(dm category> ()
+   (if (lst? (: CATEGORY))
+      (last (: CATEGORY)) )
+     (category> (db 'CATEGORY '+OrgHeadline
+                   (makeHashRef (hashLblNum>
+                                   (car (: CATEGORY)) ) )
+                                   'ptree (: ptree) ) ) )
 
 (dm upd> ())
 (dm diff> ())
-## (dm origSubTree> ()
-##    (msg "origSubTree> entered ...")
-##    (make
-##       (link
-##          (: label)
-##          (list
-##             'headline
-##             (list
-##                ':title (: title)
-##                ':alt-title (: alt-title)
-##                ':CATEGORY (: CATEGORY)
-##                ':pre-blank (: pre-blank)
-##                ':hiddenp (: hiddenp)
-##                ':level (: level)
-##                ':priority (: priority)
-##                ':tags (: tags)
-##                ':todo-keyword (: todo-keyword)
-##                ':scheduled (: scheduled)
-##                ':deadline (: deadline)
-##                ':closed (: closed)
-##                ':quotedp (: quotedp)
-##                ':archivedp (: archivedp)
-##                ':commentedp (: commentedp)
-##                ':footnote-section-p (: footnote-section-p) )
-##             ## (prepCont> (: contents))
-##             (: contents)
-##             (mapcar
-##                'origSubTree>
-##                (: descendants) ) ) ) ) )
+(dm origSubTree> ()
+   (msg "origSubTree> entered ...")
+   (make
+      (link
+         (: label)
+         (list
+            'headline
+            (list
+               ':title (: title)
+               ':alt-title (: alt-title)
+               ':CATEGORY (: CATEGORY)
+               ':pre-blank (: pre-blank)
+               ':hiddenp (: hiddenp)
+               ':level (: level)
+               ':priority (: priority)
+               ':tags (: tags)
+               ':todo-keyword (: todo-keyword)
+               ':scheduled (: scheduled)
+               ':deadline (: deadline)
+               ':closed (: closed)
+               ':quotedp (: quotedp)
+               ':archivedp (: archivedp)
+               ':commentedp (: commentedp)
+               ':footnote-section-p (: footnote-section-p) )
+            ## (prepCont> (: contents))
+            (: contents)
+            (mapcar
+               'origSubTree>
+               (: descendants) ) ) ) ) )
 
 
 ## concat object attributes, converted to elisp-parse-tree syntax, with
@@ -388,7 +388,7 @@
 (dm interpret> (ContentsOnly?)
    (if ContentsOnly?
       (writeParseTree
-         (convertParseTree (: :contents)) )
+         (convertParseTree (: contents)) )
       (writeParseTree
         (convertParseTree
            (prepareParseTree This) ) ) ) )
@@ -438,37 +438,37 @@
 ## **** Code
 
 (class +OrgTimestamp +orgElement)
-(rel :type (+Ref +Symbol))
-(rel :year-start (+Any))
-(rel :month-start (+Any))
-(rel :day-start (+Any))
-(rel :hour-start (+Any))
-(rel :minute-start (+Any))
-(rel :year-end (+Any))
-(rel :month-end (+Any))
-(rel :day-end (+Any))
-(rel :hour-end (+Any))
-(rel :minute-end (+Any))
+(rel type (+Ref +Symbol))
+(rel year-start (+Any))
+(rel month-start (+Any))
+(rel day-start (+Any))
+(rel hour-start (+Any))
+(rel minute-start (+Any))
+(rel year-end (+Any))
+(rel month-end (+Any))
+(rel day-end (+Any))
+(rel hour-end (+Any))
+(rel minute-end (+Any))
 (rel start-dat (+Aux +Ref +Date) (start-tim))
 (rel start-tim (+Time))
 (rel end-dat (+Aux +Ref +Date) (end-tim))
 (rel end-tim (+Time))
-(rel :repeater-type (+Symbol))
-(rel :repeater-value (+Number))
-(rel :repeater-unit (+Symbol))
+(rel repeater-type (+Symbol))
+(rel repeater-value (+Number))
+(rel repeater-unit (+Symbol))
 
 ## return repeater-info as string in Org syntax
 (dm repeaterString> ()
-   (let (V (: :repeater-value)
-         U (char (char (: :repeater-unit))) )
-      (case (: :repeater-type)
+   (let (V (: repeater-value)
+         U (char (char (: repeater-unit))) )
+      (case (: repeater-type)
          ("cumulate" (pack "+" V U))
          ("catch-up" (pack "++" V U))
          ("restart" (pack ".+" V U)) ) ) )
 
 
 (dm rawValue> ()
-   (let (TypeLst (mapcar pack (split (chop (: :type)) "-"))
+   (let (TypeLst (mapcar pack (split (chop (: type)) "-"))
          Range? (member "range" TypeLst)
          SameDate? (and Range? (= (: start-dat) (: end-dat)))
          Inactive? (member "inactive" TypeLst)
@@ -481,13 +481,13 @@
                           (dat$ (: start-dat) "-")
                           (pack (head 2 (chop (day (: start-dat)))))
                           (or
-                             (and (eval (: :hour-start))
+                             (and (eval (: hour-start))
                                 (pack " " (tim$ (: start-tim))
                                    (and Range? SameDate?
                                       (pack "-" (tim$ (: end-tim))) ) ) )
                              "" )
                           (or
-                             (and (: :repeater-type)
+                             (and (: repeater-type)
                                 (pack " " (repeaterString> This)) )
                              "" ) ) )
          EndStamp (and Range? (not SameDate?)
@@ -499,7 +499,7 @@
                            (dat$ (: end-dat) "-")
                            (pack (head 2 (chop (day (: end-dat)))))
                            (or
-                              (and (eval (: :hour-end))
+                              (and (eval (: hour-end))
                                  (pack " "
                                     (tim$ (: end-tim)) ) )
                               "" ) ) ) ) )
