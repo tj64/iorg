@@ -15,55 +15,6 @@
 
 ## ** Comments
 
-## *** Calling Emacs
-## With action arguments:
-
-## #+begin_quote
-## `-l FILE'
-## `--load=FILE'
-##      Load a Lisp library named FILE with the function `load'.  If FILE
-##      is not an absolute file name, Emacs first looks for it in the
-##      current directory, then in the directories listed in `load-path'
-##      (*note Lisp Libraries::).
-
-##      *Warning:* If previous command-line arguments have visited files,
-##      the current directory is the directory of the last file visited.
-
-## `--eval=EXPRESSION'
-## `--execute=EXPRESSION'
-##      Evaluate Lisp expression EXPRESSION.
-## #+end_quote
-
-## With initial options:
-
-## #+begin_quote
-## `-batch'
-## `--batch'
-##      Run Emacs in "batch mode".  Batch mode is used for running
-##      programs written in Emacs Lisp from shell scripts, makefiles, and
-##      so on.  To invoke a Lisp program, use the `-batch' option in
-##      conjunction with one or more of `-l', `-f' or `--eval' (*note
-##      Action Arguments::).  *Note Command Example::, for an example.
-
-##      In batch mode, Emacs does not display the text being edited, and
-##      the standard terminal interrupt characters such as `C-z' and `C-c'
-##      have their usual effect.  Emacs functions that normally print a
-##      message in the echo area will print to either the standard output
-##      stream (`stdout') or the standard error stream (`stderr') instead.
-##      (To be precise, functions like `prin1', `princ' and `print' print
-##      to `stdout', while `message' and `error' print to `stderr'.)
-##      Functions that normally read keyboard input from the minibuffer
-##      take their input from the terminal's standard input stream
-##      (`stdin') instead.
-
-##      `--batch' implies `-q' (do not load an initialization file), but
-##      `site-start.el' is loaded nonetheless.  It also causes Emacs to
-##      exit after processing all the command options.  In addition, it
-##      disables auto-saving except in buffers for which auto-saving is
-##      explicitly requested.
-## #+end_quote
-
-
 ## * Variables
 
 (setq *IorgGlobalSwitch NIL)
@@ -244,17 +195,22 @@
             L (: :title)
             N (: :contents)
             Lst (and N (processContents (cadr N))) )
-      (and D (put> This 'deadline-stamp (makeOrgTimestamp (car (tail -1 D))))
+      (and D
+         (put> This 'deadline-stamp (makeOrgTimestamp (car (tail -1 D))))
          (put> This ':deadline '(rawValue> (: deadline-stamp))) )
-      (and S (put> This 'scheduled-stamp (makeOrgTimestamp (car (tail -1 S))))
+      (and S
+         (put> This 'scheduled-stamp (makeOrgTimestamp (car (tail -1 S))))
          (put> This ':scheduled '(rawValue> (: scheduled-stamp))) )
-      (and C (put> This 'closed-stamp (makeOrgTimestamp (car (tail -1 C))))
+      (and C
+         (put> This 'closed-stamp (makeOrgTimestamp (car (tail -1 C))))
          (put> This ':closed '(rawValue> (: closed-stamp))) )
-      (and L (put> This 'title-object (makeOrgTitle L This))
+      (and L
+         (put> This 'title-object (makeOrgTitle L This))
          (put> This ':raw-value '(rawValue> (: title-object)))
          (put> This ':title '(: title-object title)) )
-      (and Lst (msg Lst " => Lst ") (put> This ':contents (car Lst))
-         (put> This 'properties (processProperties (cdr Lst))) ) ) ) )
+      (and Lst
+         (put> This 'properties (processProperties (cdr Lst)))
+         (put> This ':contents (interpretParseTree (car Lst))) ) ) ) )
 
 ## (processContents (cadr '(\#8= (section ...)))
 (de processContents (Lst)
@@ -270,9 +226,6 @@
             Lst )
          Props ) ) )
 
-(de convertContents (Lst) )
-
-
 (de processProperties (Lst)
    (msg "entering processProperties ...")
    (pop 'Lst)
@@ -286,6 +239,45 @@
                                 (car (nth (cadr P) 4)) ) ) ) )
                  Lst ) )
       Props ) )
+
+(de convertParseTree (Lst)
+   (mapcan
+      '((X)
+         (use L
+            (cond
+               ((num? X) (cons X))
+               ((pair X) (cons (convertParseTree X)))
+               ((not (setq L (chop X))) (cons 'nil))
+               ((str? X) (cons (pack (replace L "^J" "\\n"))))
+               ((or (== '\# X) (<> "#" (car L)))
+                  (cons X) )
+               ((and (= "#" (last L)) (format (head -1 (cdr L))))
+                  (cons 'nil) )
+               ((and (= "=" (last L)) (format (head -1 (cdr L)))))
+               (T (cons X)) ) ) )
+      Lst ) )
+
+
+(de interpretParseTree (Lst)
+   (out (tmp "em")
+      (pipe (print (convertParseTree Lst))
+         (while (echo "\\# (")
+            (prin "#(") ) ) )
+   (pipe
+      (in
+         (list 'emacsclient "-s" "iorg-server" "-e"
+            (pack
+               "(princ "
+               "(org-element-interpret-data "
+               "(with-current-buffer "
+               "(find-file-noselect "
+               "\"" (tmp "em") "\")"
+               "(goto-char (point-min))"
+               "(read (current-buffer)))))" ) )
+         (while (echo "\\n")
+            (prin "\^J") ) )
+      (till NIL T) ) )
+
 
 ## *** Timestamp
 
@@ -411,177 +403,6 @@
             (= `(char "#") (char (car L)))
             (= `(char "#") (char (last L))) ) ) ) )
 
-## (de oldConvertparsetree (Ptree)
-##    (cond
-##       ((hashLbl? (car Ptree))
-##        (pop 'Ptree)
-##        (convertParseTree Ptree) )
-##       ((eq '\# (car Ptree)) ) ) )
-
-
-## (de convertParseTree (Lst)
-##    (mapcan
-##       '((X)
-##          (cond
-##             ((num? X) (cons X))
-##             ((pair X) (cons (convertParseTree X)))
-##             ((not X) (cons 'nil))
-##             (T
-##                (let L (chop X)
-##                   (cond
-##                      ((or (== '\# X) (<> "#" (car L)))
-##                         (cons (pack (replace L "^J" "\\n"))) )
-##                      ((and (= "#" (last L)) (format (head -1 (cdr L))))
-##                         (cons 'nil) )
-##                      ((and (= "=" (last L)) (format (head -1 (cdr L)))))
-##                      (T (cons (pack (replace L "^J" "\\n")))) ) ) ) ) )
-##       Lst ) )
-
-## (de convertParseTree (Lst)
-##    (mapcan
-##       '((X)
-##          (cond
-##             ((num? X) (cons X))
-##             ((pair X) (cons (convertParseTree X)))
-##             ((not X) (cons 'nil))
-##             (T
-##                (let L (chop X)
-##                   (cond
-##                      ((str? X)
-##                         (cons (pack (replace L "^J" "\\n"))) )
-##                      ((or (== '\# X) (<> "#" (car L)))
-##                         (cons X) )
-##                      ((and (= "#" (last L)) (format (head -1 (cdr L))))
-##                         (cons 'nil) )
-##                      ((and (= "=" (last L)) (format (head -1 (cdr L)))))
-##                     (T (cons X)) ) ) ) ) )
-##       Lst ) )
-
-
-(de convertParseTree (Lst)
-   (mapcan
-      '((X)             
-         (use L
-            (cond
-               ((num? X) (cons X))
-               ((pair X) (cons (convertParseTree X)))
-               ((not (setq L (chop X))) (cons 'nil))
-               ((str? X) (cons (pack (replace L "^J" "\\n"))))
-               ((or (== '\# X) (<> "#" (car L)))
-                  (cons X) )
-               ((and (= "#" (last L)) (format (head -1 (cdr L))))
-                  (cons 'nil) )
-               ((and (= "=" (last L)) (format (head -1 (cdr L)))))
-               (T (cons X)) ) ) ) 
-      Lst ) )  
-
-
-## (de convertParseTree (Lst)
-##    (mapcan
-##       '((X)
-##         (cond
-##            ((num? X) (cons X))
-##            ((pair X) (cons (convertParseTree X)))
-##            ((not X) (cons 'nil))
-##            (T
-##               (let L (chop X)
-##                  (cond
-##                     ((or (== '\# X) (<> "#" (car L)))
-##                      (cons X) )
-##                     ((= "#" (last L))
-##                      (cons 'nil) )
-##                     ((= "=" (last L)))
-##                     (T (cons X)) ) ) ) ) )
-##       Lst ) )
-
-
-## (de interpretParseTree (Lst)
-##    (out "/home/tj/em.dat"  # (tmp "em")
-##       (pipe (print (convertParseTree Lst))
-##          (while (echo "\\# (")
-##             (prin "#(") ) ) )
-##    (pipe
-##       (in
-##          (list 'emacsclient "-s" "iorg-server" "-e"
-##             (pack 
-##                "(princ "
-##                "(org-element-interpret-data "
-##                "(with-current-buffer "
-##                "(find-file-noselect "
-##                ## "\"" (tmp "em") "\")"
-##                "\"/home/tj/em.dat\")"
-##                "(goto-char (point-min))"
-##                "(read (current-buffer)))))" ) )
-##          (while (echo "\\n")
-##             (prin "\^J") ) )
-##       (till NIL T) ) )
-##       ## (any (read)) ) )
-
-(de interpretParseTree (Lst)
-   (out (tmp "em")
-      (pipe (print (convertParseTree Lst))
-         (while (echo "\\# (")
-            (prin "#(") ) ) )
-   ## (pipe
-      (in
-         (list 'emacsclient "-s" "iorg-server" "-e"
-            (pack 
-               "(princ "
-               "(org-element-interpret-data "
-               "(with-current-buffer "
-               "(find-file-noselect "
-               "\"" (tmp "em") "\")"
-               "(goto-char (point-min))"
-               "(read (current-buffer)))))" ) )
-         (while (echo "\\n")
-            (prin "\^J") ) ) )
-      ## (till NIL T) ) )
-      ## (any (read)) ) )
-
-## (de interpretParseTree (Lst)
-##    (out "/home/tj/em.dat"  # (tmp "em")
-##       (pipe (println (convertParseTree Lst))
-##          (while (echo "\ \# (")
-##             (prin "#(") ) ) )
-##    (in
-##       (list 'emacsclient "-s" "iorg-server" "-e"
-##          (pack
-##             "(princ "
-##             "(org-element-interpret-data "
-##             "(with-current-buffer "
-##             "(find-file-noselect "
-##             ## "\"" (tmp "em") "\")"
-##             "\"/home/tj/em.dat\")"
-##             "(goto-char (point-min))"
-##             "(read (current-buffer)))))" ) )
-##       (till NIL T) ) )
-
-## (de interpretParseTree (Lst)
-##    (call 'mkfifo (tmp "em"))
-##    (out (tmp "em") (print (convertParseTree Lst)))
-##    (in (list 'emacsclient "-e"
-##           (pack
-##              "(princ "
-##              "(org-element-interpret-data "
-##              "(with-current-buffer "
-##              "(find-file-noselect "
-##              "\"" (tmp "em") "\")"
-##              "(goto-char (point-min))"
-##              "(read (current-buffer)))))" ) ) ) )
-
-
-(de interpretContents (This)
-   (interpretParseTree
-      (convertParseTree (: :contents)) ) )
-
-## (de interpretContents (Obj)
-##    (with Obj
-##       (let Txt (pack "\""
-##                   (interpretParseTree
-##                              (convertParseTree (: :contents) ) )
-##                   "\"" )
-##          Txt ) ) )
-
 ## expects a parse-tree as produced by `iorg-normalize-parse-tree'
 ## and an option as string like e.g. "iorg"
 
@@ -601,19 +422,6 @@
                      (car (nth (cadr X) 4)) ) )
                OrgDataContent ) ) )
       (cadr (member Option (mapcar pack (split (chop Strg) ":" " ")))) ) )
-
-## (de extractOptionValue (Option ParseTree)
-##    (let (OrgDataContent (and
-##                            (== (caar (nth ParseTree 4)) 'section)
-##                            (car (nth ParseTree 4)) )
-##          Strg (glue " "
-##                  (mapcar
-##                     '((X) (and
-##                              (== (car X) 'keyword)
-##                              (= (car (nth (cadr X) 2)) "OPTIONS")
-##                              (car (nth (cadr X) 4)) ) )
-##                     OrgDataContent ) ) )
-##       (cadr (member Option (mapcar pack (split (chop Strg) ":" " ")))) ) )
 
 (de emacsServerMessages ()
     (emc
@@ -638,7 +446,7 @@
        "-s" "iorg-server"
        "-c"
        "-e"
-       (pack 
+       (pack
          "(progn "
          "(and (display-graphic-p) "
          "(set-background-color \"black\") "
@@ -779,25 +587,7 @@
                "(iorg-wrap-parse-tree "
                "(iorg-convert-parse-tree)))))" ) ) ) ) )
 
-
-## ** Write Parse Tree
-
-## expects a 'raw' (complete) parse-tree as string, rebuilt from the PicoLisp
-## DB, and returns the textual representation of the parsed Org file
-## (de writeParseTree (Ptree)
-##    (emc '(echo)
-##       (pack
-##          "(with-output-to-string "
-##          "(find-file "
-##          "\"" Path "\")"
-##          "(org-mode)"
-##          "(let ((org-cycle-silently 1))"
-##          "(princ "
-##          "(iorg-wrap-parse-tree "
-##          "(iorg-convert-parse-tree)))))" ) ) )) )
-
 ## ** Set Path
-
 
 ## expects an absolute path
 (de addToEmacsLoadPath (Path)
@@ -1044,188 +834,5 @@
             (httpEcho (pack Nm ".pdf") "application/pdf" 20) ) ) ) )
 
 ## * Old stuff (for later use)
-
-## ** OrgData
-
-## (de makeOrgHeadline1 (Label Lst Iorg?)
-##    (msg "makeOrgHeadline entered...")
-##    (msg Lst " =>  Lst")
-##    ## (msg Label " => Label")
-##    ## (msg Iorg? " => Iorg?")
-##    (and Lst
-##       (let (Tags (cadr (member 'tags (car Lst)))
-##             Tag (and Tags
-##                    (if (str? Tags)
-##                       (and (or (= Tags "iorg") (= Tags "noiorg")) Tags)
-##                       (or
-##                          (car (member "iorg" Tags))
-##                          (car (member "noiorg" Tags)) ) ) )
-##             Prop (cadr (member 'IORG (car Lst))) )
-##          ## (and
-##          ##    (or
-##          ##       (= "t" *IorgGlobalSwitch)
-##          ##       (and
-##          ##          (not (or (= Tag "noiorg") (= Prop "off")))
-##          ##          (and (or Iorg? (= Tag "iorg") (= Prop "on"))) ) )
-##          (ifn
-##             (or
-##                (= "t" *IorgGlobalSwitch)
-##                (and
-##                   (not (or (= Tag "noiorg") (= Prop "off")))
-##                   (and (or Iorg? (= Tag "iorg") (= Prop "on"))) ) )
-
-##             (let (List (make
-##                           (for (L (pop 'Lst) L)
-##                              (link
-##                                 (pop 'L)
-##                                 (if (hashLbl? (car L))
-##                                    (cut 2 'L)
-##                                    (pop 'L) ) ) ) ) )
-##                (and (== 'section (caadr Lst)) (cut 2 'Lst) )
-##                (makeOrgHeadline
-##                   (and
-##                      (hashLbl? (car List))
-##                      (pop 'List) )
-##                   (if (str? (car List) NIL (cdr (pop 'List))))
-##                   ## (cdr (pop 'List))
-##                   Iorg? ) )
-
-##             (or Iorg? (on Iorg?))
-##             (let Obj
-##                (apply
-##                   new
-##                   (make
-##                      (for (L (pop 'Lst) L)
-##                         (link
-##                            (pop 'L)
-##                            (if (hashLbl? (car L))
-##                               (cut 2 'L)
-##                               (pop 'L) ) ) ) )
-##                   (db: +OrgHeadline) '(+OrgHeadline)
-##                   'contents (and
-##                                (== 'section (caadr Lst))
-##                                (cut 2 'Lst) ) )
-##                (and Label (set @ Obj))
-##                (msg (show Obj) " => New OrgHeadline object created") ) )
-##          (while Lst
-##             ## (msg "while OrgHeadline ...")
-##             ## (msg (length Lst) "while OrgHeadline")
-##             ## (msg Lst)
-##             (makeOrgHeadline
-##                (and
-##                   (hashLbl? (car Lst))
-##                   (pop 'Lst) )
-##                (or
-##                   (cdr (pop 'Lst))
-##                   (car (pop 'Lst)) )
-##                Iorg? ) ) ) ) )
-
-
-## ** Render
-
-## ## render original PicoLisp Wiki syntax
-## (de render (Bin)
-##    (let Nest NIL
-##       (recur (Nest)
-##          (use C
-##             (loop
-##                (ht:Prin (till "^J123456&/!_*+-<@>=\^:\\#}" T))
-##                (NIL (setq C (char)))
-##                (T (and Nest (= C "}")))
-##                (case (peek)
-##                   ("^J"
-##                      (ifn (= "^J" C)
-##                         (ht:Prin C)
-##                         (----)
-##                         (char) ) )
-##                   ("{"
-##                      (char)  # Skip "{"
-##                      (case C
-##                         (("1" "2" "3" "4" "5" "6")  # Heading
-##                            (_render "h" C)
-##                            (prinl)
-##                            (skip) )
-##                         ("&"
-##                            (let? N (format (till "}" T))
-##                               (prin "<br"
-##                                  (and (lt0 N) " class=\"clr\"")
-##                                  "/>" )
-##                               (do (dec (abs N))
-##                                  (prin "<br/>") ) )
-##                            (char) )
-##                         ("/"  # Italic
-##                            (_render "i") )
-##                         ("!"  # Bold
-##                            (_render "b") )
-##                         ("_"  # Underlined
-##                            (_render "u") )
-##                         ("*"  # Unordered list
-##                            (_render "ul") )
-##                         ("+"  # Ordered list
-##                            (_render "ol") )
-##                         ("-"  # List item
-##                            (_render "li") )
-##                         (("<" "@" ">")  # Binary file
-##                            (let Nm (till "}" T)
-##                               (char)
-##                               (with (! findBin Nm Bin)
-##                                  (cond
-##                                     ((pre? "image/" (: mt))
-##                                        (prin "<img src=\""
-##                                           *SesId (blob This 'd)
-##                                           "\" alt=\"" )
-##                                        (ht:Prin Nm)
-##                                        (prin
-##                                           "\" class=\""
-##                                           (case C
-##                                              ("<" "left")
-##                                              ("@" "nofloat")
-##                                              (">" "right") )
-##                                           "\"/>" ) )
-##                                     ((pre? "video/" (: mt))
-##                                        (prin "<video src=\""
-##                                           *SesId (blob This 'd)
-##                                           "\" class=\""
-##                                           (case C
-##                                              ("<" "left")
-##                                              ("@" "nofloat")
-##                                              (">" "right") )
-##                                           "\">" )
-##                                        (ht:Prin Nm)
-##                                        (prin "</video>") )
-##                                     (T
-##                                        (<style> (cons 'type (: mt))
-##                                           (<href> Nm (pack "!download?" (ht:Fmt This))) ) ) ) ) ) )
-##                         ("="  # Internal document link
-##                            (iorgLink (split (till "}") " " "^I" "^J" "^M"))
-##                            (char) )
-##                         ("\^"  # External web link
-##                            (let S (split (till "}") " " "^I" "^J" "^M")
-##                               (char)
-##                               (if
-##                                  (member
-##                                     (car (split (car S) ":"))
-##                                     (quote
-##                                        `(chop "http")
-##                                        `(chop "https")
-##                                        `(chop "irc")
-##                                        `(chop "mailto") ) )
-##                                  (<href>
-##                                     (or (glue " " (cdr S)) (pack (car S)))
-##                                     (pack (car S)) )
-##                                  (prin "???") ) ) )
-##                         (":"  # Pre-formatted
-##                            ((if (= "^J" (peek)) <pre> <span>) 'code
-##                               (renderBlock ht:Prin)) )
-##                         ("\\" (prin "{"))  # Escaped brace
-##                         ("#" (renderBlock prog))  # Comment
-##                         (T (prin C "{")) ) )
-##                   (T (ht:Prin C)) ) ) ) ) ) )
-
-## (de _render (C D)
-##    (prin "<" C D ">")
-##    (recurse T)
-##    (prin "</" C D ">") )
-
 
 ## iorg/lib.l ends here
