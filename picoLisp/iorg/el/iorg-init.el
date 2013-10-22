@@ -26,11 +26,6 @@
 (set-selection-coding-system 'utf-8)
 (prefer-coding-system 'utf-8)
 
-;; * Start Server
-
-(setq server-name "iorg-server")
-(server-start)
-
 ;; * Screen Colors
 
 ;; window type dependend screen colors
@@ -72,6 +67,9 @@ emacsclient on X"
 
 ;; * General settings
 
+;; make function `edit' aus `eedit.l' work without querying
+(setq revert-without-query
+      (quote ("/home/tj/\\.pil/tmp/.+")))
 ;; disable menubar
 (menu-bar-mode -1)
 ;; disable scrollbar
@@ -92,6 +90,11 @@ emacsclient on X"
 ;; (setq version-control t)
 ;; "y or n" instead of "yes or no"
 (fset 'yes-or-no-p 'y-or-n-p)
+
+;; ;; * Start Server
+
+;; (setq server-name "iorg-server")
+;; (server-start)
 
 ;; * Run hooks and provide
 

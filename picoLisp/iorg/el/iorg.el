@@ -247,38 +247,26 @@ while on it."
 (defun iorg--unfix-read-syntax (tree-as-string)
   "Returns parse TREE-AS-STRING with read syntax unfixed.
 Unfixed means, in this case, adjusted from PicoLisp syntax for
-the Emacs Lisp reader: remove backquotes from all '\#' characters
-and trailing blanks from all labels like 'and\#2= '."
-  (let ((enclosing-hashtags-regexp
+the Emacs Lisp reader: remove backslashes and trailing blanks
+from all '\#' labels."
+  (message "entering iorg--unfix-read-syntax ...")
+  (let ((leading-hashtag-regexp
          (concat
           ;; 1st
-          "\\(\\\\\)"
+          "\\(\\\\\\)"
           ;; 2nd
-          "\\(#[[:digit::]]+#\\)"))
-        (leading-hashtag-regexp
-         (concat
-          ;; 1st
-          "\\(\\\\\)"
-          ;; 2nd
-          "\\(#"
+          "\\(#\\)"
           ;; 3rd
           "\\( \\)"
           ;; 4th
-          "(\\)")))
+          "\\((\\)")))
     (with-temp-buffer
       ;; (with-current-buffer "tmp<2>"
       (insert tree-as-string)
       (goto-char (point-min))
-      (while (re-search-forward enclosing-hashtags-regexp nil 'NOERROR)
-        (replace-match "\\2"))
-      (goto-char (point-min))
       (while (re-search-forward leading-hashtag-regexp nil 'NOERROR)
         (replace-match "\\2\\4"))
       (buffer-substring-no-properties (point-min) (point-max)))))
-
-
-;; (defun iorg--add-colons-to-keys (tree-as-string)
-;;   "Add a colon : in from of every keyword in TREE-AS-STRING.")
 
 
 ;; *** Core Functions
@@ -320,14 +308,23 @@ are not converted to uppercase forms NIL and T."
       (iorg--nil-and-t-to-uppercase converted-parse-tree-as-string))))
 
 (defun iorg-wrap-parse-tree (tree-as-string)
-  "Wrap TREE-AS-STRING in PicoLisp function '(processParseTree ...)'."
+  "Wrap TREE-AS-STRING in PicoLisp function `processParseTree'."
   (concat "(processParseTree " tree-as-string " )"))
 
-(defun iorg-reconvert-parse-tree (tree-as-string)
-  "Reconvert a parse TREE-AS-STRING stored in a PicoLisp database.
-Convert PicoLisp compliant syntax back to Emacs Lisp syntax."
-  (read-from-string
-   (iorg--unfix-read-syntax tree-as-string)))
+;; (defun iorg-reconvert-parse-tree (tree-as-string)
+;;   "Reconvert a parse TREE-AS-STRING stored in a PicoLisp database.
+;; Convert PicoLisp compliant syntax back to Emacs Lisp syntax."
+;;   (read-from-string
+;;    (iorg--unfix-read-syntax tree-as-string)))
+
+(defun iorg-interpret-data (tree-as-string)
+  "Return the textual interpretation of TREE-AS-STRING.
+Call `org-element-interpret-data' to do the real work."
+  (message "entering iorg-interpret-data ...")
+  (org-element-interpret-data 
+   (car
+    (read-from-string
+     (iorg--unfix-read-syntax tree-as-string)))))
 
 ;; **** Query Database
 

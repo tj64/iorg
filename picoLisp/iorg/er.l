@@ -186,7 +186,7 @@
 
 ## - descendants :: joint link to descendant elements
 ## - label :: element ID (unique for parse-tree)
-## - contents :: normalized partial parse-tree
+## - :contents :: normalized partial parse-tree
 
 ## **** Code
 
@@ -218,8 +218,8 @@
 ## **** Comments
 
 ## - ancestor :: joint link to ancestor element
-## - parent :: element/Object containing it
-## - post-blank :: number of trailing blank lines/spaces
+## - :parent :: element/Object containing it
+## - :post-blank :: number of trailing blank lines/spaces
 
 ## **** Code
 
@@ -284,23 +284,28 @@
 ## **** Comments
 
 ## - ptree :: containing parse-tree object
-## - title :: parsed headline text with properties
-## - alt-title :: alternative title
-## - raw-value :: title string
+## - :title :: parsed headline text with properties
+## - :raw-value :: title string
+## - title-object :: link to +OrgTitle object
+## - :alt-title :: alternative title
+## - properties :: list with links to +OrgProperty objects
 ## - category :: either name of input file or user attribute
-## - pre-blank :: number blank lines before content
-## - hiddpenp :: non-nil (symbol) if headline is hidden
-## - level :: reduced level of headline
-## - priority :: headlines priority as character
-## - tags :: headlines tags (without archive tag)
-## - todo-keyword :: todo keyword without quote/comment
-## - scheduled :: scheduled reference (timestamp or NIL)
-## - deadline :: deadline reference (timestamp or NIL)
-## - closed :: closed reference (timestamp or NIL)
-## - quotedp :: non-nil if headline contains quote keyword
-## - archivedp :: non-nil if headline has archived tag
-## - commentedp :: non-nil if headline has comment keyword
-## - footnote-section-p :: non-nil if headline is footnote-section
+## - :pre-blank :: number blank lines before content
+## - :hiddpenp :: non-nil (symbol) if headline is hidden
+## - :level :: reduced level of headline
+## - :priority :: headlines priority as character
+## - :tags :: headlines tags (without archive tag)
+## - :todo-keyword :: todo keyword without quote/comment
+## - :scheduled :: scheduled reference (timestamp or NIL)
+## - scheduled-stamp :: link to +OrgTimestamp object
+## - :deadline :: deadline reference (timestamp or NIL)
+## - deadline-stamp :: link to +OrgTimestamp object
+## - :closed :: closed reference (timestamp or NIL)
+## - closed-stamp :: link to +OrgTimestamp object
+## - :quotedp :: non-nil if headline contains quote keyword
+## - :archivedp :: non-nil if headline has archived tag
+## - :commentedp :: non-nil if headline has comment keyword
+## - :footnote-section-p :: non-nil if headline is footnote-section
 
 ## **** Code
 
@@ -320,7 +325,7 @@
 (rel :level (+Need +Ref +Number))
 (rel :priority (+Ref +Number))
 (rel :tags (+List +Ref +String))
-(rel raw-tags (+String))
+## (rel raw-tags (+String))
 (rel :todo-keyword (+Ref +String))
 (rel :scheduled (+Any))
 (rel scheduled-stamp (+Ref +Link) NIL (+OrgTimestamp))
@@ -416,24 +421,24 @@
 ## *** Timestamp
 ## **** Comments
 
-## - type :: active or inactive [range]
-## - year-start :: number (convenience attribute)
-## - month-start :: number (convenience attribute)
-## - day-start :: number (convenience attribute)
-## - hour-start :: number (convenience attribute)
-## - minute-start :: number (convenience attribute)
-## - year-end :: number (convenience attribute)
-## - month-end :: number (convenience attribute)
-## - day-end :: number (convenience attribute)
-## - hour-end :: number (convenience attribute)
-## - minute-end :: number (convenience attribute)
+## - :type :: active or inactive [range]
+## - :year-start :: number (convenience attribute)
+## - :month-start :: number (convenience attribute)
+## - :day-start :: number (convenience attribute)
+## - :hour-start :: number (convenience attribute)
+## - :minute-start :: number (convenience attribute)
+## - :year-end :: number (convenience attribute)
+## - :month-end :: number (convenience attribute)
+## - :day-end :: number (convenience attribute)
+## - :hour-end :: number (convenience attribute)
+## - :minute-end :: number (convenience attribute)
 ## - start-dat ::  start date 
 ## - start-tim :: time of start date
 ## - end-dat :: end date 
 ## - end-tim :: time of end date
-## - repeater-type :: cumulative, catch-up or restart
-## - repeater-value :: number
-## - repeater-unit :: hour, day, week, month, year
+## - :repeater-type :: cumulative, catch-up or restart
+## - :repeater-value :: number
+## - :repeater-unit :: hour, day, week, month, year
 
 ## **** Code
 

@@ -271,7 +271,7 @@
          Props ) ) )
 
 (de convertContents (Lst) )
-   
+
 
 (de processProperties (Lst)
    (msg "entering processProperties ...")
@@ -418,61 +418,235 @@
 ##        (convertParseTree Ptree) )
 ##       ((eq '\# (car Ptree)) ) ) )
 
-## convert parse-tree back to Emacs Lisp syntax
+
+## (de convertParseTree (Lst)
+##    (mapcan
+##       '((X)
+##          (cond
+##             ((num? X) (cons X))
+##             ((pair X) (cons (convertParseTree X)))
+##             ((not X) (cons 'nil))
+##             (T
+##                (let L (chop X)
+##                   (cond
+##                      ((or (== '\# X) (<> "#" (car L)))
+##                         (cons (pack (replace L "^J" "\\n"))) )
+##                      ((and (= "#" (last L)) (format (head -1 (cdr L))))
+##                         (cons 'nil) )
+##                      ((and (= "=" (last L)) (format (head -1 (cdr L)))))
+##                      (T (cons (pack (replace L "^J" "\\n")))) ) ) ) ) )
+##       Lst ) )
+
+## (de convertParseTree (Lst)
+##    (mapcan
+##       '((X)
+##          (cond
+##             ((num? X) (cons X))
+##             ((pair X) (cons (convertParseTree X)))
+##             ((not X) (cons 'nil))
+##             (T
+##                (let L (chop X)
+##                   (cond
+##                      ((str? X)
+##                         (cons (pack (replace L "^J" "\\n"))) )
+##                      ((or (== '\# X) (<> "#" (car L)))
+##                         (cons X) )
+##                      ((and (= "#" (last L)) (format (head -1 (cdr L))))
+##                         (cons 'nil) )
+##                      ((and (= "=" (last L)) (format (head -1 (cdr L)))))
+##                     (T (cons X)) ) ) ) ) )
+##       Lst ) )
+
+
 (de convertParseTree (Lst)
    (mapcan
-      '((X)
-         (cond
-            ((num? X) (cons X))
-            ((pair X) (cons (convertParseTree X)))
-            ((not X) (cons 'nil))
-            (T
-               (let L (chop X)
-                  (cond
-                     ((or (== '\# X) (<> "#" (car L)))
-                        (cons X) )
-                     ((= "#" (last L))
-                        (cons 'nil) )
-                     ((= "=" (last L)))
-                     (T (cons X)) ) ) ) ) )
-      Lst ) )
+      '((X)             
+         (use L
+            (cond
+               ((num? X) (cons X))
+               ((pair X) (cons (convertParseTree X)))
+               ((not (setq L (chop X))) (cons 'nil))
+               ((str? X) (cons (pack (replace L "^J" "\\n"))))
+               ((or (== '\# X) (<> "#" (car L)))
+                  (cons X) )
+               ((and (= "#" (last L)) (format (head -1 (cdr L))))
+                  (cons 'nil) )
+               ((and (= "=" (last L)) (format (head -1 (cdr L)))))
+               (T (cons X)) ) ) ) 
+      Lst ) )  
 
 
-## ## add : to keys of (key val) pairs in list
-## (de addColonsToKeys (Lst)
-##       (let L Lst Key? NIL
-##          (cond
-##             ((hashLbl? (car L))
-##              (pop 'L) )
-##             ((lst? (cadr L))
-##              (pop 'L) )
-##             (Key?
-##               (off Key?)
-##               (intern
-##                   (pack ":" (pop 'L)) ) )
-##             (T
-##                (onOff Key?)
-##                (pop 'L) ) )
-##          (addColonsToKeys L) ) )
+## (de convertParseTree (Lst)
+##    (mapcan
+##       '((X)
+##         (cond
+##            ((num? X) (cons X))
+##            ((pair X) (cons (convertParseTree X)))
+##            ((not X) (cons 'nil))
+##            (T
+##               (let L (chop X)
+##                  (cond
+##                     ((or (== '\# X) (<> "#" (car L)))
+##                      (cons X) )
+##                     ((= "#" (last L))
+##                      (cons 'nil) )
+##                     ((= "=" (last L)))
+##                     (T (cons X)) ) ) ) ) )
+##       Lst ) )
 
 
-## (de prepCont (PropLst)
-##    )
+## (de interpretParseTree (Lst)
+##    (out "/home/tj/em.dat"  # (tmp "em")
+##       (pipe (print (convertParseTree Lst))
+##          (while (echo "\\# (")
+##             (prin "#(") ) ) )
+##    (pipe
+##       (in
+##          (list 'emacsclient "-s" "iorg-server" "-e"
+##             (pack 
+##                "(princ "
+##                "(org-element-interpret-data "
+##                "(with-current-buffer "
+##                "(find-file-noselect "
+##                ## "\"" (tmp "em") "\")"
+##                "\"/home/tj/em.dat\")"
+##                "(goto-char (point-min))"
+##                "(read (current-buffer)))))" ) )
+##          (while (echo "\\n")
+##             (prin "\^J") ) )
+##       (till NIL T) ) )
+##       ## (any (read)) ) )
+
+(de interpretParseTree (Lst)
+   (out (tmp "em")
+      (pipe (print (convertParseTree Lst))
+         (while (echo "\\# (")
+            (prin "#(") ) ) )
+   ## (pipe
+      (in
+         (list 'emacsclient "-s" "iorg-server" "-e"
+            (pack 
+               "(princ "
+               "(org-element-interpret-data "
+               "(with-current-buffer "
+               "(find-file-noselect "
+               "\"" (tmp "em") "\")"
+               "(goto-char (point-min))"
+               "(read (current-buffer)))))" ) )
+         (while (echo "\\n")
+            (prin "\^J") ) ) )
+      ## (till NIL T) ) )
+      ## (any (read)) ) )
+
+## (de interpretParseTree (Lst)
+##    (out "/home/tj/em.dat"  # (tmp "em")
+##       (pipe (println (convertParseTree Lst))
+##          (while (echo "\ \# (")
+##             (prin "#(") ) ) )
+##    (in
+##       (list 'emacsclient "-s" "iorg-server" "-e"
+##          (pack
+##             "(princ "
+##             "(org-element-interpret-data "
+##             "(with-current-buffer "
+##             "(find-file-noselect "
+##             ## "\"" (tmp "em") "\")"
+##             "\"/home/tj/em.dat\")"
+##             "(goto-char (point-min))"
+##             "(read (current-buffer)))))" ) )
+##       (till NIL T) ) )
+
+## (de interpretParseTree (Lst)
+##    (call 'mkfifo (tmp "em"))
+##    (out (tmp "em") (print (convertParseTree Lst)))
+##    (in (list 'emacsclient "-e"
+##           (pack
+##              "(princ "
+##              "(org-element-interpret-data "
+##              "(with-current-buffer "
+##              "(find-file-noselect "
+##              "\"" (tmp "em") "\")"
+##              "(goto-char (point-min))"
+##              "(read (current-buffer)))))" ) ) ) )
+
+
+(de interpretContents (This)
+   (interpretParseTree
+      (convertParseTree (: :contents)) ) )
+
+## (de interpretContents (Obj)
+##    (with Obj
+##       (let Txt (pack "\""
+##                   (interpretParseTree
+##                              (convertParseTree (: :contents) ) )
+##                   "\"" )
+##          Txt ) ) )
 
 ## expects a parse-tree as produced by `iorg-normalize-parse-tree'
 ## and an option as string like e.g. "iorg"
+
 (de extractOptionValue (Option ParseTree)
-   (let (OrgDataContent (and
-                           (== (caar (nth ParseTree 4)) 'section)
-                           (car (nth ParseTree 4)) )
-         Strg (glue " "
-                 (mapcar
-                    '((X) (and
-                             (== (car X) 'keyword)
-                             (= (car (nth (cadr X) 2)) "OPTIONS")
-                             (car (nth (cadr X) 4)) ) )
-                    OrgDataContent ) ) )
+   (let
+      (OrgDataContent
+         (and
+            (== (caar (nth ParseTree 4)) 'section)
+            (car (nth ParseTree 4)) )
+         Strg
+         (glue " "
+            (mapcar
+              '((X)
+                  (and
+                     (== (car X) 'keyword)
+                     (= (car (nth (cadr X) 2)) "OPTIONS")
+                     (car (nth (cadr X) 4)) ) )
+               OrgDataContent ) ) )
       (cadr (member Option (mapcar pack (split (chop Strg) ":" " ")))) ) )
+
+## (de extractOptionValue (Option ParseTree)
+##    (let (OrgDataContent (and
+##                            (== (caar (nth ParseTree 4)) 'section)
+##                            (car (nth ParseTree 4)) )
+##          Strg (glue " "
+##                  (mapcar
+##                     '((X) (and
+##                              (== (car X) 'keyword)
+##                              (= (car (nth (cadr X) 2)) "OPTIONS")
+##                              (car (nth (cadr X) 4)) ) )
+##                     OrgDataContent ) ) )
+##       (cadr (member Option (mapcar pack (split (chop Strg) ":" " ")))) ) )
+
+(de emacsServerMessages ()
+    (emc
+       '(echo)
+       (pack
+          "(message \"%s\" "
+          "(with-current-buffer \"*Messages*\" (buffer-string)))" ) ) )
+
+(de emacsServerBacktrace ()
+    (emc
+       '(echo)
+       (pack
+          "(message \"%s\" "
+          "(with-current-buffer \"*Backtrace*\" (buffer-string)))" ) ) )
+
+(de emacsServerToggleDebugOnError ()
+    (emc '(echo) "(toggle-debug-on-error)") )
+
+## call with filename-sans-extension (non-directory)
+(de emacsServerEditFile (File)
+    (call 'emacsclient
+       "-s" "iorg-server"
+       "-c"
+       "-e"
+       (pack
+          "(progn "
+          "(and (display-graphic-p) "
+          "(set-background-color \"black\") "
+          "(set-foreground-color \"wheat\")) "
+          "(setq revert-without-query "
+          "(quote (\"/home/tj/\\.pil/tmp/.+\")))"
+          "(find-file "
+          "(expand-file-name \"" (pack File  ".el") "\" iorg-el-dir)))" ) ) )
 
 ## ** Others
 
