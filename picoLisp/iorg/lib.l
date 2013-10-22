@@ -632,21 +632,38 @@
 (de emacsServerToggleDebugOnError ()
     (emc '(echo) "(toggle-debug-on-error)") )
 
-## call with filename-sans-extension (non-directory)
-(de emacsServerEditFile (File)
+## create graphical emacs-server frame with scratch-buffer selected
+(de es ()
     (call 'emacsclient
        "-s" "iorg-server"
        "-c"
        "-e"
-       (pack
-          "(progn "
-          "(and (display-graphic-p) "
-          "(set-background-color \"black\") "
-          "(set-foreground-color \"wheat\")) "
-          "(setq revert-without-query "
-          "(quote (\"/home/tj/\\.pil/tmp/.+\")))"
-          "(find-file "
-          "(expand-file-name \"" (pack File  ".el") "\" iorg-el-dir)))" ) ) )
+       (pack 
+         "(progn "
+         "(and (display-graphic-p) "
+         "(set-background-color \"black\") "
+         "(set-foreground-color \"wheat\")))" ) ) )
+         ## "(setq revert-without-query "
+         ## "(quote (\"/home/tj/\\.pil/tmp/.+\"))))" ) ) )
+
+## edit File in graphical emacs-server frame
+(de ee (File)
+   (call 'emacsclient
+      "-s" "iorg-server"
+      "-c"
+      "-e"
+      (pack
+         "(progn "
+         "(and (display-graphic-p) "
+         "(set-background-color \"black\") "
+         "(set-foreground-color \"wheat\")) "
+         ## "(setq revert-without-query "
+         ## "(quote (\"/home/tj/\\.pil/tmp/.+\")))"
+         "(let ((fn \"" File  "\"))"
+         "(if (file-name-extension fn) "
+         "(find-file (expand-file-name fn iorg-el-dir)) "
+         "(find-file (expand-file-name "
+         "(concat fn \".el\") iorg-el-dir)))))" ) ) )
 
 ## ** Others
 

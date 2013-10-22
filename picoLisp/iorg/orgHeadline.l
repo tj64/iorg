@@ -24,19 +24,19 @@
 (de choOrgHeadline (Dst)
    (diaform '(Dst)
       (<grid> "--."
-         ,"Number" (gui 'level '(+Focus +Var +NumField) '*OrgHeadlineLevel 3)
+         ,"Number" (gui ':level '(+Focus +Var +NumField) '*OrgHeadline:Level 3)
          (searchButton '(init> (: home query)))
          ,"Todo"
          (gui 'todo '(+Var +TextField) '*OrgHeadlineTodo
             '("TODO" "DONE" "NEXT" "WAITING") )
-         (resetButton '(level todo query)) )
+         (resetButton '(:level todo query)) )
       (gui 'query '(+QueryChart) (cho)
          '(goal
             (quote
                @Level (and *OrgHeadlineLevel (cons @ T))
                @Todo *OrgHeadlineTodo
                (select (@@)
-                  ((level +OrgHeadline @Level) (todo +OrgHeadline @Todo))
+                  ((:level +OrgHeadline @Level) (todo +OrgHeadline @Todo))
                   (range @Level @@ level)
                   (head @Todo @@ todo) ) ) )
          4
@@ -45,11 +45,11 @@
                This
                (pack (car (split (chop (: ptree parse-tree-id)) "_")))
                ## (last (getCategory> This))
-               (car (: title 2))
+               (car (: :title 2))
                (pack
-                  (and tags ":")
-                  (glue ":" (: tags))
-                  (and tags ":") ) ) ) )
+                  (and :tags ":")
+                  (glue ":" (: :tags))
+                  (and :tags ":") ) ) ) )
       (<table> 'chart (choTtl ,"Headlines" 'nr '+OrgHeadline)
          '((btn) (NIL ,"Category") (NIL ,"Title") (NIL ,"Tags"))
          (do (cho)
@@ -87,24 +87,24 @@
 
 
 (menu ,"OrgHeadline"
-   (idForm ,"OrgHeadline" '(choOrgHeadline) 'level '+OrgHeadline T '(may Delete)
+   (idForm ,"OrgHeadline" '(choOrgHeadline) ':level '+OrgHeadline T '(may Delete)
       '((: label) " "
         (let (Split (split (chop (: ptree parse-tree-id)) "_"))
            (pack (car Split) ".org [" (pack (cdr Split)) "] ") ) )
       (<grid> 2
         ,"Level" (gui '(+E/R +NumField)
-                    '(level : home obj) 1 )
+                    '(:level : home obj) 1 )
         ,"Priority" (gui '(+E/R +Fmt +TextField)
-                       '(priority : home obj)
+                       '(:priority : home obj)
                         char char
                        '("A" "B" "C") )
         ,"Todo" (gui '(+E/R +TextField)
-                   '(todo-keyword : home obj)
+                   '(:todo-keyword : home obj)
                    '("TODO" "DONE" "NEXT" "WAITING") )
         ,"Title" (gui '(+View +TextField)
-                    '(car (: home obj title 2)) 30 )
+                    '(car (: home obj :title 2)) 30 )
         ,"Tags" (gui '(+View +TextField)
-                   '(pack ":" (glue ":" (: home obj tags)) ":") 30 )
+                   '(pack ":" (glue ":" (: home obj :tags)) ":") 30 )
         ,"Contents" (gui '(+View +Cue +TextField)
                        NIL "Lorem ipsum dolor sit amet" 50 20 ) )
       (<spread> NIL (editButton T)) ) )
