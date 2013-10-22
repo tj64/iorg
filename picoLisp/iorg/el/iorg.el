@@ -219,28 +219,13 @@ Fixed means, in this case, adjusted for the PicoLisp reader:
 backquote leading '#' characters. And, although not strictly
 necessary, remove the leading ':' of keywords in the parse-tree
 while on it."
-  (let ((hash-regexp "#")
-        ;; (keyword-regexp
-        ;;  (concat
-        ;;   ;; 1st
-        ;;   "\\([[:space:]]\\|(\\|\"\\)"
-        ;;   ;; 2nd
-        ;;   "\\(:\\)"
-        ;;   ;; 3rd
-        ;;   "\\([[:word:]-_]+\\)"
-        ;;   ;; 4th
-        ;;   "\\([[:space:]]+\\)"))
-        )
+  (let ((hash-regexp "#"))
     (with-temp-buffer
     ;; (with-current-buffer "tmp<2>"
       (insert (prin1-to-string tree))
       (goto-char (point-min))
       (while (re-search-forward hash-regexp nil 'NOERROR)
         (replace-match "\\\\\\&"))
-      ;; (goto-char (point-min))
-      ;; (while (re-search-forward keyword-regexp nil 'NOERROR)
-      ;;   (replace-match
-      ;;    (concat "\\1\\3\\4")))
       (buffer-substring-no-properties (point-min) (point-max)))))
 
 ;; TODO: check if necessary - maybe elisp reader does all this as-is?

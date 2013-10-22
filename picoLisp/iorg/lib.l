@@ -75,6 +75,12 @@
 
 ## use this with (read) for lists
 (de emc (Exe . @)
+   (in
+      (list 'emacsclient
+         "-s" "iorg-server" "-e" (rest) )
+      (eval Exe) ) )
+
+(de emc1 (Exe . @)
    (pipe
       (in
          (list 'emacsclient
@@ -208,12 +214,12 @@
          (put> This 'title-object (makeOrgTitle L This))
          (put> This ':raw-value '(rawValue> (: title-object)))
          (put> This ':title '(: title-object title)) )
-      (and Lst
-         (put> This 'properties (processProperties (cdr Lst)))
-         (put> This ':contents (interpretParseTree (car Lst))) ) ) ) )
+      (and Lst (put> This 'properties (processProperties (cdr Lst))))
+      (and Lst (put> This ':contents (interpretParseTree (car Lst)))) ) ) )
 
 ## (processContents (cadr '(\#8= (section ...)))
 (de processContents (Lst)
+   (msg "entering processContens ...")
    (let Props NIL
       (cons
          (filter
@@ -241,6 +247,7 @@
       Props ) )
 
 (de convertParseTree (Lst)
+   ## (msg "entering convertParseTree ...")
    (mapcan
       '((X)
          (use L
@@ -257,26 +264,33 @@
                (T (cons X)) ) ) )
       Lst ) )
 
-
+## "\"" (tmp "em") "\")))"
 (de interpretParseTree (Lst)
-   (out (tmp "em")
+   ## (msg "entering interpretParseTree ...")
+   (out "/home/tj/em.dat" #(tmp "em")
       (pipe (print (convertParseTree Lst))
-         (while (echo "\\# (")
-            (prin "#(") ) ) )
+         (prog
+            (while (echo "\\# (")
+               (prin "#(") ) ) ) )
    (pipe
       (in
          (list 'emacsclient "-s" "iorg-server" "-e"
             (pack
-               "(princ "
-               "(org-element-interpret-data "
-               "(with-current-buffer "
+               "(let* ((buf "
                "(find-file-noselect "
-               "\"" (tmp "em") "\")"
+                "\"/home/tj/em.dat\"))"
+               "(strg "
+               "(org-element-interpret-data "
+               "(with-current-buffer buf "
                "(goto-char (point-min))"
-               "(read (current-buffer)))))" ) )
+               "(read (current-buffer))))))"
+               "(kill-buffer buf)"
+               "(princ strg))") )
          (while (echo "\\n")
             (prin "\^J") ) )
-      (till NIL T) ) )
+         ## (any (read)) ) )
+         (till NIL T) ) )
+
 
 
 ## *** Timestamp
@@ -578,14 +592,15 @@
       (any
          (emc '(read)
             (pack
-               "(with-current-buffer "
-               "(find-file "
-               "\"" (absPath Path) "\")"
+               "(let* ((org-cycle-silently 1)"
+               "(print-escape-newlines 1)"
+               "(buf (find-file \"" (absPath Path) "\"))"
+               "(strg (with-current-buffer buf "
                "(org-mode)"
-               "(let ((org-cycle-silently 1))"
-               "(princ "
                "(iorg-wrap-parse-tree "
-               "(iorg-convert-parse-tree)))))" ) ) ) ) )
+               "(iorg-convert-parse-tree)))))"
+               "(kill-buffer buf)"
+               "(princ strg))" ) ) ) ) )
 
 ## ** Set Path
 
