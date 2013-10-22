@@ -63,7 +63,7 @@
 (de ems (Exe . @)
    (pipe
       (in
-         (list 'emacsclient
+         (cons 'emacsclient
             "-s" "iorg-server" "-e" (rest) )
          (while (echo "\\n" "\\\"" "\\#")
             (case @
@@ -76,41 +76,85 @@
 ## use this with (read) for lists
 (de emc (Exe . @)
    (in
-      (list 'emacsclient
+      (cons 'emacsclient
          "-s" "iorg-server" "-e" (rest) )
       (eval Exe) ) )
 
+## (de emc1 (Exe . @)
+##    (pipe
+##       (in
+##          (list 'emacsclient
+##             "-s" "iorg-server" "-e" (rest) ) 
+##          (while (echo "\n" "#" "nil")
+##             (case @
+##                ("\n" (prin "^J"))
+##                ("#" (prin "\#"))
+##                ("nil" (prin NIL)) ) ) )
+##          (eval Exe) ) )
+
 (de emc1 (Exe . @)
    (pipe
-      (in
-         (list 'emacsclient
-            "-s" "iorg-server" "-e" (rest) )
-         (while (echo "\\n")
+      (in (cons 'emacsclient "-s" "iorg-server" "-e" (rest)) 
+         (while (echo "\\n" "#")
             (case @
-               ("\\n" (prin "^J")) ) ) )
+               ("\\n" (prin "^J"))
+               ("#"
+                  (let C (peek)
+                  (cond
+                     ((= "(" C)
+                      (prin "\\#") )
+                     ((format C)
+                      (prin "\\#" (till " #=") (char)) ) ) ) ) ) ) )
          (eval Exe) ) )
-
-## ** Retrieve document history
-
-(be history (@Doc @Mup)
-   (val @Mup @Doc mup) )
-
-(be history (@Doc @Mup)
-   (^ @C (box (; (-> @Doc) mup)))
-   (_history @C @Mup) )
-
-(be _history (@C @Prv) (^ @ (not (; (val (-> @C)) <))) T (fail))
-(be _history (@C @Prv) (^ @Prv (set (-> @C) (; (val (-> @C)) <))))
-(repeat)
 
 ## ** Make OrgData Objects
 
-## *** Parse Tree
+## *** Read Parse Tree
+
+## ## expects absolute PATH to org file
+## (de readParseTree (Path)
+##     (emx '(read)
+##        (pack
+##        "(add-to-list 'load-path "
+##        ## ## FIXME! should be:
+##        ## "\"" (absPath "@iorg/el/") "\"" )
+##        "\"/home/tj/git/iorg/picoLisp/iorg/el/\")" )
+##       "(require 'iorg-init)"
+##       "(require 'iorg)"
+##       "(require 'ox)"
+##       (pack
+##          "(with-current-buffer "
+##          "(find-file "
+##          "\"" Path "\")"
+##          "(org-mode)"
+##          "(let ((org-cycle-silently 1))"
+##          "(princ (iorg-normalize-parse-tree))))" ) ) )
+
+## expects absolute PATH to org file
+## stores parse-tree and all its headlines in PicoLisp DB
+(de readParseTree (Path)
+   (msg "entering readParseTree ...")
+   (processParseTree
+         (emc1 '(read)
+            (pack
+               "(let ((org-cycle-silently t) "
+               "(print-escape-newlines t) "
+               "(print-circle t)) "
+               "(with-temp-buffer "
+               "(insert-file-contents-literally \"" (absPath Path) "\") "
+               "(org-mode) "
+               "(prin1-to-string "
+               "(iorg-convert-parse-tree))))" ) ) ) ) )
+
+            ## "(iorg-wrap-parse-tree "
+
+## *** Process Parse Tree
 
 ## expects a parse-tree as produced by `iorg-normalize-parse-tree'
-(de processParseTree Tree
+(de processParseTree (Tree)
    (msg "entering processParseTree ...")
-   (makeOrgData (car Tree) (cadr Tree)) )
+   (msg Tree " =>  tree ") )
+   ## (makeOrgData (car Tree) (cadr Tree)) )
 
 ## create a new +OrgData object and trigger creation of +OrgHeadline objects
 ## for the parse-tree's headlines
@@ -199,8 +243,8 @@
             S (: :scheduled)
             C (: :closed)
             L (: :title)
-            N (: :contents)
-            Lst (and N (processContents (cadr N))) )
+            N (: :contents) ) 
+            ## Lst (and N (processContents (cadr N))) )
       (and D
          (put> This 'deadline-stamp (makeOrgTimestamp (car (tail -1 D))))
          (put> This ':deadline '(rawValue> (: deadline-stamp))) )
@@ -213,9 +257,9 @@
       (and L
          (put> This 'title-object (makeOrgTitle L This))
          (put> This ':raw-value '(rawValue> (: title-object)))
-         (put> This ':title '(: title-object title)) )
-      (and Lst (put> This 'properties (processProperties (cdr Lst))))
-      (and Lst (put> This ':contents (interpretParseTree (car Lst)))) ) ) )
+         (put> This ':title '(: title-object title)) ) ) ) )
+      ## (and Lst (put> This 'properties (processProperties (cdr Lst))))
+      ## (and Lst (put> This ':contents (interpretParseTree (car Lst)))) ) ) )
 
 ## (processContents (cadr '(\#8= (section ...)))
 (de processContents (Lst)
@@ -559,48 +603,20 @@
    (httpHead (: mt) 60 (: nm))
    (in (blob This 'd) (ht:Out *Chunked (echo))) )
 
+## ** Retrieve document history
+
+(be history (@Doc @Mup)
+   (val @Mup @Doc mup) )
+
+(be history (@Doc @Mup)
+   (^ @C (box (; (-> @Doc) mup)))
+   (_history @C @Mup) )
+
+(be _history (@C @Prv) (^ @ (not (; (val (-> @C)) <))) T (fail))
+(be _history (@C @Prv) (^ @Prv (set (-> @C) (; (val (-> @C)) <))))
+(repeat)
 
 ## * Predefined Emacs Calls
-
-## ** Read Parse Tree
-
-## ## expects absolute PATH to org file
-## (de readParseTree (Path)
-##     (emx '(read)
-##        (pack
-##        "(add-to-list 'load-path "
-##        ## ## FIXME! should be:
-##        ## "\"" (absPath "@iorg/el/") "\"" )
-##        "\"/home/tj/git/iorg/picoLisp/iorg/el/\")" )
-##       "(require 'iorg-init)"
-##       "(require 'iorg)"
-##       "(require 'ox)"
-##       (pack
-##          "(with-current-buffer "
-##          "(find-file "
-##          "\"" Path "\")"
-##          "(org-mode)"
-##          "(let ((org-cycle-silently 1))"
-##          "(princ (iorg-normalize-parse-tree))))" ) ) )
-
-
-## expects absolute PATH to org file
-## stores parse-tree and all its headlines in PicoLisp DB
-(de readParseTree (Path)
-   (msg "entering readParseTree ...")
-   (eval
-      (any
-         (emc '(read)
-            (pack
-               "(let* ((org-cycle-silently 1)"
-               "(print-escape-newlines 1)"
-               "(buf (find-file \"" (absPath Path) "\"))"
-               "(strg (with-current-buffer buf "
-               "(org-mode)"
-               "(iorg-wrap-parse-tree "
-               "(iorg-convert-parse-tree)))))"
-               "(kill-buffer buf)"
-               "(princ strg))" ) ) ) ) )
 
 ## ** Set Path
 

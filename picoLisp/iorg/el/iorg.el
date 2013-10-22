@@ -145,15 +145,19 @@ environmental properties."
               (org-export--get-buffer-attributes)))
            (author (plist-get env-attr :author))
            (descr (plist-get env-attr :description))
-           (infile (plist-get buf-attr :input-file)))
+           (infile-or-buf
+            (or (plist-get buf-attr :input-file)
+                (with-current-buffer buffer
+                  (buffer-name)))))
       (setcar (cdr tree)
               (list
                :parse-tree-id (make-temp-name
                                (concat
                                 (file-name-nondirectory
-                                 (file-name-sans-extension infile)) "_"))
+                                 (file-name-sans-extension
+                                  infile-or-buf)) "_"))
                ;; :elem-id 0
-               :input-file infile
+               :input-file infile-or-buf
                ;; :date (plist-get (cadar (plist-get env-attr :date))
                ;;              :raw-value)
                :author (when author
@@ -258,20 +262,18 @@ from all '\#' labels."
 
 ;; **** Normalize Parse-Tree
 
-(defun iorg-convert-parse-tree
-  (&optional data buffer-or-file preserve-nil-and-t-p)
+ ;; preserve-nil-and-t-p)
+(defun iorg-convert-parse-tree (&optional data buffer-or-file)
   "Converts an org-element parse-tree to PicoLisp syntax.
 
 Optional argument DATA should be part of or an entire parse-tree
 as returned by `org-element-parse-buffer', optional argument
 BUFFER-OR-FILE is either the name of an existing Org-mode buffer
-or the name of an Org-mode file.
-
-If optional argument PRESERVE-NIL-AND-T-P is non-nil, nil and t
-are not converted to uppercase forms NIL and T."
+or the name of an Org-mode file."
+  ;; If optional argument PRESERVE-NIL-AND-T-P is non-nil, nil and t
+  ;; are not converted to uppercase forms NIL and T."
   ;; get data and arguments
-  (let* ((print-circle t)
-         (buf (or (and buffer-or-file
+  (let* ((buf (or (and buffer-or-file
                        (or (get-buffer buffer-or-file)
                            (if (and
                                 (file-exists-p buffer-or-file)
@@ -281,16 +283,20 @@ are not converted to uppercase forms NIL and T."
                              (error "File %s is not a valid Org file"
                                     buffer-or-file))))
                   (current-buffer)))
+         (print-circle t)
+         (print-escape-newlines t)
          (dat (or data
                   (with-current-buffer buf
-                    (org-element-parse-buffer 'object))))
-         (converted-parse-tree-as-string
-          (iorg--fix-read-syntax
-           (iorg--tag-org-data-element dat buf))))
-    ;; upcase nil and t?
-    (if preserve-nil-and-t-p
-        converted-parse-tree-as-string
-      (iorg--nil-and-t-to-uppercase converted-parse-tree-as-string))))
+                    (org-element-parse-buffer 'object)))))
+    ;; (converted-parse-tree-as-string
+    ;;  (iorg--fix-read-syntax
+    (iorg--tag-org-data-element dat buf)))
+
+
+    ;; ;; upcase nil and t?
+    ;; (if preserve-nil-and-t-p
+    ;;     converted-parse-tree-as-string
+    ;;   (iorg--nil-and-t-to-uppercase converted-parse-tree-as-string))))
 
 (defun iorg-wrap-parse-tree (tree-as-string)
   "Wrap TREE-AS-STRING in PicoLisp function `processParseTree'."
