@@ -27,25 +27,22 @@
          ,"Number" (gui ':level '(+Focus +Var +NumField) '*OrgHeadline:Level 3)
          (searchButton '(init> (: home query)))
          ,"Todo"
-         (gui ':todo-keyword '(+Var +TextField) '*OrgHeadlineTodo
+         (gui 'todo '(+Var +TextField) '*OrgHeadlineTodo
             '("TODO" "DONE" "NEXT" "WAITING") )
-         (resetButton '(:level :todo-keyword query)) )
+         (resetButton '(:level todo query)) )
       (gui 'query '(+QueryChart) (cho)
          '(goal
             (quote
                @Level (and *OrgHeadlineLevel (cons @ T))
                @Todo *OrgHeadlineTodo
                (select (@@)
-                  ((:level +OrgHeadline @Level)
-                   (:todo-keyword +OrgHeadline @Todo) )
+                  ((:level +OrgHeadline @Level) (todo +OrgHeadline @Todo))
                   (range @Level @@ level)
                   (head @Todo @@ todo) ) ) )
-         6
+         4
          '((This)
             (list
                This
-               (: :level)
-               (: :todo-keyword)
                (pack (car (split (chop (: ptree parse-tree-id)) "_")))
                ## (last (getCategory> This))
                (car (: :title 2))
@@ -54,15 +51,13 @@
                   (glue ":" (: :tags))
                   (and :tags ":") ) ) ) )
       (<table> 'chart (choTtl ,"Headlines" 'nr '+OrgHeadline)
-         '((btn) (NIL ,"Number") (NIL ,"Todo") (NIL ,"Category") (NIL ,"Title") (NIL ,"Tags"))
+         '((btn) (NIL ,"Category") (NIL ,"Title") (NIL ,"Tags"))
          (do (cho)
             (<row> (alternating)
                (gui 1 '(+DstButton) Dst)
-               (gui 2 '(+NumField))
+               (gui 2 '(+TextField))
                (gui 3 '(+TextField))
-               (gui 4 '(+TextField))
-               (gui 5 '(+TextField))
-               (gui 6 '(+TextField)) ) ) )
+               (gui 4 '(+TextField)) ) ) )
       (<spread>
          (scroll (cho))
          (newButton T Dst '(+OrgHeadline))
@@ -94,39 +89,24 @@
 (menu ,"OrgHeadline"
    (idForm ,"OrgHeadline" '(choOrgHeadline) ':level '+OrgHeadline T '(may Delete)
       '((: label) " "
-        (let Split (split (chop (: ptree parse-tree-id)) "_")
+        (let (Split (split (chop (: ptree parse-tree-id)) "_"))
            (pack (car Split) ".org [" (pack (cdr Split)) "] ") ) )
-      (<grid> 3
-         ,"Level" NIL
-         (gui '(+E/R +NumField) '(:level : home obj) 1)
-         ,"Priority" NIL
-         (gui '(+E/R +Fmt +TextField)
-            '(:priority : home obj)
-            char char
-            '("A" "B" "C") )
-         ,"Todo" NIL
-         (gui '(+E/R +TextField)
-            '(:todo-keyword : home obj)
-            '("TODO" "DONE" "NEXT" "WAITING") )
-         ,"Title"
-         (choTitle 0)
-         (gui '(+E/R +Obj +TextField)
-            '(title-object : home obj)
-            '(title +OrgTitle)
-            30 )
-         NIL NIL
-         (gui '(+View +TextField)
-            '(rawValue> (; (val> (field -1)) timestamp))
-            30 )
-         ,"Tags" NIL
-         (gui '(+View +TextField)
-            '(pack ":" (glue ":" (: home obj :tags)) ":")
-            30 )
-         ,"Contents" NIL
-         (gui '(+E/R +Cue +TextField)
-            '(:contents : home obj)
-            NIL "Lorem ipsum dolor sit amet"
-            50 20 ) )
-   (<spread> NIL (editButton T)) ) )
+      (<grid> 2
+        ,"Level" (gui '(+E/R +NumField)
+                    '(:level : home obj) 1 )
+        ,"Priority" (gui '(+E/R +Fmt +TextField)
+                       '(:priority : home obj)
+                        char char
+                       '("A" "B" "C") )
+        ,"Todo" (gui '(+E/R +TextField)
+                   '(:todo-keyword : home obj)
+                   '("TODO" "DONE" "NEXT" "WAITING") )
+        ,"Title" (gui '(+View +TextField)
+                    '(car (: home obj :title 2)) 30 )
+        ,"Tags" (gui '(+View +TextField)
+                   '(pack ":" (glue ":" (: home obj :tags)) ":") 30 )
+        ,"Contents" (gui '(+View +Cue +TextField)
+                       NIL "Lorem ipsum dolor sit amet" 50 20 ) )
+      (<spread> NIL (editButton T)) ) )
 
 ## iorg/orgHeadline.l ends here

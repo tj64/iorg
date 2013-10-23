@@ -80,6 +80,18 @@
          "-s" "iorg-server" "-e" (rest) )
       (eval Exe) ) )
 
+(de emc2 (Exe . @)
+   (pipe
+      (in
+         (cons 'emacsclient
+            "-s" "iorg-server" "-e" (rest) )
+         (while (echo "\\n" "\\#")
+            (case @
+               ("\\n" (prin "^J"))
+               ("\\#" (prin "\#")) ) ) )
+      ## (out 'emc (echo)) ) )
+      (eval Exe) ) )
+
 (de emc1 (Exe . @)
    (pipe
       (in (cons 'emacsclient "-s" "iorg-server" "-e" (rest)) 
@@ -132,7 +144,7 @@
                "(with-temp-buffer "
                "(insert-file-contents-literally \"" (absPath Path) "\") "
                "(org-mode) "
-               "(print "
+               "(princ "
                "(iorg-convert-parse-tree))))" ) ) ) ) )
 
 ## *** Process Parse Tree
