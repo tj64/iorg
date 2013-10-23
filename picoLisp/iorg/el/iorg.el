@@ -151,22 +151,22 @@ environmental properties."
                   (buffer-name)))))
       (setcar (cdr tree)
               (list
-               :parse-tree-id (make-temp-name
+               parse-tree-id (make-temp-name
                                (concat
                                 (file-name-nondirectory
                                  (file-name-sans-extension
                                   infile-or-buf)) "_"))
                ;; :elem-id 0
-               :input-file infile-or-buf
+               input-file infile-or-buf
                ;; :date (plist-get (cadar (plist-get env-attr :date))
                ;;              :raw-value)
-               :author (when author
+               author (when author
                          (substring-no-properties (car author)))
                ;; (substring-no-properties author))
-               :creator (plist-get env-attr :creator)
-               :email (plist-get env-attr :email)
+               creator (plist-get env-attr :creator)
+               email (plist-get env-attr :email)
                ;; :description descr
-               :description (when descr
+               description (when descr
                               ;; (substring-no-properties (car descr))))
                               (substring-no-properties descr))))))
   tree)
