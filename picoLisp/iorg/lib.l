@@ -122,8 +122,9 @@
 ## stores parse-tree and all its headlines in PicoLisp DB
 (de readParseTree (Path)
    (msg "entering readParseTree ...")
-   (processParseTree
-         (emc1 '(read)
+   (eval
+      (any
+         (emc '(read)
             (pack
                "(let ((org-cycle-silently t) "
                "(print-escape-newlines t) "
@@ -131,15 +132,14 @@
                "(with-temp-buffer "
                "(insert-file-contents-literally \"" (absPath Path) "\") "
                "(org-mode) "
-               "(iorg-convert-parse-tree)))" ) ) ) )
+               "(print "
+               "(iorg-convert-parse-tree))))" ) ) ) ) )
 
 ## *** Process Parse Tree
 
 ## expects a parse-tree as produced by `iorg-normalize-parse-tree'
-(de processParseTree (Tree)
-   (msg "entering processParseTree ...")
-   (msg Tree " =>  tree ") )
-   ## (makeOrgData (car Tree) (cadr Tree)) )
+(de processParseTree Tree
+   (makeOrgData (car Tree) (cadr Tree)) )
 
 ## create a new +OrgData object and trigger creation of +OrgHeadline objects
 ## for the parse-tree's headlines
@@ -227,8 +227,8 @@
       (let (D (: :deadline)
             S (: :scheduled)
             C (: :closed)
-            L (: :title)
-            N (: :contents) ) 
+            L (: :title) )
+            ## N (: :contents) ) 
             ## Lst (and N (processContents (cadr N))) )
       (and D
          (put> This 'deadline-stamp (makeOrgTimestamp (car (tail -1 D))))
