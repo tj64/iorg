@@ -220,9 +220,7 @@ MATCH is the match-string to be converted, with 'nil' becoming
 (defun iorg--fix-read-syntax (tree)
   "Returns parse TREE as string with read syntax fixed.
 Fixed means, in this case, adjusted for the PicoLisp reader:
-backquote leading '#' characters. And, although not strictly
-necessary, remove the leading ':' of keywords in the parse-tree
-while on it."
+backquote leading '#' characters."
   (let ((hash-regexp "#"))
     (with-temp-buffer
     ;; (with-current-buffer "tmp<2>"
@@ -262,16 +260,17 @@ from all '\#' labels."
 
 ;; **** Normalize Parse-Tree
 
- ;; preserve-nil-and-t-p)
-(defun iorg-convert-parse-tree (&optional data buffer-or-file)
+(defun iorg-convert-parse-tree
+  (&optional data buffer-or-file preserve-nil-and-t-p)
   "Converts an org-element parse-tree to PicoLisp syntax.
 
 Optional argument DATA should be part of or an entire parse-tree
 as returned by `org-element-parse-buffer', optional argument
 BUFFER-OR-FILE is either the name of an existing Org-mode buffer
-or the name of an Org-mode file."
-  ;; If optional argument PRESERVE-NIL-AND-T-P is non-nil, nil and t
-  ;; are not converted to uppercase forms NIL and T."
+or the name of an Org-mode file.
+
+If optional argument PRESERVE-NIL-AND-T-P is non-nil, nil and t
+are not converted to uppercase forms NIL and T."
   ;; get data and arguments
   (let* ((buf (or (and buffer-or-file
                        (or (get-buffer buffer-or-file)
@@ -287,16 +286,15 @@ or the name of an Org-mode file."
          (print-escape-newlines t)
          (dat (or data
                   (with-current-buffer buf
-                    (org-element-parse-buffer 'object)))))
-    ;; (converted-parse-tree-as-string
-    ;;  (iorg--fix-read-syntax
-    (iorg--tag-org-data-element dat buf)))
-
-
-    ;; ;; upcase nil and t?
-    ;; (if preserve-nil-and-t-p
-    ;;     converted-parse-tree-as-string
-    ;;   (iorg--nil-and-t-to-uppercase converted-parse-tree-as-string))))
+                    (org-element-parse-buffer 'object))))
+         (converted-parse-tree-as-string
+          (iorg-wrap-parse-tree
+           (iorg--fix-read-syntax
+            (iorg--tag-org-data-element dat buf)))))
+    ;; upcase nil and t?
+    (if preserve-nil-and-t-p
+        converted-parse-tree-as-string
+      (iorg--nil-and-t-to-uppercase converted-parse-tree-as-string))))
 
 (defun iorg-wrap-parse-tree (tree-as-string)
   "Wrap TREE-AS-STRING in PicoLisp function `processParseTree'."
