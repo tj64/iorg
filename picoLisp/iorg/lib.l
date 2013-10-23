@@ -145,7 +145,24 @@
                "(insert-file-contents-literally \"" (absPath Path) "\") "
                "(org-mode) "
                "(princ "
-               "(iorg-convert-parse-tree))))" ) ) ) ) )
+               "(iorg-wrap-parse-tree "
+               "(iorg-convert-parse-tree)))))" ) ) ) ) )
+
+## (de readParseTree (Path)
+##    (msg "entering readParseTree ...")
+##    (eval
+##       (any
+##          (emc '(read)
+##             (pack
+##                "(with-current-buffer "
+##                "(find-file "
+##                "\"" (absPath Path) "\")"
+##                "(org-mode)"
+##                "(let ((org-cycle-silently 1))"
+##                "(princ "
+##                "(iorg-wrap-parse-tree "
+##                "(iorg-convert-parse-tree)))))" ) ) ) ) )
+
 
 ## *** Process Parse Tree
 

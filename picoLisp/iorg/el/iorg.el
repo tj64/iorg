@@ -288,9 +288,9 @@ are not converted to uppercase forms NIL and T."
                   (with-current-buffer buf
                     (org-element-parse-buffer 'object))))
          (converted-parse-tree-as-string
-          (iorg-wrap-parse-tree
+          ;; (iorg-wrap-parse-tree
            (iorg--fix-read-syntax
-            (iorg--tag-org-data-element dat buf)))))
+            (iorg--tag-org-data-element dat buf))))
     ;; upcase nil and t?
     (if preserve-nil-and-t-p
         converted-parse-tree-as-string
