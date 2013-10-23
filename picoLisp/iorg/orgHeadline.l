@@ -40,8 +40,8 @@
 
 (menu ,"OrgHeadline"
    (idForm ,"OrgHeadline" '(choOrgHeadline) ':level '+OrgHeadline T '(may Delete)
-      '((: label) " "
-        (let Split (split (chop (: ptree parse-tree-id)) "_")
+      '((: :label) " "
+        (let Split (split (chop (: :ptree :parse-tree-id)) "_")
            (pack (car Split) ".org [" (pack (cdr Split)) "] ") ) )
       (<grid> 3
          ,"Level" NIL
@@ -57,19 +57,19 @@
             '("TODO" "DONE" "NEXT" "WAITING") )
          ,"Title" (choTitle 0)
          (gui '(+E/R +Obj +TextField)
-            '(title-object : home obj)
-            '(title +OrgTitle)
+            '(:title-object : home obj)
+            '(:title +OrgTitle)
             30 )
          NIL NIL
          (gui '(+View +TextField)
-            '(and (; (val> (field -1)) timestamp) (rawValue> @))
+            '(and (; (val> (field -1)) :timestamp) (rawValue> @))
             30 )
          ,"Tags" NIL
          (gui '(+View +TextField)
             '(pack ":" (glue ":" (: home obj :tags)) ":")
             30 ) )
       (----)
-      (gui '(+E/R +Chart) '(properties : home obj) 4)
+      (gui '(+E/R +Chart) '(:properties : home obj) 4)
       (<table> NIL ,"Properties" '((NIL ,"Key") (NIL ,"Value"))
          (do 6
             (<row> NIL

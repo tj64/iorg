@@ -153,7 +153,6 @@
          (newButton T Dst '(+Doc))
          (cancelButton) ) ) )
 
-# Eventuell nach "gui.l" schieben
 (de choOrgHeadline (Dst)
    (diaform '(Dst)
       (<grid> "--."
@@ -179,7 +178,7 @@
                This
                (: :level)
                (: :todo-keyword)
-               (pack (car (split (chop (: ptree parse-tree-id)) "_")))
+               (pack (car (split (chop (: :ptree :parse-tree-id)) "_")))
                ## (last (getCategory> This))
                (car (: :title 2))
                (pack
@@ -187,7 +186,7 @@
                   (glue ":" (: :tags))
                   (and :tags ":") ) ) ) )
       (<table> 'chart (choTtl ,"Headlines" 'nr '+OrgHeadline)
-         '((btn) (NIL ,"Number") (NIL ,"Todo") (NIL ,"Category") (NIL ,"Title") (NIL ,"Tags"))
+         '((btn) (NIL ,"Level") (NIL ,"Todo") (NIL ,"Category") (NIL ,"Title") (NIL ,"Tags"))
          (do (cho)
             (<row> (alternating)
                (gui 1 '(+DstButton) Dst)

@@ -199,7 +199,7 @@
                ':contents (and
                             (== 'section (caadr Lst))
                             (cut 2 'Lst) )
-               'label Label )
+               ':label Label )
             (msg Obj " => New OrgData object created")
             (msg (show Obj) " => Show New OrgData object")
             (while Lst
@@ -235,11 +235,11 @@
          ':contents (and
                       (== 'section (caadr Lst))
                       (cut 2 'Lst) )
-         'ptree Ptree
-         'label Label )
+         ':ptree Ptree
+         ':label Label )
       (put> Obj 'ancestor
-         (db 'label '+orgBaseElement
-            (makeHashLbl (hashLblNum> Obj 'parent)) ) )
+         (db ':label '+orgBaseElement
+            (makeHashLbl (hashLblNum> Obj ':parent)) ) )
       (msg Obj " => New OrgHeadline object created")
       (treatOrgHeadline Obj) )
 (while Lst
@@ -261,19 +261,19 @@
             N (: :contents)
             Lst (and N (processContents (cadr N))) )
       (and D
-         (put> This 'deadline-stamp (makeOrgTimestamp (car (tail -1 D))))
-         (put> This ':deadline '(rawValue> (: deadline-stamp))) )
+         (put> This ':deadline-stamp (makeOrgTimestamp (car (tail -1 D))))
+         (put> This ':deadline '(rawValue> (: :deadline-stamp))) )
       (and S
-         (put> This 'scheduled-stamp (makeOrgTimestamp (car (tail -1 S))))
-         (put> This ':scheduled '(rawValue> (: scheduled-stamp))) )
+         (put> This ':scheduled-stamp (makeOrgTimestamp (car (tail -1 S))))
+         (put> This ':scheduled '(rawValue> (: :scheduled-stamp))) )
       (and C
-         (put> This 'closed-stamp (makeOrgTimestamp (car (tail -1 C))))
-         (put> This ':closed '(rawValue> (: closed-stamp))) )
+         (put> This ':closed-stamp (makeOrgTimestamp (car (tail -1 C))))
+         (put> This ':closed '(rawValue> (: :closed-stamp))) )
       (and L
-         (put> This 'title-object (makeOrgTitle L This))
-         (put> This ':raw-value '(rawValue> (: title-object)))
-         (put> This ':title '(: title-object title)) )
-      (and Lst (put> This 'properties (processProperties (cdr Lst))))
+         (put> This ':title-object (makeOrgTitle L This))
+         (put> This ':raw-value '(rawValue> (: :title-object)))
+         (put> This ':title '(: :title-object :title)) )
+      (and Lst (put> This ':properties (processProperties (cdr Lst))))
       (and Lst (put> This ':contents (car Lst)))) ) )
 
 ## (processContents (cadr '(\#8= (section ...)))
@@ -373,34 +373,34 @@
 (de treatOrgTimestamp (S)
    (msg "entering treatOrgTimestamp ...")
    (with S
-      (put> S 'start-dat
+      (put> S ':start-dat
          (date (: :year-start)(: :month-start)(: :day-start)) )
-      (put> S 'start-tim
+      (put> S ':start-tim
          (time (: :hour-start)(: :minute-start)) )
-      (put> S 'end-dat
+      (put> S ':end-dat
          (date (: :year-end)(: :month-end)(: :day-end)) )
-      (put> S 'end-tim
+      (put> S ':end-tim
          (time (: :hour-end)(: :minute-end)) )
       (put> S ':year-start
-         '(car (date (: start-dat))) )
+         '(car (date (: :start-dat))) )
       (put> S ':month-start
-         '(cadr (date (: start-dat))) )
+         '(cadr (date (: :start-dat))) )
       (put> S ':day-start
-         '(last (date (: start-dat))) )
+         '(last (date (: :start-dat))) )
       (put> S ':hour-start
-         '(car (time (: start-tim))) )
+         '(car (time (: :start-tim))) )
       (put> S ':minute-start
-         '(cadr (time (: start-tim))) )
+         '(cadr (time (: :start-tim))) )
       (put> S ':year-end
-         '(car (date (: end-dat))) )
+         '(car (date (: :end-dat))) )
       (put> S ':month-end
-         '(cadr (date (: end-dat))) )
+         '(cadr (date (: :end-dat))) )
       (put> S ':day-end
-         '(last (date (: end-dat))) )
+         '(last (date (: :end-dat))) )
       (put> S ':hour-end
-         '(car (time (: end-tim))) )
+         '(car (time (: :end-tim))) )
       (put> S ':minute-end
-         '(cadr (time (: end-tim))) ) ) )
+         '(cadr (time (: :end-tim))) ) ) )
 
 
 ## *** Title
@@ -413,8 +413,8 @@
                                      (= (car X) 'timestamp) ) )
                               Lst ) ) )
          Obj (new (db: +OrgTitle) '(+OrgTitle)
-                'title RawValue
-                'timestamp (and TimeStamp
+                ':title RawValue
+                ':timestamp (and TimeStamp
                               (makeOrgTimestamp (car (tail -1 TimeStamp))) ) ) )
       (msg Obj " => New OrgTitle object created")
       (treatOrgTitle Obj)
@@ -423,18 +423,18 @@
 ## FIXME put title too when no timestamp
 (de treatOrgTitle (Title)
    (msg "entering treatOrgTitle ...")
-   (when (; Title timestamp)
-      (let L (chop (; Title title))
+   (when (; Title :timestamp)
+      (let L (chop (; Title :title))
          (and
             (seek
                '((L)
                   (head
                      (cons "<" (chop (dat$ (; Title
-                  timestamp start-dat) "-")))
+                  :timestamp :start-dat) "-")))
                      (cdr L) ) )
                L )
             (con @) )
-         (put> Title 'title (pack (trim L))) ) ) )
+         (put> Title ':title (pack (trim L))) ) ) )
 
 ## *** Property
 

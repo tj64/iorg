@@ -191,8 +191,8 @@
 ## **** Code
 
 (class +orgBaseElement +Entity)
-(rel descendants (+List +Joint) ancestor (+orgElement))
-(rel label (+Ref +Symbol))
+(rel :descendants (+List +Joint) ancestor (+orgElement))
+(rel :label (+Ref +Symbol))
 (rel :contents (+Any))
 
 (dm url> ())
@@ -218,13 +218,13 @@
 ## **** Comments
 
 ## - ancestor :: joint link to ancestor element
-## - :parent :: element/Object containing it
+## - :3parent :: element/Object containing it
 ## - :post-blank :: number of trailing blank lines/spaces
 
 ## **** Code
 
 (class +orgElement +orgBaseElement)
-(rel ancestor (+Joint) descendants (+orgBaseElement))
+(rel :ancestor (+Joint) descendants (+orgBaseElement))
 (rel :parent (+Ref +Symbol))
 (rel :post-blank (+Number))
 
@@ -246,12 +246,12 @@
 ## Parse-Tree (meta data for containing org file,
 ## collected from Emacs environment, plus root elem-id)
 (class +OrgData +orgBaseElement)
-(rel parse-tree-id (+Need +Sn +Idx +String))
-(rel input-file (+Need +Ref +String))
-(rel author (+Ref +String))
-(rel email (+Ref +String))
-(rel creator (+Sn +Idx +String))
-(rel description (+Sn +Idx +String))
+(rel :parse-tree-id (+Need +Sn +Idx +String))
+(rel :input-file (+Need +Ref +String))
+(rel :author (+Ref +String))
+(rel :email (+Ref +String))
+(rel :creator (+Sn +Idx +String))
+(rel :description (+Sn +Idx +String))
 
 (dm url> (Tab)
    (and (may OrgData) (list "iorg/orgData.l" '*ID This)) )
@@ -310,21 +310,21 @@
 ## **** Code
 
 (class +OrgHeadline +orgElement)
-(rel ptree (+Aux +Ref +Link) (label) NIL (+OrgData))
+(rel :ptree (+Aux +Ref +Link) (label) NIL (+OrgData))
 (rel :title (+Any))
 (rel :raw-value (+Any))
-(rel title-object (+Ref +Link) NIL (+OrgTitle))
+(rel :title-object (+Ref +Link) NIL (+OrgTitle))
 ## TODO deal with alt-title (just like with title?)
 (rel :alt-title (+Any))
 ## (rel properties (+List +Ref +Link) NIL (+OrgProperty))
 ## (put> Obj 'properties
 ##    (make (while .. (link (list Key Val)))) )
-(rel properties (+List +Bag)
+(rel :properties (+List +Bag)
    ((+Ref +String))              # Key
    ((+String)) )                 # Value
 ## (rel timestamps (+List +Ref +Link) NIL (+OrgTimestamp))
 ## (rel CATEGORY (+Any))
-(rel category (+Ref +String))
+(rel :category (+Ref +String))
 (rel :pre-blank (+Number))
 (rel :hiddenp (+Symbol))
 (rel :level (+Need +Ref +Number))
@@ -333,11 +333,11 @@
 ## (rel raw-tags (+String))
 (rel :todo-keyword (+Ref +String))
 (rel :scheduled (+Any))
-(rel scheduled-stamp (+Ref +Link) NIL (+OrgTimestamp))
+(rel :scheduled-stamp (+Ref +Link) NIL (+OrgTimestamp))
 (rel :deadline (+Any))
-(rel deadline-stamp (+Ref +Link) NIL (+OrgTimestamp))
+(rel :deadline-stamp (+Ref +Link) NIL (+OrgTimestamp))
 (rel :closed (+Any))
-(rel closed-stamp (+Ref +Link) NIL (+OrgTimestamp))
+(rel :closed-stamp (+Ref +Link) NIL (+OrgTimestamp))
 (rel :quotedp (+Bool))
 (rel :archivedp (+Symbol))
 (rel :commentedp (+Bool))
@@ -459,10 +459,10 @@
 (rel :day-end (+Any))
 (rel :hour-end (+Any))
 (rel :minute-end (+Any))
-(rel start-dat (+Aux +Ref +Date) (start-tim))
-(rel start-tim (+Time))
-(rel end-dat (+Aux +Ref +Date) (end-tim))
-(rel end-tim (+Time))
+(rel :start-dat (+Aux +Ref +Date) (start-tim))
+(rel :start-tim (+Time))
+(rel :end-dat (+Aux +Ref +Date) (end-tim))
+(rel :end-tim (+Time))
 (rel :repeater-type (+Symbol))
 (rel :repeater-value (+Number))
 (rel :repeater-unit (+Symbol))
@@ -480,7 +480,7 @@
 (dm rawValue> ()
    (let (TypeLst (mapcar pack (split (chop (: :type)) "-"))
          Range? (member "range" TypeLst)
-         SameDate? (and Range? (= (: start-dat) (: end-dat)))
+         SameDate? (and Range? (= (: :start-dat) (: :end-dat)))
          Inactive? (member "inactive" TypeLst)
          Delimiters (if Inactive? (cons "[" "]") (cons "<" ">"))
          StartStamp (pack
@@ -488,13 +488,13 @@
                                 (car Delimiters)
                                 "@1 @2@3@4"
                                 (cdr Delimiters) )
-                          (dat$ (: start-dat) "-")
-                          (pack (head 2 (chop (day (: start-dat)))))
+                          (dat$ (: :start-dat) "-")
+                          (pack (head 2 (chop (day (: :start-dat)))))
                           (or
                              (and (eval (: :hour-start))
-                                (pack " " (tim$ (: start-tim))
+                                (pack " " (tim$ (: :start-tim))
                                    (and Range? SameDate?
-                                      (pack "-" (tim$ (: end-tim))) ) ) )
+                                      (pack "-" (tim$ (: :end-tim))) ) ) )
                              "" )
                           (or
                              (and (: :repeater-type)
@@ -506,12 +506,12 @@
                                 (car Delimiters)
                                  "@1 @2@3"
                                 (cdr Delimiters) )
-                           (dat$ (: end-dat) "-")
-                           (pack (head 2 (chop (day (: end-dat)))))
+                           (dat$ (: :end-dat) "-")
+                           (pack (head 2 (chop (day (: :end-dat)))))
                            (or
                               (and (eval (: :hour-end))
                                  (pack " "
-                                    (tim$ (: end-tim)) ) )
+                                    (tim$ (: :end-tim)) ) )
                               "" ) ) ) ) )
       (if EndStamp
          (pack StartStamp "--" EndStamp)
@@ -529,14 +529,14 @@
 ## **** Code
 
 (class +OrgTitle +orgElement)
-(rel title (+Ref +String))
-(rel timestamp (+Ref +Link) NIL (+OrgTimestamp))
+(rel :title (+Ref +String))
+(rel :timestamp (+Ref +Link) NIL (+OrgTimestamp))
 
 (dm rawValue> ()
    (pack
-      (: title)
-      (and (: timestamp)
-         (pack " " (rawValue> (: timestamp))) ) ) )
+      (: :title)
+      (and (: :timestamp)
+         (pack " " (rawValue> (: :timestamp))) ) ) )
 
 ## *** Node Properties
 ## **** Comments
