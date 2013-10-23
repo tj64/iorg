@@ -256,9 +256,9 @@
       (let (D (: :deadline)
             S (: :scheduled)
             C (: :closed)
-            L (: :title) )
-            ## N (: :contents) ) 
-            ## Lst (and N (processContents (cadr N))) )
+            L (: :title)
+            N (: :contents)
+            Lst (and N (processContents (cadr N))) )
       (and D
          (put> This 'deadline-stamp (makeOrgTimestamp (car (tail -1 D))))
          (put> This ':deadline '(rawValue> (: deadline-stamp))) )
@@ -271,9 +271,9 @@
       (and L
          (put> This 'title-object (makeOrgTitle L This))
          (put> This ':raw-value '(rawValue> (: title-object)))
-         (put> This ':title '(: title-object title)) ) ) ) )
-      ## (and Lst (put> This 'properties (processProperties (cdr Lst))))
-      ## (and Lst (put> This ':contents (interpretParseTree (car Lst)))) ) ) )
+         (put> This ':title '(: title-object title)) )
+      (and Lst (put> This 'properties (processProperties (cdr Lst))))
+      (and Lst (put> This ':contents (car Lst)))) ) )
 
 ## (processContents (cadr '(\#8= (section ...)))
 (de processContents (Lst)
