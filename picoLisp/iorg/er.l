@@ -199,7 +199,7 @@
 (dm upd> ())
 (dm diff> ())
 (dm new> ())
-## return for relation Rel hashLbl number as string 
+## return for relation Rel hashLbl number as string
 (dm hashLblNum> (Rel)
    (pack
       (tail -1
@@ -316,7 +316,12 @@
 (rel title-object (+Ref +Link) NIL (+OrgTitle))
 ## TODO deal with alt-title (just like with title?)
 (rel :alt-title (+Any))
-(rel properties (+List +Ref +Link) NIL (+OrgProperty))
+## (rel properties (+List +Ref +Link) NIL (+OrgProperty))
+## (put> Obj 'properties
+##    (make (while .. (link (list Key Val)))) )
+(rel properties (+List +Bag)
+   ((+Ref +String))              # Key
+   ((+String)) )                 # Value
 ## (rel timestamps (+List +Ref +Link) NIL (+OrgTimestamp))
 ## (rel CATEGORY (+Any))
 (rel category (+Ref +String))
@@ -432,9 +437,9 @@
 ## - :day-end :: number (convenience attribute)
 ## - :hour-end :: number (convenience attribute)
 ## - :minute-end :: number (convenience attribute)
-## - start-dat ::  start date 
+## - start-dat ::  start date
 ## - start-tim :: time of start date
-## - end-dat :: end date 
+## - end-dat :: end date
 ## - end-tim :: time of end date
 ## - :repeater-type :: cumulative, catch-up or restart
 ## - :repeater-value :: number
@@ -541,12 +546,12 @@
 
 ## **** Code
 
-(class +OrgNodeProperty +orgElement)
-(rel key (+Ref +String))
-(rel value (+Ref +String))
+## (class +OrgNodeProperty +orgElement)
+## (rel key (+Ref +String))
+## (rel value (+Ref +String))
 
-(dm rawValue> ()
-   (pack (: key) " " (: value)) )
+## (dm rawValue> ()
+##    (pack (: key) " " (: value)) )
 
 
 ## ** iOrg data

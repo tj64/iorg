@@ -1,5 +1,5 @@
 ## * iorg/orgHeadline.l --- iOrg GUI for OrgHeadline
-## ** MetaData 
+## ** MetaData
 ##   :PROPERTIES:
 ##   :copyright: Thorsten_Jolitz
 ##   :copyright-since: 2013
@@ -16,58 +16,6 @@
 ## * Permissions
 
 (must "OrgHeadline" OrgData)
-
-## * Functions
-## ** Choose Function
-
-# Eventuell nach "gui.l" schieben
-(de choOrgHeadline (Dst)
-   (diaform '(Dst)
-      (<grid> "--."
-         ,"Number" (gui ':level '(+Focus +Var +NumField) '*OrgHeadline:Level 3)
-         (searchButton '(init> (: home query)))
-         ,"Todo"
-         (gui ':todo-keyword '(+Var +TextField) '*OrgHeadlineTodo
-            '("TODO" "DONE" "NEXT" "WAITING") )
-         (resetButton '(:level :todo-keyword query)) )
-      (gui 'query '(+QueryChart) (cho)
-         '(goal
-            (quote
-               @Level (and *OrgHeadlineLevel (cons @ T))
-               @Todo *OrgHeadlineTodo
-               (select (@@)
-                  ((:level +OrgHeadline @Level)
-                   (:todo-keyword +OrgHeadline @Todo) )
-                  (range @Level @@ level)
-                  (head @Todo @@ todo) ) ) )
-         6
-         '((This)
-            (list
-               This
-               (: :level)
-               (: :todo-keyword)
-               (pack (car (split (chop (: ptree parse-tree-id)) "_")))
-               ## (last (getCategory> This))
-               (car (: :title 2))
-               (pack
-                  (and :tags ":")
-                  (glue ":" (: :tags))
-                  (and :tags ":") ) ) ) )
-      (<table> 'chart (choTtl ,"Headlines" 'nr '+OrgHeadline)
-         '((btn) (NIL ,"Number") (NIL ,"Todo") (NIL ,"Category") (NIL ,"Title") (NIL ,"Tags"))
-         (do (cho)
-            (<row> (alternating)
-               (gui 1 '(+DstButton) Dst)
-               (gui 2 '(+NumField))
-               (gui 3 '(+TextField))
-               (gui 4 '(+TextField))
-               (gui 5 '(+TextField))
-               (gui 6 '(+TextField)) ) ) )
-      (<spread>
-         (scroll (cho))
-         (newButton T Dst '(+OrgHeadline))
-         (cancelButton) ) ) )
-
 
 ## ** GUI Function
 
@@ -90,7 +38,6 @@
 ## (rel commentedp (+Bool))
 ## (rel footnote-section-p (+Bool))
 
-
 (menu ,"OrgHeadline"
    (idForm ,"OrgHeadline" '(choOrgHeadline) ':level '+OrgHeadline T '(may Delete)
       '((: label) " "
@@ -108,25 +55,33 @@
          (gui '(+E/R +TextField)
             '(:todo-keyword : home obj)
             '("TODO" "DONE" "NEXT" "WAITING") )
-         ,"Title"
-         (choTitle 0)
+         ,"Title" (choTitle 0)
          (gui '(+E/R +Obj +TextField)
             '(title-object : home obj)
             '(title +OrgTitle)
             30 )
          NIL NIL
          (gui '(+View +TextField)
-            '(rawValue> (; (val> (field -1)) timestamp))
+            '(and (; (val> (field -1)) timestamp) (rawValue> @))
             30 )
          ,"Tags" NIL
          (gui '(+View +TextField)
             '(pack ":" (glue ":" (: home obj :tags)) ":")
-            30 )
-         ,"Contents" NIL
-         (gui '(+E/R +Cue +TextField)
-            '(:contents : home obj)
-            NIL "Lorem ipsum dolor sit amet"
-            50 20 ) )
-   (<spread> NIL (editButton T)) ) )
+            30 ) )
+      (----)
+      (gui '(+E/R +Chart) '(properties : home obj) 4)
+      (<table> NIL ,"Properties" '((NIL ,"Key") (NIL ,"Value"))
+         (do 6
+            (<row> NIL
+               (gui 1 '(+TextField) 30)
+               (gui 2 '(+TextField) 50)
+               (gui 3 '(+DelRowButton))
+               (gui 4 '(+BubbleButton)) ) ) )
+      (<spread> (scroll 6) (editButton T))
+      (----)
+      (gui '(+E/R +Cue +TextField)
+         '(:contents : home obj)
+         "Lorem ipsum dolor sit amet"
+         80 40 ,"Contents" ) ) )
 
 ## iorg/orgHeadline.l ends here

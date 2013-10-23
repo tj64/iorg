@@ -201,6 +201,7 @@
                             (cut 2 'Lst) )
                'label Label )
             (msg Obj " => New OrgData object created")
+            (msg (show Obj) " => Show New OrgData object")
             (while Lst
                (makeOrgHeadline
                   (and
@@ -298,11 +299,12 @@
                  '((P) (and
                           (lst? P) (= (car P) 'node-property)
                           (link
-                             (makeOrgProperty
+                             ## (makeOrgProperty
+                             (list
                                 (car (nth (cadr P) 2))
                                 (car (nth (cadr P) 4)) ) ) ) )
                  Lst ) )
-      Props ) )
+     Props ) )
 
 (de convertParseTree (Lst)
    ## (msg "entering convertParseTree ...")
@@ -405,7 +407,7 @@
 
 (de makeOrgTitle (Lst Headline)
    (msg "entering makeOrgTitle ...")
-   (let (RawValue (; Headline raw-value)
+   (let (RawValue (; Headline :raw-value)
          TimeStamp (and Lst
                       (car (fish '((X) (and (lst? X)
                                      (= (car X) 'timestamp) ) )
@@ -436,14 +438,14 @@
 
 ## *** Property
 
-(de makeOrgProperty (Key Val)
-    (msg "entering makeOrgProperty ...")
-    (let Obj (new (db: +OrgProperty) '(+OrgProperty)
-                'key Key
-                'value Val )
-      (msg Obj " => New OrgProperty object created")
-      (msg (show Obj))
-      Obj ) )
+## (de makeOrgProperty (Key Val)
+##     (msg "entering makeOrgProperty ...")
+##     (let Obj (new (db: +OrgProperty) '(+OrgProperty)
+##                 'key Key
+##                 'value Val )
+##       (msg Obj " => New OrgProperty object created")
+##       (msg (show Obj))
+##       Obj ) )
 
 ## *** Helper Functions
 
