@@ -467,6 +467,9 @@
 (rel :repeater-value (+Number))
 (rel :repeater-unit (+Symbol))
 
+(dm url> (Tab)
+   (and (may OrgData) (list "iorg/orgTimestamp.l" '*ID This)) )
+
 ## return repeater-info as string in Org syntax
 (dm repeaterString> ()
    (let (V (: :repeater-value)

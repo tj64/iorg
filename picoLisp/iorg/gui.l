@@ -153,6 +153,9 @@
          (newButton T Dst '(+Doc))
          (cancelButton) ) ) )
 
+(de choOrgData ()
+   )
+
 (de choOrgHeadline (Dst)
    (diaform '(Dst)
       (<grid> "--."
@@ -201,14 +204,15 @@
          (cancelButton) ) ) )
 
 
-(de choTitle ()
+(de choOrgTitle ()
    )
 
-(de choTimestamp ()
+(de choOrgTimestamp ()
    )
 
 (de choCategory ()
    )
+
 
 ## ** Show document HTML page
 

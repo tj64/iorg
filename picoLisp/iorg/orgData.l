@@ -1,5 +1,5 @@
 ## * iorg/orgData.l --- iOrg GUI for OrgData
-## ** MetaData 
+## ** MetaData
 ##   :PROPERTIES:
 ##   :copyright: Thorsten_Jolitz
 ##   :copyright-since: 2013
@@ -13,88 +13,43 @@
 ##   :keywords: emacs org-mode picolisp wiki
 ##   :END:
 
-## ** Comments
-
-## * Code
-
-## ** Permissions
+## * Permissions
 
 (must "OrgData" OrgData)
-## (must "OrgData" Iorg)
 
-## ** Functions
+## ** GUI Function
+
+## (rel :descendants (+List +Joint) :ancestor (+orgElement))
+## (rel :label (+Ref +Symbol))
+## (rel :contents (+Any))
+
+## (rel :parse-tree-id (+Need +Sn +Idx +String))
+## (rel :input-file (+Need +Ref +String))
+## (rel :author (+Ref +String))
+## (rel :email (+Ref +String))
+## (rel :creator (+Sn +Idx +String))
+## (rel :description (+Sn +Idx +String))
+
 
 (menu ,"OrgData"
-   (idForm ,"OrgData" ,"OrgDatas" 'nm '+OrgData
-      T '(may Delete) '((: nm))
-      (<grid> 2
-
-        ,"Raw Value" (gui '(+E/R +Cue +TextField)
-                        '(raw-value : home obj) ,"Raw V" )
-         ,"X" (gui '(+E/R +TextField) '(x : home obj) 40)
-         ,"X" (gui '(+E/R +TextField) '(x : home obj) 40)
-         ,"X" (gui '(+E/R +TextField) '(x : home obj) 40)
-
-         ,"XXXX" (gui '(+E/R +NumField) '(xx : home obj) 40) )
-      (<spread> NIL (editButton T)) ) )
-
-## (menu "Headline"
-##    (idForm "User" '(choUser) 'nm '+User
-##       '(or (may UserAdmin) (== *Login (: home obj)))
-##       '(or (may Delete) (== *Login (: home obj)))
-##       '((: nm))
-##       (<grid> 2
-##          "Login Name" (gui '(+E/R +Cue +TextField) '(nm : home obj) "User" 30)
-##          "Password"
-##          (gui '(+Able +E/R +Fmt +TextField)
-##             '(or (may Password) (== *Login (: home obj)))
-##             '(pw : home obj)
-##             '((V) (and V "****"))
-##             '((V)
-##                (if (= V "****")
-##                   (: home obj pw 0)
-##                   (passwd V (: home obj pw 0)) ) )
-##             30 )
-##          "Role"
-##          (gui '(+Able +E/R +Obj +TextField)
-##             '(may RoleAdmin)
-##             '(role : home obj)
-##             '(nm +Role)
-##             T )
-##          "Full Name" (gui '(+E/R +TextField) '(name : home obj) 40)
-##          "EMail" (gui '(+E/R +MailField) '(em : home obj) 40)
-##          "Picture"
-##          (prog
-##             (gui '(+Able +UpField) '(not (: home obj jpg)) 30)
-##             (gui '(+Drop +Button) '(field -1)
-##                '(if (: home obj jpg) "Uninstall" "Install")
-##                '(cond
-##                   ((: home obj jpg)
-##                      (ask "Uninstall Picture?"
-##                         (put!> (: home top 1 obj) 'jpg NIL) ) )
-##                   ((: drop) (blob! (: home obj) 'jpg @)) ) ) )
-##          NIL
-##          (gui '(+Upd +Img) 
-##             '(and (: home obj jpg) (allow (blob (: home obj) 'jpg)))
-##             "Picture" )
-##          "Created" (gui '(+Able +E/R +DateField) '(may System) '(ca : home obj) 10)
-##          "New" (gui '(+Able +E/R +Checkbox) '(may System) '(new : home obj)) )
-##       (gui '(+QueryChart) 12
-##          '(goal
-##             (quote
-##                @User (list (cons (: home obj) T) (: home obj))
-##                (db u +Mup @User @@) ) )
-##          3
-##          '((This) (list This (: t) (: sum))) )
-##       (<table> 'chart "Postings"
-##          '((em7 "Date") (em7 "Time") (NIL "Summary"))
-##          (do 12
-##             (<row> (alternating)
-##                (gui 1 '(+ObjView +DateField) '(: d))
-##                (gui 2 '(+TimeField))
-##                (gui 3 '(+TextField)) ) ) )
-##       (scroll 12)
-##       (<spread> NIL
-##          (editButton '(or (may UserAdmin) (== *Login (: home obj)))) ) ) )
+   (idForm ,"OrgData" '(choOrgData) ':level '+OrgData T '(may Delete)
+      '((: :label) " "
+        (let Split (split (chop (: :parse-tree-id)) "_")
+           (pack (car Split) ".org [" (pack (cdr Split)) "] ") ) )
+      (<grid> 3
+         ,"Parse Tree ID" NIL
+         (gui '(+View +TextField) '(:parse-tree-id : home obj) 40)
+         ,"Input File" NIL
+         (gui '(+View +FileField) '(:input-file : home obj) 60)
+         ,"Author" NIL
+         (gui '(+View +TextField) '(:author : home obj) 40)
+         ,"Email" NIL
+         (gui '(+View +MailField) '(:email : home obj) 40)
+         ,"Creator" NIL
+         (gui '(+View +TextField) '(:creator : home obj) 60)
+         (--)
+         ,"Description" NIL
+         (gui '(+View +TextField) '(:description : home obj) 60 20) )
+         (----) ) )
 
 ## iorg/orgData.l ends here

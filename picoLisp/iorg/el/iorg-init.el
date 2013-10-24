@@ -63,7 +63,8 @@ emacsclient on X"
 
 ;; set load-path to 'emacs-w3m'
 (add-to-list 'load-path (expand-file-name "~/gitclone/emacs-w3m/"))
-(require 'w3m-form-patched nil 'NOERROR)
+(require 'w3m-form nil 'NOERROR)
+(require 'w3m-filter nil 'NOERROR)
 
 ;; * General settings
 
