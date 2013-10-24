@@ -191,7 +191,7 @@
 ## **** Code
 
 (class +orgBaseElement +Entity)
-(rel :descendants (+List +Joint) ancestor (+orgElement))
+(rel :descendants (+List +Joint) :ancestor (+orgElement))
 (rel :label (+Ref +Symbol))
 (rel :contents (+Any))
 
@@ -218,13 +218,13 @@
 ## **** Comments
 
 ## - ancestor :: joint link to ancestor element
-## - :3parent :: element/Object containing it
+## - :parent :: element/Object containing it
 ## - :post-blank :: number of trailing blank lines/spaces
 
 ## **** Code
 
 (class +orgElement +orgBaseElement)
-(rel :ancestor (+Joint) descendants (+orgBaseElement))
+(rel :ancestor (+Joint) :descendants (+orgBaseElement))
 (rel :parent (+Ref +Symbol))
 (rel :post-blank (+Number))
 
@@ -310,7 +310,7 @@
 ## **** Code
 
 (class +OrgHeadline +orgElement)
-(rel :ptree (+Aux +Ref +Link) (label) NIL (+OrgData))
+(rel :ptree (+Aux +Ref +Link) (:label) NIL (+OrgData))
 (rel :title (+Any))
 (rel :raw-value (+Any))
 (rel :title-object (+Ref +Link) NIL (+OrgTitle))
@@ -459,9 +459,9 @@
 (rel :day-end (+Any))
 (rel :hour-end (+Any))
 (rel :minute-end (+Any))
-(rel :start-dat (+Aux +Ref +Date) (start-tim))
+(rel :start-dat (+Aux +Ref +Date) (:start-tim))
 (rel :start-tim (+Time))
-(rel :end-dat (+Aux +Ref +Date) (end-tim))
+(rel :end-dat (+Aux +Ref +Date) (:end-tim))
 (rel :end-tim (+Time))
 (rel :repeater-type (+Symbol))
 (rel :repeater-value (+Number))

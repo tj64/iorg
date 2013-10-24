@@ -237,7 +237,7 @@
                       (cut 2 'Lst) )
          ':ptree Ptree
          ':label Label )
-      (put> Obj 'ancestor
+      (put> Obj ':ancestor
          (db ':label '+orgBaseElement
             (makeHashLbl (hashLblNum> Obj ':parent)) ) )
       (msg Obj " => New OrgHeadline object created")

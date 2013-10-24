@@ -204,6 +204,12 @@
 (de choTitle ()
    )
 
+(de choTimestamp ()
+   )
+
+(de choCategory ()
+   )
+
 ## ** Show document HTML page
 
 (dm (html> . +Doc) ()
