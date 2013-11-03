@@ -56,7 +56,7 @@ emacsclient on X"
 ;; require libs
 (require 'iorg)
 (require 'iorg-scrape)
-(require 'ox-iorg)
+(require 'ox-iorg-data)
 ;; (require 'iorg-agenda)
 ;; (require 'iorg-dired)
 

@@ -1,4 +1,4 @@
-;;; ox-iorg.el --- iOrg Back-End for Org Export Engine
+;;; ox-iorg-form.el --- iOrg Form Back-End for Org Export Engine
 ;;;; License and Copyright
 
 ;; Copyright (C) 2013  Thorsten Jolitz
@@ -23,13 +23,13 @@
 
 ;;;; Commentary
 
-;; This library implements a iOrg back-end for Org exporter.
+;; This library implements a iOrg Form back-end for Org exporter.
 ;;
-;; It introduces two interactive functions, `org-iorg-export-as-org'
-;; and `org-iorg-export-to-org', which export, respectively, to
+;; It introduces two interactive functions, `org-iorg-form-export-as-org'
+;; and `org-iorg-form-export-to-org', which export, respectively, to
 ;; a temporary buffer and to a file.
 ;;
-;; A publishing function is also provided: `org-iorg-publish-to-org'.
+;; A publishing function is also provided: `org-iorg-form-publish-to-org'.
 
 ;;; Require
 ;; (eval-when-compile (require 'cl))
@@ -41,35 +41,35 @@
 
 (org-export-define-derived-backend 'iorg 'html
   :translate-alist
-  '((headline . org-iorg-headline)
-    (item . org-iorg-item)
-    (plain-list . org-iorg-plain-list)
-    (table . org-iorg-table)
-    (table-cell . org-iorg-table-cell)
-    (table-row . org-iorg-table-row)
-    (template . org-iorg-template))
+  '((headline . org-iorg-form-headline)
+    (item . org-iorg-form-item)
+    (plain-list . org-iorg-form-plain-list)
+    (table . org-iorg-form-table)
+    (table-cell . org-iorg-form-table-cell)
+    (table-row . org-iorg-form-table-row)
+    (template . org-iorg-form-template))
   :export-block "IORG"
   :filters-alist '(
                    ;; convert 
                    (:filter-parse-tree
-		    . (org-iorg--translate-stuff))
+		    . (org-iorg-form--translate-stuff))
                    ;; change #( read syntax
                    (:filter-plain-text
-		    . (org-iorg--translate-stuff))
+		    . (org-iorg-form--translate-stuff))
                    ;; add info and elem-id to org-data
                    (:filter-org-data
-		    . (org-iorg--translate-stuff))
+		    . (org-iorg-form--translate-stuff))
                    ;; nil and t to uppercase
                    (:filter-final-output
-		    . (org-iorg--translate-stuff)))
+		    . (org-iorg-form--translate-stuff)))
   :menu-entry
   '(?i "Export to iOrg"
-       ((?I "As iOrg buffer" org-iorg-export-as-iorg)
-	(?i "As iOrg file" org-iorg-export-to-iorg)
+       ((?I "As iOrg buffer" org-iorg-form-export-as-iorg)
+	(?i "As iOrg file" org-iorg-form-export-to-iorg)
 	(?o "As Org file and open"
 	    (lambda (a s v b)
-	      (if a (org-iorg-export-to-iorg t s v b)
-		(org-open-file (org-iorg-export-to-iorg nil s v b)))))))
+	      (if a (org-iorg-form-export-to-iorg t s v b)
+		(org-open-file (org-iorg-form-export-to-iorg nil s v b)))))))
   :options-alist
   '((:iorg-export-p nil "iorg" t t)
     (:iorg-data "IORG_DATA" nil nil space)
@@ -81,15 +81,15 @@
 ;;;; User Configurable Variables
 
 (defgroup org-export-iorg nil
-  "Options for exporting Org mode files to iOrg."
+  "Options for exporting Org mode files to iOrg HTML Forms."
   :tag "Org Export iOrg"
   :group 'org-export
   :version "24.4"
   :package-version '(Org . "8.0"))
 
 (define-obsolete-variable-alias
-  'org-export-htmlized-org-css-url 'org-iorg-htmlized-css-url "24.4")
-(defcustom org-iorg-htmlized-css-url nil
+  'org-export-htmlized-org-css-url 'org-iorg-form-htmlized-css-url "24.4")
+(defcustom org-iorg-form-htmlized-css-url nil
   "URL pointing to the CSS defining colors for htmlized Emacs buffers.
 Normally when creating an htmlized version of an Org buffer,
 htmlize will create the CSS to define the font colors.  However,
@@ -97,7 +97,7 @@ this does not work when converting in batch mode, and it also can
 look bad if different people with different fontification setup
 work on the same website.  When this variable is non-nil,
 creating an htmlized version of an Org buffer using
-`org-iorg-export-as-org' will include a link to this URL if the
+`org-iorg-form-export-as-org' will include a link to this URL if the
 setting of `org-html-htmlize-output-type' is 'css."
   :group 'org-export-iorg
   :type '(choice
@@ -108,7 +108,7 @@ setting of `org-html-htmlize-output-type' is 'css."
 ;;;; Internal Functions
 ;;;; Template
 
-(defun org-iorg-template (contents info)
+(defun org-iorg-form-template (contents info)
   "Return complete document string after iOrg conversion.
 CONTENTS is the transcoded contents string.  INFO is a plist
 holding export options."
@@ -121,7 +121,7 @@ holding export options."
 ;; CONTENTS is its contents, as a string or nil.  INFO is ignored."
 ;;   (org-export-expand blob contents t))
 
-(defun org-iorg-headline (headline contents info)
+(defun org-iorg-form-headline (headline contents info)
   "Transcode HEADLINE element back into Org syntax.
 CONTENTS is its contents, as a string or nil.  INFO is ignored."
 (format "%s" contents))
@@ -134,27 +134,27 @@ CONTENTS is its contents, as a string or nil.  INFO is ignored."
   ;;   (org-element-put-property headline :priority nil))
   ;; (org-element-headline-interpreter headline contents))
 
-(defun org-iorg-plain-list (headline contents info)
+(defun org-iorg-form-plain-list (headline contents info)
   "Transcode PLAIN-LIST element into iOrg syntax.
 CONTENTS is its contents, as a string or nil.  INFO is ignored."
 (format "%s" contents))
 
-(defun org-iorg-item (headline contents info)
+(defun org-iorg-form-item (headline contents info)
   "Transcode ITEM element into iOrg syntax.
 CONTENTS is its contents, as a string or nil.  INFO is ignored."
   contents)
 
-(defun org-iorg-table (headline contents info)
+(defun org-iorg-form-table (headline contents info)
   "Transcode TABLE element into iOrg syntax.
 CONTENTS is its contents, as a string or nil.  INFO is ignored."
 (format "%s" contents))
 
-(defun org-iorg-table-cell (headline contents info)
+(defun org-iorg-form-table-cell (headline contents info)
   "Transcode TABLE-CELL element into iOrg syntax.
 CONTENTS is its contents, as a string or nil.  INFO is ignored."
 (format "%s" contents))
 
-(defun org-iorg-table-row (headline contents info)
+(defun org-iorg-form-table-row (headline contents info)
   "Transcode TABLE-ROW element into iOrg syntax.
 CONTENTS is its contents, as a string or nil.  INFO is ignored."
 (format "%s" contents))
@@ -162,9 +162,9 @@ CONTENTS is its contents, as a string or nil.  INFO is ignored."
 
 ;;;; Filter Functions
 
-(defun org-iorg--translate-stuff (headline back-end info) )
+(defun org-iorg-form--translate-stuff (headline back-end info) )
 
-(defun org-iorg-final-function (contents backend info)
+(defun org-iorg-form-final-function (contents backend info)
   "Filter to indent the HTML and convert HTML entities."
   (with-temp-buffer
     (insert contents)
@@ -179,7 +179,7 @@ CONTENTS is its contents, as a string or nil.  INFO is ignored."
 ;;;; End-user functions
 
 ;;;###autoload
-(defun org-iorg-export-as-iorg (&optional async subtreep visible-only ext-plist)
+(defun org-iorg-form-export-as-iorg (&optional async subtreep visible-only ext-plist)
   "Export current buffer to an iOrg buffer.
 
 If narrowing is active in the current buffer, only export its
@@ -225,7 +225,7 @@ non-nil."
 	(switch-to-buffer-other-window outbuf)))))
 
 ;;;###autoload
-(defun org-iorg-export-to-iorg (&optional async subtreep visible-only ext-plist)
+(defun org-iorg-form-export-to-iorg (&optional async subtreep visible-only ext-plist)
   "Export current buffer to an iorg file.
 
 If narrowing is active in the current buffer, only export its
@@ -261,7 +261,7 @@ Return output file name."
       nil ext-plist))))
 
 ;;;###autoload
-(defun org-iorg-publish-to-iorg (plist filename pub-dir)
+(defun org-iorg-form-publish-to-iorg (plist filename pub-dir)
   "Publish an org file to iorg.
 
 FILENAME is the filename of the Org file to be published.  PLIST
@@ -283,14 +283,14 @@ Return output file name."
       (font-lock-fontify-buffer)
       (setq newbuf (htmlize-buffer))
       (with-current-buffer newbuf
-	(when org-iorg-htmlized-css-url
+	(when org-iorg-form-htmlized-css-url
 	  (goto-char (point-min))
 	  (and (re-search-forward
 		"<style type=\"text/css\">[^\000]*?\n[ \t]*</style>.*" nil t)
 	       (replace-match
 		(format
 		 "<link rel=\"stylesheet\" type=\"text/css\" href=\"%s\">"
-		 org-iorg-htmlized-css-url) t t)))
+		 org-iorg-form-htmlized-css-url) t t)))
 	(write-file (concat pub-dir (file-name-nondirectory filename) html-ext)))
       (kill-buffer newbuf)
       (unless visitingp (kill-buffer work-buffer)))
@@ -298,10 +298,10 @@ Return output file name."
 
 ;;; Provide and Hooks
 
-(provide 'ox-iorg)
+(provide 'ox-iorg-form)
 
 ;; Local variables:
 ;; generated-autoload-file: "org-loaddefs.el"
 ;; End:
 
-;; ox-iorg.el ends here
+;; ox-iorg-form.el ends here

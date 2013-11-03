@@ -112,11 +112,21 @@ There is a mode hook, and a few commands:
 ;; ** Non-interactive Functions
 ;; *** Helper Functions
 
-(defsubst iorg--elisp-plist-p (lst)
-  "Return non-nil if LST is a list and its car a keyword."
-  (and (listp lst) (keywordp (car lst))))
+(defsubst iorg--plist-p (elem)
+  "Return non-nil if ELEM is a list and its car a keyword."
+  (and (listp elem) (keywordp (car elem))))
 
-;; courtesy of Pascal Bourguignon
+(defun iorg--collect-plist-keys (plist)
+  "Return a list with all keywords in Emacs Lisp PLIST."
+  (and (iorg--elisp-plist-p plist)
+       (remove
+        t
+        (mapcar
+         (lambda (--elem)
+           (or (not (keywordp --elem)) --elem))
+         plist))))
+
+;; Courtesy of Pascal Bourguignon
 ;; FIXME: recursion too deep -> enter debugger
 (defun iorg--sexp-remove-string-properties (sexp)
    (cond
@@ -132,44 +142,44 @@ There is a mode hook, and a few commands:
 ;; --> "(:category \"tmp2\" :title (\"C2 \"))"
 
 
-(defun iorg--tag-org-data-element (tree buffer)
-  "Add elem-id and some properties to `org-data' element of TREE.
-Added Properties are either related to parsed BUFFER or
-environmental properties."
-  (when (require 'ox nil 'NOERROR)
-    (let* ((env-attr
-            (with-current-buffer buffer
-              (org-export-get-environment)))
-           (buf-attr
-            (with-current-buffer buffer
-              (org-export--get-buffer-attributes)))
-           (author (plist-get env-attr :author))
-           (descr (plist-get env-attr :description))
-           (infile-or-buf
-            (or (plist-get buf-attr :input-file)
-                (with-current-buffer buffer
-                  (buffer-name)))))
-      (setcar (cdr tree)
-              (list
-               :parse-tree-id (make-temp-name
-                               (concat
-                                (file-name-nondirectory
-                                 (file-name-sans-extension
-                                  infile-or-buf)) "_"))
-               ;; :elem-id 0
-               :input-file infile-or-buf
-               ;; :date (plist-get (cadar (plist-get env-attr :date))
-               ;;              :raw-value)
-               :author (when author
-                         (substring-no-properties (car author)))
-               ;; (substring-no-properties author))
-               :creator (plist-get env-attr :creator)
-               :email (plist-get env-attr :email)
-               ;; :description descr
-               :description (when descr
-                              ;; (substring-no-properties (car descr))))
-                              (substring-no-properties descr))))))
-  tree)
+;; (defun iorg--tag-org-data-element (tree buffer)
+;;   "Add elem-id and some properties to `org-data' element of TREE.
+;; Added Properties are either related to parsed BUFFER or
+;; environmental properties."
+;;   (when (require 'ox nil 'NOERROR)
+;;     (let* ((env-attr
+;;             (with-current-buffer buffer
+;;               (org-export-get-environment)))
+;;            (buf-attr
+;;             (with-current-buffer buffer
+;;               (org-export--get-buffer-attributes)))
+;;            (author (plist-get env-attr :author))
+;;            (descr (plist-get env-attr :description))
+;;            (infile-or-buf
+;;             (or (plist-get buf-attr :input-file)
+;;                 (with-current-buffer buffer
+;;                   (buffer-name)))))
+;;       (setcar (cdr tree)
+;;               (list
+;;                :parse-tree-id (make-temp-name
+;;                                (concat
+;;                                 (file-name-nondirectory
+;;                                  (file-name-sans-extension
+;;                                   infile-or-buf)) "_"))
+;;                ;; :elem-id 0
+;;                :input-file infile-or-buf
+;;                ;; :date (plist-get (cadar (plist-get env-attr :date))
+;;                ;;              :raw-value)
+;;                :author (when author
+;;                          (substring-no-properties (car author)))
+;;                ;; (substring-no-properties author))
+;;                :creator (plist-get env-attr :creator)
+;;                :email (plist-get env-attr :email)
+;;                ;; :description descr
+;;                :description (when descr
+;;                               ;; (substring-no-properties (car descr))))
+;;                               (substring-no-properties descr))))))
+;;   tree)
 
 
 (defun iorg--nil-and-t-to-uppercase (tree-as-string)
@@ -458,192 +468,192 @@ clickable link when the document is rendered in the wiki."
 
 ;; * Obsolete Stuff
 
-(defun iorg--tag-elems-with-id-attributes (tree)
-  "Add ':elem-id' property to each element of parse TREE."
-  (let ((counter 1)
-        (structure 1))
-    (org-element-map tree iorg-default-map-types
-      (lambda (--elem)
-          (org-element-put-property --elem :elem-id counter)
-          (setq counter (1+ counter))
-          (and (eq (org-element-type --elem) 'plain-list)
-               (org-element-put-property --elem :structure-id structure)
-               (setq structure (1+ structure))))))
-  tree)
+;; (defun iorg--tag-elems-with-id-attributes (tree)
+;;   "Add ':elem-id' property to each element of parse TREE."
+;;   (let ((counter 1)
+;;         (structure 1))
+;;     (org-element-map tree iorg-default-map-types
+;;       (lambda (--elem)
+;;           (org-element-put-property --elem :elem-id counter)
+;;           (setq counter (1+ counter))
+;;           (and (eq (org-element-type --elem) 'plain-list)
+;;                (org-element-put-property --elem :structure-id structure)
+;;                (setq structure (1+ structure))))))
+;;   tree)
 
-(defun iorg--collect-children (tree)
-  "Return alist with '(elem-id . parent-id)' pairs.
-The data is collected from parse TREE."
-  (let (child-lst)
-    (org-element-map tree 'headline
-      (lambda (--headline)
-        (push (cons (org-element-property :elem-id --headline)
-                    (org-element-property :parent --headline))
-              child-lst)))
-    child-lst))
+;; (defun iorg--collect-children (tree)
+;;   "Return alist with '(elem-id . parent-id)' pairs.
+;; The data is collected from parse TREE."
+;;   (let (child-lst)
+;;     (org-element-map tree 'headline
+;;       (lambda (--headline)
+;;         (push (cons (org-element-property :elem-id --headline)
+;;                     (org-element-property :parent --headline))
+;;               child-lst)))
+;;     child-lst))
 
-(defun iorg--add-children-list (tree)
-  "Add ':children' property to each headline in parse TREE.
-Assumes that all headlines are tagged with an ':elem-id' property
-and that the circular-list read-syntax of the ':parent' attribute
-has been replaced with simple integer values (the :elem-id of the
-elements parent)."
-  (let ((pairs (iorg--collect-children tree)))
-    (org-element-map tree 'headline
-      (lambda (--elem)
-        (org-element-put-property
-         --elem :children
-         (reverse
-          (delq nil
-                (mapcar
-                 (lambda (--pair)
-                   (and (eq (cdr --pair)
-                            (org-element-property :elem-id --elem))
-                        (car --pair)))
-                 pairs)))))))
-  tree)
+;; (defun iorg--add-children-list (tree)
+;;   "Add ':children' property to each headline in parse TREE.
+;; Assumes that all headlines are tagged with an ':elem-id' property
+;; and that the circular-list read-syntax of the ':parent' attribute
+;; has been replaced with simple integer values (the :elem-id of the
+;; elements parent)."
+;;   (let ((pairs (iorg--collect-children tree)))
+;;     (org-element-map tree 'headline
+;;       (lambda (--elem)
+;;         (org-element-put-property
+;;          --elem :children
+;;          (reverse
+;;           (delq nil
+;;                 (mapcar
+;;                  (lambda (--pair)
+;;                    (and (eq (cdr --pair)
+;;                             (org-element-property :elem-id --elem))
+;;                         (car --pair)))
+;;                  pairs)))))))
+;;   tree)
 
-(defun iorg--unwind-circular-list (tree)
-  "Replace circular links with unique ID's in parse TREE."
-  (org-element-map tree iorg-all-map-types
-    (lambda (--elem)
-      (let ((par (org-element-property :parent --elem)))
-        (and (eq (org-element-type --elem) 'item)
-             (eq (org-element-type par) 'plain-list)
-             (org-element-put-property
-              --elem :parent-structure-id
-              (org-element-property :structure-id par)))
-        (org-element-put-property
-         --elem :parent-id
-         (if (eq (org-element-type par) 'org-data)
-             0
-           (org-element-property :elem-id par)))))
-    nil nil nil 'WITH-AFFILIATED)
-  tree)
-
-
-(defun iorg--collect-plist-keys (plist)
-  "Return a list with all keywords in Emacs Lisp PLIST."
-  (and (iorg--elisp-plist-p plist)
-       (remove
-        t
-        (mapcar
-         (lambda (--elem)
-           (or (not (keywordp --elem)) --elem))
-         plist))))
+;; (defun iorg--unwind-circular-list (tree)
+;;   "Replace circular links with unique ID's in parse TREE."
+;;   (org-element-map tree iorg-all-map-types
+;;     (lambda (--elem)
+;;       (let ((par (org-element-property :parent --elem)))
+;;         (and (eq (org-element-type --elem) 'item)
+;;              (eq (org-element-type par) 'plain-list)
+;;              (org-element-put-property
+;;               --elem :parent-structure-id
+;;               (org-element-property :structure-id par)))
+;;         (org-element-put-property
+;;          --elem :parent-id
+;;          (if (eq (org-element-type par) 'org-data)
+;;              0
+;;            (org-element-property :elem-id par)))))
+;;     nil nil nil 'WITH-AFFILIATED)
+;;   tree)
 
 
-;; (defun iorg--fix-read-syntax-old (tree)
-;;   "Returns parse TREE as string with read syntax fixed.
+;; (defun iorg--collect-plist-keys (plist)
+;;   "Return a list with all keywords in Emacs Lisp PLIST."
+;;   (and (iorg--plist-p plist)
+;;        (remove
+;;         t
+;;         (mapcar
+;;          (lambda (--elem)
+;;            (or (not (keywordp --elem)) --elem))
+;;          plist))))
 
-;; Fixed means, in this case, adjusted for the PicoLisp reader:
 
-;;  - '#(' replaced by PicoLisp function `(hashtag '(....))'
-;;  - '#1=(' replaced by PicoLisp function `(hashtag-equal '(....))'
-;;  - '#1#' replaced by PicoLisp function `(enclosing-hashtags 1)'
+;; ;; (defun iorg--fix-read-syntax-old (tree)
+;; ;;   "Returns parse TREE as string with read syntax fixed.
 
-;; These functions, when evaluated in PicoLisp, return a string with
-;; the original Emacs Lisp read-syntax.
+;; ;; Fixed means, in this case, adjusted for the PicoLisp reader:
 
-;; Furthermore, the leading ':' are removed from the keywords in the
-;; parse-tree, and all keywords are converted to lowercase."
-;;   (let ((txt-prop-regexp
-;;          (concat
-;;           ;; 1st
-;;           "\\([[:space:]]\\|(\\)"
-;;           ;; 2nd -> replace
-;;           "\\(#(\\)"
-;;           ;; 3rd
-;;           "\\(.+?\n?.+?-id \\)"
-;;           ;; 4th
-;;           "\\([[:digit:]]+\\|nil\\)"
-;;           ;; 5th
-;;           "\\()+\\)"))
-;;         ;; (concat
-;;         ;;  ;; 1st
-;;         ;;  "\\([[:space:]]\\|(\\)"
-;;         ;;  ;; 2nd -> replace
-;;         ;;  "\\(#(\\)"
-;;         ;;  ;; 3rd
-;;         ;;  "\\(.+?\n?.+?\\)"
-;;         ;;  ;; 4th
-;;         ;;  "\\() :parent-id[[:space:]]*\n?#?[[:digit:]]+\\)"
-;;         ;;  ;; 5th
-;;         ;;  "\\()+\\)"))
-;;         (obj-ref-regexp
-;;          (concat
-;;           ;; 1st
-;;           "\\(#\\)"
-;;           ;; 2nd
-;;           "\\([[:digit:]]+\\)"
-;;           ;; 3rd
-;;           "\\(=\\|#\\)"
-;;           ;; 4th
-;;           "\\(.*?\\n?.*?\\)"
-;;           ;; 5th
-;;           "\\(\s+:\\w+\\|)\s+\\|\s+(\\|\s+*$\\)"))
-;;         (keyword-regexp
-;;          (concat
-;;           ;; 1st
-;;           "\\([[:space:]]*\\)"
-;;           ;; 2nd
-;;           "\\(:\\)"
-;;           ;; 3rd
-;;           "\\([[:word:]-_]+\\)"
-;;           ;; 4th
-;;           "\\([[:space:]]+\\)")))
-;;     ;; (with-temp-buffer
-;;     (with-current-buffer "tmp<2>"
-;;       (insert (prin1-to-string tree))
-;;       (goto-char (point-min))
-;;       (while (re-search-forward txt-prop-regexp nil 'NOERROR)
-;;         (replace-match "\\1(hashtag '(\\3\\4\\5)"))
-;;       (goto-char (point-min))
-;;       (while (re-search-forward obj-ref-regexp nil 'NOERROR)
-;;         (cond
-;;          ((string-equal (match-string-no-properties 3) "=")
-;;           (replace-match "(hashtag-equal '(\\2 \\4))\\5"))
-;;          ((string-equal (match-string-no-properties 3) "#")
-;;           (replace-match "(enclosing-hashtags \\2)\\4\\5"))
-;;          (t (error "Matched subexpression not one of \"=\" or \"#\""))))
-;;       (goto-char (point-min))
-;;       (while (re-search-forward keyword-regexp nil 'NOERROR)
-;;         ;; (let ((keyword (downcase (match-string-no-properties 3))))
-;;         (replace-match
-;;          ;; (concat "\\1" keyword "\\4"))))
-;;          (concat "\\1\\3\\4")))
-;;       (buffer-substring-no-properties (point-min) (point-max)))))
+;; ;;  - '#(' replaced by PicoLisp function `(hashtag '(....))'
+;; ;;  - '#1=(' replaced by PicoLisp function `(hashtag-equal '(....))'
+;; ;;  - '#1#' replaced by PicoLisp function `(enclosing-hashtags 1)'
 
-;; FIXME obsolete
-(defun iorg--convert-plists-to-picolisp (tree)
-  "Convert all elements plists in TREE to PicosLisp plists.
+;; ;; These functions, when evaluated in PicoLisp, return a string with
+;; ;; the original Emacs Lisp read-syntax.
 
-Assume TREE is a parse-tree produced by `org-element-parse-buffer' and turned
-into a non-circular list by applying `iorg--tag-elems-with-id-attributes' and
-`iorg--unwind-circular-list' on it. Return the parse-tree in PicoLisp
-compliant form."
-  (org-element-map
-      tree
-      iorg-default-map-types
-      ;; iorg-default-map-types
-    (lambda (--elem)
-      ;; (let ((type (org-element-type elem)))
-      ;;   ;; (and (not (eq type 'plain-text))
-      ;;        ;; (not (eq type 'org-data))
-      (let* ((plist (cadr --elem))
-             (props (if (iorg--elisp-plist-p plist)
-                        (iorg--collect-plist-keys plist)
-                      (error "%s is not an Emacs Lisp plist"
-                             plist))))
-        ;; (message "%s"
-        (cons (car --elem)
-              (list
-               (mapcar
-                (lambda (--prop)
-                  (cons (org-element-property --prop --elem) --prop))
-                props)))))))
-  ;; 'iorg--transform-elements-plist-to-picolisp-plist)
-  ;; (message "%s" tree)
+;; ;; Furthermore, the leading ':' are removed from the keywords in the
+;; ;; parse-tree, and all keywords are converted to lowercase."
+;; ;;   (let ((txt-prop-regexp
+;; ;;          (concat
+;; ;;           ;; 1st
+;; ;;           "\\([[:space:]]\\|(\\)"
+;; ;;           ;; 2nd -> replace
+;; ;;           "\\(#(\\)"
+;; ;;           ;; 3rd
+;; ;;           "\\(.+?\n?.+?-id \\)"
+;; ;;           ;; 4th
+;; ;;           "\\([[:digit:]]+\\|nil\\)"
+;; ;;           ;; 5th
+;; ;;           "\\()+\\)"))
+;; ;;         ;; (concat
+;; ;;         ;;  ;; 1st
+;; ;;         ;;  "\\([[:space:]]\\|(\\)"
+;; ;;         ;;  ;; 2nd -> replace
+;; ;;         ;;  "\\(#(\\)"
+;; ;;         ;;  ;; 3rd
+;; ;;         ;;  "\\(.+?\n?.+?\\)"
+;; ;;         ;;  ;; 4th
+;; ;;         ;;  "\\() :parent-id[[:space:]]*\n?#?[[:digit:]]+\\)"
+;; ;;         ;;  ;; 5th
+;; ;;         ;;  "\\()+\\)"))
+;; ;;         (obj-ref-regexp
+;; ;;          (concat
+;; ;;           ;; 1st
+;; ;;           "\\(#\\)"
+;; ;;           ;; 2nd
+;; ;;           "\\([[:digit:]]+\\)"
+;; ;;           ;; 3rd
+;; ;;           "\\(=\\|#\\)"
+;; ;;           ;; 4th
+;; ;;           "\\(.*?\\n?.*?\\)"
+;; ;;           ;; 5th
+;; ;;           "\\(\s+:\\w+\\|)\s+\\|\s+(\\|\s+*$\\)"))
+;; ;;         (keyword-regexp
+;; ;;          (concat
+;; ;;           ;; 1st
+;; ;;           "\\([[:space:]]*\\)"
+;; ;;           ;; 2nd
+;; ;;           "\\(:\\)"
+;; ;;           ;; 3rd
+;; ;;           "\\([[:word:]-_]+\\)"
+;; ;;           ;; 4th
+;; ;;           "\\([[:space:]]+\\)")))
+;; ;;     ;; (with-temp-buffer
+;; ;;     (with-current-buffer "tmp<2>"
+;; ;;       (insert (prin1-to-string tree))
+;; ;;       (goto-char (point-min))
+;; ;;       (while (re-search-forward txt-prop-regexp nil 'NOERROR)
+;; ;;         (replace-match "\\1(hashtag '(\\3\\4\\5)"))
+;; ;;       (goto-char (point-min))
+;; ;;       (while (re-search-forward obj-ref-regexp nil 'NOERROR)
+;; ;;         (cond
+;; ;;          ((string-equal (match-string-no-properties 3) "=")
+;; ;;           (replace-match "(hashtag-equal '(\\2 \\4))\\5"))
+;; ;;          ((string-equal (match-string-no-properties 3) "#")
+;; ;;           (replace-match "(enclosing-hashtags \\2)\\4\\5"))
+;; ;;          (t (error "Matched subexpression not one of \"=\" or \"#\""))))
+;; ;;       (goto-char (point-min))
+;; ;;       (while (re-search-forward keyword-regexp nil 'NOERROR)
+;; ;;         ;; (let ((keyword (downcase (match-string-no-properties 3))))
+;; ;;         (replace-match
+;; ;;          ;; (concat "\\1" keyword "\\4"))))
+;; ;;          (concat "\\1\\3\\4")))
+;; ;;       (buffer-substring-no-properties (point-min) (point-max)))))
+
+;; ;; FIXME obsolete
+;; (defun iorg--convert-plists-to-picolisp (tree)
+;;   "Convert all elements plists in TREE to PicosLisp plists.
+
+;; Assume TREE is a parse-tree produced by `org-element-parse-buffer' and turned
+;; into a non-circular list by applying `iorg--tag-elems-with-id-attributes' and
+;; `iorg--unwind-circular-list' on it. Return the parse-tree in PicoLisp
+;; compliant form."
+;;   (org-element-map
+;;       tree
+;;       iorg-default-map-types
+;;       ;; iorg-default-map-types
+;;     (lambda (--elem)
+;;       ;; (let ((type (org-element-type elem)))
+;;       ;;   ;; (and (not (eq type 'plain-text))
+;;       ;;        ;; (not (eq type 'org-data))
+;;       (let* ((plist (cadr --elem))
+;;              (props (if (iorg--plist-p plist)
+;;                         (iorg--collect-plist-keys plist)
+;;                       (error "%s is not an Emacs Lisp plist"
+;;                              plist))))
+;;         ;; (message "%s"
+;;         (cons (car --elem)
+;;               (list
+;;                (mapcar
+;;                 (lambda (--prop)
+;;                   (cons (org-element-property --prop --elem) --prop))
+;;                 props)))))))
+;;   ;; 'iorg--transform-elements-plist-to-picolisp-plist)
+;;   ;; (message "%s" tree)
 
   ;; tree)
 
@@ -654,7 +664,7 @@ compliant form."
 ;;          (not (eq type 'plain-text))
 ;;          ;; (not (eq type 'org-data))
 ;;          (let* ((plist (cadr elem))
-;;                 (props (if (iorg--elisp-plist-p plist)
+;;                 (props (if (iorg--plist-p plist)
 ;;                            (iorg--collect-plist-keys plist)
 ;;                          (error "%s is not an Emacs Lisp plist"
 ;;                                 plist))))
