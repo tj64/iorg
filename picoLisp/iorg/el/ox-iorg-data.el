@@ -41,8 +41,10 @@
 ;;; Define Back-End
 
 (org-export-define-derived-backend 'iorg-data 'org
-  :translate-alist ()
-  ;; '((headline . org-iorg-data-headline)
+  :translate-alist
+  '((template . org-iorg-data-template)
+    (headline . org-iorg-data-headline)
+    (timestamp . org-iorg-data-timestamp))
   ;;   (item . org-iorg-data-item)
   ;;   (plain-list . org-iorg-data-plain-list)
   ;;   (table . org-iorg-data-table)
@@ -379,7 +381,7 @@ compliant form."
   "Return complete document string after iOrg conversion.
 CONTENTS is the transcoded contents string.  INFO is a plist
 holding export options."
-  (format "(list '(org-data %s) %s)"
+  (format "(list '(org-data %S) %S)"
           (list
            'parse-tree-id
            (make-temp-name
@@ -415,46 +417,140 @@ holding export options."
 ;;            (org-element-property :children headline))
 ;;   (org-element-headline-interpreter headline contents))
 
+
+(defun org-iorg-data-timestamp (timestamp contents info)
+  "Transcode TIMESTAMP element into iOrg syntax.
+CONTENTS is its contents, as a string or nil.  INFO is ignored."
+  (format "(timestamp %S) "
+          (list
+           (org-element-property :type timestamp)
+          (list
+           (org-element-property :year-start timestamp)
+           (org-element-property :month-start timestamp)
+           (org-element-property :day-start timestamp))
+          (list
+           (org-element-property :hour-start timestamp)
+           (org-element-property :minute-start timestamp))
+          (list
+           (org-element-property :year-end timestamp)
+           (org-element-property :month-end timestamp)
+           (org-element-property :day-end timestamp))
+          (list
+           (org-element-property :hour-end timestamp)
+           (org-element-property :minute-end timestamp))
+           (org-element-property :repeater-type timestamp)
+           (org-element-property :repeater-value timestamp)
+           (org-element-property :repeater-unit timestamp))))
+
+          ;;  'parse-tree-id
+          ;;  (make-temp-name
+          ;;   (concat
+          ;;    (file-name-nondirectory
+          ;;     (file-name-sans-extension
+          ;;      (or (plist-get info :input-file)
+          ;;          (plist-get info :input-buffer))))
+          ;;    "_"))
+          ;;  'input-file (plist-get info :input-file)
+          ;;  'input-buffer (plist-get info :input-buffer)
+          ;;  'author (car (plist-get info :author))
+          ;;  'creator (plist-get info :creator)
+          ;;  'email (plist-get info :email)
+          ;;  'description (plist-get info :description))
+          ;; contents))
+
 (defun org-iorg-data-headline (headline contents info)
-  "Transcode HEADLINE element back into Org syntax.
+  "Transcode HEADLINE element into iOrg syntax.
 CONTENTS is its contents, as a string or nil.  INFO is ignored."
+  (format "(headline %S) "
+          (list
+           'title-string
+           (substring-no-properties
+            (car (org-element-property :title headline)))
+           'alt-title-string
+           (substring-no-properties
+            (car (org-export-get-alt-title headline info)))
+           'category
+           (substring-no-properties (org-export-get-category headline info))
+           'level
+           (org-element-property :level headline)
+           'priority
+           (org-element-property :priority headline)
+           'tags
+           (org-element-property :tags headline)
+           'todo-keyword
+           (org-element-property :todo-keyword headline)
+           'quotedp
+           (org-element-property :quotedp headline)
+           'archivedp
+           (org-element-property :archivedp headline)
+           'commentedp
+           (org-element-property :commentedp headline)
+           'footnote-secion-p
+           (org-element-property :footnote-secion-p headline)
+           contents)))
+
+          ;;  (org-element-property :month-end headline)
+          ;;  (org-element-property :day-end headline))
+          ;; (list
+          ;;  (org-element-property :hour-end headline)
+          ;;  (org-element-property :minute-end headline))
+          ;;  (org-element-property :repeater-type headline)
+          ;;  (org-element-property :repeater-value headline)
+          ;;  (org-element-property :repeater-unit headline))))
+
+          ;; (list
+          ;;  'parse-tree-id
+          ;;  (make-temp-name
+          ;;   (concat
+          ;;    (file-name-nondirectory
+          ;;     (file-name-sans-extension
+          ;;      (or (plist-get info :input-file)
+          ;;          (plist-get info :input-buffer))))
+          ;;    "_"))
+          ;;  'input-file (plist-get info :input-file)
+          ;;  'input-buffer (plist-get info :input-buffer)
+          ;;  'author (car (plist-get info :author))
+          ;;  'creator (plist-get info :creator)
+          ;;  'email (plist-get info :email)
+          ;;  'description (plist-get info :description))
+          ;; contents))
+
+  ;; (unless (plist-get info :with-todo-keywords)
+  ;;   (org-element-put-property headline :todo-keyword nil))
+  ;; (unless (plist-get info :with-tags)
+  ;;   (org-element-put-property headline :tags nil))
+  ;; (unless (plist-get info :with-priority)
+  ;;   (org-element-put-property headline :priority nil))
+  ;; (message "elem-id: %s\n parent-id: %s\n children: %s"
+  ;;          (org-element-property :elem-id headline)
+  ;;          (org-element-property :parent-id headline)
+  ;;          (org-element-property :children headline))
+  ;; (org-element-headline-interpreter headline contents))
+
+;; (defun org-iorg-data-plain-list (plain-list contents info)
+;;   "Transcode PLAIN-LIST element into iOrg syntax.
+;; CONTENTS is its contents, as a string or nil.  INFO is ignored."
+;; (format "'(plain-list (%s))" contents))
+
+;; (defun org-iorg-data-item (item contents info)
+;;   "Transcode ITEM element into iOrg syntax.
+;; CONTENTS is its contents, as a string or nil.  INFO is ignored."
+;; (format "'(item (%s))" contents))
+
+;; (defun org-iorg-data-table (table contents info)
+;;   "Transcode TABLE element into iOrg syntax.
+;; CONTENTS is its contents, as a string or nil.  INFO is ignored."
 ;; (format "%s" contents))
-  (unless (plist-get info :with-todo-keywords)
-    (org-element-put-property headline :todo-keyword nil))
-  (unless (plist-get info :with-tags)
-    (org-element-put-property headline :tags nil))
-  (unless (plist-get info :with-priority)
-    (org-element-put-property headline :priority nil))
-  (message "elem-id: %s\n parent-id: %s\n children: %s"
-           (org-element-property :elem-id headline)
-           (org-element-property :parent-id headline)
-           (org-element-property :children headline))
-  (org-element-headline-interpreter headline contents))
 
-(defun org-iorg-data-plain-list (plain-list contents info)
-  "Transcode PLAIN-LIST element into iOrg syntax.
-CONTENTS is its contents, as a string or nil.  INFO is ignored."
-(format "'(plain-list (%s))" contents))
+;; (defun org-iorg-data-table-cell (table-cell contents info)
+;;   "Transcode TABLE-CELL element into iOrg syntax.
+;; CONTENTS is its contents, as a string or nil.  INFO is ignored."
+;; (format "%s" contents))
 
-(defun org-iorg-data-item (item contents info)
-  "Transcode ITEM element into iOrg syntax.
-CONTENTS is its contents, as a string or nil.  INFO is ignored."
-(format "'(item (%s))" contents))
-
-(defun org-iorg-data-table (table contents info)
-  "Transcode TABLE element into iOrg syntax.
-CONTENTS is its contents, as a string or nil.  INFO is ignored."
-(format "%s" contents))
-
-(defun org-iorg-data-table-cell (table-cell contents info)
-  "Transcode TABLE-CELL element into iOrg syntax.
-CONTENTS is its contents, as a string or nil.  INFO is ignored."
-(format "%s" contents))
-
-(defun org-iorg-data-table-row (table-row contents info)
-  "Transcode TABLE-ROW element into iOrg syntax.
-CONTENTS is its contents, as a string or nil.  INFO is ignored."
-(format "%s" contents))
+;; (defun org-iorg-data-table-row (table-row contents info)
+;;   "Transcode TABLE-ROW element into iOrg syntax.
+;; CONTENTS is its contents, as a string or nil.  INFO is ignored."
+;; (format "%s" contents))
 
 
 ;;;; Filter Functions
@@ -501,16 +597,15 @@ CONTENTS is its contents, as a string or nil.  INFO is ignored."
 
 (defun org-iorg-data-filter-parse-tree-function (tree backend info)
   "Filter complete parsed TREE ignoring BACKEND and INFO."
-  ;; (org-iorg-data-tag-org-data-element
    (org-iorg-data-add-children
     (org-iorg-data-add-parent-ids
      (org-iorg-data-add-ids tree backend info)
      backend info)
     backend info))
-   ;; backend info))
 
 (defun org-iorg-data-filter-section-function (section backend info)
   (format "(section %s)" section))
+  ;; (format "(any (section %s))" section))
 
 ;; (defun org-iorg-data-filter-final-output-function (string backend info)
 ;;   "Prepare final output STRING ignoring BACKEND.

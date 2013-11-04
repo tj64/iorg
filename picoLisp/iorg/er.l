@@ -186,14 +186,14 @@
 
 ## - descendants :: joint link to descendant elements
 ## - label :: element ID (unique for parse-tree)
-## - :contents :: normalized partial parse-tree
+## - section :: normalized partial parse-tree
 
 ## **** Code
 
 (class +orgBaseElement +Entity)
 (rel descendants (+List +Joint) ancestor (+orgElement))
 (rel label (+Ref +Symbol))
-(rel contents (+String))
+(rel section (+String))
 
 (dm url> ())
 (dm upd> ())
