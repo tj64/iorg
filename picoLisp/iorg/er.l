@@ -313,7 +313,7 @@
 (rel ptree (+Aux +Ref +Link) (label) NIL (+OrgData))
 (rel title-string (+Aux +Ref +String) (title-stamp))
 (rel title-stamp (+List +Bag)
-   ((+Ref +Symbol))                     # timestamp-type
+   ((+Symbol))                          # timestamp-type
    ((+Ref +Date))                       # start date
    ((+Time))                            # start time
    ((+Date))                            # end date
@@ -331,7 +331,7 @@
 (rel tags (+List +Ref +String))
 (rel todo-keyword (+Ref +String))
 (rel scheduled (+List +Bag)
-   ((+Symbol))                     # timestamp-type
+   ((+Symbol))                          # timestamp-type
    ((+Ref +Date))                       # start date
    ((+Time))                            # start time
    ((+Date))                            # end date
@@ -340,16 +340,32 @@
    ((+Number))                          # repeater-value
    ((+Symbol)) )                        # repeater-unit
 (rel deadline (+List +Bag)
-   ((+Symbol))                     # timestamp-type
-   ((+Ref +Date))                       # date
-   ((+Time))                            # time
+   ((+Symbol))                          # timestamp-type
+   ((+Ref +Date))                       # start date
+   ((+Time))                            # start time
+   ((+Date))                            # end date
+   ((+Time))                            # end time
    ((+Symbol))                          # repeater-type
    ((+Number))                          # repeater-value
    ((+Symbol)) )                        # repeater-unit
+   ## ((+Symbol))                     # timestamp-type
+   ## ((+Ref +Date))                       # date
+   ## ((+Time))                            # time
+   ## ((+Symbol))                          # repeater-type
+   ## ((+Number))                          # repeater-value
+   ## ((+Symbol)) )                        # repeater-unit
 (rel closed (+List +Bag)
-   ((+Symbol))                     # timestamp-type
-   ((+Ref +Date))                       # date
-   ((+Time)) )                          # time
+   ((+Symbol))                          # timestamp-type
+   ((+Ref +Date))                       # start date
+   ((+Time))                            # start time
+   ((+Date))                            # end date
+   ((+Time))                            # end time
+   ((+Symbol))                          # repeater-type
+   ((+Number))                          # repeater-value
+   ((+Symbol)) )                        # repeater-unit
+   ## ((+Symbol))                     # timestamp-type
+   ## ((+Ref +Date))                       # date
+   ## ((+Time)) )                          # time
 (rel quotedp (+Bool))
 (rel archivedp (+Symbol))
 (rel commentedp (+Bool))

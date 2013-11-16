@@ -44,7 +44,10 @@
   :translate-alist
   '((template . org-iorg-data-template)
     (headline . org-iorg-data-headline)
-    (timestamp . org-iorg-data-timestamp))
+    (planning . org-iorg-data-planning)
+    (property-drawer . org-iorg-data-property-drawer)
+    ;; (timestamp . org-iorg-data-timestamp)
+    )
   ;;   (item . org-iorg-data-item)
   ;;   (plain-list . org-iorg-data-plain-list)
   ;;   (table . org-iorg-data-table)
@@ -55,9 +58,9 @@
   :filters-alist '((:filter-parse-tree
 		    . org-iorg-data-filter-parse-tree-function)
                    (:filter-section
-		    . org-iorg-data-filter-section-function)
-                   (:filter-final-output
-		    . org-iorg-data-filter-final-output-function))
+		    . org-iorg-data-filter-section-function))
+                   ;; (:filter-final-output
+		   ;;  . org-iorg-data-filter-final-output-function))
   :menu-entry
   '(?i "Export to iOrg"
        ((?I "As iOrg buffer" org-iorg-data-export-as-iorg)
@@ -374,6 +377,35 @@ compliant form."
 ;;                     (cons (org-element-property prop elem) prop))
 ;;                   props))))))
 
+;;;;; Deal with Timestamps
+
+(defun org-iorg-data-process-timestamp (timestamp)
+  "Process TIMESTAMP element."
+  ;; (if (memq (org-element-type (org-export-get-parent timestamp))
+  ;;           '(headline deadline scheduled closed))
+  (message "this is 'timestamp': %s" timestamp)                
+  (and timestamp
+       (list
+        (org-element-property :type timestamp)
+        (list
+         (org-element-property :year-start timestamp)
+         (org-element-property :month-start timestamp)
+         (org-element-property :day-start timestamp))
+        (list
+         (org-element-property :hour-start timestamp)
+         (org-element-property :minute-start timestamp))
+        (list
+         (org-element-property :year-end timestamp)
+         (org-element-property :month-end timestamp)
+         (org-element-property :day-end timestamp))
+        (list
+         (org-element-property :hour-end timestamp)
+         (org-element-property :minute-end timestamp))
+        (org-element-property :repeater-type timestamp)
+        (org-element-property :repeater-value timestamp)
+        (org-element-property :repeater-unit timestamp))))
+    ;; (org-element-timestamp-interpreter timestamp contents)))
+
 
 ;;;; Template
 
@@ -381,7 +413,7 @@ compliant form."
   "Return complete document string after iOrg conversion.
 CONTENTS is the transcoded contents string.  INFO is a plist
 holding export options."
-  (format "(list '(org-data %S) %S)"
+  (format "((org-data %S) %s)"
           (list
            'parse-tree-id
            (make-temp-name
@@ -398,6 +430,15 @@ holding export options."
            'email (plist-get info :email)
            'description (plist-get info :description))
           contents))
+
+;; (defun org-iorg-timestamp-template (contents info)
+;;   "Return timestamp string after iOrg conversion.
+;; CONTENTS is the transcoded contents string.  INFO is a plist
+;; holding export options."
+;;   (format "((org-data %S) %s)"
+;;           (list )
+;;           contents))
+
 
 ;;;; Transcode Functions
 
@@ -418,29 +459,6 @@ holding export options."
 ;;   (org-element-headline-interpreter headline contents))
 
 
-(defun org-iorg-data-timestamp (timestamp contents info)
-  "Transcode TIMESTAMP element into iOrg syntax.
-CONTENTS is its contents, as a string or nil.  INFO is ignored."
-  (format "(timestamp %S) "
-          (list
-           (org-element-property :type timestamp)
-          (list
-           (org-element-property :year-start timestamp)
-           (org-element-property :month-start timestamp)
-           (org-element-property :day-start timestamp))
-          (list
-           (org-element-property :hour-start timestamp)
-           (org-element-property :minute-start timestamp))
-          (list
-           (org-element-property :year-end timestamp)
-           (org-element-property :month-end timestamp)
-           (org-element-property :day-end timestamp))
-          (list
-           (org-element-property :hour-end timestamp)
-           (org-element-property :minute-end timestamp))
-           (org-element-property :repeater-type timestamp)
-           (org-element-property :repeater-value timestamp)
-           (org-element-property :repeater-unit timestamp))))
 
           ;;  'parse-tree-id
           ;;  (make-temp-name
@@ -461,14 +479,22 @@ CONTENTS is its contents, as a string or nil.  INFO is ignored."
 (defun org-iorg-data-headline (headline contents info)
   "Transcode HEADLINE element into iOrg syntax.
 CONTENTS is its contents, as a string or nil.  INFO is ignored."
-  (format "(headline %S) "
+  (format "(headline %S %s) "
           (list
            'title-string
            (substring-no-properties
             (car (org-element-property :title headline)))
+           'title-stamp
+           (org-iorg-data-process-timestamp
+            (car
+             (org-element-map
+                 (org-element-property :title headline)
+                 'timestamp 'identity)))
            'alt-title-string
-           (substring-no-properties
-            (car (org-export-get-alt-title headline info)))
+           (let ((attl (org-element-property :alt-title headline)))
+                 (and attl (substring-no-properties (car attl))))
+           ;; (substring-no-properties
+           ;;  (car (org-export-get-alt-title headline info)))
            'category
            (substring-no-properties (org-export-get-category headline info))
            'level
@@ -487,7 +513,29 @@ CONTENTS is its contents, as a string or nil.  INFO is ignored."
            (org-element-property :commentedp headline)
            'footnote-secion-p
            (org-element-property :footnote-secion-p headline)
-           contents)))
+           'deadline
+           (org-iorg-data-process-timestamp
+            (org-element-property :deadline headline))
+           'scheduled
+           (org-iorg-data-process-timestamp
+            (org-element-property :scheduled headline))
+           'closed
+           (org-iorg-data-process-timestamp
+            (org-element-property :closed headline))
+           )
+          (org-no-properties contents)))
+
+
+(defun org-iorg-data-planning (planning contents info)
+  "Transcode PLANNING element into iOrg syntax.
+CONTENTS is its contents, as a string or nil.  INFO is ignored."
+  "")
+
+(defun org-iorg-data-property-drawer (property-drawer contents info)
+  "Transcode PROPERTY-DRAWER element into iOrg syntax.
+CONTENTS is its contents, as a string or nil.  INFO is ignored."
+  "")
+
 
           ;;  (org-element-property :month-end headline)
           ;;  (org-element-property :day-end headline))
@@ -604,7 +652,8 @@ CONTENTS is its contents, as a string or nil.  INFO is ignored."
     backend info))
 
 (defun org-iorg-data-filter-section-function (section backend info)
-  (format "(section %s)" section))
+  (format "(section %S)" (org-no-properties section)))
+  ;; (format "(section (%S))" (org-no-properties section)))
   ;; (format "(any (section %s))" section))
 
 ;; (defun org-iorg-data-filter-final-output-function (string backend info)
