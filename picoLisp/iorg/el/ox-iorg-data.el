@@ -46,6 +46,8 @@
     (headline . org-iorg-data-headline)
     (planning . org-iorg-data-planning)
     (property-drawer . org-iorg-data-property-drawer)
+    (drawer . org-iorg-data-drawer)
+    (node-property . org-iorg-data-node-property)
     ;; (timestamp . org-iorg-data-timestamp)
     )
   ;;   (item . org-iorg-data-item)
@@ -57,6 +59,8 @@
   :export-block "IORG_DATA"
   :filters-alist '((:filter-parse-tree
 		    . org-iorg-data-filter-parse-tree-function)
+                   ;; (:filter-headline
+		   ;;  . org-iorg-data-filter-headline-function)
                    (:filter-section
 		    . org-iorg-data-filter-section-function))
                    ;; (:filter-final-output
@@ -77,6 +81,14 @@
 
 ;;; Variables
 ;;;; Internal Variables
+
+(defconst org-iorg-data-ignored-node-properties
+  '("deadline" "scheduled" "closed" "CATEGORY" "ALT_TITLE")
+  "Node properties that are ignored in a headline's property attribute.")
+
+(defvar org-iorg-data-node-properties nil
+  "Temporary storage for a headline's node-properties")
+
 ;;;; User Configurable Variables
 
 (defgroup org-export-iorg-data nil
@@ -479,63 +491,85 @@ holding export options."
 (defun org-iorg-data-headline (headline contents info)
   "Transcode HEADLINE element into iOrg syntax.
 CONTENTS is its contents, as a string or nil.  INFO is ignored."
-  (format "(headline %S %s) "
-          (list
-           'title-string
-           (substring-no-properties
-            (car (org-element-property :title headline)))
-           'title-stamp
-           (org-iorg-data-process-timestamp
-            (car
-             (org-element-map
-                 (org-element-property :title headline)
-                 'timestamp 'identity)))
-           'alt-title-string
-           (let ((attl (org-element-property :alt-title headline)))
-                 (and attl (substring-no-properties (car attl))))
-           ;; (substring-no-properties
-           ;;  (car (org-export-get-alt-title headline info)))
-           'category
-           (substring-no-properties (org-export-get-category headline info))
-           'level
-           (org-element-property :level headline)
-           'priority
-           (org-element-property :priority headline)
-           'tags
-           (org-element-property :tags headline)
-           'todo-keyword
-           (org-element-property :todo-keyword headline)
-           'quotedp
-           (org-element-property :quotedp headline)
-           'archivedp
-           (org-element-property :archivedp headline)
-           'commentedp
-           (org-element-property :commentedp headline)
-           'footnote-secion-p
-           (org-element-property :footnote-secion-p headline)
-           'deadline
-           (org-iorg-data-process-timestamp
-            (org-element-property :deadline headline))
-           'scheduled
-           (org-iorg-data-process-timestamp
-            (org-element-property :scheduled headline))
-           'closed
-           (org-iorg-data-process-timestamp
-            (org-element-property :closed headline))
-           )
-          (org-no-properties contents)))
+  (let ((props org-iorg-data-node-properties))
+    (setq org-iorg-data-node-properties nil)
+    (format "(headline %S %s) "
+            (list
+             'title-string
+             (substring-no-properties
+              (car (org-element-property :title headline)))
+             'title-stamp
+             (org-iorg-data-process-timestamp
+              (car
+               (org-element-map
+                   (org-element-property :title headline)
+                   'timestamp 'identity)))
+             'alt-title-string
+             (let ((attl (org-element-property :alt-title headline)))
+               (and attl (substring-no-properties (car attl))))
+             ;; (substring-no-properties
+             ;;  (car (org-export-get-alt-title headline info)))
+             'properties props
+             'category
+             (substring-no-properties (org-export-get-category headline info))
+             'level
+             (org-element-property :level headline)
+             'priority
+             (org-element-property :priority headline)
+             'tags
+             (org-element-property :tags headline)
+             'todo-keyword
+             (org-element-property :todo-keyword headline)
+             'quotedp
+             (org-element-property :quotedp headline)
+             'archivedp
+             (org-element-property :archivedp headline)
+             'commentedp
+             (org-element-property :commentedp headline)
+             'footnote-secion-p
+             (org-element-property :footnote-secion-p headline)
+             'deadline
+             (org-iorg-data-process-timestamp
+              (org-element-property :deadline headline))
+             'scheduled
+             (org-iorg-data-process-timestamp
+              (org-element-property :scheduled headline))
+             'closed
+             (org-iorg-data-process-timestamp
+              (org-element-property :closed headline)))
+            (org-no-properties contents))))
 
+
+(defun org-iorg-data-drawer (drawer contents info)
+  "Transcode DRAWER element into iOrg syntax.
+CONTENTS is its contents, as a string or nil. INFO is ignored."
+  (if (string= (org-element-property :drawer-name drawer) "LOGBOOK")
+      ""
+    (org-export-expand drawer contents t)))
 
 (defun org-iorg-data-planning (planning contents info)
   "Transcode PLANNING element into iOrg syntax.
 CONTENTS is its contents, as a string or nil.  INFO is ignored."
   "")
 
+;; TODO how to export property drawer? Nicolas mail ...
 (defun org-iorg-data-property-drawer (property-drawer contents info)
   "Transcode PROPERTY-DRAWER element into iOrg syntax.
 CONTENTS is its contents, as a string or nil.  INFO is ignored."
   "")
+  ;; (format "(properties (%s))" contents))
+  ;; (list contents))
 
+(defun org-iorg-data-node-property (node-property contents info)
+  "Transcode NODE-PROPERTY element into iOrg syntax.
+CONTENTS is its contents, as a string or nil.  INFO is ignored."
+  (let ((key (org-element-property :key node-property)))
+    (unless (member key org-iorg-data-ignored-node-properties)
+      (delq nil
+            (add-to-list
+             'org-iorg-data-node-properties
+             (list key (org-element-property :value node-property))))))
+  "")
 
           ;;  (org-element-property :month-end headline)
           ;;  (org-element-property :day-end headline))
@@ -652,18 +686,12 @@ CONTENTS is its contents, as a string or nil.  INFO is ignored."
     backend info))
 
 (defun org-iorg-data-filter-section-function (section backend info)
+  "Filter parsed SECTION ignoring BACKEND and INFO."
   (format "(section %S)" (org-no-properties section)))
-  ;; (format "(section (%S))" (org-no-properties section)))
-  ;; (format "(any (section %s))" section))
 
-;; (defun org-iorg-data-filter-final-output-function (string backend info)
-;;   "Prepare final output STRING ignoring BACKEND.
-;; More specifically, tag `org-data' element with useful meta-data
-;; extracted form INFO."
-;;   (with-temp-buffer
-;;     (insert string)
-
-;;     (buffer-substring-no-properties (point-min) (point-max))))
+;; (defun org-iorg-data-filter-headline-function (headline backend info)
+;;   "Filter parsed HEADLINE ignoring BACKEND and INFO."
+;;   )
 
 ;;;; End-user functions
 
@@ -787,6 +815,11 @@ Return output file name."
     (set-buffer-modified-p nil)))
 
 ;;; Provide and Hooks
+
+(add-hook 'org-export-before-processing-hook
+          (lambda (backend)
+            (and (eq backend 'iorg-data)
+                     (setq org-iorg-data-node-properties nil))))
 
 (provide 'ox-iorg-data)
 
