@@ -696,9 +696,38 @@ CONTENTS is its contents, as a string or nil.  INFO is ignored."
 ;;;; End-user functions
 
 ;;;###autoload
+(defun org-iorg-data-export (&optional subtreep visible-only
+body-only ext-plist)
+  "Export current buffer to iorg-data and return transcoded string.
+
+If narrowing is active in the current buffer, only transcode its
+narrowed part.
+
+If a region is active, transcode that region.
+
+When optional argument SUBTREEP is non-nil, transcode the
+sub-tree at point, extracting information from the headline
+properties first.
+
+When optional argument VISIBLE-ONLY is non-nil, don't export
+contents of hidden elements.
+
+When optional argument BODY-ONLY is non-nil, only return body
+code, without surrounding template.
+
+Optional argument EXT-PLIST, when provided, is a property list
+with external parameters overriding Org default settings, but
+still inferior to file-local settings.
+
+Return code as a string."
+  (interactive)
+  (org-export-as 'iorg-data subtreep visible-only body-only ext-plist))
+
+
+;;;###autoload
 (defun org-iorg-data-export-as-iorg-data (&optional async subtreep
 visible-only ext-plist)
-  "Export current buffer to an iOrg buffer.
+  "Export current buffer to an iorg-data buffer.
 
 If narrowing is active in the current buffer, only export its
 narrowed part.
@@ -720,20 +749,20 @@ EXT-PLIST, when provided, is a property list with external
 parameters overriding Org default settings, but still inferior to
 file-local settings.
 
-Export is done in a buffer named \"*Org IORG Export*\", which will
+Export is done in a buffer named \"*Org IORG_DATA Export*\", which will
 be displayed when `org-export-show-temporary-export-buffer' is
 non-nil."
   (interactive)
   (if async
       (org-export-async-start
 	  (lambda (output)
-	    (with-current-buffer (get-buffer-create "*Org IORG Export*")
+	    (with-current-buffer (get-buffer-create "*Org IORG_DATA Export*")
 	      (erase-buffer)
 	      (insert output)
 	      (goto-char (point-min))
 	      (org-mode)
-	      (org-export-add-to-stack (current-buffer) 'iorg)))
-	`(org-export-as 'iorg ,subtreep ,visible-only nil ',ext-plist))
+	      (org-export-add-to-stack (current-buffer) 'iorg-data)))
+	`(org-export-as 'iorg-data ,subtreep ,visible-only nil ',ext-plist))
     (let ((outbuf
 	   (org-export-to-buffer
 	    'iorg-data "*Org IORG_DATA Export*"
@@ -742,9 +771,11 @@ non-nil."
       (when org-export-show-temporary-export-buffer
 	(switch-to-buffer-other-window outbuf)))))
 
+
 ;;;###autoload
-(defun org-iorg-data-export-to-iorg-data (&optional async subtreep visible-only ext-plist)
-  "Export current buffer to an iorg file.
+(defun org-iorg-data-export-to-iorg-data (&optional async
+subtreep visible-only ext-plist)
+  "Export current buffer to an iorg-data file.
 
 If narrowing is active in the current buffer, only export its
 narrowed part.
@@ -771,11 +802,11 @@ Return output file name."
   (let ((outfile (org-export-output-file-name ".l" subtreep)))
     (if async
 	(org-export-async-start
-	    (lambda (f) (org-export-add-to-stack f 'iorg))
+	    (lambda (f) (org-export-add-to-stack f 'iorg-data))
 	  `(expand-file-name
 	    (org-export-to-file
-	     'iorg ,outfile ,subtreep ,visible-only nil ',ext-plist)))
-      (org-export-to-file 'iorg outfile subtreep visible-only
+	     'iorg-data ,outfile ,subtreep ,visible-only nil ',ext-plist)))
+      (org-export-to-file 'iorg-data outfile subtreep visible-only
       nil ext-plist))))
 
 ;;;###autoload
