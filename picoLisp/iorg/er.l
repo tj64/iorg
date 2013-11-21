@@ -192,7 +192,8 @@
 
 (class +orgBaseElement +Entity)
 (rel descendants (+List +Joint) ancestor (+orgElement))
-(rel label (+Ref +Symbol))
+(rel elem-id (+Number))
+(rel children (+List +Number))
 (rel section (+String))
 
 (dm url> ())
@@ -311,6 +312,7 @@
 
 (class +OrgHeadline +orgElement)
 (rel ptree (+Aux +Ref +Link) (label) NIL (+OrgData))
+(rel parent-id (+Number))
 (rel title-string (+Aux +Ref +String) (title-stamp))
 (rel title-stamp (+List +Bag)
    ((+Symbol))                          # timestamp-type

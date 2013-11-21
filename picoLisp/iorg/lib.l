@@ -112,7 +112,7 @@
 ## *** Read Parse Tree
 
 ## ## expects absolute PATH to org file
-## (de readParseTree (Path)
+## (de importOrgData (Path)
 ##     (emx '(read)
 ##        (pack
 ##        "(add-to-list 'load-path "
@@ -130,26 +130,41 @@
 ##          "(let ((org-cycle-silently 1))"
 ##          "(princ (iorg-normalize-parse-tree))))" ) ) )
 
-## expects absolute PATH to org file
-## stores parse-tree and all its headlines in PicoLisp DB
-(de readParseTree (Path)
-   (msg "entering readParseTree ...")
-   (eval
-      (any
-         (emc '(read)
-            (pack
-               "(let ((org-cycle-silently t) "
-               "(print-escape-newlines t) "
-               "(print-circle t)) "
-               "(with-temp-buffer "
-               "(insert-file-contents-literally \"" (absPath Path) "\") "
-               "(org-mode) "
-               "(princ "
-               "(iorg-wrap-parse-tree "
-               "(iorg-convert-parse-tree)))))" ) ) ) ) )
+(de importOrgData (Path)
+   (msg "entering importOrgData ...")
+   (any
+      (emc '(read)
+         (pack
+            "(let ((org-cycle-silently t) "
+            ## "(print-escape-newlines t) "
+            "expStrg) "
+            "(with-current-buffer "
+            "(find-file \"" (absPath Path) "\") "
+            "(org-mode) "
+            "(show-all) "
+            "(setq expStrg (org-iorg-data-export)) "
+            "(kill-buffer)) "
+            "expStrg)" ) ) ) )
 
-## (de readParseTree (Path)
-##    (msg "entering readParseTree ...")
+
+## (de importOrgData (Path)
+##    (msg "entering importOrgData ...")
+##    (eval
+##       (any
+##          (emc '(read)
+##             (pack
+##                "(let ((org-cycle-silently t) "
+##                "(print-escape-newlines t) "
+##                "(print-circle t)) "
+##                "(with-temp-buffer "
+##                "(insert-file-contents-literally \"" (absPath Path) "\") "
+##                "(org-mode) "
+##                "(princ "
+##                "(iorg-wrap-parse-tree "
+##                "(iorg-convert-parse-tree)))))" ) ) ) ) )
+
+## (de importOrgData (Path)
+##    (msg "entering importOrgData ...")
 ##    (eval
 ##       (any
 ##          (emc '(read)

@@ -62,9 +62,9 @@
                    ;; (:filter-headline
 		   ;;  . org-iorg-data-filter-headline-function)
                    (:filter-section
-		    . org-iorg-data-filter-section-function))
-                   ;; (:filter-final-output
-		   ;;  . org-iorg-data-filter-final-output-function))
+		    . org-iorg-data-filter-section-function)
+                   (:filter-final-output
+		    . org-iorg-data-filter-final-output-function))
   :menu-entry
   '(?i "Export to iOrg"
        ((?I "As iOrg buffer" org-iorg-data-export-as-iorg)
@@ -84,7 +84,7 @@
 
 (defconst org-iorg-data-ignored-node-properties
   '("deadline" "scheduled" "closed" "CATEGORY" "ALT_TITLE")
-  "Node properties that are ignored in a headline's property attribute.")
+  "Node properties that are ignored in a headline's `properties' attribute.")
 
 (defvar org-iorg-data-node-properties nil
   "Temporary storage for a headline's node-properties")
@@ -166,6 +166,7 @@ elements parent)."
     nil nil nil 'WITH-AFFILIATED)
   tree)
 
+;; OBSOLETE
 (defun org-iorg-data-tag-org-data-element (tree backend info)
   "Add elem-id and other properties to `org-data' element of TREE.
 Added Properties are taken from INFO, BACKEND is ignored. The modified
@@ -395,7 +396,7 @@ compliant form."
   "Process TIMESTAMP element."
   ;; (if (memq (org-element-type (org-export-get-parent timestamp))
   ;;           '(headline deadline scheduled closed))
-  (message "this is 'timestamp': %s" timestamp)                
+  ;; (message "this is 'timestamp': %s" timestamp)
   (and timestamp
        (list
         (org-element-property :type timestamp)
@@ -418,6 +419,34 @@ compliant form."
         (org-element-property :repeater-unit timestamp))))
     ;; (org-element-timestamp-interpreter timestamp contents)))
 
+;;;;; Postprocess Results
+
+(defun org-iorg-data-nil-and-t-to-uppercase (strg)
+  "Takes a parse STRG and upcases nil and t."
+  (and (stringp strg)
+        (replace-regexp-in-string
+         "\\(\\_<t\\_>\\|(t)\\|\\_<nil\\_>\\|(nil)\\)"
+        'org-iorg-data-rep-function-for-nil-and-t
+        strg)))
+
+(defun org-iorg-data-rep-function-for-nil-and-t (match)
+  "Helper function for converting Elisp 'nil' an 't' to PicoLisp syntax.
+MATCH is the match-string to be converted, with 'nil' becoming
+'NIL' and 't' becoming 'T'."
+  (cond
+   ((string= match "t")
+    (format "%s" "T"))
+   ((string= match "nil")
+    (format "%s" "NIL"))
+   ((string= match "(t)")
+    (format "%s" "(T)"))
+   ((string= match "(nil)")
+    (format "%s" "(NIL)"))))
+
+(defun org-iorg-data-fix-newlines (strg)
+  "Replace Emacs newlines '\n' with PicoLisp newlines '^J'"
+  (and (stringp strg)
+        (replace-regexp-in-string "\n" "^J" strg)))
 
 ;;;; Template
 
@@ -425,7 +454,8 @@ compliant form."
   "Return complete document string after iOrg conversion.
 CONTENTS is the transcoded contents string.  INFO is a plist
 holding export options."
-  (format "((org-data %S) %s)"
+  ;; (format "((org-data %S) %s)"
+  (format "(org-data %S %s)"
           (list
            'parse-tree-id
            (make-temp-name
@@ -435,6 +465,17 @@ holding export options."
                (or (plist-get info :input-file)
                    (plist-get info :input-buffer))))
              "_"))
+           'elem-id 0
+           'children
+           (let (chld)
+             (org-element-map (plist-get info :parse-tree) 'headline
+               (lambda (--elem)
+                 (and (eq (org-element-property :parent-id --elem) 0)
+                      (setq chld
+                            (cons
+                             (org-element-property :elem-id --elem)
+                             chld)))))    
+               (reverse chld))
            'input-file (plist-get info :input-file)
            'input-buffer (plist-get info :input-buffer)
            'author (car (plist-get info :author))
@@ -495,6 +536,12 @@ CONTENTS is its contents, as a string or nil.  INFO is ignored."
     (setq org-iorg-data-node-properties nil)
     (format "(headline %S %s) "
             (list
+             'elem-id
+             (org-element-property :elem-id headline)
+             'parent-id
+             (org-element-property :parent-id headline)
+             'children
+             (org-element-property :children headline)
              'title-string
              (substring-no-properties
               (car (org-element-property :title headline)))
@@ -552,13 +599,10 @@ CONTENTS is its contents, as a string or nil. INFO is ignored."
 CONTENTS is its contents, as a string or nil.  INFO is ignored."
   "")
 
-;; TODO how to export property drawer? Nicolas mail ...
 (defun org-iorg-data-property-drawer (property-drawer contents info)
   "Transcode PROPERTY-DRAWER element into iOrg syntax.
 CONTENTS is its contents, as a string or nil.  INFO is ignored."
   "")
-  ;; (format "(properties (%s))" contents))
-  ;; (list contents))
 
 (defun org-iorg-data-node-property (node-property contents info)
   "Transcode NODE-PROPERTY element into iOrg syntax.
@@ -687,7 +731,14 @@ CONTENTS is its contents, as a string or nil.  INFO is ignored."
 
 (defun org-iorg-data-filter-section-function (section backend info)
   "Filter parsed SECTION ignoring BACKEND and INFO."
-  (format "(section %S)" (org-no-properties section)))
+  (format "(section %S) " (org-no-properties section)))
+
+(defun org-iorg-data-filter-final-output-function (strg backend info)
+  "Filter final output string STRG ignoring BACKEND and INFO."
+  (let ((print-escape-newlines t))
+    (org-iorg-data-fix-newlines
+     (org-iorg-data-nil-and-t-to-uppercase strg))))
+
 
 ;; (defun org-iorg-data-filter-headline-function (headline backend info)
 ;;   "Filter parsed HEADLINE ignoring BACKEND and INFO."
@@ -697,7 +748,7 @@ CONTENTS is its contents, as a string or nil.  INFO is ignored."
 
 ;;;###autoload
 (defun org-iorg-data-export (&optional subtreep visible-only
-body-only ext-plist)
+                                       body-only ext-plist)
   "Export current buffer to iorg-data and return transcoded string.
 
 If narrowing is active in the current buffer, only transcode its
@@ -722,7 +773,6 @@ still inferior to file-local settings.
 Return code as a string."
   (interactive)
   (org-export-as 'iorg-data subtreep visible-only body-only ext-plist))
-
 
 ;;;###autoload
 (defun org-iorg-data-export-as-iorg-data (&optional async subtreep
@@ -818,7 +868,7 @@ is the property list for the given project.  PUB-DIR is the
 publishing directory.
 
 Return output file name."
-  (org-publish-org-to 'iorg filename ".l" plist pub-dir)
+  (org-publish-org-to 'iorg-data filename ".l" plist pub-dir)
   (when (plist-get plist :htmlized-source)
     (require 'htmlize)
     (require 'ox-html)
