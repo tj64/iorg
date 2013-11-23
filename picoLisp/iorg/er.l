@@ -351,12 +351,6 @@
    ((+Symbol))                          # repeater-type
    ((+Number))                          # repeater-value
    ((+Symbol)) )                        # repeater-unit
-   ## ((+Symbol))                     # timestamp-type
-   ## ((+Ref +Date))                       # date
-   ## ((+Time))                            # time
-   ## ((+Symbol))                          # repeater-type
-   ## ((+Number))                          # repeater-value
-   ## ((+Symbol)) )                        # repeater-unit
 (rel closed (+Bag)
    ((+Symbol))                          # timestamp-type
    ((+Ref +Date))                       # start date
@@ -366,77 +360,16 @@
    ((+Symbol))                          # repeater-type
    ((+Number))                          # repeater-value
    ((+Symbol)) )                        # repeater-unit
-   ## ((+Symbol))                     # timestamp-type
-   ## ((+Ref +Date))                       # date
-   ## ((+Time)) )                          # time
 (rel quotedp (+Bool))
 (rel archivedp (+Symbol))
 (rel commentedp (+Bool))
 (rel footnote-section-p (+Bool))
 
-
 (dm url> (Tab)
    (and (may OrgData) (list "iorg/orgHeadline.l" '*ID This)) )
 
-## (dm category> ()
-##    (if (lst? (: CATEGORY))
-##       (last (: CATEGORY)) )
-##      (category> (db 'CATEGORY '+OrgHeadline
-##                    (makeHashRef (hashLblNum>
-##                                    (car (: CATEGORY)) ) )
-##                                    'ptree (: ptree) ) ) )
-
 (dm upd> ())
 (dm diff> ())
-## (dm origSubTree> ()
-##    (msg "origSubTree> entered ...")
-##    (make
-##       (link
-##          (: label)
-##          (list
-##             'headline
-##             (list
-##                ':title (: title)
-##                ':alt-title (: alt-title)
-##                ':CATEGORY (: CATEGORY)
-##                ':pre-blank (: pre-blank)
-##                ':hiddenp (: hiddenp)
-##                ':level (: level)
-##                ':priority (: priority)
-##                ':tags (: tags)
-##                ':todo-keyword (: todo-keyword)
-##                ':scheduled (: scheduled)
-##                ':deadline (: deadline)
-##                ':closed (: closed)
-##                ':quotedp (: quotedp)
-##                ':archivedp (: archivedp)
-##                ':commentedp (: commentedp)
-##                ':footnote-section-p (: footnote-section-p) )
-##             ## (prepCont> (: contents))
-##             (: contents)
-##             (mapcar
-##                'origSubTree>
-##                (: descendants) ) ) ) ) )
-
-
-## ## concat object attributes, converted to elisp-parse-tree syntax, with
-## ## object's contents string (re-converted to elisp syntax too) and send it to
-## ## Emacs (using function 'emx) for interpretation (-> creation of textual org
-## ## file from parse-tree by `org-element-interpret-data'), finally return
-## ## string with textual representation of headline object or parts of it. If
-## ## 'ContentsOnly?' is non-nil, return only the textual representation of the
-## ## headlines' s content.
-## (dm interpret> (ContentsOnly?)
-##    (if ContentsOnly?
-##       (writeParseTree
-##          (convertParseTree (: :contents)) )
-##       (writeParseTree
-##         (convertParseTree
-##            (prepareParseTree This) ) ) ) )
-
-## (de prepareParseTree (Headline)
-##    (let Plst (getl Headline)
-##       (
 
 ## (de convertParseTree (Tree)
 
