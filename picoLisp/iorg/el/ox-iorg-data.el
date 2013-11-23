@@ -458,14 +458,14 @@ holding export options."
   ;; (format "((org-data %S) %s)"
   (format "(org-data %S %s)"
           (list
-           'parse-tree-id
-           (make-temp-name
-            (concat
-             (file-name-nondirectory
-              (file-name-sans-extension
-               (or (plist-get info :input-file)
-                   (plist-get info :input-buffer))))
-             "_"))
+           ;; 'parse-tree-id
+           ;; (make-temp-name
+           ;;  (concat
+           ;;   (file-name-nondirectory
+           ;;    (file-name-sans-extension
+           ;;     (or (plist-get info :input-file)
+           ;;         (plist-get info :input-buffer))))
+           ;;   "_"))
            'elem-id 0
            'children
            (let (chld)
@@ -475,7 +475,7 @@ holding export options."
                       (setq chld
                             (cons
                              (org-element-property :elem-id --elem)
-                             chld)))))    
+                             chld)))))
                (reverse chld))
            'input-file (plist-get info :input-file)
            'input-buffer (plist-get info :input-buffer)

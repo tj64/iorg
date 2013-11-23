@@ -246,11 +246,10 @@
 ## Parse-Tree (meta data for containing org file,
 ## collected from Emacs environment, plus root elem-id)
 (class +OrgData +orgBaseElement)
-(rel parse-tree-id (+Need +Sn +Idx +String))
+(rel input-buffer (+Need +Aux +Ref +String) (date time))
+(rel input-file (+String))
 (rel date (+Date))
 (rel time (+Time))
-(rel input-file (+String))
-(rel input-buffer (+String))
 (rel author (+Ref +String))
 (rel email (+String))
 (rel creator (+String))
