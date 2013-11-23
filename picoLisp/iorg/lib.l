@@ -238,7 +238,8 @@
          'section (and
                       (== 'section (caar Lst))
                       (last (pop 'Lst)) )
-         'ptree Ptree )
+         'ptree Ptree
+         'deadline (car (get 'Obj 'deadline)) )
       ## (put> Obj 'ancestor
       ##    (db 'elem-id '+orgBaseElement (: parent-id) ) )
       ##       ## (makeHashLbl (hashLblNum> Obj ':parent)) ) )
@@ -251,30 +252,24 @@
       (cdr (pop 'Lst))
       Ptree ) ) )
 
-(de treatOrgHeadline (H)
-  (msg "entering treatOrgHeadline ...")
-   (with H
-      (let (D (: :deadline)
-            S (: :scheduled)
-            C (: :closed)
-            L (: :title)
-            N (: :contents)
-            Lst (and N (processContents (cadr N))) )
-      (and D
-         (put> This ':deadline-stamp (makeOrgTimestamp (car (tail -1 D))))
-         (put> This ':deadline '(rawValue> (: :deadline-stamp))) )
-      (and S
-         (put> This ':scheduled-stamp (makeOrgTimestamp (car (tail -1 S))))
-         (put> This ':scheduled '(rawValue> (: :scheduled-stamp))) )
-      (and C
-         (put> This ':closed-stamp (makeOrgTimestamp (car (tail -1 C))))
-         (put> This ':closed '(rawValue> (: :closed-stamp))) )
-      (and L
-         (put> This ':title-object (makeOrgTitle L This))
-         (put> This ':raw-value '(rawValue> (: :title-object)))
-         (put> This ':title '(: :title-object :title)) )
-      (and Lst (put> This ':properties (processProperties (cdr Lst))))
-      (and Lst (put> This ':contents (car Lst)))) ) )
+
+## (de treatOrgHeadline (H)
+##   (msg "entering treatOrgHeadline ...")
+##    (with H
+##       (let (D (: deadline)
+##             S (: scheduled)
+##             C (: closed)
+##             L (: title-stamp) )
+##             ## N (: :contents)
+##             ## Lst (and N (processContents (cadr N))) )
+##       (and D
+##          (put> This 'deadline  (car D)) )
+##       (and S
+##          (put> This 'scheduled  (car S)) )
+##       (and C
+##          (put> This 'closed  (car C)) )
+##       (and L
+##          (put> This 'title-stamp (car L)) ) ) ) )
 
 ## (processContents (cadr '(\#8= (section ...)))
 (de processContents (Lst)

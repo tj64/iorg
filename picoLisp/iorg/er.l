@@ -315,7 +315,7 @@
 (rel ptree (+Aux +Ref +Link) (label) NIL (+OrgData))
 (rel parent-id (+Number))
 (rel title-string (+Aux +Ref +String) (title-stamp))
-(rel title-stamp (+List +Bag)
+(rel title-stamp (+Bag)
    ((+Symbol))                          # timestamp-type
    ((+Ref +Date))                       # start date
    ((+Time))                            # start time
@@ -333,7 +333,7 @@
 (rel priority (+Ref +Number))
 (rel tags (+List +Ref +String))
 (rel todo-keyword (+Ref +String))
-(rel scheduled (+List +Bag)
+(rel scheduled (+Bag)
    ((+Symbol))                          # timestamp-type
    ((+Ref +Date))                       # start date
    ((+Time))                            # start time
@@ -342,7 +342,7 @@
    ((+Symbol))                          # repeater-type
    ((+Number))                          # repeater-value
    ((+Symbol)) )                        # repeater-unit
-(rel deadline (+List +Bag)
+(rel deadline (+Bag)
    ((+Symbol))                          # timestamp-type
    ((+Ref +Date))                       # start date
    ((+Time))                            # start time
@@ -357,7 +357,7 @@
    ## ((+Symbol))                          # repeater-type
    ## ((+Number))                          # repeater-value
    ## ((+Symbol)) )                        # repeater-unit
-(rel closed (+List +Bag)
+(rel closed (+Bag)
    ((+Symbol))                          # timestamp-type
    ((+Ref +Date))                       # start date
    ((+Time))                            # start time
