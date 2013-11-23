@@ -215,9 +215,6 @@
       (msg (show Obj) " => Show New OrgData object")
       (while Lst
          (makeOrgHeadline
-                  ## (and
-                  ##    (hashLbl? (car Lst))
-                  ##    (pop 'Lst) )
                   (cdr (pop 'Lst))
                   Obj ) )
       (commit 'upd)
@@ -236,17 +233,12 @@
             (for (L (pop 'Lst) L)
                (if (meta '(+OrgHeadline) (car L))
                   (link (pop 'L) (pop 'L))
-                     ## (if (hashLbl? (car L))
-                     ##    (cut 2 'L)
-                     ##    (pop 'L) ) )
                   (cut 2 'L) ) ) )
-                  ## (and (hashLbl? (car L) (pop 'L)))
          (db: +OrgHeadline) '(+OrgHeadline)
          'section (and
                       (== 'section (caar Lst))
                       (last (pop 'Lst)) )
          'ptree Ptree )
-         ## ':label Label )
       ## (put> Obj 'ancestor
       ##    (db 'elem-id '+orgBaseElement (: parent-id) ) )
       ##       ## (makeHashLbl (hashLblNum> Obj ':parent)) ) )
@@ -256,12 +248,8 @@
       )
 (while Lst
    (makeOrgHeadline
-      ## (and
-      ##    (hashLbl? (car Lst))
-      ##    (pop 'Lst) )
       (cdr (pop 'Lst))
       Ptree ) ) )
-
 
 (de treatOrgHeadline (H)
   (msg "entering treatOrgHeadline ...")
@@ -460,34 +448,6 @@
 ##       Obj ) )
 
 ## *** Helper Functions
-
-## ## converts 1 to \#1=
-## (de makeHashLbl (Num)
-##    (intern
-##       (pack "\#" Num "=") ) )
-
-## ## converts 1 to \#1#
-## (de makeHashRef (Num)
-##    (intern
-##       (pack "\#" Num "#") ) )
-
-## ## check if symbol is a label like #2= or #12=
-## (de hashLbl? (X)
-##    (and
-##       (sym? X)
-##       (let L (chop X)
-##          (and
-##             (= `(char "#") (char (car L)))
-##             (= `(char "=") (char (last L))) ) ) ) )
-
-## ## check if symbol is a label like #2#= or #12#
-## (de hashRef? (X)
-##    (and
-##       (sym? X)
-##       (let L (chop X)
-##          (and
-##             (= `(char "#") (char (car L)))
-##             (= `(char "#") (char (last L))) ) ) ) )
 
 ## ## expects a parse-tree as produced by `iorg-normalize-parse-tree'
 ## ## and an option as string like e.g. "iorg"
