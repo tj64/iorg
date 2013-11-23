@@ -193,7 +193,7 @@
 (class +orgBaseElement +Entity)
 (rel descendants (+List +Joint) ancestor (+orgElement))
 (rel elem-id (+Number))
-(rel children (+List +Number))
+## (rel children (+List +Number))
 (rel section (+String))
 
 (dm url> ())
@@ -247,6 +247,8 @@
 ## collected from Emacs environment, plus root elem-id)
 (class +OrgData +orgBaseElement)
 (rel parse-tree-id (+Need +Sn +Idx +String))
+(rel date (+Date))
+(rel time (+Time))
 (rel input-file (+String))
 (rel input-buffer (+String))
 (rel author (+Ref +String))
@@ -418,20 +420,20 @@
 ##                (: descendants) ) ) ) ) )
 
 
-## concat object attributes, converted to elisp-parse-tree syntax, with
-## object's contents string (re-converted to elisp syntax too) and send it to
-## Emacs (using function 'emx) for interpretation (-> creation of textual org
-## file from parse-tree by `org-element-interpret-data'), finally return
-## string with textual representation of headline object or parts of it. If
-## 'ContentsOnly?' is non-nil, return only the textual representation of the
-## headlines' s content.
-(dm interpret> (ContentsOnly?)
-   (if ContentsOnly?
-      (writeParseTree
-         (convertParseTree (: :contents)) )
-      (writeParseTree
-        (convertParseTree
-           (prepareParseTree This) ) ) ) )
+## ## concat object attributes, converted to elisp-parse-tree syntax, with
+## ## object's contents string (re-converted to elisp syntax too) and send it to
+## ## Emacs (using function 'emx) for interpretation (-> creation of textual org
+## ## file from parse-tree by `org-element-interpret-data'), finally return
+## ## string with textual representation of headline object or parts of it. If
+## ## 'ContentsOnly?' is non-nil, return only the textual representation of the
+## ## headlines' s content.
+## (dm interpret> (ContentsOnly?)
+##    (if ContentsOnly?
+##       (writeParseTree
+##          (convertParseTree (: :contents)) )
+##       (writeParseTree
+##         (convertParseTree
+##            (prepareParseTree This) ) ) ) )
 
 ## (de prepareParseTree (Headline)
 ##    (let Plst (getl Headline)

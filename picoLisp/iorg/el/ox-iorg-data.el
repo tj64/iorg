@@ -44,6 +44,7 @@
   :translate-alist
   '((template . org-iorg-data-template)
     (headline . org-iorg-data-headline)
+    (section . org-iorg-data-section)
     (planning . org-iorg-data-planning)
     (property-drawer . org-iorg-data-property-drawer)
     (drawer . org-iorg-data-drawer)
@@ -61,8 +62,8 @@
 		    . org-iorg-data-filter-parse-tree-function)
                    ;; (:filter-headline
 		   ;;  . org-iorg-data-filter-headline-function)
-                   (:filter-section
-		    . org-iorg-data-filter-section-function)
+                   ;; (:filter-section
+		   ;;  . org-iorg-data-filter-section-function)
                    (:filter-final-output
 		    . org-iorg-data-filter-final-output-function))
   :menu-entry
@@ -166,30 +167,30 @@ elements parent)."
     nil nil nil 'WITH-AFFILIATED)
   tree)
 
-;; OBSOLETE
-(defun org-iorg-data-tag-org-data-element (tree backend info)
-  "Add elem-id and other properties to `org-data' element of TREE.
-Added Properties are taken from INFO, BACKEND is ignored. The modified
-TREE is returned."
-  (setcar (cdr tree)
-          (list
-           :parse-tree-id
-           (make-temp-name
-            (concat
-             (file-name-nondirectory
-              (file-name-sans-extension
-               (or (plist-get info :input-file)
-                   (plist-get info :input-buffer))))
-              "_"))
-           :input-file (plist-get info :input-file)
-           :input-buffer (plist-get info :input-buffer)
-           ;; :author (mapconcat 'identity (plist-get info :author) ", ")
-           :author (car (plist-get info :author))
-           :creator (plist-get info :creator)
-           :email (plist-get info :email)
-           :description (plist-get info :description)))
-  (message "%S" tree)
-  tree)
+;; ;; OBSOLETE
+;; (defun org-iorg-data-tag-org-data-element (tree backend info)
+;;   "Add elem-id and other properties to `org-data' element of TREE.
+;; Added Properties are taken from INFO, BACKEND is ignored. The modified
+;; TREE is returned."
+;;   (setcar (cdr tree)
+;;           (list
+;;            :parse-tree-id
+;;            (make-temp-name
+;;             (concat
+;;              (file-name-nondirectory
+;;               (file-name-sans-extension
+;;                (or (plist-get info :input-file)
+;;                    (plist-get info :input-buffer))))
+;;               "_"))
+;;            :input-file (plist-get info :input-file)
+;;            :input-buffer (plist-get info :input-buffer)
+;;            ;; :author (mapconcat 'identity (plist-get info :author) ", ")
+;;            :author (car (plist-get info :author))
+;;            :creator (plist-get info :creator)
+;;            :email (plist-get info :email)
+;;            :description (plist-get info :description)))
+;;   (message "%S" tree)
+;;   tree)
 
 ;; (defun org-iorg-data-tag-org-data-element (tree backend info)
 ;;   "Add elem-id and some properties to `org-data' element of TREE.
@@ -419,7 +420,7 @@ compliant form."
         (org-element-property :repeater-unit timestamp))))
     ;; (org-element-timestamp-interpreter timestamp contents)))
 
-;;;;; Postprocess Results
+;;;;; Post-process Results
 
 (defun org-iorg-data-nil-and-t-to-uppercase (strg)
   "Takes a parse STRG and upcases nil and t."
@@ -511,8 +512,6 @@ holding export options."
 ;;            (org-element-property :children headline))
 ;;   (org-element-headline-interpreter headline contents))
 
-
-
           ;;  'parse-tree-id
           ;;  (make-temp-name
           ;;   (concat
@@ -554,8 +553,6 @@ CONTENTS is its contents, as a string or nil.  INFO is ignored."
              'alt-title-string
              (let ((attl (org-element-property :alt-title headline)))
                (and attl (substring-no-properties (car attl))))
-             ;; (substring-no-properties
-             ;;  (car (org-export-get-alt-title headline info)))
              'properties props
              'category
              (substring-no-properties (org-export-get-category headline info))
@@ -586,6 +583,15 @@ CONTENTS is its contents, as a string or nil.  INFO is ignored."
               (org-element-property :closed headline)))
             (org-no-properties contents))))
 
+(defun org-iorg-data-section (section contents info)
+  "Transcode SECTION element into iOrg syntax.
+CONTENTS is its contents, as a string or nil. INFO is ignored."
+  (if (and contents (stringp contents) (> (length contents) 0))
+      (format "(section (parent-id %s) %S) "
+              (or (org-element-property
+                   :elem-id (org-export-get-parent section)) 0)
+              (org-no-properties contents))
+    ""))
 
 (defun org-iorg-data-drawer (drawer contents info)
   "Transcode DRAWER element into iOrg syntax.
@@ -729,9 +735,11 @@ CONTENTS is its contents, as a string or nil.  INFO is ignored."
      backend info)
     backend info))
 
-(defun org-iorg-data-filter-section-function (section backend info)
-  "Filter parsed SECTION ignoring BACKEND and INFO."
-  (format "(section %S) " (org-no-properties section)))
+;; (defun org-iorg-data-filter-section-function (section backend info)
+;;   "Filter parsed SECTION ignoring BACKEND and INFO."
+;;   (format "(section (parent-id %s) %S) "
+;;           (org-element-property :elem-id (org-export-get-parent section))
+;;           (org-no-properties section)))
 
 (defun org-iorg-data-filter-final-output-function (strg backend info)
   "Filter final output string STRG ignoring BACKEND and INFO."

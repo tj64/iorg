@@ -181,57 +181,53 @@
 
 ## *** Process Parse Tree
 
-## expects a parse-tree as produced by `iorg-normalize-parse-tree'
-(de processParseTree Tree
-   (makeOrgData (car Tree) (cadr Tree)) )
+## ## expects a parse-tree as produced by `iorg-normalize-parse-tree'
+## (de processParseTree Tree
+##    (makeOrgData (car Tree) (cadr Tree)) )
 
 ## create a new +OrgData object and trigger creation of +OrgHeadline objects
 ## for the parse-tree's headlines
-(de makeOrgData (Label Lst)
+(de makeOrgData (Lst)
    (msg "entering makeOrgData ...")
-   (setq *IorgGlobalSwitch (extractOptionValue "iorg" Lst))
-   (msg *IorgGlobalSwitch " => *IorgGlobalSwitch ")
-      (unless (= "nil" *IorgGlobalSwitch)
-         (unless (== 'org-data (pop 'Lst))
-            (quit "Bad type" DataType) )
-         (unless (car Lst)
-            (quit "No properties for type 'org-data' specified") )
-         (dbSync)
-         (let Obj
-            (apply
-               new
-               (make
-                  (for (L (pop 'Lst) L)
-                     (if (meta '(+OrgData) (car L))
-                        (link
-                           (pop 'L)
-                           (if (hashLbl? (car L))
-                              (cut 2 'L)
-                              (pop 'L) ) )
-                        (pop 'L)
-                        (and (hashLbl? (car L) (pop 'L))) ) ) )
-               (db: +OrgData) '(+OrgData)
-               ':contents (and
-                            (== 'section (caadr Lst))
-                            (cut 2 'Lst) )
-               ':label Label )
-            (msg Obj " => New OrgData object created")
-            (msg (show Obj) " => Show New OrgData object")
-            (while Lst
-               (makeOrgHeadline
-                  (and
-                     (hashLbl? (car Lst))
-                     (pop 'Lst) )
+   ## (setq *IorgGlobalSwitch (extractOptionValue "iorg" Lst))
+   ## (msg *IorgGlobalSwitch " => *IorgGlobalSwitch ")
+   ##    (unless (= "nil" *IorgGlobalSwitch)
+   (unless (== 'org-data (pop 'Lst))
+      (quit "Bad type" DataType) )
+   (unless (car Lst)
+      (quit "No properties for type 'org-data' specified") )
+   (dbSync)
+   (let Obj
+      (apply
+         new
+         (make
+            (for (L (pop 'Lst) L)
+               (if (meta '(+OrgData) (car L))
+                  (link (pop 'L) (pop 'L))
+                  (cut 2 'L) ) ) )
+         (db: +OrgData) '(+OrgData)
+         'section (and
+                     (== 'section (caar Lst))
+                     (last (pop 'Lst)) )
+         'time (time)
+         'date (date) )
+      (msg Obj " => New OrgData object created")
+      (msg (show Obj) " => Show New OrgData object")
+      (while Lst
+         (makeOrgHeadline
+                  ## (and
+                  ##    (hashLbl? (car Lst))
+                  ##    (pop 'Lst) )
                   (cdr (pop 'Lst))
                   Obj ) )
-            (commit 'upd)
-            (off *IorgGlobalSwitch)
-            Obj ) ) )
+      (commit 'upd)
+      ## (off *IorgGlobalSwitch)
+      Obj ) )
 
 ## *** Headline
 
 ## create a new +OrgHeadline object
-(de makeOrgHeadline (Label Lst Ptree)
+(de makeOrgHeadline (Lst Ptree)
    (msg "entering makeOrgHeadline ...")
    (let Obj
       (apply
@@ -239,29 +235,30 @@
          (make
             (for (L (pop 'Lst) L)
                (if (meta '(+OrgHeadline) (car L))
-                  (link
-                     (pop 'L)
-                     (if (hashLbl? (car L))
-                        (cut 2 'L)
-                        (pop 'L) ) )
-                  (pop 'L)
-                  (and (hashLbl? (car L) (pop 'L))) ) ) )
+                  (link (pop 'L) (pop 'L))
+                     ## (if (hashLbl? (car L))
+                     ##    (cut 2 'L)
+                     ##    (pop 'L) ) )
+                  (cut 2 'L) ) ) )
+                  ## (and (hashLbl? (car L) (pop 'L)))
          (db: +OrgHeadline) '(+OrgHeadline)
-         ':contents (and
-                      (== 'section (caadr Lst))
-                      (cut 2 'Lst) )
-         ':ptree Ptree
-         ':label Label )
-      (put> Obj ':ancestor
-         (db ':label '+orgBaseElement
-            (makeHashLbl (hashLblNum> Obj ':parent)) ) )
+         'section (and
+                      (== 'section (caar Lst))
+                      (last (pop 'Lst)) )
+         'ptree Ptree )
+         ## ':label Label )
+      ## (put> Obj 'ancestor
+      ##    (db 'elem-id '+orgBaseElement (: parent-id) ) )
+      ##       ## (makeHashLbl (hashLblNum> Obj ':parent)) ) )
       (msg Obj " => New OrgHeadline object created")
-      (treatOrgHeadline Obj) )
+      (msg (show Obj) " => Show New OrgHeadline object")
+      ## (treatOrgHeadline Obj)
+      )
 (while Lst
    (makeOrgHeadline
-      (and
-         (hashLbl? (car Lst))
-         (pop 'Lst) )
+      ## (and
+      ##    (hashLbl? (car Lst))
+      ##    (pop 'Lst) )
       (cdr (pop 'Lst))
       Ptree ) ) )
 
@@ -464,53 +461,53 @@
 
 ## *** Helper Functions
 
-## converts 1 to \#1=
-(de makeHashLbl (Num)
-   (intern
-      (pack "\#" Num "=") ) )
+## ## converts 1 to \#1=
+## (de makeHashLbl (Num)
+##    (intern
+##       (pack "\#" Num "=") ) )
 
-## converts 1 to \#1#
-(de makeHashRef (Num)
-   (intern
-      (pack "\#" Num "#") ) )
+## ## converts 1 to \#1#
+## (de makeHashRef (Num)
+##    (intern
+##       (pack "\#" Num "#") ) )
 
-## check if symbol is a label like #2= or #12=
-(de hashLbl? (X)
-   (and
-      (sym? X)
-      (let L (chop X)
-         (and
-            (= `(char "#") (char (car L)))
-            (= `(char "=") (char (last L))) ) ) ) )
+## ## check if symbol is a label like #2= or #12=
+## (de hashLbl? (X)
+##    (and
+##       (sym? X)
+##       (let L (chop X)
+##          (and
+##             (= `(char "#") (char (car L)))
+##             (= `(char "=") (char (last L))) ) ) ) )
 
-## check if symbol is a label like #2#= or #12#
-(de hashRef? (X)
-   (and
-      (sym? X)
-      (let L (chop X)
-         (and
-            (= `(char "#") (char (car L)))
-            (= `(char "#") (char (last L))) ) ) ) )
+## ## check if symbol is a label like #2#= or #12#
+## (de hashRef? (X)
+##    (and
+##       (sym? X)
+##       (let L (chop X)
+##          (and
+##             (= `(char "#") (char (car L)))
+##             (= `(char "#") (char (last L))) ) ) ) )
 
-## expects a parse-tree as produced by `iorg-normalize-parse-tree'
-## and an option as string like e.g. "iorg"
+## ## expects a parse-tree as produced by `iorg-normalize-parse-tree'
+## ## and an option as string like e.g. "iorg"
 
-(de extractOptionValue (Option ParseTree)
-   (let
-      (OrgDataContent
-         (and
-            (== (caar (nth ParseTree 4)) 'section)
-            (car (nth ParseTree 4)) )
-         Strg
-         (glue " "
-            (mapcar
-              '((X)
-                  (and
-                     (== (car X) 'keyword)
-                     (= (car (nth (cadr X) 2)) "OPTIONS")
-                     (car (nth (cadr X) 4)) ) )
-               OrgDataContent ) ) )
-      (cadr (member Option (mapcar pack (split (chop Strg) ":" " ")))) ) )
+## (de extractOptionValue (Option ParseTree)
+##    (let
+##       (OrgDataContent
+##          (and
+##             (== (caar (nth ParseTree 4)) 'section)
+##             (car (nth ParseTree 4)) )
+##          Strg
+##          (glue " "
+##             (mapcar
+##               '((X)
+##                   (and
+##                      (== (car X) 'keyword)
+##                      (= (car (nth (cadr X) 2)) "OPTIONS")
+##                      (car (nth (cadr X) 4)) ) )
+##                OrgDataContent ) ) )
+##       (cadr (member Option (mapcar pack (split (chop Strg) ":" " ")))) ) )
 
 (de emacsServerMessages ()
     (emc
