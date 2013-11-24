@@ -226,7 +226,7 @@
 
 (class +orgElement +orgBaseElement)
 (rel ancestor (+Joint) descendants (+orgBaseElement))
-(rel parent (+Ref +Symbol))
+## (rel parent (+Ref +Symbol))
 
 (dm interpret> ())
 
@@ -312,8 +312,8 @@
 ## **** Code
 
 (class +OrgHeadline +orgElement)
-(rel ptree (+Aux +Ref +Link) (label) NIL (+OrgData))
-(rel parent-id (+Number))
+(rel ptree (+Aux +Ref +Link) (elem-id) NIL (+OrgData))
+## (rel parent-id (+Number))
 (rel title-string (+Aux +Ref +String) (title-stamp))
 (rel title-stamp (+Bag)
    ((+Symbol))                          # timestamp-type

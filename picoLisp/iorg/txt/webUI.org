@@ -97,9 +97,14 @@ text-browsers like (emacs-)w3m.
 
  5. (optional) Lets edit a minimal Org-mode test file with emacsclient:
 
+    # #+begin_src picolisp
+    #   (call 'emacsclient "-s" "iorg-server" "-c"
+    #      (pack (absPath "@iorg/txt/test-files/small.org")) )
+    # #+end_src
+
     #+begin_src picolisp
       (call 'emacsclient "-s" "iorg-server" "-c"
-         (pack (absPath "@iorg/txt/test-files/small.org")) )
+         (absPath "iorg/txt/test-files/small.org") )
     #+end_src
 
     Cycle visibility or edit the file, and exit with ~C-x C-c~
@@ -128,9 +133,14 @@ text-browsers like (emacs-)w3m.
     with ~(bye)~
  3. make sure the process is really killed with the following shell command
 
+    # #+begin_src sh
+    # $ killall -KILL picolisp
+    # #+end_src
+
     #+begin_src sh
-    $ killall -KILL picolisp
+    $ killall picolisp
     #+end_src
+
  4. restart the PicoLisp server in production mode
 
      #+begin_src sh

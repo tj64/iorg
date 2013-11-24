@@ -226,7 +226,10 @@
 ## create a new +OrgHeadline object
 (de makeOrgHeadline (Lst Ptree)
    (msg "entering makeOrgHeadline ...")
-   (let Obj
+   (let
+      (ParentID 
+       (cadr (memq 'parent-id (car Lst)))
+      Obj
       (apply
          new
          (make
@@ -238,198 +241,207 @@
          'section (and
                       (== 'section (caar Lst))
                       (last (pop 'Lst)) )
-         'ptree Ptree
-         'deadline (car (get 'Obj 'deadline)) )
-      ## (put> Obj 'ancestor
-      ##    (db 'elem-id '+orgBaseElement (: parent-id) ) )
-      ##       ## (makeHashLbl (hashLblNum> Obj ':parent)) ) )
+         'ptree Ptree ) )
+       (put> Obj 'ancestor
+         (if (= ParentID 0)
+            Ptree
+            (db 'ptree '+OrgHeadline Ptree 'elem-id ParentID) ) )
       (msg Obj " => New OrgHeadline object created")
       (msg (show Obj) " => Show New OrgHeadline object")
-      ## (treatOrgHeadline Obj)
-      )
+      (treatOrgHeadline Obj) )
 (while Lst
    (makeOrgHeadline
       (cdr (pop 'Lst))
       Ptree ) ) )
 
+(de treatOrgHeadline (H)
+  (msg "entering treatOrgHeadline ...")
+   (with H
+      (let (D (: deadline)
+            S (: scheduled)
+            C (: closed)
+            L (: title-stamp) )
+      (and D
+         (put> This 'deadline (postProcessTimestamp D)) )
+      (and S
+         (put> This 'scheduled (postProcessTimestamp S)) )
+      (and C
+         (put> This 'closed (postProcessTimestamp C)) )
+      (and L
+         (put> This 'title-stamp (postProcessTimestamp L)) ) ) ) )
 
-## (de treatOrgHeadline (H)
-##   (msg "entering treatOrgHeadline ...")
-##    (with H
-##       (let (D (: deadline)
-##             S (: scheduled)
-##             C (: closed)
-##             L (: title-stamp) )
-##             ## N (: :contents)
-##             ## Lst (and N (processContents (cadr N))) )
-##       (and D
-##          (put> This 'deadline  (car D)) )
-##       (and S
-##          (put> This 'scheduled  (car S)) )
-##       (and C
-##          (put> This 'closed  (car C)) )
-##       (and L
-##          (put> This 'title-stamp (car L)) ) ) ) )
+## (de postProcessTimestamp (Lst)
+##      (msg "entering postProcessTimestamp ...")
+##      (make
+##         (link
+##            (pop 'Lst)
+##            (date (filter 'bool (pop 'Lst)))
+##            (time (filter 'bool (pop 'Lst)))
+##            (date (filter 'bool (pop 'Lst)))
+##            (time (filter 'bool (pop 'Lst)))
+##            (pop 'Lst)
+##            (pop 'Lst)
+##            (pop 'Lst) ) ) )
 
-## (processContents (cadr '(\#8= (section ...)))
-(de processContents (Lst)
-   (msg "entering processContens ...")
-   (let Props NIL
-      (cons
-         (filter
-            '((X)
-              (nor
-                 (and (atom X) (hashLbl? X))
-                 (== 'planning (car X))
-                 (and (== 'property-drawer (car X))
-                    (setq Props X) ) ) )
-            Lst )
-         Props ) ) )
+## ## (processContents (cadr '(\#8= (section ...)))
+## (de processContents (Lst)
+##    (msg "entering processContens ...")
+##    (let Props NIL
+##       (cons
+##          (filter
+##             '((X)
+##               (nor
+##                  (and (atom X) (hashLbl? X))
+##                  (== 'planning (car X))
+##                  (and (== 'property-drawer (car X))
+##                     (setq Props X) ) ) )
+##             Lst )
+##          Props ) ) )
 
-(de processProperties (Lst)
-   (msg "entering processProperties ...")
-   (pop 'Lst)
-   (let Props (make
-                 (mapcar
-                 '((P) (and
-                          (lst? P) (= (car P) 'node-property)
-                          (link
-                             ## (makeOrgProperty
-                             (list
-                                (car (nth (cadr P) 2))
-                                (car (nth (cadr P) 4)) ) ) ) )
-                 Lst ) )
-     Props ) )
+## (de processProperties (Lst)
+##    (msg "entering processProperties ...")
+##    (pop 'Lst)
+##    (let Props (make
+##                  (mapcar
+##                  '((P) (and
+##                           (lst? P) (= (car P) 'node-property)
+##                           (link
+##                              ## (makeOrgProperty
+##                              (list
+##                                 (car (nth (cadr P) 2))
+##                                 (car (nth (cadr P) 4)) ) ) ) )
+##                  Lst ) )
+##      Props ) )
 
-(de convertParseTree (Lst)
-   ## (msg "entering convertParseTree ...")
-   (mapcan
-      '((X)
-         (use L
-            (cond
-               ((num? X) (cons X))
-               ((pair X) (cons (convertParseTree X)))
-               ((not (setq L (chop X))) (cons 'nil))
-               ((str? X) (cons (pack (replace L "^J" "\\n"))))
-               ((or (== '\# X) (<> "#" (car L)))
-                  (cons X) )
-               ((and (= "#" (last L)) (format (head -1 (cdr L))))
-                  (cons 'nil) )
-               ((and (= "=" (last L)) (format (head -1 (cdr L)))))
-               (T (cons X)) ) ) )
-      Lst ) )
+## (de convertParseTree (Lst)
+##    ## (msg "entering convertParseTree ...")
+##    (mapcan
+##       '((X)
+##          (use L
+##             (cond
+##                ((num? X) (cons X))
+##                ((pair X) (cons (convertParseTree X)))
+##                ((not (setq L (chop X))) (cons 'nil))
+##                ((str? X) (cons (pack (replace L "^J" "\\n"))))
+##                ((or (== '\# X) (<> "#" (car L)))
+##                   (cons X) )
+##                ((and (= "#" (last L)) (format (head -1 (cdr L))))
+##                   (cons 'nil) )
+##                ((and (= "=" (last L)) (format (head -1 (cdr L)))))
+##                (T (cons X)) ) ) )
+##       Lst ) )
 
-## "\"" (tmp "em") "\")))"
-(de interpretParseTree (Lst)
-   ## (msg "entering interpretParseTree ...")
-   (out "/home/tj/em.dat" #(tmp "em")
-      (pipe (print (convertParseTree Lst))
-         (prog
-            (while (echo "\\# (")
-               (prin "#(") ) ) ) )
-   (pipe
-      (in
-         (list 'emacsclient "-s" "iorg-server" "-e"
-            (pack
-               "(let* ((buf "
-               "(find-file-noselect "
-                "\"/home/tj/em.dat\"))"
-               "(strg "
-               "(org-element-interpret-data "
-               "(with-current-buffer buf "
-               "(goto-char (point-min))"
-               "(read (current-buffer))))))"
-               "(kill-buffer buf)"
-               "(princ strg))") )
-         (while (echo "\\n")
-            (prin "\^J") ) )
-         ## (any (read)) ) )
-         (till NIL T) ) )
-
-
-
-## *** Timestamp
-
-(de makeOrgTimestamp (Lst)
-   (msg "entering makeOrgTimestamp ...")
-   (let Obj
-      (apply new
-         (fish atom
-            (make
-               (for (L Lst L)
-                  (if (meta '(+OrgTimestamp) (car L))
-                     (link (cut 2 'L))
-                     (cut 2 'L) ) ) ) )
-         (db: +OrgTimestamp) '(+OrgTimestamp) )
-      (msg Obj " => New OrgTimestamp object created")
-      (treatOrgTimestamp Obj)
-      Obj ) )
-
-(de treatOrgTimestamp (S)
-   (msg "entering treatOrgTimestamp ...")
-   (with S
-      (put> S ':start-dat
-         (date (: :year-start)(: :month-start)(: :day-start)) )
-      (put> S ':start-tim
-         (time (: :hour-start)(: :minute-start)) )
-      (put> S ':end-dat
-         (date (: :year-end)(: :month-end)(: :day-end)) )
-      (put> S ':end-tim
-         (time (: :hour-end)(: :minute-end)) )
-      (put> S ':year-start
-         '(car (date (: :start-dat))) )
-      (put> S ':month-start
-         '(cadr (date (: :start-dat))) )
-      (put> S ':day-start
-         '(last (date (: :start-dat))) )
-      (put> S ':hour-start
-         '(car (time (: :start-tim))) )
-      (put> S ':minute-start
-         '(cadr (time (: :start-tim))) )
-      (put> S ':year-end
-         '(car (date (: :end-dat))) )
-      (put> S ':month-end
-         '(cadr (date (: :end-dat))) )
-      (put> S ':day-end
-         '(last (date (: :end-dat))) )
-      (put> S ':hour-end
-         '(car (time (: :end-tim))) )
-      (put> S ':minute-end
-         '(cadr (time (: :end-tim))) ) ) )
+## ## "\"" (tmp "em") "\")))"
+## (de interpretParseTree (Lst)
+##    ## (msg "entering interpretParseTree ...")
+##    (out "/home/tj/em.dat" #(tmp "em")
+##       (pipe (print (convertParseTree Lst))
+##          (prog
+##             (while (echo "\\# (")
+##                (prin "#(") ) ) ) )
+##    (pipe
+##       (in
+##          (list 'emacsclient "-s" "iorg-server" "-e"
+##             (pack
+##                "(let* ((buf "
+##                "(find-file-noselect "
+##                 "\"/home/tj/em.dat\"))"
+##                "(strg "
+##                "(org-element-interpret-data "
+##                "(with-current-buffer buf "
+##                "(goto-char (point-min))"
+##                "(read (current-buffer))))))"
+##                "(kill-buffer buf)"
+##                "(princ strg))") )
+##          (while (echo "\\n")
+##             (prin "\^J") ) )
+##          ## (any (read)) ) )
+##          (till NIL T) ) )
 
 
-## *** Title
 
-(de makeOrgTitle (Lst Headline)
-   (msg "entering makeOrgTitle ...")
-   (let (RawValue (; Headline :raw-value)
-         TimeStamp (and Lst
-                      (car (fish '((X) (and (lst? X)
-                                     (= (car X) 'timestamp) ) )
-                              Lst ) ) )
-         Obj (new (db: +OrgTitle) '(+OrgTitle)
-                ':title RawValue
-                ':timestamp (and TimeStamp
-                              (makeOrgTimestamp (car (tail -1 TimeStamp))) ) ) )
-      (msg Obj " => New OrgTitle object created")
-      (treatOrgTitle Obj)
-      Obj ) )
+## ## *** Timestamp
 
-## FIXME put title too when no timestamp
-(de treatOrgTitle (Title)
-   (msg "entering treatOrgTitle ...")
-   (when (; Title :timestamp)
-      (let L (chop (; Title :title))
-         (and
-            (seek
-               '((L)
-                  (head
-                     (cons "<" (chop (dat$ (; Title
-                  :timestamp :start-dat) "-")))
-                     (cdr L) ) )
-               L )
-            (con @) )
-         (put> Title ':title (pack (trim L))) ) ) )
+## (de makeOrgTimestamp (Lst)
+##    (msg "entering makeOrgTimestamp ...")
+##    (let Obj
+##       (apply new
+##          (fish atom
+##             (make
+##                (for (L Lst L)
+##                   (if (meta '(+OrgTimestamp) (car L))
+##                      (link (cut 2 'L))
+##                      (cut 2 'L) ) ) ) )
+##          (db: +OrgTimestamp) '(+OrgTimestamp) )
+##       (msg Obj " => New OrgTimestamp object created")
+##       (treatOrgTimestamp Obj)
+##       Obj ) )
+
+## (de treatOrgTimestamp (S)
+##    (msg "entering treatOrgTimestamp ...")
+##    (with S
+##       (put> S ':start-dat
+##          (date (: :year-start)(: :month-start)(: :day-start)) )
+##       (put> S ':start-tim
+##          (time (: :hour-start)(: :minute-start)) )
+##       (put> S ':end-dat
+##          (date (: :year-end)(: :month-end)(: :day-end)) )
+##       (put> S ':end-tim
+##          (time (: :hour-end)(: :minute-end)) )
+##       (put> S ':year-start
+##          '(car (date (: :start-dat))) )
+##       (put> S ':month-start
+##          '(cadr (date (: :start-dat))) )
+##       (put> S ':day-start
+##          '(last (date (: :start-dat))) )
+##       (put> S ':hour-start
+##          '(car (time (: :start-tim))) )
+##       (put> S ':minute-start
+##          '(cadr (time (: :start-tim))) )
+##       (put> S ':year-end
+##          '(car (date (: :end-dat))) )
+##       (put> S ':month-end
+##          '(cadr (date (: :end-dat))) )
+##       (put> S ':day-end
+##          '(last (date (: :end-dat))) )
+##       (put> S ':hour-end
+##          '(car (time (: :end-tim))) )
+##       (put> S ':minute-end
+##          '(cadr (time (: :end-tim))) ) ) )
+
+
+## ## *** Title
+
+## (de makeOrgTitle (Lst Headline)
+##    (msg "entering makeOrgTitle ...")
+##    (let (RawValue (; Headline :raw-value)
+##          TimeStamp (and Lst
+##                       (car (fish '((X) (and (lst? X)
+##                                      (= (car X) 'timestamp) ) )
+##                               Lst ) ) )
+##          Obj (new (db: +OrgTitle) '(+OrgTitle)
+##                 ':title RawValue
+##                 ':timestamp (and TimeStamp
+##                               (makeOrgTimestamp (car (tail -1 TimeStamp))) ) ) )
+##       (msg Obj " => New OrgTitle object created")
+##       (treatOrgTitle Obj)
+##       Obj ) )
+
+## ## FIXME put title too when no timestamp
+## (de treatOrgTitle (Title)
+##    (msg "entering treatOrgTitle ...")
+##    (when (; Title :timestamp)
+##       (let L (chop (; Title :title))
+##          (and
+##             (seek
+##                '((L)
+##                   (head
+##                      (cons "<" (chop (dat$ (; Title
+##                   :timestamp :start-dat) "-")))
+##                      (cdr L) ) )
+##                L )
+##             (con @) )
+##          (put> Title ':title (pack (trim L))) ) ) )
 
 ## *** Property
 
@@ -850,3 +862,5 @@
 ## * Old stuff (for later use)
 
 ## iorg/lib.l ends here
+
+(0)
