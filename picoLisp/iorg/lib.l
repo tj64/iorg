@@ -270,18 +270,18 @@
       (and L
          (put> This 'title-stamp (postProcessTimestamp L)) ) ) ) )
 
-## (de postProcessTimestamp (Lst)
-##      (msg "entering postProcessTimestamp ...")
-##      (make
-##         (link
-##            (pop 'Lst)
-##            (date (filter 'bool (pop 'Lst)))
-##            (time (filter 'bool (pop 'Lst)))
-##            (date (filter 'bool (pop 'Lst)))
-##            (time (filter 'bool (pop 'Lst)))
-##            (pop 'Lst)
-##            (pop 'Lst)
-##            (pop 'Lst) ) ) )
+(de postProcessTimestamp (Lst)
+     (msg "entering postProcessTimestamp ...")
+     (make
+        (link
+           (pop 'Lst)
+           (date (filter 'bool (pop 'Lst)))
+           (time (filter 'bool (pop 'Lst)))
+           (date (filter 'bool (pop 'Lst)))
+           (time (filter 'bool (pop 'Lst)))
+           (pop 'Lst)
+           (pop 'Lst)
+           (pop 'Lst) ) ) )
 
 ## ## (processContents (cadr '(\#8= (section ...)))
 ## (de processContents (Lst)
@@ -443,7 +443,7 @@
 ##             (con @) )
 ##          (put> Title ':title (pack (trim L))) ) ) )
 
-## *** Property
+## ## *** Property
 
 ## (de makeOrgProperty (Key Val)
 ##     (msg "entering makeOrgProperty ...")
@@ -454,7 +454,7 @@
 ##       (msg (show Obj))
 ##       Obj ) )
 
-## *** Helper Functions
+## ** Communicate with Emacs Server
 
 ## ## expects a parse-tree as produced by `iorg-normalize-parse-tree'
 ## ## and an option as string like e.g. "iorg"

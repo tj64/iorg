@@ -56,7 +56,7 @@
 
 (dm rel> (Obj Old New Hook)
    (let
-      (Tree (tree (: var) (: cls) (or Hook (get Obj (: hook))))
+       (Tree (tree (: var) (: cls) (or Hook (get Obj (: hook))))
          A (foldedWords Old)
          B (foldedWords New) )
       (for W (diff A B)
@@ -193,7 +193,6 @@
 (class +orgBaseElement +Entity)
 (rel descendants (+List +Joint) ancestor (+orgElement))
 (rel elem-id (+Number))
-## (rel children (+List +Number))
 (rel section (+String))
 
 (dm url> ())
@@ -226,7 +225,6 @@
 
 (class +orgElement +orgBaseElement)
 (rel ancestor (+Joint) descendants (+orgBaseElement))
-## (rel parent (+Ref +Symbol))
 
 (dm interpret> ())
 

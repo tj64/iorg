@@ -467,16 +467,16 @@ holding export options."
            ;;         (plist-get info :input-buffer))))
            ;;   "_"))
            'elem-id 0
-           'children
-           (let (chld)
-             (org-element-map (plist-get info :parse-tree) 'headline
-               (lambda (--elem)
-                 (and (eq (org-element-property :parent-id --elem) 0)
-                      (setq chld
-                            (cons
-                             (org-element-property :elem-id --elem)
-                             chld)))))
-               (reverse chld))
+           ;; 'children
+           ;; (let (chld)
+           ;;   (org-element-map (plist-get info :parse-tree) 'headline
+           ;;     (lambda (--elem)
+           ;;       (and (eq (org-element-property :parent-id --elem) 0)
+           ;;            (setq chld
+           ;;                  (cons
+           ;;                   (org-element-property :elem-id --elem)
+           ;;                   chld)))))
+           ;;     (reverse chld))
            'input-file (plist-get info :input-file)
            'input-buffer (plist-get info :input-buffer)
            'author (car (plist-get info :author))
@@ -539,8 +539,8 @@ CONTENTS is its contents, as a string or nil.  INFO is ignored."
              (org-element-property :elem-id headline)
              'parent-id
              (org-element-property :parent-id headline)
-             'children
-             (org-element-property :children headline)
+             ;; 'children
+             ;; (org-element-property :children headline)
              'title-string
              (substring-no-properties
               (car (org-element-property :title headline)))
