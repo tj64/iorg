@@ -192,21 +192,25 @@
 
 (class +orgBaseElement +Entity)
 (rel descendants (+List +Joint) ancestor (+orgElement))
+(rel creation-date (+Date))
+(rel creation-time (+Time))
 (rel elem-id (+Number))
+(rel max-child-id (+Number))
 (rel section (+String))
 
 (dm url> ())
 (dm upd> ())
 (dm diff> ())
 (dm new> ())
-## return for relation Rel hashLbl number as string
-(dm hashLblNum> (Rel)
-   (pack
-      (tail -1
-         (head -1
-            (chop
-               (eval
-                  (make (link ': Rel)) ) ) ) ) ) )
+
+## ## return for relation Rel hashLbl number as string
+## (dm hashLblNum> (Rel)
+##    (pack
+##       (tail -1
+##          (head -1
+##             (chop
+##                (eval
+##                   (make (link ': Rel)) ) ) ) ) ) )
 
 ## ## prepare contents for `org-element-interpret-data'
 ## (dm prepCont> ()
@@ -244,10 +248,8 @@
 ## Parse-Tree (meta data for containing org file,
 ## collected from Emacs environment, plus root elem-id)
 (class +OrgData +orgBaseElement)
-(rel input-buffer (+Need +Aux +Ref +String) (date time))
+(rel input-buffer (+Aux +Ref +String) (creation-date creation-time) )
 (rel input-file (+String))
-(rel date (+Date))
-(rel time (+Time))
 (rel author (+Ref +String))
 (rel email (+String))
 (rel creator (+String))
@@ -310,8 +312,7 @@
 ## **** Code
 
 (class +OrgHeadline +orgElement)
-(rel ptree (+Aux +Ref +Link) (elem-id) NIL (+OrgData))
-## (rel parent-id (+Number))
+(rel ptree (+Need +Aux +Ref +Link) (elem-id) NIL (+OrgData))
 (rel title-string (+Aux +Ref +String) (title-stamp))
 (rel title-stamp (+Bag)
    ((+Symbol))                          # timestamp-type
@@ -326,7 +327,7 @@
 (rel properties (+List +Bag)
    ((+Ref +String))                     # Key
    ((+String)) )                        # Value
-(rel category (+Ref +String))
+(rel category (+Need +Ref +String))
 (rel level (+Need +Ref +Number))
 (rel priority (+Ref +Number))
 (rel tags (+List +Ref +String))

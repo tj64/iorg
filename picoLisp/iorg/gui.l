@@ -159,35 +159,31 @@
 (de choOrgHeadline (Dst)
    (diaform '(Dst)
       (<grid> "--."
-         ,"Number" (gui ':level '(+Focus +Var +NumField) '*OrgHeadline:Level 3)
+         ,"Level" (gui 'level '(+Focus +Var +NumField) '*OrgHeadline:Level 3)
          (searchButton '(init> (: home query)))
          ,"Todo"
          (gui ':todo-keyword '(+Var +TextField) '*OrgHeadlineTodo
             '("TODO" "DONE" "NEXT" "WAITING") )
-         (resetButton '(:level :todo-keyword query)) )
+         (resetButton '(level todo-keyword query)) )
       (gui 'query '(+QueryChart) (cho)
          '(goal
             (quote
                @Level (and *OrgHeadlineLevel (cons @ T))
                @Todo *OrgHeadlineTodo
                (select (@@)
-                  ((:level +OrgHeadline @Level)
-                   (:todo-keyword +OrgHeadline @Todo) )
+                  ((level +OrgHeadline @Level)
+                   (todo-keyword +OrgHeadline @Todo) )
                   (range @Level @@ level)
                   (head @Todo @@ todo) ) ) )
          6
          '((This)
             (list
                This
-               (: :level)
-               (: :todo-keyword)
-               (pack (car (split (chop (: :ptree :parse-tree-id)) "_")))
-               ## (last (getCategory> This))
-               (car (: :title 2))
-               (pack
-                  (and :tags ":")
-                  (glue ":" (: :tags))
-                  (and :tags ":") ) ) ) )
+               (: level)
+               (: todo-keyword)
+               (: category)
+               (: title-string)
+               (and tags (pack ":" (glue ":" (: tags)) ":")) ) ) )
       (<table> 'chart (choTtl ,"Headlines" 'nr '+OrgHeadline)
          '((btn) (NIL ,"Level") (NIL ,"Todo") (NIL ,"Category") (NIL ,"Title") (NIL ,"Tags"))
          (do (cho)

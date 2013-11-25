@@ -209,17 +209,41 @@
          'section (and
                      (== 'section (caar Lst))
                      (last (pop 'Lst)) )
-         'time (time)
-         'date (date) )
+         'creation-time (time)
+         'creation-date (date) )
       (msg Obj " => New OrgData object created")
       (msg (show Obj) " => Show New OrgData object")
       (while Lst
          (makeOrgHeadline
                   (cdr (pop 'Lst))
                   Obj ) )
+      (treatOrgData Obj)
       (commit 'upd)
       ## (off *IorgGlobalSwitch)
       Obj ) )
+
+(de treatOrgData (OrgData)
+   (msg "entering treatOrgData ...")
+   (postProcessElemID OrgData) )
+   ## (with OrgData
+   ##    (let Desc (: descendants)
+   ##       (and Desc
+   ##          (put> This 'max-child-id (length Desc)) )
+   ##       (for (I . X) (reverse Desc)
+   ##          (with X
+   ##             (put> This 'elem-id I) ) ) ) ) )
+
+(de postProcessElemID (Elem)
+   (msg "entering postProcessElemID ...")
+   (with Elem
+      (let Desc (: descendants)
+         (and Desc
+            (put> This 'max-child-id (length Desc))
+            (for (I . X) (reverse Desc)
+               (with X
+                  (put> This 'elem-id I) )
+               (postProcessElemID X) ) ) ) ) )
+
 
 ## *** Headline
 
@@ -241,7 +265,9 @@
          'section (and
                       (== 'section (caar Lst))
                       (last (pop 'Lst)) )
-         'ptree Ptree ) )
+         'ptree Ptree
+         'creation-time (time)
+         'creation-date (date) ) )
        (put> Obj 'ancestor
          (if (= ParentID 0)
             Ptree
@@ -254,9 +280,9 @@
       (cdr (pop 'Lst))
       Ptree ) ) )
 
-(de treatOrgHeadline (H)
+(de treatOrgHeadline (OrgHeadline)
   (msg "entering treatOrgHeadline ...")
-   (with H
+   (with OrgHeadline
       (let (D (: deadline)
             S (: scheduled)
             C (: closed)

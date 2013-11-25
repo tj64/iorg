@@ -424,11 +424,12 @@ compliant form."
 
 (defun org-iorg-data-nil-and-t-to-uppercase (strg)
   "Takes a parse STRG and upcases nil and t."
-  (and (stringp strg)
-        (replace-regexp-in-string
-         "\\(\\_<t\\_>\\|(t)\\|\\_<nil\\_>\\|(nil)\\)"
-        'org-iorg-data-rep-function-for-nil-and-t
-        strg)))
+  (let ((case-fold-search nil))
+    (and (stringp strg)
+         (replace-regexp-in-string
+          "\\(\\_<t\\_>\\|(t)\\|\\_<nil\\_>\\|(nil)\\)"
+          'org-iorg-data-rep-function-for-nil-and-t
+          strg))))
 
 (defun org-iorg-data-rep-function-for-nil-and-t (match)
   "Helper function for converting Elisp 'nil' an 't' to PicoLisp syntax.
