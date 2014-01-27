@@ -80,6 +80,18 @@
          "-s" "iorg-server" "-e" (rest) )
       (eval Exe) ) )
 
+(de emc3 (Exe . @)
+ (msg "emc3 enterered ...")
+   (pipe
+      (in
+         (cons 'emacsclient
+            "-s" "iorg-server" "-e" (rest) )
+         (while (echo "#")
+            (msg "inside while ...")
+            (prin "\#")
+            (msg "end while ...") ) )
+      (eval Exe) ) )
+
 (de emc2 (Exe . @)
    (pipe
       (in
@@ -133,7 +145,7 @@
 (de importOrgData (Path)
    (msg "entering importOrgData ...")
    (any
-      (emc '(read)
+      (emc3 '(read)
          (pack
             "(let ((org-cycle-silently t) "
             ## "(print-escape-newlines t) "

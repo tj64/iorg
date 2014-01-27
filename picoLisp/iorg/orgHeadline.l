@@ -63,11 +63,11 @@
          ## (msg "before Category")
          ,"Category" (choCategory 0)
          (gui '(+E/R +TextField)
-            '(category : home obj) 20)
+            '(category : home obj) 15)
          ## (msg "before Title")
          ,"Title" (choOrgTitle 0)
          (gui '(+E/R +TextField)
-            '(title-string : home obj) 60)
+            '(title-string : home obj) 50)
          ## (msg "before Tags")
          ,"Tags" NIL
          (gui '(+E/R +Fmt +TextField)
@@ -77,7 +77,7 @@
                         (filter bool
                            (mapcar pack
                               (split (chop Strg) ":") ) ) ) )
-            40 ) )
+            25 ) )
       ## (msg "after grid")
 
         ## (----)
@@ -123,7 +123,7 @@
      ##        '(: :start-tim) 15 )
      ##     ,"Closed (Date/Time)" (choOrgTimestamp 0)
      ##     (gui '(+E/R +ObjView +DateField)
-     ##        '(:closed-stamp : home obj)
+3     ##        '(:closed-stamp : home obj)
      ##        '(: :start-dat) 10 )
      ##     (gui '(+E/R +ObjView +TimeField)
      ##        '(:closed-stamp : home obj)
@@ -138,11 +138,11 @@
      ##           (gui 3 '(+DelRowButton))
      ##           (gui 4 '(+BubbleButton)) ) ) )
      ##  (<spread> (scroll 6) (editButton T))
-     ##  (----)
-     ##  (gui '(+E/R +Cue +TextField)
-     ##     '(:contents : home obj)
-     ##     "Lorem ipsum dolor sit amet"
-     ##     80 40 ,"Contents" )
+      (----)
+      (gui '(+E/R +Cue +TextField)
+         '(section : home obj)
+         "Lorem ipsum dolor sit amet"
+         80 40 ,"Contents" )
      ##  (----)
      ##  (<grid> 12
      ## ,"Quoted" NIL
