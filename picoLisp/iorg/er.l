@@ -173,7 +173,7 @@
 (rel d (+Blob))                        # Binary data
 
 (dm upd> (X Old)
-   (when (== X 'd)
+   (When (== X 'd)
       (put> This 'mt (mimetype (blob This 'd))) ) )
 
 
@@ -185,8 +185,11 @@
 ## **** Comments
 
 ## - descendants :: joint link to descendant elements
-## - label :: element ID (unique for parse-tree)
-## - section :: normalized partial parse-tree
+## - org-elem-id :: org-mode element ID (unique for parse-tree)
+## - creation-date :: date of object creation
+## - creation-time :: time of object creation
+## - elem-id :: iorg object ID (unique for class)
+## - section :: element's content in org-mode syntax
 
 ## **** Code
 
@@ -195,7 +198,8 @@
 (rel creation-date (+Date))
 (rel creation-time (+Time))
 (rel org-elem-id (+Number))
-(rel max-child-id (+Number))
+(rel elem-id (+Key +Number))
+## (rel max-child-id (+Number))
 (rel section (+String))
 
 (dm url> ())
