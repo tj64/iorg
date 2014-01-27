@@ -238,17 +238,16 @@
 
 (de treatOrgData (OrgData)
    (msg "entering treatOrgData ...")
-   (postProcessElemID OrgData) )
+   (postProcessOrgElemID OrgData) )
 
-(de postProcessElemID (Elem)
-   (msg "entering postProcessElemID ...")
+(de postProcessOrgElemID (Elem)
+   (msg "entering postProcessOrgElemID ...")
    (with Elem
       (let Desc (: descendants)
          (and Desc
             (for X Desc
-               (with X
-                  (put> This 'org-elem-id NIL) ) )
-               (postProcessElemID X) ) ) ) )
+               (put> X 'org-elem-id NIL)
+               (postProcessOrgElemID X) ) ) ) ) )
 
 ## *** Headline
 
