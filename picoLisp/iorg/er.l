@@ -194,7 +194,7 @@
 (rel descendants (+List +Joint) ancestor (+orgElement))
 (rel creation-date (+Date))
 (rel creation-time (+Time))
-(rel elem-id (+Number))
+(rel org-elem-id (+Number))
 (rel max-child-id (+Number))
 (rel section (+String))
 
@@ -246,7 +246,7 @@
 ## **** Code
 
 ## Parse-Tree (meta data for containing org file,
-## collected from Emacs environment, plus root elem-id)
+## collected from Emacs environment, plus root org-elem-id)
 (class +OrgData +orgBaseElement)
 (rel input-buffer (+Aux +Ref +String) (creation-date creation-time) )
 (rel input-file (+String))
@@ -312,7 +312,7 @@
 ## **** Code
 
 (class +OrgHeadline +orgElement)
-(rel ptree (+Need +Aux +Ref +Link) (elem-id) NIL (+OrgData))
+(rel ptree (+Need +Aux +Ref +Link) (org-elem-id) NIL (+OrgData))
 (rel title-string (+Aux +Ref +String) (title-stamp))
 (rel title-stamp (+Bag)
    ((+Symbol))                          # timestamp-type
@@ -530,7 +530,7 @@
 ##    (let Plist (cadr ParseTree)
 ##       (super
 ##          'ID (cadr (memq ':ID Plist))
-##          'elem-id (cadr (memq ':elem-id Plist))
+##          'org-elem-id (cadr (memq ':org-elem-id Plist))
 ##          'input-file (cadr (memq ':input-file Plist))
 ##          'author (cadr (memq ':author Plist))
 ##          'email (cadr (memq ':email Plist))
@@ -543,7 +543,7 @@
 ## (dm T (ParseTree)
 ##    (let Plist (cadr ParseTree)
 ##       (super
-##          'elem-id (cadr (memq ':elem-id Plist))
+##          'org-elem-id (cadr (memq ':org-elem-id Plist))
 ##          'begin (cadr (memq ':begin Plist))
 ##          'end (cadr (memq ':end Plist))
 ##          'post-blank (cadr (memq ':post-blank Plist))

@@ -244,7 +244,7 @@
 ## **** Code
 
 ## Parse-Tree (meta data for containing org file,
-## collected from Emacs environment, plus root elem-id)
+## collected from Emacs environment, plus root org-elem-id)
 (class +OrgData +orgBaseElement)
 (rel parse-tree-id (+Need +Sn +Idx +String))
 (rel input-file (+Need +Ref +String))
@@ -554,7 +554,7 @@
 ##    (let Plist (cadr ParseTree)
 ##       (super
 ##          'ID (cadr (memq ':ID Plist))
-##          'elem-id (cadr (memq ':elem-id Plist))
+##          'org-elem-id (cadr (memq ':org-elem-id Plist))
 ##          'input-file (cadr (memq ':input-file Plist))
 ##          'author (cadr (memq ':author Plist))
 ##          'email (cadr (memq ':email Plist))
@@ -567,7 +567,7 @@
 ## (dm T (ParseTree)
 ##    (let Plist (cadr ParseTree)
 ##       (super
-##          'elem-id (cadr (memq ':elem-id Plist))
+##          'org-elem-id (cadr (memq ':org-elem-id Plist))
 ##          'begin (cadr (memq ':begin Plist))
 ##          'end (cadr (memq ':end Plist))
 ##          'post-blank (cadr (memq ':post-blank Plist))

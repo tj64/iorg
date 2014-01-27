@@ -105,12 +105,12 @@
 ;;;;; Tag Parse Tree
 
 (defun org-iorg-data-add-ids (tree backend info)
-  "Add ':elem-id' property to each element of parse TREE."
+  "Add ':org-elem-id' property to each element of parse TREE."
   (let ((counter 1)
         (structure 1))
     (org-element-map tree iorg-default-map-types
       (lambda (--elem)
-          (org-element-put-property --elem :elem-id counter)
+          (org-element-put-property --elem :org-elem-id counter)
           (setq counter (1+ counter))
           (and (eq (org-element-type --elem) 'plain-list)
                (org-element-put-property --elem :structure-id structure)
@@ -118,21 +118,21 @@
   tree)
 
 (defun org-iorg-data--collect-children (tree)
-  "Return alist with '(elem-id . parent-id)' pairs.
+  "Return alist with '(org-elem-id . parent-id)' pairs.
 The data is collected from parse TREE."
   (let (child-lst)
     (org-element-map tree 'headline
       (lambda (--headline)
-        (push (cons (org-element-property :elem-id --headline)
+        (push (cons (org-element-property :org-elem-id --headline)
                     (org-element-property :parent-id --headline))
               child-lst)))
     child-lst))
 
 (defun org-iorg-data-add-children (tree backend info)
   "Add `:children' property to each headline in parse TREE.
-Assumes that all headlines are tagged with an `:elem-id' property
+Assumes that all headlines are tagged with an `:org-elem-id' property
 and that the circular-list read-syntax of the `:parent' attribute
-has been replaced with simple integer values (the :elem-id of the
+has been replaced with simple integer values (the :org-elem-id of the
 elements parent)."
   (let ((pairs (org-iorg-data--collect-children tree)))
     (org-element-map tree 'headline
@@ -144,7 +144,7 @@ elements parent)."
                 (mapcar
                  (lambda (--pair)
                    (and (eq (cdr --pair)
-                            (org-element-property :elem-id --elem))
+                            (org-element-property :org-elem-id --elem))
                         (car --pair)))
                  pairs)))))))
   tree)
@@ -163,13 +163,13 @@ elements parent)."
          --elem :parent-id
          (if (eq (org-element-type par) 'org-data)
              0
-           (org-element-property :elem-id par)))))
+           (org-element-property :org-elem-id par)))))
     nil nil nil 'WITH-AFFILIATED)
   tree)
 
 ;; ;; OBSOLETE
 ;; (defun org-iorg-data-tag-org-data-element (tree backend info)
-;;   "Add elem-id and other properties to `org-data' element of TREE.
+;;   "Add org-elem-id and other properties to `org-data' element of TREE.
 ;; Added Properties are taken from INFO, BACKEND is ignored. The modified
 ;; TREE is returned."
 ;;   (setcar (cdr tree)
@@ -193,7 +193,7 @@ elements parent)."
 ;;   tree)
 
 ;; (defun org-iorg-data-tag-org-data-element (tree backend info)
-;;   "Add elem-id and some properties to `org-data' element of TREE.
+;;   "Add org-elem-id and some properties to `org-data' element of TREE.
 ;; Added Properties are either related to parsed BUFFER or
 ;; environmental properties."
 ;;   (when (require 'ox nil 'NOERROR)
@@ -219,7 +219,7 @@ elements parent)."
 ;;                       (file-name-nondirectory
 ;;                        (file-name-sans-extension
 ;;                         infile-or-buf)) "_")))
-;;                ;; :elem-id 0
+;;                ;; :org-elem-id 0
 ;;                :input-file infile-or-buf
 ;;                ;; :date (plist-get (cadar (plist-get env-attr :date))
 ;;                ;;              :raw-value)
@@ -324,7 +324,7 @@ elements parent)."
 ;; convenience function for testing - might be deleted
 (defun org-iorg-data-tag-parse-tree (&optional buffer-or-file tree)
   "Return parse-tree TREE tagged with new properties.
-These properties are `:elem-id', `:parent-id', `:structure-id',
+These properties are `:org-elem-id', `:parent-id', `:structure-id',
 `:parent-structure-id' and `:children'."
   (let ((ptree (cond
                 (tree tree)
@@ -467,7 +467,7 @@ holding export options."
            ;;     (or (plist-get info :input-file)
            ;;         (plist-get info :input-buffer))))
            ;;   "_"))
-           'elem-id 0
+           'org-elem-id 0
            ;; 'children
            ;; (let (chld)
            ;;   (org-element-map (plist-get info :parse-tree) 'headline
@@ -475,7 +475,7 @@ holding export options."
            ;;       (and (eq (org-element-property :parent-id --elem) 0)
            ;;            (setq chld
            ;;                  (cons
-           ;;                   (org-element-property :elem-id --elem)
+           ;;                   (org-element-property :org-elem-id --elem)
            ;;                   chld)))))
            ;;     (reverse chld))
            'input-file (plist-get info :input-file)
@@ -507,8 +507,8 @@ holding export options."
 ;;     (org-element-put-property headline :tags nil))
 ;;   (unless (plist-get info :with-priority)
 ;;     (org-element-put-property headline :priority nil))
-;;   (message "elem-id: %s\n parent-id: %s\n children: %s"
-;;            (org-element-property :elem-id headline)
+;;   (message "org-elem-id: %s\n parent-id: %s\n children: %s"
+;;            (org-element-property :org-elem-id headline)
 ;;            (org-element-property :parent-id headline)
 ;;            (org-element-property :children headline))
 ;;   (org-element-headline-interpreter headline contents))
@@ -536,8 +536,8 @@ CONTENTS is its contents, as a string or nil.  INFO is ignored."
     (setq org-iorg-data-node-properties nil)
     (format "(headline %S %s) "
             (list
-             'elem-id
-             (org-element-property :elem-id headline)
+             'org-elem-id
+             (org-element-property :org-elem-id headline)
              'parent-id
              (org-element-property :parent-id headline)
              ;; 'children
@@ -590,7 +590,7 @@ CONTENTS is its contents, as a string or nil. INFO is ignored."
   (if (and contents (stringp contents) (> (length contents) 0))
       (format "(section (parent-id %s) %S) "
               (or (org-element-property
-                   :elem-id (org-export-get-parent section)) 0)
+                   :org-elem-id (org-export-get-parent section)) 0)
               (org-no-properties contents))
     ""))
 
@@ -654,8 +654,8 @@ CONTENTS is its contents, as a string or nil.  INFO is ignored."
   ;;   (org-element-put-property headline :tags nil))
   ;; (unless (plist-get info :with-priority)
   ;;   (org-element-put-property headline :priority nil))
-  ;; (message "elem-id: %s\n parent-id: %s\n children: %s"
-  ;;          (org-element-property :elem-id headline)
+  ;; (message "org-elem-id: %s\n parent-id: %s\n children: %s"
+  ;;          (org-element-property :org-elem-id headline)
   ;;          (org-element-property :parent-id headline)
   ;;          (org-element-property :children headline))
   ;; (org-element-headline-interpreter headline contents))
@@ -739,7 +739,7 @@ CONTENTS is its contents, as a string or nil.  INFO is ignored."
 ;; (defun org-iorg-data-filter-section-function (section backend info)
 ;;   "Filter parsed SECTION ignoring BACKEND and INFO."
 ;;   (format "(section (parent-id %s) %S) "
-;;           (org-element-property :elem-id (org-export-get-parent section))
+;;           (org-element-property :org-elem-id (org-export-get-parent section))
 ;;           (org-no-properties section)))
 
 (defun org-iorg-data-filter-final-output-function (strg backend info)

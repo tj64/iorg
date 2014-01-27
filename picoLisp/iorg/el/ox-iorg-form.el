@@ -56,7 +56,7 @@
                    ;; change #( read syntax
                    (:filter-plain-text
 		    . (org-iorg-form--translate-stuff))
-                   ;; add info and elem-id to org-data
+                   ;; add info and org-elem-id to org-data
                    (:filter-org-data
 		    . (org-iorg-form--translate-stuff))
                    ;; nil and t to uppercase

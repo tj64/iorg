@@ -243,7 +243,7 @@
    ##          (put> This 'max-child-id (length Desc)) )
    ##       (for (I . X) (reverse Desc)
    ##          (with X
-   ##             (put> This 'elem-id I) ) ) ) ) )
+   ##             (put> This 'org-elem-id I) ) ) ) ) )
 
 (de postProcessElemID (Elem)
    (msg "entering postProcessElemID ...")
@@ -253,7 +253,7 @@
             (put> This 'max-child-id (length Desc))
             (for (I . X) (reverse Desc)
                (with X
-                  (put> This 'elem-id I) )
+                  (put> This 'org-elem-id I) )
                (postProcessElemID X) ) ) ) ) )
 
 
@@ -283,7 +283,7 @@
        (put> Obj 'ancestor
          (if (= ParentID 0)
             Ptree
-            (db 'ptree '+OrgHeadline Ptree 'elem-id ParentID) ) )
+            (db 'ptree '+OrgHeadline Ptree 'org-elem-id ParentID) ) )
       (msg Obj " => New OrgHeadline object created")
       (msg (show Obj) " => Show New OrgHeadline object")
       (treatOrgHeadline Obj) )

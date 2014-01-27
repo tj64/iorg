@@ -142,7 +142,7 @@
       (gui '(+E/R +Cue +TextField)
          '(section : home obj)
          "Lorem ipsum dolor sit amet"
-         80 40 ,"Contents" )
+         68 40 ,"Contents" )
      ##  (----)
      ##  (<grid> 12
      ## ,"Quoted" NIL

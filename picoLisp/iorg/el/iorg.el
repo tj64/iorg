@@ -143,7 +143,7 @@ There is a mode hook, and a few commands:
 
 
 ;; (defun iorg--tag-org-data-element (tree buffer)
-;;   "Add elem-id and some properties to `org-data' element of TREE.
+;;   "Add org-elem-id and some properties to `org-data' element of TREE.
 ;; Added Properties are either related to parsed BUFFER or
 ;; environmental properties."
 ;;   (when (require 'ox nil 'NOERROR)
@@ -166,7 +166,7 @@ There is a mode hook, and a few commands:
 ;;                                 (file-name-nondirectory
 ;;                                  (file-name-sans-extension
 ;;                                   infile-or-buf)) "_"))
-;;                ;; :elem-id 0
+;;                ;; :org-elem-id 0
 ;;                :input-file infile-or-buf
 ;;                ;; :date (plist-get (cadar (plist-get env-attr :date))
 ;;                ;;              :raw-value)
@@ -469,12 +469,12 @@ clickable link when the document is rendered in the wiki."
 ;; * Obsolete Stuff
 
 ;; (defun iorg--tag-elems-with-id-attributes (tree)
-;;   "Add ':elem-id' property to each element of parse TREE."
+;;   "Add ':org-elem-id' property to each element of parse TREE."
 ;;   (let ((counter 1)
 ;;         (structure 1))
 ;;     (org-element-map tree iorg-default-map-types
 ;;       (lambda (--elem)
-;;           (org-element-put-property --elem :elem-id counter)
+;;           (org-element-put-property --elem :org-elem-id counter)
 ;;           (setq counter (1+ counter))
 ;;           (and (eq (org-element-type --elem) 'plain-list)
 ;;                (org-element-put-property --elem :structure-id structure)
@@ -482,21 +482,21 @@ clickable link when the document is rendered in the wiki."
 ;;   tree)
 
 ;; (defun iorg--collect-children (tree)
-;;   "Return alist with '(elem-id . parent-id)' pairs.
+;;   "Return alist with '(org-elem-id . parent-id)' pairs.
 ;; The data is collected from parse TREE."
 ;;   (let (child-lst)
 ;;     (org-element-map tree 'headline
 ;;       (lambda (--headline)
-;;         (push (cons (org-element-property :elem-id --headline)
+;;         (push (cons (org-element-property :org-elem-id --headline)
 ;;                     (org-element-property :parent --headline))
 ;;               child-lst)))
 ;;     child-lst))
 
 ;; (defun iorg--add-children-list (tree)
 ;;   "Add ':children' property to each headline in parse TREE.
-;; Assumes that all headlines are tagged with an ':elem-id' property
+;; Assumes that all headlines are tagged with an ':org-elem-id' property
 ;; and that the circular-list read-syntax of the ':parent' attribute
-;; has been replaced with simple integer values (the :elem-id of the
+;; has been replaced with simple integer values (the :org-elem-id of the
 ;; elements parent)."
 ;;   (let ((pairs (iorg--collect-children tree)))
 ;;     (org-element-map tree 'headline
@@ -508,7 +508,7 @@ clickable link when the document is rendered in the wiki."
 ;;                 (mapcar
 ;;                  (lambda (--pair)
 ;;                    (and (eq (cdr --pair)
-;;                             (org-element-property :elem-id --elem))
+;;                             (org-element-property :org-elem-id --elem))
 ;;                         (car --pair)))
 ;;                  pairs)))))))
 ;;   tree)
@@ -527,7 +527,7 @@ clickable link when the document is rendered in the wiki."
 ;;          --elem :parent-id
 ;;          (if (eq (org-element-type par) 'org-data)
 ;;              0
-;;            (org-element-property :elem-id par)))))
+;;            (org-element-property :org-elem-id par)))))
 ;;     nil nil nil 'WITH-AFFILIATED)
 ;;   tree)
 
