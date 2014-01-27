@@ -229,6 +229,8 @@
          (makeOrgHeadline
                   (cdr (pop 'Lst))
                   Obj ) )
+      (put> Obj 'elem-id (genKey 'elem-id '+orgBaseElement))
+      (put> Obj 'org-elem-id NIL)
       (treatOrgData Obj)
       (commit 'upd)
       ## (off *IorgGlobalSwitch)
@@ -237,25 +239,16 @@
 (de treatOrgData (OrgData)
    (msg "entering treatOrgData ...")
    (postProcessElemID OrgData) )
-   ## (with OrgData
-   ##    (let Desc (: descendants)
-   ##       (and Desc
-   ##          (put> This 'max-child-id (length Desc)) )
-   ##       (for (I . X) (reverse Desc)
-   ##          (with X
-   ##             (put> This 'org-elem-id I) ) ) ) ) )
 
 (de postProcessElemID (Elem)
    (msg "entering postProcessElemID ...")
    (with Elem
       (let Desc (: descendants)
          (and Desc
-            (put> This 'max-child-id (length Desc))
-            (for (I . X) (reverse Desc)
+            (for X Desc
                (with X
-                  (put> This 'org-elem-id I) )
-               (postProcessElemID X) ) ) ) ) )
-
+                  (put> This 'org-elem-id NIL) ) )
+               (postProcessElemID X) ) ) ) )
 
 ## *** Headline
 
@@ -284,6 +277,7 @@
          (if (= ParentID 0)
             Ptree
             (db 'ptree '+OrgHeadline Ptree 'org-elem-id ParentID) ) )
+      (put> Obj 'elem-id (genKey 'elem-id '+orgBaseElement))
       (msg Obj " => New OrgHeadline object created")
       (msg (show Obj) " => Show New OrgHeadline object")
       (treatOrgHeadline Obj) )
