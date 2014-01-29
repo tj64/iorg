@@ -40,7 +40,11 @@
 
 (menu ,"OrgHeadline"
    (idForm ,"OrgHeadline" '(choOrgHeadline) 'level '+OrgHeadline T '(may Delete)
-      '((: ptree input-buffer) "<" (stamp (: ptree date) (: ptree time)) ">")
+      '("ID " (: elem-id)
+          " Obj" This
+          " [" (: ptree input-buffer)
+          "<" (stamp (: ptree date) (: ptree time)) ">]" )
+      ## '((: ptree input-buffer) "<" (stamp (: ptree date) (: ptree time)) ">")
         ## (let Split (split (chop (: :ptree :parse-tree-id)) "_")
         ##    (pack (car Split) ".org [" (pack (cdr Split)) "] ") ) )
       ## (msg "before grid 3")
@@ -85,64 +89,78 @@
         ##  (<table> NIL ,"Timestamp" '((NIL ,"Key") (NIL ,"Value"))
         ##     (do 2
         ##        (<row> NIL
-        ##           (gui 1 '(+TextField) 30)
-        ##           (gui 2 '(+TextField) 40)
+        ##           (gui 1 '(+TextField) 25)
+        ##           (gui 2 '(+TextField) 35)
         ##           (gui 3 '(+DelRowButton))
         ##           (gui 4 '(+BubbleButton)) ) ) )
         ##  (<spread> (scroll 6) (editButton T))
         ##  (----)
+
+        (----)
+         (gui '(+E/R +Chart) '(title-stamp : home obj) 9)
+         (<table> NIL ,"Timestamp" '((NIL ,"Key") (NIL ,"Value"))
+            (do 2
+               (<row> NIL
+                  (gui 1 '(+DateField) 20)
+                  (gui 2 '(+TimeField) 30)
+                  (gui 3 '(+DelRowButton))
+                  (gui 4 '(+BubbleButton)) ) ) )
+         (<spread> (scroll 6) (editButton T))
+         (----)
+
 
          ## NIL NIL
          ## (gui '(+E/R +Fmt +Field)
          ##    '(
          ##    40 )
 
-     ##  (--)
-     ##  (<grid> 4
-     ##     ,"Scheduled (Date/Time)" (choOrgTimestamp 0) NIL NIL
-     ##     ,"Start" NIL
-     ##     (gui '(+E/R +ObjView +DateField)
-     ##               '(:scheduled-stamp : home obj)
-     ##               '(: :start-dat) 15 )
-     ##     (gui '(+E/R +ObjView +TimeField)
-     ##                '(:scheduled-stamp : home obj)
-     ##                '(: :start-tim) 15 )
-     ##     ,"End" NIL
-     ##     (gui '(+E/R +ObjView +DateField)
-     ##                '(:scheduled-stamp : home obj)
-     ##                '(: :end-dat) 15 )
-     ##     (gui '(+E/R +ObjView +TimeField)
-     ##                '(:scheduled-stamp : home obj)
-     ##                '(: :end-tim) 15 )
-     ##     ,"Deadline (Date/Time)" (choOrgTimestamp 0)
-     ##     (gui '(+E/R +ObjView +DateField)
-     ##        '(:deadline-stamp : home obj)
-     ##        '(: :start-dat) 10 )
-     ##     (gui '(+E/R +ObjView +TimeField)
-     ##        '(:deadline-stamp : home obj)
-     ##        '(: :start-tim) 15 )
-     ##     ,"Closed (Date/Time)" (choOrgTimestamp 0)
-     ##     (gui '(+E/R +ObjView +DateField)
-3     ##        '(:closed-stamp : home obj)
-     ##        '(: :start-dat) 10 )
-     ##     (gui '(+E/R +ObjView +TimeField)
-     ##        '(:closed-stamp : home obj)
-     ##        '(: :start-tim) 15 ) )
-     ##   (----)
-     ##  (gui '(+E/R +Chart) '(:properties : home obj) 4)
-     ##  (<table> NIL ,"Properties" '((NIL ,"Key") (NIL ,"Value"))
-     ##     (do 6
-     ##        (<row> NIL
-     ##           (gui 1 '(+TextField) 30)
-     ##           (gui 2 '(+TextField) 40)
-     ##           (gui 3 '(+DelRowButton))
-     ##           (gui 4 '(+BubbleButton)) ) ) )
-     ##  (<spread> (scroll 6) (editButton T))
+      (--)
+      (<grid> 4
+         ,"Scheduled (Date/Time)" (choOrgTimestamp 0) NIL NIL
+         ,"Start" NIL
+         (gui '(+E/R +ObjView +DateField)
+                   '(scheduled-stamp : home obj)
+                   '(: start-dat) 15 )
+         (gui '(+E/R +ObjView +TimeField)
+                    '(scheduled-stamp : home obj)
+                    '(: start-tim) 15 )
+         ,"End" NIL
+         (gui '(+E/R +ObjView +DateField)
+                    '(scheduled-stamp : home obj)
+                    '(: end-dat) 15 )
+         (gui '(+E/R +ObjView +TimeField)
+                    '(scheduled-stamp : home obj)
+                    '(: end-tim) 15 )
+         ,"Deadline (Date/Time)" (choOrgTimestamp 0)
+         (gui '(+E/R +ObjView +DateField)
+            '(deadline-stamp : home obj)
+            '(: start-dat) 15 )
+         (gui '(+E/R +ObjView +TimeField)
+            '(deadline-stamp : home obj)
+            '(: start-tim) 15 )
+         ,"Closed (Date/Time)" (choOrgTimestamp 0)
+         (gui '(+E/R +ObjView +DateField)
+            '(closed-stamp : home obj)
+            '(: start-dat) 15 )
+         (gui '(+E/R +ObjView +TimeField)
+            '(closed-stamp : home obj)
+            '(: start-tim) 15 ) )
+       (----)
+      (gui '(+E/R +Chart) '(properties : home obj) 4)
+      (<table> NIL ,"Properties" '((NIL ,"Key") (NIL ,"Value"))
+         (do 6
+            (<row> NIL
+               (gui 1 '(+TextField) 20)
+               (gui 2 '(+TextField) 30)
+               (gui 3 '(+DelRowButton))
+               (gui 4 '(+BubbleButton)) ) ) )
+      (<spread> (scroll 6) (editButton T))
       (----)
+
       (gui '(+E/R +Cue +TextField)
          '(section : home obj)
          "Lorem ipsum dolor sit amet"
-         68 40 ,"Contents" )
+         60 30 ,"Contents" )
      ##  (----)
      ##  (<grid> 12
      ## ,"Quoted" NIL
