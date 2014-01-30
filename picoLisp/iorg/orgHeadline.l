@@ -44,9 +44,6 @@
           " Obj" This
           " [" (: ptree input-buffer)
           "<" (stamp (: ptree date) (: ptree time)) ">]" )
-      ## '((: ptree input-buffer) "<" (stamp (: ptree date) (: ptree time)) ">")
-        ## (let Split (split (chop (: :ptree :parse-tree-id)) "_")
-        ##    (pack (car Split) ".org [" (pack (cdr Split)) "] ") ) )
       ## (msg "before grid 3")
       (<grid> 9
          ## (msg "before Level")
@@ -97,23 +94,29 @@
         ##  (----)
 
         (----)
-         (gui '(+E/R +Chart) '(title-stamp : home obj) 9)
-         (<table> NIL ,"Timestamp" '((NIL ,"Key") (NIL ,"Value"))
-            (do 2
-               (<row> NIL
-                  (gui 1 '(+DateField) 20)
-                  (gui 2 '(+TimeField) 30)
-                  (gui 3 '(+DelRowButton))
-                  (gui 4 '(+BubbleButton)) ) ) )
-         (<spread> (scroll 6) (editButton T))
+         ## (gui '(+E/R +Chart) '(title-stamp : home obj) 9)
+        (gui '(+E/R +Fmt +Chart) '(title-stamp : home obj)
+           list car 8 ) 
+           (<grid> 5
+              ,"Timestamp" (choOrgTimestamp 0) NIL NIL NIL
+              ,"Type" NIL
+              (gui 1 '(+SymField) 10) NIL NIL
+              ,"Start (Date/Time)" NIL
+              (gui 2 '(+DateField) 10)
+              (gui 3 '(+TimeField) 8) NIL
+              ,"End (Date/Time)" NIL
+              (gui 4 '(+DateField) 10)
+              (gui 5 '(+TimeField) 8) NIL
+              ,"Repeater (Type/Value/Unit)" NIL
+              (gui 6 '(+SymField) 10)
+              (gui 7 '(+NumField) 8)
+              (gui 8 '(+SymField) 8) )
+         ## (<spread> (scroll 6) (editButton T))
          (----)
-
-
          ## NIL NIL
          ## (gui '(+E/R +Fmt +Field)
          ##    '(
          ##    40 )
-
       (--)
       (<grid> 4
          ,"Scheduled (Date/Time)" (choOrgTimestamp 0) NIL NIL
