@@ -179,7 +179,6 @@
 
 ## * iOrg
 ## ** Org elements
-
 ## *** (Abstract) Org-Base-Element
 
 ## **** Comments
@@ -525,7 +524,6 @@
 
 
 ## ** iOrg data
-
 ## * Obsolete Stuff FIXME:delete
 
 ## Expects partial parse-tree of type '(org-data (:ID ...))' created by

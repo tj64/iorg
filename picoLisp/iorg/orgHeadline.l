@@ -142,12 +142,12 @@
               (gui 2 '(+DateField) 10)
               (gui 3 '(+TimeField) 8) NIL
               ,"End (Date/Time)" NIL
-              (gui 4 '(+DateField) 10)
-              (gui 5 '(+TimeField) 8) NIL
+              (gui 4 '(+Lock +DateField) 10)
+              (gui 5 '(+Lock +TimeField) 8) NIL
               ,"Repeater (Type/Value/Unit)" NIL
-              (gui 6 '(+SymField) 10)
-              (gui 7 '(+NumField) 8)
-              (gui 8 '(+SymField) 8) )
+              (gui 6 '(+Lock +SymField) 10)
+              (gui 7 '(+Lock +NumField) 8)
+              (gui 8 '(+Lock +SymField) 8) )
 
         (----)
 
@@ -161,12 +161,12 @@
               (gui 2 '(+DateField) 10)
               (gui 3 '(+TimeField) 8) NIL
               ,"End (Date/Time)" NIL
-              (gui 4 '(+DateField) 10)
-              (gui 5 '(+TimeField) 8) NIL
+              (gui 4 '(+Lock +DateField) 10)
+              (gui 5 '(+Lock +TimeField) 8) NIL
               ,"Repeater (Type/Value/Unit)" NIL
-              (gui 6 '(+SymField) 10)
-              (gui 7 '(+NumField) 8)
-              (gui 8 '(+SymField) 8) )
+              (gui 6 '(+Lock +SymField) 10)
+              (gui 7 '(+Lock +NumField) 8)
+              (gui 8 '(+Lock +SymField) 8) )
 
       ## (--)
       ## (<grid> 4

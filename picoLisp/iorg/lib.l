@@ -293,23 +293,34 @@
             C (: closed)
             L (: title-stamp) )
       (and D
-         (put> This 'deadline (postProcessTimestamp D)) )
+         (put> This 'deadline
+            (postProcessTimestamp D "deadline") ) )
       (and S
-         (put> This 'scheduled (postProcessTimestamp S)) )
+         (put> This 'scheduled
+            (postProcessTimestamp S "scheduled") ) )
       (and C
-         (put> This 'closed (postProcessTimestamp C)) )
+         (put> This 'closed
+            (postProcessTimestamp C "closed") ) )
       (and L
-         (put> This 'title-stamp (postProcessTimestamp L)) ) ) ) )
+         (put> This 'title-stamp
+            (postProcessTimestamp L "title-stamp") ) ) ) ) )
 
-(de postProcessTimestamp (Lst)
+(de postProcessTimestamp (Lst Strg)
      (msg "entering postProcessTimestamp ...")
      (make
         (link
            (pop 'Lst)
            (date (filter 'bool (pop 'Lst)))
-           (time (filter 'bool (pop 'Lst)))
-           (date (filter 'bool (pop 'Lst)))
-           (time (filter 'bool (pop 'Lst)))
+           (time (filter 'bool (pop 'Lst))) )
+        (if (or (= Strg "deadline")
+                (= Strg "closed"))
+           (prog
+              (cut 2 'Lst)
+              (link NIL NIL) )
+           (link
+              (date (filter 'bool (pop 'Lst)))
+              (time (filter 'bool (pop 'Lst))) ) )
+        (link
            (pop 'Lst)
            (pop 'Lst)
            (pop 'Lst) ) ) )
