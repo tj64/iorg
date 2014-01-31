@@ -39,11 +39,14 @@
 ## (rel footnote-section-p (+Bool))
 
 (menu ,"OrgHeadline"
-   (idForm ,"OrgHeadline" '(choOrgHeadline) 'level '+OrgHeadline T '(may Delete)
+   (idForm ,"OrgHeadline" '(choOrgHeadline) 'level
+      '+OrgHeadline T '(may Delete)
       '("ID " (: elem-id)
           " Obj" This
           " [" (: ptree input-buffer)
-          "<" (stamp (: ptree date) (: ptree time)) ">]" )
+          "<" (stamp
+                 (: ptree creation-date)
+                 (: ptree creation-time) ) ">]" )
       ## (msg "before grid 3")
       (<grid> 9
          ## (msg "before Level")
