@@ -102,15 +102,15 @@
            (<grid> 5
               ,"Timestamp" (choOrgTimestamp 0) NIL NIL NIL
               ,"Type" NIL
-              (gui 1 '(+SymField) 10) NIL NIL
+              (gui 1 '(+SymField) 14) NIL NIL
               ,"Start (Date/Time)" NIL
-              (gui 2 '(+DateField) 10)
+              (gui 2 '(+DateField) 14)
               (gui 3 '(+TimeField) 8) NIL
               ,"End (Date/Time)" NIL
-              (gui 4 '(+DateField) 10)
+              (gui 4 '(+DateField) 14)
               (gui 5 '(+TimeField) 8) NIL
               ,"Repeater (Type/Value/Unit)" NIL
-              (gui 6 '(+SymField) 10)
+              (gui 6 '(+SymField) 14)
               (gui 7 '(+NumField) 8)
               (gui 8 '(+SymField) 8) )
 
@@ -121,15 +121,15 @@
            (<grid> 5
               ,"Scheduled" (choOrgTimestamp 0) NIL NIL NIL
               ,"Type" NIL
-              (gui 1 '(+SymField) 10) NIL NIL
+              (gui 1 '(+SymField) 14) NIL NIL
               ,"Start (Date/Time)" NIL
-              (gui 2 '(+DateField) 10)
+              (gui 2 '(+DateField) 14)
               (gui 3 '(+TimeField) 8) NIL
               ,"End (Date/Time)" NIL
-              (gui 4 '(+DateField) 10)
+              (gui 4 '(+DateField) 14)
               (gui 5 '(+TimeField) 8) NIL
               ,"Repeater (Type/Value/Unit)" NIL
-              (gui 6 '(+SymField) 10)
+              (gui 6 '(+SymField) 14)
               (gui 7 '(+NumField) 8)
               (gui 8 '(+SymField) 8) )
 
@@ -140,15 +140,15 @@
            (<grid> 5
               ,"Deadline" (choOrgTimestamp 0) NIL NIL NIL
               ,"Type" NIL
-              (gui 1 '(+SymField) 10) NIL NIL
+              (gui 1 '(+SymField) 14) NIL NIL
               ,"Start (Date/Time)" NIL
-              (gui 2 '(+DateField) 10)
+              (gui 2 '(+DateField) 14)
               (gui 3 '(+TimeField) 8) NIL
               ,"End (Date/Time)" NIL
-              (gui 4 '(+Lock +DateField) 10)
+              (gui 4 '(+Lock +DateField) 14)
               (gui 5 '(+Lock +TimeField) 8) NIL
               ,"Repeater (Type/Value/Unit)" NIL
-              (gui 6 '(+Lock +SymField) 10)
+              (gui 6 '(+Lock +SymField) 14)
               (gui 7 '(+Lock +NumField) 8)
               (gui 8 '(+Lock +SymField) 8) )
 
@@ -156,18 +156,25 @@
 
         (gui '(+E/R +Fmt +Chart) '(closed : home obj)
            list car 8 ) 
+
+## '(mix 1 3 5)
+## '((L)(list (caar L) NIL (cadr L) NIL ...)
+
+## '(mix 1 3 5)
+## '(mix (car 1) NIL ...) ;???
+
            (<grid> 5
               ,"Closed" (choOrgTimestamp 0) NIL NIL NIL
               ,"Type" NIL
-              (gui 1 '(+SymField) 10) NIL NIL
+              (gui 1 '(+SymField) 14) NIL NIL
               ,"Start (Date/Time)" NIL
-              (gui 2 '(+DateField) 10)
+              (gui 2 '(+DateField) 14)
               (gui 3 '(+TimeField) 8) NIL
               ,"End (Date/Time)" NIL
-              (gui 4 '(+Lock +DateField) 10)
+              (gui 4 '(+Lock +DateField) 14)
               (gui 5 '(+Lock +TimeField) 8) NIL
               ,"Repeater (Type/Value/Unit)" NIL
-              (gui 6 '(+Lock +SymField) 10)
+              (gui 6 '(+Lock +SymField) 14)
               (gui 7 '(+Lock +NumField) 8)
               (gui 8 '(+Lock +SymField) 8) )
 

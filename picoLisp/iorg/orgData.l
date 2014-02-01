@@ -40,42 +40,53 @@
 ## (rel footnote-section-p (+Bool))
 
 (menu ,"OrgData"
-   (idForm ,"OrgData" '(choOrgData) 'level '+OrgData T '(may Delete)
+   (idForm ,"OrgData" '(choOrgData) 'input-buffer
+      '+OrgData T '(may Delete)
       '("ID " (: elem-id)
-          " Obj" This
-          " [" (: ptree input-buffer)
-          "<" (stamp (: creation-date) (: creation-time)) ">]" )
-      (msg "before grid 3")
+          " Obj" This )
+          ## " [" (: input-buffer)
+          ## "<" (stamp (: creation-date) (: creation-time)) ">]" )
+      ## (msg "before grid 3")
       (<grid> 3
-         (msg "before input buffer")
+         ## (msg "before input buffer")
          ,"Input Buffer" NIL
-         (gui '(+Lock +E/R +TextField)
+         (gui '(+E/R +TextField)
             '(input-buffer : home obj) 40 )
-         (msg "before input file")
+         ## (msg "before input file")
          ,"Input File" NIL
-         (gui '(+Lock +E/R +FileField)
-            '(input-file : home obj) 40 ) )
+         (gui '(+Chk +E/R +TextField)
+            '(or
+                (extra)
+                (and (info (val> This))
+                   "File does not exist" ) )
+            '(input-file : home obj) 60 )
+         ,"Creation-Date" NIL
+         (gui '(+E/R +DateField)
+            '(creation-date : home obj) 10 )
+         ,"Creation-Time" NIL
+         (gui '(+E/R +TimeField)
+            '(creation-time : home obj) 8 ) )
       (--)
       (<grid> 3
-         (msg "before author")
+         ## (msg "before author")
          ,"Author" NIL
-         (gui '(+Lock +E/R +TextField)
+         (gui '(+E/R +TextField)
             '(author : home obj) 40 )
-         (msg "before email")
+         ## (msg "before email")
          ,"Email" NIL
-         (gui '(+Lock +E/R +MailField)
+         (gui '(+E/R +MailField)
             '(email : home obj) 40 )
-         (msg "before creator")
+         ## (msg "before creator")
          ,"Creator" NIL
-         (gui '(+Lock +E/R +TextField)
+         (gui '(+E/R +TextField)
             '(creator : home obj) 40 )
-         (msg "before description")
+         ## (msg "before description")
          ,"Description" NIL
-         (gui '(+Lock +E/R +TextField)
-            '(description : home obj) 40 5 ) )
+         (gui '(+E/R +TextField)
+            '(description : home obj) 40 3 ) )
       (----)
-      (msg "before section")
-      (gui '(+Lock +E/R +TextField)
+      ## (msg "before section")
+      (gui '(+E/R +TextField)
          '(section : home obj)
          60 30 ,"Contents" ) ) )
 

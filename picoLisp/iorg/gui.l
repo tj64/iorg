@@ -202,7 +202,7 @@
 (de choOrgHeadline (Dst)
    (diaform '(Dst)
       (<grid> "--."
-         ,"Level" (gui 'level '(+Focus +Var +NumField) '*OrgHeadlineLevel 3)
+         ,"Level" (gui 'level '(+Focus +Var +NumField) '*OrgHeadlineLevel 1)
          (searchButton '(init> (: home query)))
          ,"Todo"
          (gui 'todo-keyword '(+Var +TextField) '*OrgHeadlineTodo
