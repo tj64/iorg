@@ -221,7 +221,6 @@
 ##       )
 
 ## *** (Abstract) Org-Element
-
 ## **** Comments
 
 ## - ancestor :: joint link to ancestor element

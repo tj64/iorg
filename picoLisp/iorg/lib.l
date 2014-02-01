@@ -313,7 +313,7 @@
            (date (filter 'bool (pop 'Lst)))
            (time (filter 'bool (pop 'Lst))) )
         (if (or (= Strg "deadline")
-                (= Strg "closed")
+                (= Strg "closed") )
            (prog
               (cut 2 'Lst)
               (link NIL NIL) )

@@ -36,7 +36,8 @@
                      ("logout" (and *Login "!stop"))
                      (NIL (<hr>))
                      ("Documents" (and (may Iorg) "iorg/doc.l"))
-                     ("Org-Elements" (and (may OrgData) "iorg/orgHeadline.l"))
+                     ("Org Data" (and (may OrgData) "iorg/orgData.l"))
+                     ("Org Headlines" (and (may OrgData) "iorg/orgHeadline.l"))
                      ("Role Administration" (and (may RoleAdmin) "iorg/role.l"))
                      ("User Administration" (and (may Iorg) "iorg/user.l"))
                      ("Upload" (and (may Upload) "iorg/upload.l"))
@@ -153,16 +154,58 @@
          (newButton T Dst '(+Doc))
          (cancelButton) ) ) )
 
-(de choOrgData ()
-   )
+(de choOrgData (Dst)
+   (diaform '(Dst)
+      (<grid> "--."
+         ,"Input Buffer" (gui 'input-buffer '(+Focus +Var +TextField) '*OrgDataInputBuffer 20)
+         (searchButton '(init> (: home query)))
+         ,"Author"
+         (gui 'author '(+Var +TextField) '*OrgDataAuthor 20)
+         (resetButton '(input-buffer author query)) )
+      (gui 'query '(+QueryChart) (cho)
+         '(goal
+            (quote
+               @InputBuffer (and *OrgDataInputBuffer (cons @ T))
+               @Author *OrgDataAuthor
+               (select (@@)
+                  ((input-buffer +OrgData @InputBuffer)
+                   (author +OrgData @Author) )
+                  (range @InputBuffer @@ input-buffer)
+                  (head @Author @@ author) ) ) )
+         6
+         '((This)
+            (list
+               This
+               (: input-buffer)
+               (: author)
+               (: creation-date)
+               (: creation-time) ) ) )
+               ## (: description) ) ) )
+               ## (and tags (pack ":" (glue ":" (: tags)) ":")) ) ) )
+      (<table> 'chart (choTtl ,"OrgData" 'nr '+OrgData)
+         '((btn) (NIL ,"Input Buffer") (NIL ,"Author") (NIL ,"Date")
+           (NIL ,"Time") )
+           ## (NIL ,"Time") (NIL ,"Description") )
+         (do (cho)
+            (<row> (alternating)
+               (gui 1 '(+DstButton) Dst)
+               (gui 2 '(+TextField))
+               (gui 3 '(+TextField))
+               (gui 4 '(+DateField))
+               (gui 5 '(+TimeField))
+               (gui 6 '(+TextField)) ) ) )
+      (<spread>
+         (scroll (cho))
+         (newButton T Dst '(+OrgData))
+         (cancelButton) ) ) )
 
 (de choOrgHeadline (Dst)
    (diaform '(Dst)
       (<grid> "--."
-         ,"Level" (gui 'level '(+Focus +Var +NumField) '*OrgHeadline:Level 3)
+         ,"Level" (gui 'level '(+Focus +Var +NumField) '*OrgHeadlineLevel 3)
          (searchButton '(init> (: home query)))
          ,"Todo"
-         (gui ':todo-keyword '(+Var +TextField) '*OrgHeadlineTodo
+         (gui 'todo-keyword '(+Var +TextField) '*OrgHeadlineTodo
             '("TODO" "DONE" "NEXT" "WAITING") )
          (resetButton '(level todo-keyword query)) )
       (gui 'query '(+QueryChart) (cho)
@@ -174,7 +217,8 @@
                   ((level +OrgHeadline @Level)
                    (todo-keyword +OrgHeadline @Todo) )
                   (range @Level @@ level)
-                  (head @Todo @@ todo) ) ) )
+                  (head @Todo @@ todo-keyword) ) ) )
+                  ## (head @Todo @@ todo) ) ) )
          6
          '((This)
             (list
