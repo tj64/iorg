@@ -15,7 +15,7 @@
 
 ## * Permissions
 
-(msg "enter orgData")
+## (msg "enter orgData")
 (must "OrgData" OrgData)
 
 ## ** GUI Function
