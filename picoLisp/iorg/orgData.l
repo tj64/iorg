@@ -51,7 +51,7 @@
          ## (msg "before input buffer")
          ,"Input Buffer" NIL
          (gui '(+E/R +TextField)
-            '(input-buffer : home obj) 40 )
+            '(input-buffer : home obj) 20 )
          ## (msg "before input file")
          ,"Input File" NIL
          (gui '(+Chk +E/R +TextField)
@@ -59,7 +59,7 @@
                 (extra)
                 (and (info (val> This))
                    "File does not exist" ) )
-            '(input-file : home obj) 60 )
+            '(input-file : home obj) 40 )
          ,"Creation-Date" NIL
          (gui '(+E/R +DateField)
             '(creation-date : home obj) 10 )

@@ -156,12 +156,16 @@
 
 (de choOrgData (Dst)
    (diaform '(Dst)
-      (<grid> "--."
-         ,"Input Buffer" (gui 'input-buffer '(+Focus +Var +TextField) '*OrgDataInputBuffer 20)
+      (<grid>
+         "--."
+         ,"Input Buffer"
+         (gui 'input-buffer '(+Focus +Var +TextField) '*OrgDataInputBuffer 20)
          (searchButton '(init> (: home query)))
          ,"Author"
          (gui 'author '(+Var +TextField) '*OrgDataAuthor 20)
-         (resetButton '(input-buffer author query)) )
+         (resetButton '(input-buffer author query))
+         ,"Creation-Date"
+         (gui 'creation-date '(+Var +DateField) '*OrgDataCreationDate 10) )
       (gui 'query '(+QueryChart) (cho)
          '(goal
             (quote
@@ -201,13 +205,70 @@
 
 (de choOrgHeadline (Dst)
    (diaform '(Dst)
-      (<grid> "--."
-         ,"Level" (gui 'level '(+Focus +Var +NumField) '*OrgHeadlineLevel 1)
-         (searchButton '(init> (: home query)))
-         ,"Todo"
-         (gui 'todo-keyword '(+Var +TextField) '*OrgHeadlineTodo
-            '("TODO" "DONE" "NEXT" "WAITING") )
+      (<grid> 3
+         ## "--."
+         (searchButton '(init> (: home query))) NIL
          (resetButton '(level todo-keyword query)) )
+      (--)
+      (<grid> 12
+         ,"Level" NIL
+         (gui 'level '(+Focus +Var +NumField)
+            '*OrgHeadlineLevel 1 ) NIL 
+         ,"Todo" NIL
+         (gui 'todo-keyword '(+Var +TextField)
+            '*OrgHeadlineTodo
+            '("TODO" "DONE" "NEXT" "WAITING") ) NIL
+         ,"Priority" NIL
+         (gui 'priority '(+Var +TextField)
+            '*OrgHeadlinePriority 1 ) )
+      (--)
+      (<grid> 3
+        ,"Tags" NIL
+         (gui 'tags '(+Var +TextField)
+            '*OrgHeadlineTags 40 )
+        ,"Properties" NIL
+         (gui 'properties '(+Var +TextField)
+            '*OrgHeadlineProperties 40 ) )
+      (--)
+      (<grid> 7
+        ,"Timestamp" NIL
+         (gui 'title-stamp '(+Var +DateField)
+            '*OrgHeadlineTimestamp 10 ) NIL
+        ,"Deadline" NIL
+         (gui 'deadline '(+Var +DateField)
+            '*OrgHeadlineDeadline 10 )
+        ,"Scheduled" NIL
+         (gui 'scheduled '(+Var +DateField)
+            '*OrgHeadlineScheduled 10 ) NIL
+        ,"Closed" NIL
+         (gui 'closed '(+Var +DateField)
+            '*OrgHeadlineClosed 10 ) )
+      (--)
+      (<grid> 7
+        ,"OrgData" NIL
+         (gui 'ptree '(+Var +TextField)
+            '*OrgHeadlinePtree 20 ) NIL
+        ,"Category" NIL
+         (gui 'category '(+Var +TextField)
+            '*OrgHeadlineCategory 20 )
+        ,"Author" NIL
+         (gui `(: ptree author) '(+Var +TextField)
+            '*OrgHeadlineAuthor 20 ) NIL
+        ,"Creation-Date" NIL
+         (gui 'creation-date '(+Var +DateField)
+            '*OrgHeadlineCreationDate 10 ) )
+      (--)
+      (<grid> 7
+        ,"Archived?" NIL
+         (gui 'archivedp '(+Var +Checkbox)
+            '*OrgHeadlineArchivedP ) NIL
+        ,"Footnote-Section?" NIL
+         (gui 'footnote-section-p '(+Var +Checkbox)
+            '*OrgHeadlineFootnoteSectionP ) )            
+      (<grid> 3
+         (searchButton '(init> (: home query))) NIL
+         (resetButton '(level todo-keyword query)) )
+
       (gui 'query '(+QueryChart) (cho)
          '(goal
             (quote

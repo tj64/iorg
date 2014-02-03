@@ -250,7 +250,8 @@
 ## Parse-Tree (meta data for containing org file,
 ## collected from Emacs environment, plus root org-elem-id)
 (class +OrgData +orgBaseElement)
-(rel input-buffer (+Aux +Ref +String) (creation-date creation-time) )
+(rel input-buffer (+Aux +Ref +String)
+   (creation-date creation-time) )
 (rel input-file (+String))
 (rel author (+Ref +String))
 (rel email (+String))
