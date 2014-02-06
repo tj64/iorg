@@ -264,7 +264,7 @@
             '*OrgHeadlineArchivedP ) NIL
         ,"Footnote-Section?" NIL
          (gui 'footnote-section-p '(+Var +Checkbox)
-            '*OrgHeadlineFootnoteSectionP ) )            
+             '*OrgHeadlineFootnoteSectionP ) )            
       (<grid> 3
          (searchButton '(init> (: home query))) NIL
          (resetButton '(level todo-keyword query)) )
@@ -303,6 +303,9 @@
          (scroll (cho))
          (newButton T Dst '(+OrgHeadline))
          (cancelButton) ) ) )
+
+(de choAgenda ()
+   )
 
 
 (de choOrgTitle ()
