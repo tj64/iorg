@@ -65,11 +65,11 @@
             '("TODO" "DONE" "NEXT" "WAITING") ) )
       (<grid> 3
          ## (msg "before Category")
-         ,"Category" (choCategory 0)
+         ,"Category" NIL
          (gui '(+E/R +TextField)
             '(category : home obj) 15)
          ## (msg "before Title")
-         ,"Title" (choOrgTitle 0)
+         ,"Title" NIL
          (gui '(+E/R +TextField)
             '(title-string : home obj) 50)
          ## (msg "before Tags")
@@ -100,7 +100,7 @@
         (gui '(+E/R +Fmt +Chart) '(title-stamp : home obj)
            list car 8 ) 
            (<grid> 5
-              ,"Timestamp" (choOrgTimestamp 0) NIL NIL NIL
+              ,"Timestamp" NIL NIL NIL NIL
               ,"Type" NIL
               (gui 1 '(+SymField) 14) NIL NIL
               ,"Start (Date/Time)" NIL
@@ -119,7 +119,7 @@
         (gui '(+E/R +Fmt +Chart) '(scheduled : home obj)
            list car 8 ) 
            (<grid> 5
-              ,"Scheduled" (choOrgTimestamp 0) NIL NIL NIL
+              ,"Scheduled" NIL NIL NIL NIL
               ,"Type" NIL
               (gui 1 '(+SymField) 14) NIL NIL
               ,"Start (Date/Time)" NIL
@@ -138,7 +138,7 @@
         (gui '(+E/R +Fmt +Chart) '(deadline : home obj)
            list car 8 ) 
            (<grid> 5
-              ,"Deadline" (choOrgTimestamp 0) NIL NIL NIL
+              ,"Deadline" NIL NIL NIL NIL
               ,"Type" NIL
               (gui 1 '(+SymField) 14) NIL NIL
               ,"Start (Date/Time)" NIL
@@ -164,7 +164,7 @@
 ## '(mix (car 1) NIL ...) ;???
 
            (<grid> 5
-              ,"Closed" (choOrgTimestamp 0) NIL NIL NIL
+              ,"Closed" NIL NIL NIL NIL
               ,"Type" NIL
               (gui 1 '(+SymField) 14) NIL NIL
               ,"Start (Date/Time)" NIL

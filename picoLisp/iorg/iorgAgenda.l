@@ -65,11 +65,11 @@
             '("TODO" "DONE" "NEXT" "WAITING") ) )
       (<grid> 3
          ## (msg "before Category")
-         ,"Category" (choCategory 0)
+         ,"Category" NIL
          (gui '(+E/R +TextField)
             '(category : home obj) 15)
          ## (msg "before Title")
-         ,"Title" (choOrgTitle 0)
+         ,"Title" NIL
          (gui '(+E/R +TextField)
             '(title-string : home obj) 50)
          ## (msg "before Tags")
@@ -100,7 +100,7 @@
         (gui '(+E/R +Fmt +Chart) '(title-stamp : home obj)
            list car 8 ) 
            (<grid> 5
-              ,"Timestamp" (choOrgTimestamp 0) NIL NIL NIL
+              ,"Timestamp" NIL NIL NIL NIL
               ,"Type" NIL
               (gui 1 '(+SymField) 14) NIL NIL
               ,"Start (Date/Time)" NIL
@@ -119,7 +119,7 @@
         (gui '(+E/R +Fmt +Chart) '(scheduled : home obj)
            list car 8 ) 
            (<grid> 5
-              ,"Scheduled" (choOrgTimestamp 0) NIL NIL NIL
+              ,"Scheduled" NIL NIL NIL NIL
               ,"Type" NIL
               (gui 1 '(+SymField) 14) NIL NIL
               ,"Start (Date/Time)" NIL
@@ -138,7 +138,7 @@
         (gui '(+E/R +Fmt +Chart) '(deadline : home obj)
            list car 8 ) 
            (<grid> 5
-              ,"Deadline" (choOrgTimestamp 0) NIL NIL NIL
+              ,"Deadline" NIL NIL NIL NIL
               ,"Type" NIL
               (gui 1 '(+SymField) 14) NIL NIL
               ,"Start (Date/Time)" NIL
@@ -164,7 +164,7 @@
 ## '(mix (car 1) NIL ...) ;???
 
            (<grid> 5
-              ,"Closed" (choOrgTimestamp 0) NIL NIL NIL
+              ,"Closed" NIL NIL NIL NIL
               ,"Type" NIL
               (gui 1 '(+SymField) 14) NIL NIL
               ,"Start (Date/Time)" NIL
@@ -180,7 +180,7 @@
 
       ## (--)
       ## (<grid> 4
-      ##    ,"Scheduled (Date/Time)" (choOrgTimestamp 0) NIL NIL
+      ##    ,"Scheduled (Date/Time)" NIL NIL NIL
       ##    ,"Start" NIL
       ##    (gui '(+E/R +ObjView +DateField)
       ##              '(scheduled-stamp : home obj)
@@ -195,14 +195,14 @@
       ##    (gui '(+E/R +ObjView +TimeField)
       ##               '(scheduled-stamp : home obj)
       ##               '(: end-tim) 15 )
-      ##    ,"Deadline (Date/Time)" (choOrgTimestamp 0)
+      ##    ,"Deadline (Date/Time)" NIL
       ##    (gui '(+E/R +ObjView +DateField)
       ##       '(deadline-stamp : home obj)
       ##       '(: start-dat) 15 )
       ##    (gui '(+E/R +ObjView +TimeField)
       ##       '(deadline-stamp : home obj)
       ##       '(: start-tim) 15 )
-      ##    ,"Closed (Date/Time)" (choOrgTimestamp 0)
+      ##    ,"Closed (Date/Time)" NIL
       ##    (gui '(+E/R +ObjView +DateField)
       ##       '(closed-stamp : home obj)
       ##       '(: start-dat) 15 )

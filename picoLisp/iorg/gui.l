@@ -308,14 +308,14 @@
    )
 
 
-(de choOrgTitle ()
-   )
+## (de choOrgTitle ()
+##    )
 
-(de choOrgTimestamp ()
-   )
+## (de choOrgTimestamp ()
+##    )
 
-(de choCategory ()
-   )
+## (de choCategory ()
+##    )
 
 
 ## ** Show document HTML page
