@@ -40,7 +40,7 @@
 ## (rel footnote-section-p (+Bool))
 
 (menu ,"OrgData"
-   (idForm ,"OrgData" '(choOrgData) 'input-buffer
+   (idform ,"OrgData" '(choOrgData) 'input-buffer
       '+OrgData T '(may Delete)
       '("ID " (: elem-id)
           " Obj" This )
