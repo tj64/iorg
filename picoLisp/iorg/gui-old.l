@@ -156,35 +156,26 @@
 
 (de choOrgData (Dst)
    (diaform '(Dst)
-      (<grid> 5
-         ## "--."
-         (searchButton '(init> (: home query)))NIL
-         (resetButton '(input-buffer author query)) NIL NIL
-         ,"Input Buffer" NIL
-         (gui 'input-buffer '(+Focus +Var +TextField) '*OrgDataInputBuffer 20) NIL NIL
-         ,"Author" NIL
-         (gui 'author '(+Var +TextField) '*OrgDataAuthor 20) NIL NIL
-         ,"Creation-Range" NIL
-         (gui 'creation-date-start '(+Var +DateField) '*OrgDataCreationDateStart 10) NIL
-         (gui 'creation-date-end '(+Var +DateField) '*OrgDataCreationDateEnd 10) )
+      (<grid>
+         "--."
+         ,"Input Buffer"
+         (gui 'input-buffer '(+Focus +Var +TextField) '*OrgDataInputBuffer 20)
+         (searchButton '(init> (: home query)))
+         ,"Author"
+         (gui 'author '(+Var +TextField) '*OrgDataAuthor 20)
+         (resetButton '(input-buffer author query))
+         ,"Creation-Date"
+         (gui 'creation-date '(+Var +DateField) '*OrgDataCreationDate 10) )
       (gui 'query '(+QueryChart) (cho)
          '(goal
             (quote
-               @InputBuffer *OrgDataInputBuffer
+               @InputBuffer (and *OrgDataInputBuffer (cons @ T))
                @Author *OrgDataAuthor
-               @OrgDatRng (cons *OrgDataCreationDateStart
-                             (or *OrgDataCreationDateEnd T) )
-               ## @CreationDateStart *OrgDataCreationDateStart
-               ## @CreationDateEnd *OrgDataCreationDateEnd
                (select (@@)
                   ((input-buffer +OrgData @InputBuffer)
-                   (author +OrgData @Author)
-                   (creation-date +Cls @OrgDatRng) )
-                   ## (creation-date +OrgData @CreationDateStart)
-                   ## (creation-date +OrgData @CreationDateEnd)
-                  (part @InputBuffer @@ input-buffer)
-                  (tolr @Author @@ author)
-                  (range @OrgDatRng @@ creation-date) ) ) )
+                   (author +OrgData @Author) )
+                  (range @InputBuffer @@ input-buffer)
+                  (head @Author @@ author) ) ) )
          6
          '((This)
             (list
