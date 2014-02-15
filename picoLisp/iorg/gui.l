@@ -219,6 +219,11 @@
          (searchButton '(init> (: home query))) NIL
          (resetButton '(level todo-keyword query)) )
       (--)
+      (<grid> 3
+        ,"Category" NIL
+         (gui 'category '(+Var +TextField)
+            '*OrgHeadlineCategory 30 ) )
+      (--)
       (<grid> 11
          ,"Level (L)" NIL
          (gui 'level '(+Focus +Var +Init +Map +TextField)
@@ -308,7 +313,8 @@
                (gui 2 '(+TextField) 20)
                (gui 3 '(+DelRowButton))
                (gui 4 '(+BubbleButton)) ) ) )
-      (<spread> (scroll 6) (editButton T))
+      (scroll 6)
+      ## (<spread> (scroll 6) (editButton T))
 
         ## ,"Properties Key:" NIL
         ##  (gui 'property-key '(+Var +TextField)
@@ -316,15 +322,12 @@
         ## ,"Val:" NIL
         ##  (gui 'property-val '(+Var +TextField)
         ##     '*OrgHeadlinePropertyVal 20 ) )
-
       (--)
       (<grid> 3
-        ,"Category" NIL
-         (gui 'category '(+Var +TextField)
-            '*OrgHeadlineCategory 30 )
-        ,"Author" NIL
+         ,"Author" NIL
          (gui `(: ptree author) '(+Var +TextField)
             '*OrgHeadlineAuthor 30 ) )
+      (--)
       (<grid> 5
         ,"Creation-Date" NIL
          (gui 'creation-date '(+Var +DateField)
