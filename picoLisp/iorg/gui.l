@@ -255,44 +255,50 @@
          (gui 'tags '(+Var +TextField)
             '*OrgHeadlineTags 40 ) )
       (--)
-      (<grid> 7
-         NIL NIL ,"Start" NIL ,"End" NIL NIL
-        ,"Timestamp" NIL
-         (gui 'title-stamp-start '(+Var +DateField)
-            '*OrgHeadlineTimestampStart 10 ) NIL
-         (gui 'title-stamp-end '(+Var +DateField)
-            '*OrgHeadlineTimestampEnd 10 ) NIL
-         (gui 'title-stamp= '(+Var +Init +TextField)
-            '*OrgHeadlineTitleStamp=
-            "=="
-            '("==" ">=" "<=" "!=") )
-        ,"Scheduled" NIL
-         (gui 'scheduled-start '(+Var +DateField)
-            '*OrgHeadlineScheduledStart 10 ) NIL
-         (gui 'scheduled-end '(+Var +DateField)
-            '*OrgHeadlineScheduledEnd 10 ) NIL
-         (gui 'scheduled= '(+Var +Init +TextField)
-            '*OrgHeadlineScheduled=
-            "=="
-            '("==" ">=" "<=" "!=") )
-        ,"Deadline" NIL
-         (gui 'deadline-start '(+Var +DateField)
-            '*OrgHeadlineDeadlineStart 10 ) NIL
-         (gui 'deadline-end '(+Var +DateField)
-            '*OrgHeadlineDeadlineEnd 10 ) NIL
-         (gui 'deadline= '(+Var +Init +TextField)
-            '*OrgHeadlineDeadline=
-            "=="
-            '("==" ">=" "<=" "!=") )
-        ,"Closed" NIL
-         (gui 'closed-start '(+Var +DateField)
-            '*OrgHeadlineClosedStart 10 ) NIL
-         (gui 'closed-end '(+Var +DateField)
-            '*OrgHeadlineClosedEnd 10 ) NIL
-         (gui 'closed= '(+Var +Init +TextField)
-            '*OrgHeadlineClosed=
-            "=="
-            '("==" ">=" "<=" "!=") ) )
+      (<table>
+         NIL ,"Planning" '(NIL (NIL ,"Start") (NIL ,"End") NIL)
+         (<row> NIL
+            ## (<grid> 7
+            ## NIL NIL ,"Start" NIL ,"End" NIL NIL
+            ,"Timestamp" 
+            (gui 'title-stamp-start '(+Var +DateField)
+               '*OrgHeadlineTimestampStart 10 ) 
+            (gui 'title-stamp-end '(+Var +DateField)
+               '*OrgHeadlineTimestampEnd 10 ) 
+            (gui 'title-stamp= '(+Var +Init +TextField)
+               '*OrgHeadlineTitleStamp=
+               "=="
+               '("==" ">=" "<=" "!=") ) )
+         (<row> NIL
+            ,"Scheduled" 
+            (gui 'scheduled-start '(+Var +DateField)
+               '*OrgHeadlineScheduledStart 10 )
+            (gui 'scheduled-end '(+Var +DateField)
+               '*OrgHeadlineScheduledEnd 10 )
+            (gui 'scheduled= '(+Var +Init +TextField)
+               '*OrgHeadlineScheduled=
+               "=="
+               '("==" ">=" "<=" "!=") ) )
+         (<row> NIL
+            ,"Deadline"
+            (gui 'deadline-start '(+Var +DateField)
+               '*OrgHeadlineDeadlineStart 10 )
+            (gui 'deadline-end '(+Var +DateField)
+               '*OrgHeadlineDeadlineEnd 10 )
+            (gui 'deadline= '(+Var +Init +TextField)
+               '*OrgHeadlineDeadline=
+               "=="
+               '("==" ">=" "<=" "!=") ) )
+         (<row> NIL
+            ,"Closed"
+            (gui 'closed-start '(+Var +DateField)
+               '*OrgHeadlineClosedStart 10 )
+            (gui 'closed-end '(+Var +DateField)
+               '*OrgHeadlineClosedEnd 10 )
+            (gui 'closed= '(+Var +Init +TextField)
+               '*OrgHeadlineClosed=
+               "=="
+               '("==" ">=" "<=" "!=") ) ) )
       (--)
       (gui 'properties '(+Var +Chart) '*OrgHeadlineProperties 4)
       (<table> NIL ,"Properties" '((NIL ,"Key") (NIL ,"Value"))
