@@ -56,7 +56,9 @@
          ,"Priority" NIL
          (gui '(+E/R +Fmt +TextField)
             '(priority : home obj)
-            char char
+            ## char char 
+            '((C) (and C (char C)))
+            '((C) (and C (char C)))
             '("A" "B" "C") )
          ## (msg "before Todo")
          ,"Todo" NIL
@@ -76,12 +78,18 @@
          ,"Tags" NIL
          (gui '(+E/R +Fmt +TextField)
             '(tags : home obj)
-            '((Tags) (and Tags (pack ":" (glue ":" Tags) ":")))
+            '((Tags) (and Tags (glue " " Tags)))
             '((Strg) (and Strg
                         (filter bool
                            (mapcar pack
-                              (split (chop Strg) ":") ) ) ) )
+                              (split (chop Strg) " ") ) ) ) )
             25 ) )
+            ## '((Tags) (and Tags (pack ":" (glue ":" Tags) ":")))
+            ## '((Strg) (and Strg
+            ##             (filter bool
+            ##                (mapcar pack
+            ##                   (split (chop Strg) ":") ) ) ) )
+            ## 25 ) )
       ## (msg "after grid")
 
         ## (----)
@@ -243,3 +251,5 @@
  ) ) #)
 
 ## iorg/orgHeadline.l ends here
+
+(0)

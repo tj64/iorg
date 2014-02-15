@@ -219,53 +219,114 @@
          (searchButton '(init> (: home query))) NIL
          (resetButton '(level todo-keyword query)) )
       (--)
-      (<grid> 12
-         ,"Level" NIL
-         (gui 'level '(+Focus +Var +NumField)
-            '*OrgHeadlineLevel 1 ) NIL 
+      (<grid> 11
+         ,"Level (L)" NIL
+         (gui 'level '(+Focus +Var +Init +Map +TextField)
+            '*OrgHeadlineLevel
+            "1"
+            '(("1" . 1) ("2" . 2) ("3" . 3) ("4" . 4)
+              ("5" . 5)( "6" . 6) ("7" . 7) ("8" . 8))
+            '("1" "2" "3" "4"  "5" "6" "7" "8") ) NIL
+         (gui 'level= '(+Var +Init +TextField)
+            '*OrgHeadlineLevel=
+            ">="
+            '("==" ">=" "<=" "!=") ) NIL
+         ,"Priority (P)" NIL
+         (gui 'priority '(+Var +Map +TextField)
+            '*OrgHeadlinePriority
+            '(NIL ("A" . 1) ("B" . 2) ("C" . 3))
+            '("A" "B" "C") ) NIL
+         (gui 'priority= '(+Var +Init +TextField)
+            '*OrgHeadlinePriority=
+            ">="
+            '("==" ">=" "<=" "!=") ) )
+      (<grid> 5
          ,"Todo" NIL
          (gui 'todo-keyword '(+Var +TextField)
             '*OrgHeadlineTodo
             '("TODO" "DONE" "NEXT" "WAITING") ) NIL
-         ,"Priority" NIL
-         (gui 'priority '(+Var +TextField)
-            '*OrgHeadlinePriority 1 ) )
+         (gui 'todo-keyword= '(+Var +Init +TextField)
+            '*OrgHeadlineTodo=
+            "=="
+            '("==" ">=" "<=" "!=") ) )
       (--)
       (<grid> 3
         ,"Tags" NIL
          (gui 'tags '(+Var +TextField)
-            '*OrgHeadlineTags 40 )
-        ,"Properties" NIL
-         (gui 'properties '(+Var +TextField)
-            '*OrgHeadlineProperties 40 ) )
+            '*OrgHeadlineTags 40 ) )
       (--)
       (<grid> 7
+         NIL NIL ,"Start" NIL ,"End" NIL NIL
         ,"Timestamp" NIL
-         (gui 'title-stamp '(+Var +DateField)
-            '*OrgHeadlineTimestamp 10 ) NIL
-        ,"Deadline" NIL
-         (gui 'deadline '(+Var +DateField)
-            '*OrgHeadlineDeadline 10 )
+         (gui 'title-stamp-start '(+Var +DateField)
+            '*OrgHeadlineTimestampStart 10 ) NIL
+         (gui 'title-stamp-end '(+Var +DateField)
+            '*OrgHeadlineTimestampEnd 10 ) NIL
+         (gui 'title-stamp= '(+Var +Init +TextField)
+            '*OrgHeadlineTitleStamp=
+            "=="
+            '("==" ">=" "<=" "!=") )
         ,"Scheduled" NIL
-         (gui 'scheduled '(+Var +DateField)
-            '*OrgHeadlineScheduled 10 ) NIL
+         (gui 'scheduled-start '(+Var +DateField)
+            '*OrgHeadlineScheduledStart 10 ) NIL
+         (gui 'scheduled-end '(+Var +DateField)
+            '*OrgHeadlineScheduledEnd 10 ) NIL
+         (gui 'scheduled= '(+Var +Init +TextField)
+            '*OrgHeadlineScheduled=
+            "=="
+            '("==" ">=" "<=" "!=") )
+        ,"Deadline" NIL
+         (gui 'deadline-start '(+Var +DateField)
+            '*OrgHeadlineDeadlineStart 10 ) NIL
+         (gui 'deadline-end '(+Var +DateField)
+            '*OrgHeadlineDeadlineEnd 10 ) NIL
+         (gui 'deadline= '(+Var +Init +TextField)
+            '*OrgHeadlineDeadline=
+            "=="
+            '("==" ">=" "<=" "!=") )
         ,"Closed" NIL
-         (gui 'closed '(+Var +DateField)
-            '*OrgHeadlineClosed 10 ) )
+         (gui 'closed-start '(+Var +DateField)
+            '*OrgHeadlineClosedStart 10 ) NIL
+         (gui 'closed-end '(+Var +DateField)
+            '*OrgHeadlineClosedEnd 10 ) NIL
+         (gui 'closed= '(+Var +Init +TextField)
+            '*OrgHeadlineClosed=
+            "=="
+            '("==" ">=" "<=" "!=") ) )
       (--)
-      (<grid> 7
-        ,"OrgData" NIL
-         (gui 'ptree '(+Var +TextField)
-            '*OrgHeadlinePtree 20 ) NIL
+      (gui 'properties '(+Var +Chart) '*OrgHeadlineProperties 4)
+      (<table> NIL ,"Properties" '((NIL ,"Key") (NIL ,"Value"))
+         (do 6
+            (<row> NIL
+               (gui 1 '(+TextField) 20)
+               (gui 2 '(+TextField) 20)
+               (gui 3 '(+DelRowButton))
+               (gui 4 '(+BubbleButton)) ) ) )
+      (<spread> (scroll 6) (editButton T))
+
+        ## ,"Properties Key:" NIL
+        ##  (gui 'property-key '(+Var +TextField)
+        ##     '*OrgHeadlinePropertyKey 20 )
+        ## ,"Val:" NIL
+        ##  (gui 'property-val '(+Var +TextField)
+        ##     '*OrgHeadlinePropertyVal 20 ) )
+
+      (--)
+      (<grid> 3
         ,"Category" NIL
          (gui 'category '(+Var +TextField)
-            '*OrgHeadlineCategory 20 )
+            '*OrgHeadlineCategory 30 )
         ,"Author" NIL
          (gui `(: ptree author) '(+Var +TextField)
-            '*OrgHeadlineAuthor 20 ) NIL
+            '*OrgHeadlineAuthor 30 ) )
+      (<grid> 5
         ,"Creation-Date" NIL
          (gui 'creation-date '(+Var +DateField)
-            '*OrgHeadlineCreationDate 10 ) )
+            '*OrgHeadlineCreationDate 10 ) NIL
+         (gui 'creation-date= '(+Var +Init +TextField)
+            '*OrgHeadlineCreationDate=
+            "=="
+            '("==" ">=" "<=" "!=") ) )
       (--)
       (<grid> 7
         ,"Archived?" NIL
@@ -282,25 +343,50 @@
          '(goal
             (quote
                @Level (and *OrgHeadlineLevel (cons @ T))
+               ## @Level *OrgHeadlineLevel
                @Todo *OrgHeadlineTodo
+               @Priority (and *OrgHeadlinePriority (cons @ T))
+               ## @Priority *OrgHeadlinePriority
+               @Tags *OrgHeadlineTags
+               @TimestmpRng (cons *OrgHeadlineTimestampStart
+                             (or *OrgHeadlineTimestampEnd T) )
+               @ScheduledRng (cons *OrgHeadlineScheduledStart
+                             (or *OrgHeadlineScheduledEnd T) )
+               @Deadline *OrgHeadlineDeadline
+               @Closed *OrgHeadlineClosed
+               ## @Todo *OrgHeadlineTodo
+               ## @Todo *OrgHeadlineTodo
+               ## @Todo *OrgHeadlineTodo
                (select (@@)
                   ((level +OrgHeadline @Level)
-                   (todo-keyword +OrgHeadline @Todo) )
+                   (todo-keyword +OrgHeadline @Todo)
+                   (priority +OrgHeadline @Priority)
+                   (title-stamp +Cls @TimestmpRng)
+                   (scheduled +Cls @ScheduledRng)
+                   )
                   (range @Level @@ level)
-                  (head @Todo @@ todo-keyword) ) ) )
+                  (head @Todo @@ todo-keyword)
+                  (range @Priority @@ priority)
+                  (range @TimestmpRng @@ title-stamp)
+                  (range @ScheduledRng @@ scheduled)
+                  (range @Deadline @@ deadline)
+                  (range @Closed @@ closed)
+                  ) ) )
                   ## (head @Todo @@ todo) ) ) )
          6
          '((This)
             (list
                This
                (: level)
+               (let P (: priority)
+                  (and P (char P)) )
                (: todo-keyword)
                (: category)
                (: title-string)
                (let Tgs (: tags)
                   (and Tgs (pack ":" (glue ":" Tgs) ":")) ) ) ) )
       (<table> 'chart (choTtl ,"Headlines" 'nr '+OrgHeadline)
-         '((btn) (NIL ,"Level") (NIL ,"Todo") (NIL ,"Category") (NIL ,"Title") (NIL ,"Tags"))
+         '((btn) (NIL ,"L") (NIL ,"P") (NIL ,"Todo") (NIL ,"Category") (NIL ,"Title" ) (NIL ,"Tags") )
          (do (cho)
             (<row> (alternating)
                (gui 1 '(+DstButton) Dst)
