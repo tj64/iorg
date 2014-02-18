@@ -222,7 +222,7 @@
       (<grid> 3
         ,"Category" NIL
          (gui 'category '(+Var +TextField)
-            '*OrgHeadlineCategory 30 ) )
+            '*OrgHeadlineCategory 20 ) )
       (--)
       (<grid> 11
          ,"Level (L)" NIL
@@ -235,7 +235,7 @@
          (gui 'level= '(+Var +Init +TextField)
             '*OrgHeadlineLevel=
             ">="
-            '("==" ">=" "<=" "!=") ) NIL
+            '("==" ">=" "<=" "!=" ">" "<") ) NIL
          ,"Priority (P)" NIL
          (gui 'priority '(+Var +Map +TextField)
             '*OrgHeadlinePriority
@@ -244,7 +244,7 @@
          (gui 'priority= '(+Var +Init +TextField)
             '*OrgHeadlinePriority=
             ">="
-            '("==" ">=" "<=" "!=") ) )
+            '("==" ">=" "<=" "!=" ">" "<") ) )
       (<grid> 5
          ,"Todo" NIL
          (gui 'todo-keyword '(+Var +TextField)
@@ -253,7 +253,7 @@
          (gui 'todo-keyword= '(+Var +Init +TextField)
             '*OrgHeadlineTodo=
             "=="
-            '("==" ">=" "<=" "!=") ) )
+            '("==" ">=" "<=" "!=" ">" "<") ) )
       (--)
       (<grid> 3
         ,"Tags" NIL
@@ -267,13 +267,13 @@
             ## NIL NIL ,"Start" NIL ,"End" NIL NIL
             ,"Timestamp" 
             (gui 'title-stamp-start '(+Var +DateField)
-               '*OrgHeadlineTimestampStart 10 ) 
+               '*OrgHeadlineTitleStampStart 10 ) 
             (gui 'title-stamp-end '(+Var +DateField)
-               '*OrgHeadlineTimestampEnd 10 ) 
+               '*OrgHeadlineTitleStampEnd 10 ) 
             (gui 'title-stamp= '(+Var +Init +TextField)
                '*OrgHeadlineTitleStamp=
                "=="
-               '("==" ">=" "<=" "!=") ) )
+               '("==" ">=" "<=" "!=" ">" "<") ) )
          (<row> NIL
             ,"Scheduled" 
             (gui 'scheduled-start '(+Var +DateField)
@@ -283,7 +283,7 @@
             (gui 'scheduled= '(+Var +Init +TextField)
                '*OrgHeadlineScheduled=
                "=="
-               '("==" ">=" "<=" "!=") ) )
+               '("==" ">=" "<=" "!=" ">" "<") ) )
          (<row> NIL
             ,"Deadline"
             (gui 'deadline-start '(+Var +DateField)
@@ -293,7 +293,7 @@
             (gui 'deadline= '(+Var +Init +TextField)
                '*OrgHeadlineDeadline=
                "=="
-               '("==" ">=" "<=" "!=") ) )
+               '("==" ">=" "<=" "!=" ">" "<") ) )
          (<row> NIL
             ,"Closed"
             (gui 'closed-start '(+Var +DateField)
@@ -303,7 +303,7 @@
             (gui 'closed= '(+Var +Init +TextField)
                '*OrgHeadlineClosed=
                "=="
-               '("==" ">=" "<=" "!=") ) ) )
+               '("==" ">=" "<=" "!=" ">" "<") ) ) )
       (--)
       (gui 'properties '(+Var +Chart) '*OrgHeadlineProperties 4)
       (<table> NIL ,"Properties" '((NIL ,"Key") (NIL ,"Value"))
@@ -335,7 +335,7 @@
          (gui 'creation-date= '(+Var +Init +TextField)
             '*OrgHeadlineCreationDate=
             "=="
-            '("==" ">=" "<=" "!=") ) )
+            '("==" ">=" "<=" "!=" ">" "<") ) )
       (--)
       (<grid> 7
         ,"Archived?" NIL
@@ -352,20 +352,22 @@
          '(goal
             (quote
                @Level (and *OrgHeadlineLevel (cons @ T))
-               ## @Level *OrgHeadlineLevel
+               @Level= *OrgHeadlineLevel=
                @Todo *OrgHeadlineTodo
+               @Todo= *OrgHeadlineTodo=
                @Priority (and *OrgHeadlinePriority (cons @ T))
-               ## @Priority *OrgHeadlinePriority
+               @Priority= *OrgHeadlinePriority=
                @Tags *OrgHeadlineTags
-               @TimestmpRng (cons *OrgHeadlineTimestampStart
-                             (or *OrgHeadlineTimestampEnd T) )
+               @TitleStampRng (cons *OrgHeadlineTitleStampStart
+                             (or *OrgHeadlineTitleStampEnd T) )
+               @TitleStamp= *OrgHeadlineTitleStamp=
                @ScheduledRng (cons *OrgHeadlineScheduledStart
                              (or *OrgHeadlineScheduledEnd T) )
+               @Scheduled= *OrgHeadlineScheduled=
                @Deadline *OrgHeadlineDeadline
+               @Deadline= *OrgHeadlineDeadline=
                @Closed *OrgHeadlineClosed
-               ## @Todo *OrgHeadlineTodo
-               ## @Todo *OrgHeadlineTodo
-               ## @Todo *OrgHeadlineTodo
+               @Closed= *OrgHeadlineClosed=
                (select (@@)
                   ((level +OrgHeadline @Level)
                    (todo-keyword +OrgHeadline @Todo)
@@ -380,7 +382,7 @@
                   (range @ScheduledRng @@ scheduled)
                   (range @Deadline @@ deadline)
                   (range @Closed @@ closed)
-                  ) ) )
+ ) ) )
                   ## (head @Todo @@ todo) ) ) )
          6
          '((This)
