@@ -235,7 +235,7 @@
          (gui 'level= '(+Var +Init +TextField)
             '*OrgHeadlineLevel=
             ">="
-            '("==" ">=" "<=" "!=" ">" "<") ) NIL
+            '("==" ">=" "<=") ) NIL
          ,"Priority (P)" NIL
          (gui 'priority '(+Var +Map +TextField)
             '*OrgHeadlinePriority
@@ -244,7 +244,7 @@
          (gui 'priority= '(+Var +Init +TextField)
             '*OrgHeadlinePriority=
             ">="
-            '("==" ">=" "<=" "!=" ">" "<") ) )
+            '("==" ">=" "<=") ) )
       (<grid> 5
          ,"Todo" NIL
          (gui 'todo-keyword '(+Var +TextField)
@@ -253,7 +253,7 @@
          (gui 'todo-keyword= '(+Var +Init +TextField)
             '*OrgHeadlineTodo=
             "=="
-            '("==" ">=" "<=" "!=" ">" "<") ) )
+            '("==" ">=" "<=") ) )
       (--)
       (<grid> 3
         ,"Tags" NIL
@@ -273,7 +273,7 @@
             (gui 'title-stamp= '(+Var +Init +TextField)
                '*OrgHeadlineTitleStamp=
                "=="
-               '("==" ">=" "<=" "!=" ">" "<") ) )
+               '("==" ">=" "<=") ) )
          (<row> NIL
             ,"Scheduled" 
             (gui 'scheduled-start '(+Var +DateField)
@@ -283,7 +283,7 @@
             (gui 'scheduled= '(+Var +Init +TextField)
                '*OrgHeadlineScheduled=
                "=="
-               '("==" ">=" "<=" "!=" ">" "<") ) )
+               '("==" ">=" "<=") ) )
          (<row> NIL
             ,"Deadline"
             (gui 'deadline-start '(+Var +DateField)
@@ -293,7 +293,7 @@
             (gui 'deadline= '(+Var +Init +TextField)
                '*OrgHeadlineDeadline=
                "=="
-               '("==" ">=" "<=" "!=" ">" "<") ) )
+               '("==" ">=" "<=") ) )
          (<row> NIL
             ,"Closed"
             (gui 'closed-start '(+Var +DateField)
@@ -303,7 +303,7 @@
             (gui 'closed= '(+Var +Init +TextField)
                '*OrgHeadlineClosed=
                "=="
-               '("==" ">=" "<=" "!=" ">" "<") ) ) )
+               '("==" ">=" "<=") ) ) )
       (--)
       (gui 'properties '(+Var +Chart) '*OrgHeadlineProperties 4)
       (<table> NIL ,"Properties" '((NIL ,"Key") (NIL ,"Value"))
@@ -335,7 +335,7 @@
          (gui 'creation-date= '(+Var +Init +TextField)
             '*OrgHeadlineCreationDate=
             "=="
-            '("==" ">=" "<=" "!=" ">" "<") ) )
+            '("==" ">=" "<=") ) )
       (--)
       (<grid> 7
         ,"Archived?" NIL
