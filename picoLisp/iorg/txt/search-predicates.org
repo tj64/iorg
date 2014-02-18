@@ -1,0 +1,64 @@
+* choOrgHeadline.l search predicates 
+** E/R Excerpt from class +OrgHeadline:
+
+(rel scheduled (+Bag)
+   ((+Symbol))                          # timestamp-type
+   ((+Ref +Date))                       # start date
+   ((+Time))                            # start time
+   ((+Date))                            # end date
+   ((+Time))                            # end time
+   ((+Symbol))                          # repeater-type
+   ((+Number))                          # repeater-value
+   ((+Symbol)) )
+
+** GUI of choOrgHeadline function:
+
+,------------------------------------------
+|                Start          End
+| Scheduled  [          ] [          ] [==]
+`------------------------------------------
+
+Start/End as +DateFields and [==] as dropdown-list with values
+(search predicates):
+
+,---
+| ==
+| >=
+| <=
+`---
+
+** Semantics
+*** Headline Levels
+*** Priorities
+*** Todo Keywords
+*** Timestamps
+
+ A das +OrgHeadline Objekt hat entweder
+ 1. einen einzelnen Timestamp als scheduled Attribut (start-date ist
+    non-NIL, end-date ist NIL) oder
+ 2. es hat einen Zeitraum (start-date und end-date sind non NIL)
+
+ B Der User sucht nach OrgHeadlines scheduled für
+ 1. einen bestimmten Tag (Textfield Start hat Wert) oder 
+ 2. für einen bestimmten Zeitraum (Textfields Start und End haben beide
+    einen Wert).
+
+
+Die Suchprädikate haben dann folgende Bedeutung:
+
+|                         | Präd | B1  Search (day): Start                   | B2  Search (range): [Start - End]          |
+|-------------------------+------+-------------------------------------------+--------------------------------------------|
+| A1                      | ==   | Start == start-date                       | start-date >= Start AND <= End             |
+| Value (day):            | <=   | Start <= start-date                       | start-date <= End                          |
+| start-date              | >=   | Start >= start-date                       | start-date >= Start                        |
+|                         | !=   | Start != start-date                       | start-date > End OR < Start                |
+|                         | <    | Start < start-date                        | start-date < Start                         |
+|                         | >    | Start > start-date                        | start-date > End                           |
+|-------------------------+------+-------------------------------------------+--------------------------------------------|
+| A2                      | ==   | Start inside [start-date - end-date]      | start-date & end-date inside [Start - End] |
+| Value (range):          | <=   | Start <= end-date                         | End <= end-date                            |
+| [start-date - end-date] | >=   | Start >= start-date                       | Start >= start-date                        |
+|                         | !=   | Start before start-date OR after end-date | Start > end-date OR End < start-date       |
+|                         | <    | Start before start-date                   | start-date & end-date < Start              |
+|                         | >    | Start after end-date                      | start-date & end-date > End                |
+
