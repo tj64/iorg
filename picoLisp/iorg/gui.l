@@ -461,11 +461,11 @@
                       ((and
                          *OrgHeadlineTitleStampStart
                          *OrgHeadlineTitleStampEnd)
-                         (cons NIL *OrgHeadlineTitleStampEnd ) )
+                         (cons 0 *OrgHeadlineTitleStampEnd ) )
                       (*OrgHeadlineTitleStampStart
-                         (cons NIL *OrgHeadlineTitleStampStart ) )
+                         (cons 0 *OrgHeadlineTitleStampStart ) )
                       (*OrgHeadlineTitleStampEnd
-                         (cons NIL *OrgHeadlineTitleStampEnd ) )
+                         (cons 0 *OrgHeadlineTitleStampEnd ) )
                       (T (cons NIL T)) ) )
                   (">="
                    (cond
@@ -502,11 +502,11 @@
                       ((and
                          *OrgHeadlineScheduledStart
                          *OrgHeadlineScheduledEnd)
-                         (cons NIL *OrgHeadlineScheduledEnd ) )
+                         (cons 0 *OrgHeadlineScheduledEnd ) )
                       (*OrgHeadlineScheduledStart
-                         (cons NIL *OrgHeadlineScheduledStart ) )
+                         (cons 0 *OrgHeadlineScheduledStart ) )
                       (*OrgHeadlineScheduledEnd
-                         (cons NIL *OrgHeadlineScheduledEnd ) )
+                         (cons 0 *OrgHeadlineScheduledEnd ) )
                       (T (cons NIL T)) ) )
                   (">="
                    (cond
@@ -543,11 +543,11 @@
                       ((and
                          *OrgHeadlineDeadlineStart
                          *OrgHeadlineDeadlineEnd)
-                         (cons NIL *OrgHeadlineDeadlineEnd ) )
+                         (cons 0 *OrgHeadlineDeadlineEnd ) )
                       (*OrgHeadlineDeadlineStart
-                         (cons NIL *OrgHeadlineDeadlineStart ) )
+                         (cons 0 *OrgHeadlineDeadlineStart ) )
                       (*OrgHeadlineDeadlineEnd
-                         (cons NIL *OrgHeadlineDeadlineEnd ) )
+                         (cons 0 *OrgHeadlineDeadlineEnd ) )
                       (T (cons NIL T)) ) )
                   (">="
                    (cond
@@ -584,11 +584,11 @@
                       ((and
                          *OrgHeadlineClosedStart
                          *OrgHeadlineClosedEnd)
-                         (cons NIL *OrgHeadlineClosedEnd ) )
+                         (cons 0 *OrgHeadlineClosedEnd ) )
                       (*OrgHeadlineClosedStart
-                         (cons NIL *OrgHeadlineClosedStart ) )
+                         (cons 0 *OrgHeadlineClosedStart ) )
                       (*OrgHeadlineClosedEnd
-                         (cons NIL *OrgHeadlineClosedEnd ) )
+                         (cons 0 *OrgHeadlineClosedEnd ) )
                       (T (cons NIL T)) ) )
                   (">="
                    (cond
