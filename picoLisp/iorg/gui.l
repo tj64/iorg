@@ -217,7 +217,14 @@
       (<grid> 3
          ## "--."
          (searchButton '(init> (: home query))) NIL
-         (resetButton '(level todo-keyword query)) )
+         (resetButton
+            '(category level level= priority priority= todo-keyword
+todo-keyword= tags title-stamp-start title-stamp-end title-stamp=
+scheduled-start scheduled-end scheduled= deadline-start deadline-end
+deadline= closed-start closed-end closed= properties (: ptree author)
+creation-date-start creation-date-end creation-date= archivedp
+footnote-section-p query) ) )
+            ## '(category level level= todo-keyword query) ) )
       (--)
       (<grid> 3
         ,"Category" NIL
@@ -616,7 +623,7 @@
                   (range @Deadline @@ deadline)
                   (range @Closed @@ closed) ) ) )
                   ## (head @Todo @@ todo) ) ) )
-         6
+         7 # 6
          '((This)
             (list
                This
@@ -637,7 +644,8 @@
                (gui 3 '(+TextField))
                (gui 4 '(+TextField))
                (gui 5 '(+TextField))
-               (gui 6 '(+TextField)) ) ) )
+               (gui 6 '(+TextField))
+               (gui 7 '(+TextField)) ) ) )
       (<spread>
          (scroll (cho))
          (newButton T Dst '(+OrgHeadline))
