@@ -224,7 +224,6 @@ scheduled-start scheduled-end scheduled= deadline-start deadline-end
 deadline= closed-start closed-end closed= properties (: ptree author)
 creation-date-start creation-date-end creation-date= archivedp
 footnote-section-p query) ) )
-            ## '(category level level= todo-keyword query) ) )
       (--)
       (<grid> 3
         ,"Category" NIL
@@ -233,9 +232,6 @@ footnote-section-p query) ) )
       (--)
       (<grid> 11
          ,"Level (L)" NIL
-         ## (gui 'level '(+Focus +Var +Init +Map +TextField)
-         ##    '*OrgHeadlineLevel
-         ##    "1"
          (gui 'level '(+Focus +Var +Map +TextField)
             '*OrgHeadlineLevel
             '(("1" . 1) ("2" . 2) ("3" . 3) ("4" . 4)
@@ -275,17 +271,11 @@ footnote-section-p query) ) )
       (<table>
          NIL ,"Planning" '(NIL (NIL ,"Start") (NIL ,"End") NIL)
          (<row> NIL
-            ## (<grid> 7
-            ## NIL NIL ,"Start" NIL ,"End" NIL NIL
             ,"Timestamp" 
             (gui 'title-stamp-start '(+Var +DateField)
                '*OrgHeadlineTitleStampStart 10 ) 
             (gui 'title-stamp-end '(+Var +DateField)
                '*OrgHeadlineTitleStampEnd 10 ) 
-            ## (gui 'title-stamp= '(+Upd +Var +Init +TextField)
-               ## '(prog
-               ##     (upd> (: gui 'title-stamp-start))
-               ##     (upd> (: gui 'title-stamp-end)) )
             (gui 'title-stamp= '(+Var +Init +TextField)
                '*OrgHeadlineTitleStamp=
                "=="
@@ -330,18 +320,10 @@ footnote-section-p query) ) )
                (gui 3 '(+DelRowButton))
                (gui 4 '(+BubbleButton)) ) ) )
       (scroll 6)
-      ## (<spread> (scroll 6) (editButton T))
-
-        ## ,"Properties Key:" NIL
-        ##  (gui 'property-key '(+Var +TextField)
-        ##     '*OrgHeadlinePropertyKey 20 )
-        ## ,"Val:" NIL
-        ##  (gui 'property-val '(+Var +TextField)
-        ##     '*OrgHeadlinePropertyVal 20 ) )
       (--)
       (<grid> 3
          ,"Author" NIL
-         (gui `(: ptree author) '(+Var +TextField)
+         (gui `author '(+Var +TextField)
             '*OrgHeadlineAuthor 30 ) )
       (--)
       (<grid> 7
@@ -354,12 +336,6 @@ footnote-section-p query) ) )
                '*OrgHeadlineCreationDate=
                "=="
                '("==" ">=" "<=") ) )
-         ## (gui 'creation-date '(+Var +DateField)
-         ##    '*OrgHeadlineCreationDate 10 ) NIL
-         ## (gui 'creation-date= '(+Var +Init +TextField)
-         ##    '*OrgHeadlineCreationDate=
-         ##    "=="
-         ##    '("==" ">=" "<=") ) )
       (--)
       (<grid> 7
         ,"Archived?" NIL
@@ -603,7 +579,7 @@ footnote-section-p query) ) )
                   (range @Deadline @@ deadline)
                   (range @Closed @@ closed) ) ) )
                   ## (head @Todo @@ todo) ) ) )
-         7 # 6
+         7
          '((This)
             (list
                This
