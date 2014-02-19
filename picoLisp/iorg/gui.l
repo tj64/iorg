@@ -226,9 +226,11 @@
       (--)
       (<grid> 11
          ,"Level (L)" NIL
-         (gui 'level '(+Focus +Var +Init +Map +TextField)
+         ## (gui 'level '(+Focus +Var +Init +Map +TextField)
+         ##    '*OrgHeadlineLevel
+         ##    "1"
+         (gui 'level '(+Focus +Var +Map +TextField)
             '*OrgHeadlineLevel
-            "1"
             '(("1" . 1) ("2" . 2) ("3" . 3) ("4" . 4)
               ("5" . 5)( "6" . 6) ("7" . 7) ("8" . 8))
             '("1" "2" "3" "4"  "5" "6" "7" "8") ) NIL
@@ -239,7 +241,10 @@
          ,"Priority (P)" NIL
          (gui 'priority '(+Var +Map +TextField)
             '*OrgHeadlinePriority
-            '(NIL ("A" . 1) ("B" . 2) ("C" . 3))
+            '(NIL
+                ("A" . `(char "A"))
+                ("B" . `(char "B"))
+                ("C" . `(char "C")) )
             '("A" "B" "C") ) NIL
          (gui 'priority= '(+Var +Init +TextField)
             '*OrgHeadlinePriority=
@@ -266,40 +271,60 @@
             ## (<grid> 7
             ## NIL NIL ,"Start" NIL ,"End" NIL NIL
             ,"Timestamp" 
-            (gui 'title-stamp-start '(+Var +DateField)
-               '*OrgHeadlineTitleStampStart 10 ) 
-            (gui 'title-stamp-end '(+Var +DateField)
-               '*OrgHeadlineTitleStampEnd 10 ) 
+            (gui 'title-stamp-start '(+Var +Able +DateField)
+               '*OrgHeadlineTitleStampStart
+               '(not (= *OrgHeadlineTitleStamp= "<="))
+               10 ) 
+            (gui 'title-stamp-end '(+Var +Able +DateField)
+               '*OrgHeadlineTitleStampEnd 
+               '(not (= *OrgHeadlineTitleStamp= ">="))
+               10 ) 
+            ## (gui 'title-stamp= '(+Upd +Var +Init +TextField)
+               ## '(prog
+               ##     (upd> (: gui 'title-stamp-start))
+               ##     (upd> (: gui 'title-stamp-end)) )
             (gui 'title-stamp= '(+Var +Init +TextField)
                '*OrgHeadlineTitleStamp=
                "=="
                '("==" ">=" "<=") ) )
          (<row> NIL
             ,"Scheduled" 
-            (gui 'scheduled-start '(+Var +DateField)
-               '*OrgHeadlineScheduledStart 10 )
-            (gui 'scheduled-end '(+Var +DateField)
-               '*OrgHeadlineScheduledEnd 10 )
+            (gui 'scheduled-start '(+Var +Able +DateField)
+               '*OrgHeadlineScheduledStart 
+               '(not (= *OrgHeadlineTitleStamp= "<="))
+               10 )
+            (gui 'scheduled-end '(+Var +Able +DateField)
+               '*OrgHeadlineScheduledEnd 
+               '(not (= *OrgHeadlineTitleStamp= ">="))
+               10 )
             (gui 'scheduled= '(+Var +Init +TextField)
                '*OrgHeadlineScheduled=
                "=="
                '("==" ">=" "<=") ) )
          (<row> NIL
             ,"Deadline"
-            (gui 'deadline-start '(+Var +DateField)
-               '*OrgHeadlineDeadlineStart 10 )
-            (gui 'deadline-end '(+Var +DateField)
-               '*OrgHeadlineDeadlineEnd 10 )
+            (gui 'deadline-start '(+Var +Able +DateField)
+               '*OrgHeadlineDeadlineStart
+               '(not (= *OrgHeadlineTitleStamp= "<="))
+               10 )
+            (gui 'deadline-end '(+Var +Able +DateField)
+               '*OrgHeadlineDeadlineEnd 
+               '(not (= *OrgHeadlineTitleStamp= ">="))
+               10 )
             (gui 'deadline= '(+Var +Init +TextField)
                '*OrgHeadlineDeadline=
                "=="
                '("==" ">=" "<=") ) )
          (<row> NIL
             ,"Closed"
-            (gui 'closed-start '(+Var +DateField)
-               '*OrgHeadlineClosedStart 10 )
-            (gui 'closed-end '(+Var +DateField)
-               '*OrgHeadlineClosedEnd 10 )
+            (gui 'closed-start '(+Var +Able +DateField)
+               '*OrgHeadlineClosedStart 
+               '(not (= *OrgHeadlineTitleStamp= "<="))
+               10 )
+            (gui 'closed-end '(+Var +Able +DateField)
+               '*OrgHeadlineClosedEnd 
+               '(not (= *OrgHeadlineTitleStamp= ">="))
+               10 )
             (gui 'closed= '(+Var +Init +TextField)
                '*OrgHeadlineClosed=
                "=="
@@ -328,14 +353,26 @@
          (gui `(: ptree author) '(+Var +TextField)
             '*OrgHeadlineAuthor 30 ) )
       (--)
-      (<grid> 5
+      (<grid> 7
         ,"Creation-Date" NIL
-         (gui 'creation-date '(+Var +DateField)
-            '*OrgHeadlineCreationDate 10 ) NIL
-         (gui 'creation-date= '(+Var +Init +TextField)
-            '*OrgHeadlineCreationDate=
-            "=="
-            '("==" ">=" "<=") ) )
+            (gui 'creation-date-start '(+Var +Able +DateField)
+               '*OrgHeadlineCreationDateStart 
+               '(not (= *OrgHeadlineTitleStamp= "<="))
+               10 ) NIL
+            (gui 'creation-date-end '(+Var +Able +DateField)
+               '*OrgHeadlineCreationDateEnd 
+               '(not (= *OrgHeadlineTitleStamp= ">="))
+               10 ) NIL
+            (gui 'creation-date= '(+Var +Init +TextField)
+               '*OrgHeadlineCreationDate=
+               "=="
+               '("==" ">=" "<=") ) )
+         ## (gui 'creation-date '(+Var +DateField)
+         ##    '*OrgHeadlineCreationDate 10 ) NIL
+         ## (gui 'creation-date= '(+Var +Init +TextField)
+         ##    '*OrgHeadlineCreationDate=
+         ##    "=="
+         ##    '("==" ">=" "<=") ) )
       (--)
       (<grid> 7
         ,"Archived?" NIL
@@ -351,23 +388,219 @@
       (gui 'query '(+QueryChart) (cho)
          '(goal
             (quote
-               @Level (and *OrgHeadlineLevel (cons @ T))
-               @Level= *OrgHeadlineLevel=
+               @Level
+               (case *OrgHeadlineLevel=
+                  ("=="
+                   (and
+                      *OrgHeadlineLevel
+                      (cons
+                         *OrgHeadlineLevel
+                         *OrgHeadlineLevel ) ) )
+                  ("<="
+                   (and
+                      *OrgHeadlineLevel
+                      (cons NIL *OrgHeadlineLevel ) ) )
+                  (">="
+                   (and
+                      *OrgHeadlineLevel
+                      (cons *OrgHeadlineLevel T) ) ) )
                @Todo *OrgHeadlineTodo
-               @Todo= *OrgHeadlineTodo=
-               @Priority (and *OrgHeadlinePriority (cons @ T))
-               @Priority= *OrgHeadlinePriority=
+               ## (case *OrgHeadlineTodo=
+               ##    ("=="
+               ##     (and
+               ##        *OrgHeadlineTodo
+               ##        (cons
+               ##           *OrgHeadlineTodo
+               ##           *OrgHeadlineTodo ) ) )
+               ##    ("<="
+               ##     (and
+               ##        *OrgHeadlineTodo
+               ##        (cons NIL *OrgHeadlineTodo ) ) )
+               ##    (">="
+               ##     (and
+               ##        *OrgHeadlineTodo
+               ##        (cons *OrgHeadlineTodo T) ) ) )
+               @Priority 
+               (case *OrgHeadlinePriority=
+                  ("=="
+                   (and
+                      *OrgHeadlinePriority
+                      (cons
+                         *OrgHeadlinePriority
+                         *OrgHeadlinePriority ) ) )
+                  ("<="
+                   (and
+                      *OrgHeadlinePriority
+                      (cons `(char "A") *OrgHeadlinePriority ) ) )
+                  (">="
+                   (and
+                      *OrgHeadlinePriority
+                      (cons *OrgHeadlinePriority `(char "C")) ) ) )
                @Tags *OrgHeadlineTags
-               @TitleStampRng (cons *OrgHeadlineTitleStampStart
-                             (or *OrgHeadlineTitleStampEnd T) )
-               @TitleStamp= *OrgHeadlineTitleStamp=
-               @ScheduledRng (cons *OrgHeadlineScheduledStart
-                             (or *OrgHeadlineScheduledEnd T) )
-               @Scheduled= *OrgHeadlineScheduled=
-               @Deadline *OrgHeadlineDeadline
-               @Deadline= *OrgHeadlineDeadline=
-               @Closed *OrgHeadlineClosed
-               @Closed= *OrgHeadlineClosed=
+               @TitleStampRng
+               (case *OrgHeadlineTitleStamp=
+                  ("=="
+                   (cond
+                      ((and
+                         *OrgHeadlineTitleStampStart
+                         *OrgHeadlineTitleStampEnd)
+                         (cons
+                            *OrgHeadlineTitleStampStart
+                            *OrgHeadlineTitleStampEnd ) )
+                      (*OrgHeadlineTitleStampStart
+                         (cons
+                            *OrgHeadlineTitleStampStart
+                            *OrgHeadlineTitleStampStart ) )
+                      (*OrgHeadlineTitleStampEnd
+                         (cons
+                            *OrgHeadlineTitleStampEnd
+                            *OrgHeadlineTitleStampEnd ) )
+                      (T (cons NIL T)) ) )
+                  ("<="
+                   (cond
+                      ((and
+                         *OrgHeadlineTitleStampStart
+                         *OrgHeadlineTitleStampEnd)
+                         (cons NIL *OrgHeadlineTitleStampEnd ) )
+                      (*OrgHeadlineTitleStampStart
+                         (cons NIL *OrgHeadlineTitleStampStart ) )
+                      (*OrgHeadlineTitleStampEnd
+                         (cons NIL *OrgHeadlineTitleStampEnd ) )
+                      (T (cons NIL T)) ) )
+                  (">="
+                   (cond
+                      ((and
+                         *OrgHeadlineTitleStampStart
+                         *OrgHeadlineTitleStampEnd)
+                         (cons *OrgHeadlineTitleStampEnd T) )
+                      (*OrgHeadlineTitleStampStart
+                         (cons *OrgHeadlineTitleStampStart T) )
+                      (*OrgHeadlineTitleStampEnd
+                         (cons *OrgHeadlineTitleStampEnd T) )
+                      (T (cons NIL T)) ) ) )
+               @ScheduledRng 
+               (case *OrgHeadlineScheduled=
+                  ("=="
+                   (cond
+                      ((and
+                         *OrgHeadlineScheduledStart
+                         *OrgHeadlineScheduledEnd)
+                         (cons
+                            *OrgHeadlineScheduledStart
+                            *OrgHeadlineScheduledEnd ) )
+                      (*OrgHeadlineScheduledStart
+                         (cons
+                            *OrgHeadlineScheduledStart
+                            *OrgHeadlineScheduledStart ) )
+                      (*OrgHeadlineScheduledEnd
+                         (cons
+                            *OrgHeadlineScheduledEnd
+                            *OrgHeadlineScheduledEnd ) )
+                      (T (cons NIL T)) ) )
+                  ("<="
+                   (cond
+                      ((and
+                         *OrgHeadlineScheduledStart
+                         *OrgHeadlineScheduledEnd)
+                         (cons NIL *OrgHeadlineScheduledEnd ) )
+                      (*OrgHeadlineScheduledStart
+                         (cons NIL *OrgHeadlineScheduledStart ) )
+                      (*OrgHeadlineScheduledEnd
+                         (cons NIL *OrgHeadlineScheduledEnd ) )
+                      (T (cons NIL T)) ) )
+                  (">="
+                   (cond
+                      ((and
+                         *OrgHeadlineScheduledStart
+                         *OrgHeadlineScheduledEnd)
+                         (cons *OrgHeadlineScheduledEnd T) )
+                      (*OrgHeadlineScheduledStart
+                         (cons *OrgHeadlineScheduledStart T) )
+                      (*OrgHeadlineScheduledEnd
+                         (cons *OrgHeadlineScheduledEnd T) )
+                      (T (cons NIL T)) ) ) )
+               @Deadline 
+               (case *OrgHeadlineDeadline=
+                  ("=="
+                   (cond
+                      ((and
+                         *OrgHeadlineDeadlineStart
+                         *OrgHeadlineDeadlineEnd)
+                         (cons
+                            *OrgHeadlineDeadlineStart
+                            *OrgHeadlineDeadlineEnd ) )
+                      (*OrgHeadlineDeadlineStart
+                         (cons
+                            *OrgHeadlineDeadlineStart
+                            *OrgHeadlineDeadlineStart ) )
+                      (*OrgHeadlineDeadlineEnd
+                         (cons
+                            *OrgHeadlineDeadlineEnd
+                            *OrgHeadlineDeadlineEnd ) )
+                      (T (cons NIL T)) ) )
+                  ("<="
+                   (cond
+                      ((and
+                         *OrgHeadlineDeadlineStart
+                         *OrgHeadlineDeadlineEnd)
+                         (cons NIL *OrgHeadlineDeadlineEnd ) )
+                      (*OrgHeadlineDeadlineStart
+                         (cons NIL *OrgHeadlineDeadlineStart ) )
+                      (*OrgHeadlineDeadlineEnd
+                         (cons NIL *OrgHeadlineDeadlineEnd ) )
+                      (T (cons NIL T)) ) )
+                  (">="
+                   (cond
+                      ((and
+                         *OrgHeadlineDeadlineStart
+                         *OrgHeadlineDeadlineEnd)
+                         (cons *OrgHeadlineDeadlineEnd T) )
+                      (*OrgHeadlineDeadlineStart
+                         (cons *OrgHeadlineDeadlineStart T) )
+                      (*OrgHeadlineDeadlineEnd
+                         (cons *OrgHeadlineDeadlineEnd T) )
+                      (T (cons NIL T)) ) ) )
+               @Closed
+               (case *OrgHeadlineClosed=
+                  ("=="
+                   (cond
+                      ((and
+                         *OrgHeadlineClosedStart
+                         *OrgHeadlineClosedEnd)
+                         (cons
+                            *OrgHeadlineClosedStart
+                            *OrgHeadlineClosedEnd ) )
+                      (*OrgHeadlineClosedStart
+                         (cons
+                            *OrgHeadlineClosedStart
+                            *OrgHeadlineClosedStart ) )
+                      (*OrgHeadlineClosedEnd
+                         (cons
+                            *OrgHeadlineClosedEnd
+                            *OrgHeadlineClosedEnd ) )
+                      (T (cons NIL T)) ) )
+                  ("<="
+                   (cond
+                      ((and
+                         *OrgHeadlineClosedStart
+                         *OrgHeadlineClosedEnd)
+                         (cons NIL *OrgHeadlineClosedEnd ) )
+                      (*OrgHeadlineClosedStart
+                         (cons NIL *OrgHeadlineClosedStart ) )
+                      (*OrgHeadlineClosedEnd
+                         (cons NIL *OrgHeadlineClosedEnd ) )
+                      (T (cons NIL T)) ) )
+                  (">="
+                   (cond
+                      ((and
+                         *OrgHeadlineClosedStart
+                         *OrgHeadlineClosedEnd)
+                         (cons *OrgHeadlineClosedEnd T) )
+                      (*OrgHeadlineClosedStart
+                         (cons *OrgHeadlineClosedStart T) )
+                      (*OrgHeadlineClosedEnd
+                         (cons *OrgHeadlineClosedEnd T) )
+                      (T (cons NIL T)) ) ) )
                (select (@@)
                   ((level +OrgHeadline @Level)
                    (todo-keyword +OrgHeadline @Todo)
@@ -378,11 +611,10 @@
                   (range @Level @@ level)
                   (head @Todo @@ todo-keyword)
                   (range @Priority @@ priority)
-                  (range @TimestmpRng @@ title-stamp)
+                  (range @TitleStampRng @@ title-stamp)
                   (range @ScheduledRng @@ scheduled)
                   (range @Deadline @@ deadline)
-                  (range @Closed @@ closed)
- ) ) )
+                  (range @Closed @@ closed) ) ) )
                   ## (head @Todo @@ todo) ) ) )
          6
          '((This)

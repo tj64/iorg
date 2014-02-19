@@ -29,8 +29,48 @@ Start/End as +DateFields and [==] as dropdown-list with values
 
 ** Semantics
 *** Headline Levels
+
+| predicate  | meaning              | example | explanation   |
+|------------+----------------------+---------+---------------|
+| <10>       | <20>                 | <7>     | <13>          |
+| ==         | headlines of given level | 2 ==    | only level 2  |
+| <=         | headlines of given or smaller level | 2 <=    | level 1 and 2 |
+| >=         | headlines of given or greater level | 2 >=    | level 2 to 8  |
+
 *** Priorities
+
+| predicate  | meaning              | example | explanation   |
+|------------+----------------------+---------+---------------|
+| <10>       | <20>                 | <7>     | <13>          |
+| ==         | headlines with given priority | B ==    | only priority B |
+| <=         | headlines with given or smaller priority | B <=    | priority A and B |
+| >=         | headlines with given or greater priority | B >=    | priority B and C |
+
+
 *** Todo Keywords
+
+Given 
+
+#+begin_src picolisp :results value 
+(setq *IorgTodoKeywords
+   '((TODO . 0)
+     (NEXT . 1)
+     (WAITING . 1)
+     (HOLD . 1)
+     (PHONE . T)
+     (DONE . T)
+     (CANCELLED . T)) )
+#+end_src
+
+
+| predicate  | meaning              | example | explanation   |
+|------------+----------------------+---------+---------------|
+| <10>       | <20>                 | <7>     | <13>          |
+| ==         | headlines with TODO keyword eq to given keyword | NEXT == | only NEXT     |
+| <=         | headlines with (cdr (assoc keyword *IorgTodoKeywords)) >= than cdr of given keyword | NEXT <= | (TODO NEXT WAITING HOLD) |
+| >=         | headlines with (cdr (assoc keyword *IorgTodoKeywords)) <= than cdr of given keyword | NEXT >= | (NEXT WAITING HOLD PHONE DONE CANCELLED) |
+
+
 *** Timestamps
 
  A das +OrgHeadline Objekt hat entweder
@@ -44,21 +84,25 @@ Start/End as +DateFields and [==] as dropdown-list with values
     einen Wert).
 
 
-Die Suchprädikate haben dann folgende Bedeutung:
+| predicate  | meaning      | example         | explanation   |
+|------------+--------------+-----------------+---------------|
+| <10>       | <12>         | <15>            | <13>          |
+| ==         | date or (date1 . date2) | 735588 ==       | only NEXT     |
+| <=         | (date . T)   | 735588 <=       | (TODO NEXT WAITING HOLD) |
+| >=         | (NIL . date) | 735588 >=       | (NEXT WAITING HOLD PHONE DONE CANCELLED) |
 
-|                         | Präd | B1  Search (day): Start                   | B2  Search (range): [Start - End]          |
-|-------------------------+------+-------------------------------------------+--------------------------------------------|
-| A1                      | ==   | Start == start-date                       | start-date >= Start AND <= End             |
-| Value (day):            | <=   | Start <= start-date                       | start-date <= End                          |
-| start-date              | >=   | Start >= start-date                       | start-date >= Start                        |
-|                         | !=   | Start != start-date                       | start-date > End OR < Start                |
-|                         | <    | Start < start-date                        | start-date < Start                         |
-|                         | >    | Start > start-date                        | start-date > End                           |
-|-------------------------+------+-------------------------------------------+--------------------------------------------|
-| A2                      | ==   | Start inside [start-date - end-date]      | start-date & end-date inside [Start - End] |
-| Value (range):          | <=   | Start <= end-date                         | End <= end-date                            |
-| [start-date - end-date] | >=   | Start >= start-date                       | Start >= start-date                        |
-|                         | !=   | Start before start-date OR after end-date | Start > end-date OR End < start-date       |
-|                         | <    | Start before start-date                   | start-date & end-date < Start              |
-|                         | >    | Start after end-date                      | start-date & end-date > End                |
+
+Die Suchprädikate haben dann folgende Bedeutung:
+# | <10>       | <3> | <20>                 | <20>                 |
+
+|                         | Präd | B1  Search (day): Start              | B2  Search (range): [Start - End]          |
+|-------------------------+------+--------------------------------------+--------------------------------------------|
+| A1                      | ==   | Start == start-date                  | start-date >= Start AND <= End             |
+| Value (day):            | <=   | Start <= start-date                  | start-date <= End                          |
+| start-date              | >=   | Start >= start-date                  | start-date >= Start                        |
+|-------------------------+------+--------------------------------------+--------------------------------------------|
+| A2                      | ==   | Start inside [start-date - end-date] | start-date & end-date inside [Start - End] |
+| Value (range):          | <=   | Start <= end-date                    | End <= end-date                            |
+| [start-date - end-date] | >=   | Start >= start-date                  | Start >= start-date                        |
+
 

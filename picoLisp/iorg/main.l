@@ -74,7 +74,8 @@
    (call 'emacs
       "-Q" "--daemon=iorg-server"
       "-L" (pack (absPath "@iorg/el/")) )
-   (call 'emacsclient "-s" "iorg-server" "-e" "(require 'iorg-init)" ) )
+   (call 'emacsclient
+      "-s" "iorg-server" "-e" "(require 'iorg-init)" ) )
 
 ## (de startEmacsServer ()
 ##    (call 'emacs

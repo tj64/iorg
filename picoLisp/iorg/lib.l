@@ -18,6 +18,14 @@
 ## * Variables
 
 (setq *IorgGlobalSwitch NIL)
+(setq *IorgTodoKeywords
+   '((TODO . 0)
+     (NEXT . 1)
+     (WAITING . 1)
+     (HOLD . 1)
+     (PHONE . T)
+     (DONE . T)
+     (CANCELLED . T)) )
 
 ## * Utility functions
 
@@ -324,6 +332,26 @@
            (pop 'Lst)
            (pop 'Lst)
            (pop 'Lst) ) ) )
+
+## (de makeTodoKeywordList ()
+##    (msg "entering makeTodoKeywordList ...")
+##    (let TodoKeywords 
+##       (emc3 '(read)
+##          (pack
+##             "(let "
+##             "((todos org-todo-keywords-for-agenda) "
+##             "(dones org-done-keywords-for-agenda)) "
+##             "(list todos dones))" ) )
+##       (msg "todos: " (car TodoKeywords))
+##       (msg "dones: " (cdr TodoKeywords))
+##       (mapcar
+##          '((K) (cond
+##                  ((= (fold K) 'todo)
+##                   (cons K NIL) )
+##                   (memq K (cdr TodoKeywords))
+##                   (cons K T) )
+##                  (T (cons K 1)) )
+##         (car TodoKeywords) ) ) )
 
 ## ## (processContents (cadr '(\#8= (section ...)))
 ## (de processContents (Lst)
