@@ -278,14 +278,10 @@ footnote-section-p query) ) )
             ## (<grid> 7
             ## NIL NIL ,"Start" NIL ,"End" NIL NIL
             ,"Timestamp" 
-            (gui 'title-stamp-start '(+Var +Able +DateField)
-               '*OrgHeadlineTitleStampStart
-               '(not (= *OrgHeadlineTitleStamp= "<="))
-               10 ) 
-            (gui 'title-stamp-end '(+Var +Able +DateField)
-               '*OrgHeadlineTitleStampEnd 
-               '(not (= *OrgHeadlineTitleStamp= ">="))
-               10 ) 
+            (gui 'title-stamp-start '(+Var +DateField)
+               '*OrgHeadlineTitleStampStart 10 ) 
+            (gui 'title-stamp-end '(+Var +DateField)
+               '*OrgHeadlineTitleStampEnd 10 ) 
             ## (gui 'title-stamp= '(+Upd +Var +Init +TextField)
                ## '(prog
                ##     (upd> (: gui 'title-stamp-start))
@@ -296,42 +292,30 @@ footnote-section-p query) ) )
                '("==" ">=" "<=") ) )
          (<row> NIL
             ,"Scheduled" 
-            (gui 'scheduled-start '(+Var +Able +DateField)
-               '*OrgHeadlineScheduledStart 
-               '(not (= *OrgHeadlineTitleStamp= "<="))
-               10 )
-            (gui 'scheduled-end '(+Var +Able +DateField)
-               '*OrgHeadlineScheduledEnd 
-               '(not (= *OrgHeadlineTitleStamp= ">="))
-               10 )
+            (gui 'scheduled-start '(+Var +DateField)
+               '*OrgHeadlineScheduledStart 10 )
+            (gui 'scheduled-end '(+Var +DateField)
+               '*OrgHeadlineScheduledEnd 10 )
             (gui 'scheduled= '(+Var +Init +TextField)
                '*OrgHeadlineScheduled=
                "=="
                '("==" ">=" "<=") ) )
          (<row> NIL
             ,"Deadline"
-            (gui 'deadline-start '(+Var +Able +DateField)
-               '*OrgHeadlineDeadlineStart
-               '(not (= *OrgHeadlineTitleStamp= "<="))
-               10 )
-            (gui 'deadline-end '(+Var +Able +DateField)
-               '*OrgHeadlineDeadlineEnd 
-               '(not (= *OrgHeadlineTitleStamp= ">="))
-               10 )
+            (gui 'deadline-start '(+Var +DateField)
+               '*OrgHeadlineDeadlineStart 10 )
+            (gui 'deadline-end '(+Var +DateField)
+               '*OrgHeadlineDeadlineEnd 10 )
             (gui 'deadline= '(+Var +Init +TextField)
                '*OrgHeadlineDeadline=
                "=="
                '("==" ">=" "<=") ) )
          (<row> NIL
             ,"Closed"
-            (gui 'closed-start '(+Var +Able +DateField)
-               '*OrgHeadlineClosedStart 
-               '(not (= *OrgHeadlineTitleStamp= "<="))
-               10 )
-            (gui 'closed-end '(+Var +Able +DateField)
-               '*OrgHeadlineClosedEnd 
-               '(not (= *OrgHeadlineTitleStamp= ">="))
-               10 )
+            (gui 'closed-start '(+Var +DateField)
+               '*OrgHeadlineClosedStart 10 )
+            (gui 'closed-end '(+Var +DateField)
+               '*OrgHeadlineClosedEnd 10 )
             (gui 'closed= '(+Var +Init +TextField)
                '*OrgHeadlineClosed=
                "=="
@@ -362,14 +346,10 @@ footnote-section-p query) ) )
       (--)
       (<grid> 7
         ,"Creation-Date" NIL
-            (gui 'creation-date-start '(+Var +Able +DateField)
-               '*OrgHeadlineCreationDateStart 
-               '(not (= *OrgHeadlineTitleStamp= "<="))
-               10 ) NIL
-            (gui 'creation-date-end '(+Var +Able +DateField)
-               '*OrgHeadlineCreationDateEnd 
-               '(not (= *OrgHeadlineTitleStamp= ">="))
-               10 ) NIL
+            (gui 'creation-date-start '(+Var +DateField)
+               '*OrgHeadlineCreationDateStart 10 ) NIL
+            (gui 'creation-date-end '(+Var +DateField)
+               '*OrgHeadlineCreationDateEnd 10 ) NIL
             (gui 'creation-date= '(+Var +Init +TextField)
                '*OrgHeadlineCreationDate=
                "=="
