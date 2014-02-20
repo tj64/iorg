@@ -340,7 +340,7 @@ footnote-section-p query) ) )
             (gui 'creation-date-end '(+Var +DateField)
                '*OrgHeadlineCreationDateEnd 10 ) NIL
             ## (gui 'creation-date= '(+Var +Init +TextField)
-            (gui 'creation-date= '(+Var +TextField)
+             (gui 'creation-date= '(+Var +TextField)
                '*OrgHeadlineCreationDate=
                ## "=="
                '("==" ">=" "<=") ) )
@@ -379,7 +379,7 @@ footnote-section-p query) ) )
                   ## (">="
                   (T
                    (and
-                      *OrgHeadlineLevel
+_                      *OrgHeadlineLevel
                       (cons *OrgHeadlineLevel T) ) ) )
                @Todo *OrgHeadlineTodo
                ## (case *OrgHeadlineTodo=
@@ -583,7 +583,51 @@ footnote-section-p query) ) )
                             *OrgHeadlineClosedEnd
                             *OrgHeadlineClosedEnd ) )
                       (T (cons NIL T)) ) ) )
+               @CreationDateRng
+               (case *OrgHeadlineCreationDate=
+                  ("<="
+                   (cond
+                      ((and
+                         *OrgHeadlineCreationDateStart
+                         *OrgHeadlineCreationDateEnd)
+                         (cons 0 *OrgHeadlineCreationDateEnd ) )
+                      (*OrgHeadlineCreationDateStart
+                         (cons 0 *OrgHeadlineCreationDateStart ) )
+                      (*OrgHeadlineCreationDateEnd
+                         (cons 0 *OrgHeadlineCreationDateEnd ) )
+                      (T (cons NIL T)) ) )
+                  (">="
+                   (cond
+                      ((and
+                         *OrgHeadlineCreationDateStart
+                         *OrgHeadlineCreationDateEnd)
+                         (cons *OrgHeadlineCreationDateEnd T) )
+                      (*OrgHeadlineCreationDateStart
+                         (cons *OrgHeadlineCreationDateStart T) )
+                      (*OrgHeadlineCreationDateEnd
+                         (cons *OrgHeadlineCreationDateEnd T) )
+                      (T (cons NIL T)) ) )
+                  ## ("=="
+                  (T
+                   (cond
+                      ((and
+                         *OrgHeadlineCreationDateStart
+                         *OrgHeadlineCreationDateEnd)
+                         (cons
+                            *OrgHeadlineCreationDateStart
+                            *OrgHeadlineCreationDateEnd ) )
+                      (*OrgHeadlineCreationDateStart
+                         (cons
+                            *OrgHeadlineCreationDateStart
+                            *OrgHeadlineCreationDateStart ) )
+                      (*OrgHeadlineCreationDateEnd
+                         (cons
+                            *OrgHeadlineCreationDateEnd
+                            *OrgHeadlineCreationDateEnd ) )
+                      (T (cons NIL T)) ) ) )
                @Author *OrgHeadlineAuthor
+               @ArchivedP *OrgHeadlineArchivedP
+               @FootnoteSectionP @*OrgHeadlineFootnoteSectionP
                
                (select (@@)
                   ((category +OrgHeadline @Category)
@@ -597,7 +641,6 @@ footnote-section-p query) ) )
                    (closed +Cls @ClosedRng)
                    ## properties
                    (author +OrgData @Author (ptree +OrgHeadline))
-                   ## (author +OrgData @Author)
                    (creation-date +OrgData @CreationDateRng)
                    (archivedp +OrgHeadline @ArchivedP)
                    (footnote-section-p
@@ -614,6 +657,9 @@ footnote-section-p query) ) )
                   ## properties
                   (tolr @Author @@ ptree author)
                   (range @CreationDateRng @@ creation-date)
+                  (head @ArchivedP @@ archivedp)
+                  (or ((not @FootnoteSectionP))
+                     ((val T @@ footnote-section-p)) )
  ) ) )
                   ## (head @Todo @@ todo) ) ) )
          7

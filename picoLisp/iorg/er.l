@@ -194,7 +194,7 @@
 
 (class +orgBaseElement +Entity)
 (rel descendants (+List +Joint) ancestor (+orgElement))
-(rel creation-date (+Date))
+(rel creation-date (+Ref +Date))
 (rel creation-time (+Time))
 (rel org-elem-id (+Number))
 (rel elem-id (+Key +Number))
@@ -364,10 +364,10 @@
    ((+Symbol))                          # repeater-type
    ((+Number))                          # repeater-value
    ((+Symbol)) )                        # repeater-unit
-(rel quotedp (+Bool))
+## (rel quotedp (+Bool))
 (rel archivedp (+Symbol))
 ## (rel commentedp (+Bool))
-(rel footnote-section-p (+Bool))
+(rel footnote-section-p (+Ref +Bool))
 
 (dm url> (Tab)
    (and (may OrgData) (list "iorg/orgHeadline.l" '*ID This)) )

@@ -571,8 +571,8 @@ CONTENTS is its contents, as a string or nil.  INFO is ignored."
              (org-element-property :archivedp headline)
              'commentedp
              (org-element-property :commentedp headline)
-             'footnote-secion-p
-             (org-element-property :footnote-secion-p headline)
+             'footnote-section-p
+             (org-element-property :footnote-section-p headline)
              'deadline
              (org-iorg-data-process-timestamp
               (org-element-property :deadline headline))
