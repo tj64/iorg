@@ -366,7 +366,7 @@
    ((+Symbol)) )                        # repeater-unit
 (rel quotedp (+Bool))
 (rel archivedp (+Symbol))
-(rel commentedp (+Bool))
+## (rel commentedp (+Bool))
 (rel footnote-section-p (+Bool))
 
 (dm url> (Tab)

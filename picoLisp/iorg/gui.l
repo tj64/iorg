@@ -217,12 +217,11 @@
       (<grid> 3
          ## "--."
          (searchButton '(init> (: home query))) NIL
-         (resetButton
-            '(category level level= priority priority= todo-keyword
-todo-keyword= tags title-stamp-start title-stamp-end title-stamp=
-scheduled-start scheduled-end scheduled= deadline-start deadline-end
-deadline= closed-start closed-end closed= properties (: ptree author)
-creation-date-start creation-date-end creation-date= archivedp
+         (resetButton '(category level level= priority priority=
+todo-keyword todo-keyword= tags title-stamp-start title-stamp-end
+title-stamp= scheduled-start scheduled-end scheduled= deadline-start
+deadline-end deadline= closed-start closed-end closed= properties
+author creation-date-start creation-date-end creation-date= archivedp
 footnote-section-p query) ) )
       (--)
       (<grid> 3
@@ -232,14 +231,16 @@ footnote-section-p query) ) )
       (--)
       (<grid> 11
          ,"Level (L)" NIL
-         (gui 'level '(+Focus +Var +Map +TextField)
+         ## (gui 'level '(+Focus +Var +Map +TextField)
+         (gui 'level '(+Focus +Var +TextField)
             '*OrgHeadlineLevel
-            '(("1" . 1) ("2" . 2) ("3" . 3) ("4" . 4)
-              ("5" . 5)( "6" . 6) ("7" . 7) ("8" . 8))
+            ## '(("1" . 1) ("2" . 2) ("3" . 3) ("4" . 4)
+            ##   ("5" . 5)( "6" . 6) ("7" . 7) ("8" . 8))
             '("1" "2" "3" "4"  "5" "6" "7" "8") ) NIL
-         (gui 'level= '(+Var +Init +TextField)
+         ## (gui 'level= '(+Var +Init +TextField)
+         (gui 'level= '(+Var +TextField)
             '*OrgHeadlineLevel=
-            ">="
+            ## ">="
             '("==" ">=" "<=") ) NIL
          ,"Priority (P)" NIL
          (gui 'priority '(+Var +Map +TextField)
@@ -249,18 +250,20 @@ footnote-section-p query) ) )
                 ("B" . `(char "B"))
                 ("C" . `(char "C")) )
             '("A" "B" "C") ) NIL
-         (gui 'priority= '(+Var +Init +TextField)
+         ## (gui 'priority= '(+Var +Init +TextField)
+         (gui 'priority= '(+Var +TextField)
             '*OrgHeadlinePriority=
-            ">="
+            ## ">="
             '("==" ">=" "<=") ) )
       (<grid> 5
          ,"Todo" NIL
          (gui 'todo-keyword '(+Var +TextField)
             '*OrgHeadlineTodo
             '("TODO" "DONE" "NEXT" "WAITING") ) NIL
-         (gui 'todo-keyword= '(+Var +Init +TextField)
+         ## (gui 'todo-keyword= '(+Var +Init +TextField)
+         (gui 'todo-keyword= '(+Var +TextField)
             '*OrgHeadlineTodo=
-            "=="
+            ## "=="
             '("==" ">=" "<=") ) )
       (--)
       (<grid> 3
@@ -276,9 +279,10 @@ footnote-section-p query) ) )
                '*OrgHeadlineTitleStampStart 10 ) 
             (gui 'title-stamp-end '(+Var +DateField)
                '*OrgHeadlineTitleStampEnd 10 ) 
-            (gui 'title-stamp= '(+Var +Init +TextField)
+            ## (gui 'title-stamp= '(+Var +Init +TextField)
+            (gui 'title-stamp= '(+Var +TextField)
                '*OrgHeadlineTitleStamp=
-               "=="
+               ## "=="
                '("==" ">=" "<=") ) )
          (<row> NIL
             ,"Scheduled" 
@@ -286,9 +290,10 @@ footnote-section-p query) ) )
                '*OrgHeadlineScheduledStart 10 )
             (gui 'scheduled-end '(+Var +DateField)
                '*OrgHeadlineScheduledEnd 10 )
-            (gui 'scheduled= '(+Var +Init +TextField)
+            ## (gui 'scheduled= '(+Var +Init +TextField)
+            (gui 'scheduled= '(+Var +TextField)
                '*OrgHeadlineScheduled=
-               "=="
+               ## "=="
                '("==" ">=" "<=") ) )
          (<row> NIL
             ,"Deadline"
@@ -296,9 +301,10 @@ footnote-section-p query) ) )
                '*OrgHeadlineDeadlineStart 10 )
             (gui 'deadline-end '(+Var +DateField)
                '*OrgHeadlineDeadlineEnd 10 )
-            (gui 'deadline= '(+Var +Init +TextField)
+            ## (gui 'deadline= '(+Var +Init +TextField)
+            (gui 'deadline= '(+Var +TextField)
                '*OrgHeadlineDeadline=
-               "=="
+               ## "=="
                '("==" ">=" "<=") ) )
          (<row> NIL
             ,"Closed"
@@ -306,9 +312,10 @@ footnote-section-p query) ) )
                '*OrgHeadlineClosedStart 10 )
             (gui 'closed-end '(+Var +DateField)
                '*OrgHeadlineClosedEnd 10 )
-            (gui 'closed= '(+Var +Init +TextField)
+            ## (gui 'closed= '(+Var +Init +TextField)
+            (gui 'closed= '(+Var +TextField)
                '*OrgHeadlineClosed=
-               "=="
+               ## "=="
                '("==" ">=" "<=") ) ) )
       (--)
       (gui 'properties '(+Var +Chart) '*OrgHeadlineProperties 4)
@@ -323,7 +330,7 @@ footnote-section-p query) ) )
       (--)
       (<grid> 3
          ,"Author" NIL
-         (gui `author '(+Var +TextField)
+         (gui 'author '(+Var +TextField)
             '*OrgHeadlineAuthor 30 ) )
       (--)
       (<grid> 7
@@ -332,9 +339,10 @@ footnote-section-p query) ) )
                '*OrgHeadlineCreationDateStart 10 ) NIL
             (gui 'creation-date-end '(+Var +DateField)
                '*OrgHeadlineCreationDateEnd 10 ) NIL
-            (gui 'creation-date= '(+Var +Init +TextField)
+            ## (gui 'creation-date= '(+Var +Init +TextField)
+            (gui 'creation-date= '(+Var +TextField)
                '*OrgHeadlineCreationDate=
-               "=="
+               ## "=="
                '("==" ">=" "<=") ) )
       (--)
       (<grid> 7
@@ -346,11 +354,16 @@ footnote-section-p query) ) )
              '*OrgHeadlineFootnoteSectionP ) )            
       (<grid> 3
          (searchButton '(init> (: home query))) NIL
-         (resetButton '(level todo-keyword query)) )
-
+         (resetButton '(category level level= priority priority=
+todo-keyword todo-keyword= tags title-stamp-start title-stamp-end
+title-stamp= scheduled-start scheduled-end scheduled= deadline-start
+deadline-end deadline= closed-start closed-end closed= properties
+author creation-date-start creation-date-end creation-date= archivedp
+footnote-section-p query) ) )
       (gui 'query '(+QueryChart) (cho)
          '(goal
             (quote
+               @Category *OrgHeadlineCategory
                @Level
                (case *OrgHeadlineLevel=
                   ("=="
@@ -362,7 +375,7 @@ footnote-section-p query) ) )
                   ("<="
                    (and
                       *OrgHeadlineLevel
-                      (cons NIL *OrgHeadlineLevel ) ) )
+                      (cons NIL *OrgHeadlineLevel) ) )
                   (">="
                    (and
                       *OrgHeadlineLevel
@@ -482,7 +495,7 @@ footnote-section-p query) ) )
                       (*OrgHeadlineScheduledEnd
                          (cons *OrgHeadlineScheduledEnd T) )
                       (T (cons NIL T)) ) ) )
-               @Deadline 
+               @DeadlineRng
                (case *OrgHeadlineDeadline=
                   ("=="
                    (cond
@@ -523,7 +536,7 @@ footnote-section-p query) ) )
                       (*OrgHeadlineDeadlineEnd
                          (cons *OrgHeadlineDeadlineEnd T) )
                       (T (cons NIL T)) ) ) )
-               @Closed
+               @ClosedRng
                (case *OrgHeadlineClosed=
                   ("=="
                    (cond
@@ -564,20 +577,38 @@ footnote-section-p query) ) )
                       (*OrgHeadlineClosedEnd
                          (cons *OrgHeadlineClosedEnd T) )
                       (T (cons NIL T)) ) ) )
+               @Author *OrgHeadlineAuthor
+               
                (select (@@)
-                  ((level +OrgHeadline @Level)
-                   (todo-keyword +OrgHeadline @Todo)
+                  ((category +OrgHeadline @Category)
+                   (level +OrgHeadline @Level)
                    (priority +OrgHeadline @Priority)
+                   (todo-keyword +OrgHeadline @Todo)
+                   ## tags
                    (title-stamp +Cls @TimestmpRng)
                    (scheduled +Cls @ScheduledRng)
-                   )
+                   (deadline +Cls @DeadlineRng)
+                   (closed +Cls @ClosedRng)
+                   ## properties
+                   (author +OrgData @Author)
+                   (creation-date +OrgData @CreationDateRng)
+                   (archivedp +OrgHeadline @ArchivedP)
+                   (footnote-section-p
+                      +OrgHeadline @FootnoteSectionP )
+ )
+                  (head @Category @@ category)
                   (range @Level @@ level)
-                  (head @Todo @@ todo-keyword)
                   (range @Priority @@ priority)
+                  (head @Todo @@ todo-keyword)
+                  ## tags
                   (range @TitleStampRng @@ title-stamp)
                   (range @ScheduledRng @@ scheduled)
-                  (range @Deadline @@ deadline)
-                  (range @Closed @@ closed) ) ) )
+                  (range @DeadlineRng @@ deadline)
+                  (range @ClosedRng @@ closed)
+                  ## properties
+                  (tolr @Author @@ author)
+                  (range @CreationDateRng @@ creation-date)
+ ) ) )
                   ## (head @Todo @@ todo) ) ) )
          7
          '((This)
