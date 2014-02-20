@@ -231,11 +231,11 @@ footnote-section-p query) ) )
       (--)
       (<grid> 11
          ,"Level (L)" NIL
-         ## (gui 'level '(+Focus +Var +Map +TextField)
-         (gui 'level '(+Focus +Var +TextField)
+         (gui 'level '(+Focus +Var +Map +TextField)
+         ## (gui 'level '(+Focus +Var +TextField)
             '*OrgHeadlineLevel
-            ## '(("1" . 1) ("2" . 2) ("3" . 3) ("4" . 4)
-            ##   ("5" . 5)( "6" . 6) ("7" . 7) ("8" . 8))
+            '(("1" . 1) ("2" . 2) ("3" . 3) ("4" . 4)
+              ("5" . 5)( "6" . 6) ("7" . 7) ("8" . 8))
             '("1" "2" "3" "4"  "5" "6" "7" "8") ) NIL
          ## (gui 'level= '(+Var +Init +TextField)
          (gui 'level= '(+Var +TextField)
@@ -376,7 +376,8 @@ footnote-section-p query) ) )
                    (and
                       *OrgHeadlineLevel
                       (cons NIL *OrgHeadlineLevel) ) )
-                  (">="
+                  ## (">="
+                  (T
                    (and
                       *OrgHeadlineLevel
                       (cons *OrgHeadlineLevel T) ) ) )
@@ -408,30 +409,14 @@ footnote-section-p query) ) )
                    (and
                       *OrgHeadlinePriority
                       (cons `(char "A") *OrgHeadlinePriority ) ) )
-                  (">="
+                  ## (">="
+                  (T
                    (and
                       *OrgHeadlinePriority
                       (cons *OrgHeadlinePriority `(char "C")) ) ) )
                @Tags *OrgHeadlineTags
                @TitleStampRng
                (case *OrgHeadlineTitleStamp=
-                  ("=="
-                   (cond
-                      ((and
-                         *OrgHeadlineTitleStampStart
-                         *OrgHeadlineTitleStampEnd)
-                         (cons
-                            *OrgHeadlineTitleStampStart
-                            *OrgHeadlineTitleStampEnd ) )
-                      (*OrgHeadlineTitleStampStart
-                         (cons
-                            *OrgHeadlineTitleStampStart
-                            *OrgHeadlineTitleStampStart ) )
-                      (*OrgHeadlineTitleStampEnd
-                         (cons
-                            *OrgHeadlineTitleStampEnd
-                            *OrgHeadlineTitleStampEnd ) )
-                      (T (cons NIL T)) ) )
                   ("<="
                    (cond
                       ((and
@@ -453,26 +438,27 @@ footnote-section-p query) ) )
                          (cons *OrgHeadlineTitleStampStart T) )
                       (*OrgHeadlineTitleStampEnd
                          (cons *OrgHeadlineTitleStampEnd T) )
+                      (T (cons NIL T)) ) )
+                  ## ("=="
+                  (T
+                   (cond
+                      ((and
+                         *OrgHeadlineTitleStampStart
+                         *OrgHeadlineTitleStampEnd)
+                         (cons
+                            *OrgHeadlineTitleStampStart
+                            *OrgHeadlineTitleStampEnd ) )
+                      (*OrgHeadlineTitleStampStart
+                         (cons
+                            *OrgHeadlineTitleStampStart
+                            *OrgHeadlineTitleStampStart ) )
+                      (*OrgHeadlineTitleStampEnd
+                         (cons
+                            *OrgHeadlineTitleStampEnd
+                            *OrgHeadlineTitleStampEnd ) )
                       (T (cons NIL T)) ) ) )
                @ScheduledRng 
                (case *OrgHeadlineScheduled=
-                  ("=="
-                   (cond
-                      ((and
-                         *OrgHeadlineScheduledStart
-                         *OrgHeadlineScheduledEnd)
-                         (cons
-                            *OrgHeadlineScheduledStart
-                            *OrgHeadlineScheduledEnd ) )
-                      (*OrgHeadlineScheduledStart
-                         (cons
-                            *OrgHeadlineScheduledStart
-                            *OrgHeadlineScheduledStart ) )
-                      (*OrgHeadlineScheduledEnd
-                         (cons
-                            *OrgHeadlineScheduledEnd
-                            *OrgHeadlineScheduledEnd ) )
-                      (T (cons NIL T)) ) )
                   ("<="
                    (cond
                       ((and
@@ -494,26 +480,27 @@ footnote-section-p query) ) )
                          (cons *OrgHeadlineScheduledStart T) )
                       (*OrgHeadlineScheduledEnd
                          (cons *OrgHeadlineScheduledEnd T) )
+                      (T (cons NIL T)) ) ) 
+                  ## ("=="
+                  (T
+                   (cond
+                      ((and
+                         *OrgHeadlineScheduledStart
+                         *OrgHeadlineScheduledEnd)
+                         (cons
+                            *OrgHeadlineScheduledStart
+                            *OrgHeadlineScheduledEnd ) )
+                      (*OrgHeadlineScheduledStart
+                         (cons
+                            *OrgHeadlineScheduledStart
+                            *OrgHeadlineScheduledStart ) )
+                      (*OrgHeadlineScheduledEnd
+                         (cons
+                            *OrgHeadlineScheduledEnd
+                            *OrgHeadlineScheduledEnd ) )
                       (T (cons NIL T)) ) ) )
                @DeadlineRng
                (case *OrgHeadlineDeadline=
-                  ("=="
-                   (cond
-                      ((and
-                         *OrgHeadlineDeadlineStart
-                         *OrgHeadlineDeadlineEnd)
-                         (cons
-                            *OrgHeadlineDeadlineStart
-                            *OrgHeadlineDeadlineEnd ) )
-                      (*OrgHeadlineDeadlineStart
-                         (cons
-                            *OrgHeadlineDeadlineStart
-                            *OrgHeadlineDeadlineStart ) )
-                      (*OrgHeadlineDeadlineEnd
-                         (cons
-                            *OrgHeadlineDeadlineEnd
-                            *OrgHeadlineDeadlineEnd ) )
-                      (T (cons NIL T)) ) )
                   ("<="
                    (cond
                       ((and
@@ -535,26 +522,27 @@ footnote-section-p query) ) )
                          (cons *OrgHeadlineDeadlineStart T) )
                       (*OrgHeadlineDeadlineEnd
                          (cons *OrgHeadlineDeadlineEnd T) )
+                      (T (cons NIL T)) ) )
+                  ## ("=="
+                  (T
+                   (cond
+                      ((and
+                         *OrgHeadlineDeadlineStart
+                         *OrgHeadlineDeadlineEnd)
+                         (cons
+                            *OrgHeadlineDeadlineStart
+                            *OrgHeadlineDeadlineEnd ) )
+                      (*OrgHeadlineDeadlineStart
+                         (cons
+                            *OrgHeadlineDeadlineStart
+                            *OrgHeadlineDeadlineStart ) )
+                      (*OrgHeadlineDeadlineEnd
+                         (cons
+                            *OrgHeadlineDeadlineEnd
+                            *OrgHeadlineDeadlineEnd ) )
                       (T (cons NIL T)) ) ) )
                @ClosedRng
                (case *OrgHeadlineClosed=
-                  ("=="
-                   (cond
-                      ((and
-                         *OrgHeadlineClosedStart
-                         *OrgHeadlineClosedEnd)
-                         (cons
-                            *OrgHeadlineClosedStart
-                            *OrgHeadlineClosedEnd ) )
-                      (*OrgHeadlineClosedStart
-                         (cons
-                            *OrgHeadlineClosedStart
-                            *OrgHeadlineClosedStart ) )
-                      (*OrgHeadlineClosedEnd
-                         (cons
-                            *OrgHeadlineClosedEnd
-                            *OrgHeadlineClosedEnd ) )
-                      (T (cons NIL T)) ) )
                   ("<="
                    (cond
                       ((and
@@ -576,6 +564,24 @@ footnote-section-p query) ) )
                          (cons *OrgHeadlineClosedStart T) )
                       (*OrgHeadlineClosedEnd
                          (cons *OrgHeadlineClosedEnd T) )
+                      (T (cons NIL T)) ) )
+                  ## ("=="
+                  (T
+                   (cond
+                      ((and
+                         *OrgHeadlineClosedStart
+                         *OrgHeadlineClosedEnd)
+                         (cons
+                            *OrgHeadlineClosedStart
+                            *OrgHeadlineClosedEnd ) )
+                      (*OrgHeadlineClosedStart
+                         (cons
+                            *OrgHeadlineClosedStart
+                            *OrgHeadlineClosedStart ) )
+                      (*OrgHeadlineClosedEnd
+                         (cons
+                            *OrgHeadlineClosedEnd
+                            *OrgHeadlineClosedEnd ) )
                       (T (cons NIL T)) ) ) )
                @Author *OrgHeadlineAuthor
                
@@ -623,7 +629,7 @@ footnote-section-p query) ) )
                (let Tgs (: tags)
                   (and Tgs (pack ":" (glue ":" Tgs) ":")) ) ) ) )
       (<table> 'chart (choTtl ,"Headlines" 'nr '+OrgHeadline)
-         '((btn) (NIL ,"L") (NIL ,"P") (NIL ,"Todo") (NIL ,"Category") (NIL ,"Title" ) (NIL ,"Tags") )
+         '((btn) (NIL ,"*") (NIL ,"[#]") (NIL ,"Todo") (NIL ,"Category") (NIL ,"Title" ) (NIL ,"Tags") )
          (do (cho)
             (<row> (alternating)
                (gui 1 '(+DstButton) Dst)
