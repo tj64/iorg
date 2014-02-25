@@ -230,7 +230,7 @@ footnote-section-p query) ) )
             '*OrgHeadlineCategory 20 ) )
       (--)
       (<grid> 11
-         ,"Level (L)" NIL
+         ,"Level" NIL
          (gui 'level '(+Focus +Var +Map +TextField)
          ## (gui 'level '(+Focus +Var +TextField)
             '*OrgHeadlineLevel
@@ -242,7 +242,7 @@ footnote-section-p query) ) )
             '*OrgHeadlineLevel=
             ## ">="
             '("==" ">=" "<=") ) NIL
-         ,"Priority (P)" NIL
+         ,"Priority" NIL
          (gui 'priority '(+Var +Map +TextField)
             '*OrgHeadlinePriority
             '(NIL
@@ -274,7 +274,7 @@ footnote-section-p query) ) )
       (<table>
          NIL ,"Planning" '(NIL (NIL ,"Start") (NIL ,"End") NIL)
          (<row> NIL
-            ,"Timestamp" 
+            ,"<Timestamp>" 
             (gui 'title-stamp-start '(+Var +DateField)
                '*OrgHeadlineTitleStampStart 10 ) 
             (gui 'title-stamp-end '(+Var +DateField)
@@ -285,7 +285,7 @@ footnote-section-p query) ) )
                ## "=="
                '("==" ">=" "<=") ) )
          (<row> NIL
-            ,"Scheduled" 
+            ,"<Scheduled>" 
             (gui 'scheduled-start '(+Var +DateField)
                '*OrgHeadlineScheduledStart 10 )
             (gui 'scheduled-end '(+Var +DateField)
@@ -296,7 +296,7 @@ footnote-section-p query) ) )
                ## "=="
                '("==" ">=" "<=") ) )
          (<row> NIL
-            ,"Deadline"
+            ,"<Deadline>"
             (gui 'deadline-start '(+Var +DateField)
                '*OrgHeadlineDeadlineStart 10 )
             (gui 'deadline-end '(+Var +DateField)
@@ -307,7 +307,7 @@ footnote-section-p query) ) )
                ## "=="
                '("==" ">=" "<=") ) )
          (<row> NIL
-            ,"Closed"
+            ,"<Closed>"
             (gui 'closed-start '(+Var +DateField)
                '*OrgHeadlineClosedStart 10 )
             (gui 'closed-end '(+Var +DateField)
@@ -334,7 +334,7 @@ footnote-section-p query) ) )
             '*OrgHeadlineAuthor 30 ) )
       (--)
       (<grid> 7
-        ,"Creation-Date" NIL
+        ,"<Creation-Date>" NIL
             (gui 'creation-date-start '(+Var +DateField)
                '*OrgHeadlineCreationDateStart 10 ) NIL
             (gui 'creation-date-end '(+Var +DateField)
@@ -367,20 +367,23 @@ footnote-section-p query) ) )
                @Level
                (case *OrgHeadlineLevel=
                   ("=="
+                   (msg "Level == " *OrgHeadlineLevel)
                    (and
                       *OrgHeadlineLevel
                       (cons
                          *OrgHeadlineLevel
                          *OrgHeadlineLevel ) ) )
                   ("<="
+                   (msg "Level <= " *OrgHeadlineLevel)
                    (and
                       *OrgHeadlineLevel
                       (cons NIL *OrgHeadlineLevel) ) )
                   ## (">="
                   (T
-                   (and
-_                      *OrgHeadlineLevel
-                      (cons *OrgHeadlineLevel T) ) ) )
+                     (msg "Level T (>=) " *OrgHeadlineLevel)
+                     (and
+                        *OrgHeadlineLevel
+                        (cons *OrgHeadlineLevel T) ) ) )
                @Todo *OrgHeadlineTodo
                ## (case *OrgHeadlineTodo=
                ##    ("=="
@@ -400,17 +403,20 @@ _                      *OrgHeadlineLevel
                @Priority 
                (case *OrgHeadlinePriority=
                   ("=="
+                   (msg "Priority == " *OrgHeadlinePriority)
                    (and
                       *OrgHeadlinePriority
                       (cons
                          *OrgHeadlinePriority
                          *OrgHeadlinePriority ) ) )
                   ("<="
+                   (msg "Priority <= " *OrgHeadlinePriority)
                    (and
                       *OrgHeadlinePriority
                       (cons `(char "A") *OrgHeadlinePriority ) ) )
                   ## (">="
                   (T
+                   (msg "Priority T (>=) " *OrgHeadlinePriority)
                    (and
                       *OrgHeadlinePriority
                       (cons *OrgHeadlinePriority `(char "C")) ) ) )
@@ -418,17 +424,25 @@ _                      *OrgHeadlineLevel
                @TitleStampRng
                (case *OrgHeadlineTitleStamp=
                   ("<="
+                       (msg "Title-Stamp <= "
+                         *OrgHeadlineTitleStampStart
+                         *OrgHeadlineTitleStampEnd
+                         )
                    (cond
                       ((and
                          *OrgHeadlineTitleStampStart
                          *OrgHeadlineTitleStampEnd)
                          (cons 0 *OrgHeadlineTitleStampEnd ) )
                       (*OrgHeadlineTitleStampStart
-                         (cons 0 *OrgHeadlineTitleStampStart ) )
+                         (cons 0 *OrgHeadlineTitleStampStart) )
                       (*OrgHeadlineTitleStampEnd
                          (cons 0 *OrgHeadlineTitleStampEnd ) )
                       (T (cons NIL T)) ) )
                   (">="
+                      (msg "Title-Stamp >= "
+                         *OrgHeadlineTitleStampStart
+                         *OrgHeadlineTitleStampEnd
+                         )
                    (cond
                       ((and
                          *OrgHeadlineTitleStampStart
@@ -441,6 +455,10 @@ _                      *OrgHeadlineLevel
                       (T (cons NIL T)) ) )
                   ## ("=="
                   (T
+                     (msg "Title-Stamp T (==) "
+                         *OrgHeadlineTitleStampStart
+                         *OrgHeadlineTitleStampEnd
+                         )
                    (cond
                       ((and
                          *OrgHeadlineTitleStampStart
@@ -460,6 +478,10 @@ _                      *OrgHeadlineLevel
                @ScheduledRng 
                (case *OrgHeadlineScheduled=
                   ("<="
+                     (msg "Scheduled <= "
+                         *OrgHeadlineScheduledStart
+                         *OrgHeadlineScheduledEnd
+                         )
                    (cond
                       ((and
                          *OrgHeadlineScheduledStart
@@ -471,6 +493,10 @@ _                      *OrgHeadlineLevel
                          (cons 0 *OrgHeadlineScheduledEnd ) )
                       (T (cons NIL T)) ) )
                   (">="
+                      (msg "Scheduled >= "
+                         *OrgHeadlineScheduledStart
+                         *OrgHeadlineScheduledEnd
+                         )
                    (cond
                       ((and
                          *OrgHeadlineScheduledStart
@@ -483,6 +509,10 @@ _                      *OrgHeadlineLevel
                       (T (cons NIL T)) ) ) 
                   ## ("=="
                   (T
+                     (msg "Scheduled T (==) "
+                         *OrgHeadlineScheduledStart
+                         *OrgHeadlineScheduledEnd
+                         )
                    (cond
                       ((and
                          *OrgHeadlineScheduledStart
@@ -502,6 +532,10 @@ _                      *OrgHeadlineLevel
                @DeadlineRng
                (case *OrgHeadlineDeadline=
                   ("<="
+                     (msg "Deadline <= "
+                         *OrgHeadlineDeadlineStart
+                         *OrgHeadlineDeadlineEnd
+                         )
                    (cond
                       ((and
                          *OrgHeadlineDeadlineStart
@@ -513,6 +547,10 @@ _                      *OrgHeadlineLevel
                          (cons 0 *OrgHeadlineDeadlineEnd ) )
                       (T (cons NIL T)) ) )
                   (">="
+                     (msg "Deadline >= "
+                         *OrgHeadlineDeadlineStart
+                         *OrgHeadlineDeadlineEnd
+                         )
                    (cond
                       ((and
                          *OrgHeadlineDeadlineStart
@@ -525,6 +563,10 @@ _                      *OrgHeadlineLevel
                       (T (cons NIL T)) ) )
                   ## ("=="
                   (T
+                     (msg "Deadline T (==) "
+                         *OrgHeadlineDeadlineStart
+                         *OrgHeadlineDeadlineEnd
+                         )
                    (cond
                       ((and
                          *OrgHeadlineDeadlineStart
@@ -544,6 +586,10 @@ _                      *OrgHeadlineLevel
                @ClosedRng
                (case *OrgHeadlineClosed=
                   ("<="
+                     (msg "Closed <= "
+                         *OrgHeadlineClosedStart
+                         *OrgHeadlineClosedEnd
+                         )
                    (cond
                       ((and
                          *OrgHeadlineClosedStart
@@ -555,6 +601,10 @@ _                      *OrgHeadlineLevel
                          (cons 0 *OrgHeadlineClosedEnd ) )
                       (T (cons NIL T)) ) )
                   (">="
+                     (msg "Closed >= "
+                         *OrgHeadlineClosedStart
+                         *OrgHeadlineClosedEnd
+                         )
                    (cond
                       ((and
                          *OrgHeadlineClosedStart
@@ -567,6 +617,10 @@ _                      *OrgHeadlineLevel
                       (T (cons NIL T)) ) )
                   ## ("=="
                   (T
+                     (msg "Closed T (==) "
+                         *OrgHeadlineClosedStart
+                         *OrgHeadlineClosedEnd
+                         )
                    (cond
                       ((and
                          *OrgHeadlineClosedStart
@@ -586,6 +640,10 @@ _                      *OrgHeadlineLevel
                @CreationDateRng
                (case *OrgHeadlineCreationDate=
                   ("<="
+                     (msg "Creation-Date <= "
+                         *OrgHeadlineCreationDateStart
+                         *OrgHeadlineCreationDateEnd
+                         )
                    (cond
                       ((and
                          *OrgHeadlineCreationDateStart
@@ -597,6 +655,10 @@ _                      *OrgHeadlineLevel
                          (cons 0 *OrgHeadlineCreationDateEnd ) )
                       (T (cons NIL T)) ) )
                   (">="
+                     (msg "Creation-Date >= "
+                         *OrgHeadlineCreationDateStart
+                         *OrgHeadlineCreationDateEnd
+                         )
                    (cond
                       ((and
                          *OrgHeadlineCreationDateStart
@@ -609,6 +671,10 @@ _                      *OrgHeadlineLevel
                       (T (cons NIL T)) ) )
                   ## ("=="
                   (T
+                     (msg "Creation-Date T (==) "
+                         *OrgHeadlineCreationDateStart
+                         *OrgHeadlineCreationDateEnd
+                         )
                    (cond
                       ((and
                          *OrgHeadlineCreationDateStart
@@ -630,30 +696,43 @@ _                      *OrgHeadlineLevel
                @FootnoteSectionP @*OrgHeadlineFootnoteSectionP
                
                (select (@@)
-                  ((category +OrgHeadline @Category)
+                  ((creation-date +OrgHeadline @CreationDateRng)
+                   (category +OrgHeadline @Category)
                    (level +OrgHeadline @Level)
                    (priority +OrgHeadline @Priority)
                    (todo-keyword +OrgHeadline @Todo)
                    ## tags
-                   (title-stamp +Cls @TimestmpRng)
-                   (scheduled +Cls @ScheduledRng)
-                   (deadline +Cls @DeadlineRng)
-                   (closed +Cls @ClosedRng)
+                   (title-stamp +OrgHeadline @TitleStampRng)
+                   (scheduled +OrgHeadline @ScheduledRng)
+                   (deadline +OrgHeadline @DeadlineRng)
+                   (closed +OrgHeadline @ClosedRng)
+                   ## (title-stamp +Cls @TimestmpRng)
+                   ## (scheduled +Cls @ScheduledRng)
+                   ## (deadline +Cls @DeadlineRng)
+                   ## (closed +Cls @ClosedRng)
+
                    ## properties
-                   (author +OrgData @Author (ptree +OrgHeadline))
-                   (creation-date +OrgData @CreationDateRng)
+
+                   ## (author +OrgData @Author (ptree +OrgHeadline))
+                   ## (creation-date +OrgData @CreationDateRng)
+                   (author +OrgData
+                      @Author (ptree +OrgHeadline) )
                    (archivedp +OrgHeadline @ArchivedP)
                    (footnote-section-p
-                      +OrgHeadline @FootnoteSectionP ))
+                      +OrgHeadline @FootnoteSectionP ) )
+                   ## (footnote-section-p
+                   ##    +Cls @FootnoteSectionP ) )
+
+                  (range @TitleStampRng @@ title-stamp)
+                  (range @ScheduledRng @@ scheduled)
+                  (range @DeadlineRng @@ deadline)
+                  (range @ClosedRng @@ closed)
+
                   (head @Category @@ category)
                   (range @Level @@ level)
                   (range @Priority @@ priority)
                   (head @Todo @@ todo-keyword)
                   ## tags
-                  (range @TitleStampRng @@ title-stamp)
-                  (range @ScheduledRng @@ scheduled)
-                  (range @DeadlineRng @@ deadline)
-                  (range @ClosedRng @@ closed)
                   ## properties
                   (tolr @Author @@ ptree author)
                   (range @CreationDateRng @@ creation-date)
