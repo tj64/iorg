@@ -251,14 +251,13 @@
 ## collected from Emacs environment, plus root org-elem-id)
 (class +OrgData +orgBaseElement)
 ## (rel input-buffer (+Aux +Ref +String)
-(rel input-buffer (+Aux +IdxFold +String)
-   (creation-date creation-time) )
+(rel input-buffer (+IdxFold +String))
 (rel input-file (+String))
 ## (rel author (+Ref +String))
 (rel author (+Sn +Idx +String))
 (rel email (+String))
 (rel creator (+String))
-(rel creation-date (+Ref +Date))
+(rel creation-date (+Aux +Ref +Date) (creation-time))
 (rel description (+String))
 
 (dm url> (Tab)
@@ -366,7 +365,7 @@
    ((+Number))                          # repeater-value
    ((+Symbol)) )                        # repeater-unit
 ## (rel quotedp (+Bool))
-(rel creation-date (+Ref +Date))
+(rel creation-date (+Aux +Ref +Date) (creation-time))
 (rel archivedp (+Symbol))
 ## (rel commentedp (+Bool))
 (rel footnote-section-p (+Ref +Bool))
