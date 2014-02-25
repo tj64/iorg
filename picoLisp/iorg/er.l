@@ -194,7 +194,7 @@
 
 (class +orgBaseElement +Entity)
 (rel descendants (+List +Joint) ancestor (+orgElement))
-(rel creation-date (+Ref +Date))
+(rel creation-date (+Date))
 (rel creation-time (+Time))
 (rel org-elem-id (+Number))
 (rel elem-id (+Key +Number))
@@ -258,6 +258,7 @@
 (rel author (+Sn +Idx +String))
 (rel email (+String))
 (rel creator (+String))
+(rel creation-date (+Ref +Date))
 (rel description (+String))
 
 (dm url> (Tab)
@@ -365,6 +366,7 @@
    ((+Number))                          # repeater-value
    ((+Symbol)) )                        # repeater-unit
 ## (rel quotedp (+Bool))
+(rel creation-date (+Ref +Date))
 (rel archivedp (+Symbol))
 ## (rel commentedp (+Bool))
 (rel footnote-section-p (+Ref +Bool))
