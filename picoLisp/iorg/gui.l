@@ -231,25 +231,26 @@ footnote-section-p query) ) )
       (--)
       (<grid> 11
          ,"Level" NIL
-         (gui 'level '(+Focus +Var +Map +TextField)
+         (gui 'level '(+Focus +Var +Init +Map +TextField)
          ## (gui 'level '(+Focus +Var +TextField)
             '*OrgHeadlineLevel
+            "1"
             '(("1" . 1) ("2" . 2) ("3" . 3) ("4" . 4)
               ("5" . 5)( "6" . 6) ("7" . 7) ("8" . 8))
             '("1" "2" "3" "4"  "5" "6" "7" "8") ) NIL
-         ## (gui 'level= '(+Var +Init +TextField)
-         (gui 'level= '(+Var +TextField)
+         (gui 'level= '(+Var +Init +TextField)
+         ## (gui 'level= '(+Var +TextField)
             '*OrgHeadlineLevel=
-            ## ">="
+            ">="
             '("==" ">=" "<=") ) NIL
          ,"Priority" NIL
          (gui 'priority '(+Var +Map +TextField)
             '*OrgHeadlinePriority
-            '(NIL
-                ("A" . `(char "A"))
-                ("B" . `(char "B"))
-                ("C" . `(char "C")) )
-            '("A" "B" "C") ) NIL
+            '(("-" . NIL)
+              ("A" . `(char "A"))
+              ("B" . `(char "B"))
+              ("C" . `(char "C")) )
+            '("-" "A" "B" "C") ) NIL
          ## (gui 'priority= '(+Var +Init +TextField)
          (gui 'priority= '(+Var +TextField)
             '*OrgHeadlinePriority=
@@ -257,9 +258,14 @@ footnote-section-p query) ) )
             '("==" ">=" "<=") ) )
       (<grid> 5
          ,"Todo" NIL
-         (gui 'todo-keyword '(+Var +TextField)
+         (gui 'todo-keyword '(+Var +Map +TextField)
             '*OrgHeadlineTodo
-            '("TODO" "DONE" "NEXT" "WAITING") ) NIL
+            '(("-" . NIL) )
+              ## ("TODO" . "TODO")
+              ## ("DONE" . "DONE")
+              ## ("NEXT" . "NEXT")
+              ## ("WAITING" . "WAITING") )
+            '("-" "TODO" "DONE" "NEXT" "WAITING") ) NIL
          ## (gui 'todo-keyword= '(+Var +Init +TextField)
          (gui 'todo-keyword= '(+Var +TextField)
             '*OrgHeadlineTodo=
