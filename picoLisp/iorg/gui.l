@@ -453,12 +453,19 @@ footnote-section-p query) ) )
                       ((and
                          *OrgHeadlineTitleStampStart
                          *OrgHeadlineTitleStampEnd)
-                         (cons *OrgHeadlineTitleStampEnd T) )
+                       ## (msg "1st branch")
+                         (cons *OrgHeadlineTitleStampStart T) )
                       (*OrgHeadlineTitleStampStart
+                         (msg (env))
+                       ## (msg "2nd branch")
+                          ## *OrgHeadlineTitleStampStart )
                          (cons *OrgHeadlineTitleStampStart T) )
                       (*OrgHeadlineTitleStampEnd
+                       ## (msg "3rd branch")
                          (cons *OrgHeadlineTitleStampEnd T) )
-                      (T (cons NIL T)) ) )
+                      (T
+                       ## (msg "final branch")
+                         (cons NIL T) ) ) )
                   ## ("=="
                   (T
                      ## (msg "Title-Stamp T (==) "

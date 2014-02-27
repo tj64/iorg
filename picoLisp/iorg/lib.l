@@ -98,6 +98,7 @@
             (msg "inside while ...")
             (prin "\#")
             (msg "end while ...") ) )
+      ## (out 'emc (echo)) ) )
       (eval Exe) ) )
 
 (de emc2 (Exe . @)
@@ -667,6 +668,29 @@
 (de download (This)
    (httpHead (: mt) 60 (: nm))
    (in (blob This 'd) (ht:Out *Chunked (echo))) )
+
+## Logging function
+
+## It can be used like
+
+##    (log "+myLogFile" '(gt0 le0 + - * /)
+##       (myProgram
+##          (myFun
+##             (foo (bar ..)) ) ) )
+
+## This example traces all calls to the comparison and arithmetic
+## functions in the list while 'myProgram' is running.
+
+## The "+" is to append the output to the log file. Without it,
+## "myLogFile" will be overwritten from scratch each time.
+
+(de log (File Funs . Prg)
+   (err File
+      (prog2
+         (mapc trace Funs)
+         (run Prg 1)
+         (mapc untrace Funs) ) ) )
+
 
 ## ** Retrieve document history
 
