@@ -318,7 +318,6 @@
 
 (class +OrgHeadline +orgElement)
 (rel ptree (+Need +Aux +Ref +Link) (org-elem-id) NIL (+OrgData))
-## (rel ptree (+Need +Link) (+OrgData))
 ## (rel title-string (+Aux +Ref +String) (title-stamp))
 (rel title-string (+String))
 (rel title-stamp (+Bag)

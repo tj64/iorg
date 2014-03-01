@@ -706,7 +706,7 @@ footnote-section-p query) ) )
                       (T (cons NIL T)) ) ) )
                @Author *OrgHeadlineAuthor
                @ArchivedP *OrgHeadlineArchivedP
-               @FootnoteSectionP @*OrgHeadlineFootnoteSectionP
+               @FootnoteSectionP *OrgHeadlineFootnoteSectionP
                
                (select (@@)
                   ((creation-date +OrgHeadline @CreationDateRng)
