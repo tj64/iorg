@@ -488,44 +488,62 @@ footnote-section-p query) ) )
                @CreationDateRng
                (case *OrgHeadlineCreationDate=
                   ("<="
-                   (cond
-                      ((and
-                         *OrgHeadlineCreationDateStart
-                         *OrgHeadlineCreationDateEnd)
-                         (cons 0 *OrgHeadlineCreationDateEnd ) )
-                      (*OrgHeadlineCreationDateStart
-                         (cons 0 *OrgHeadlineCreationDateStart ) )
-                      (*OrgHeadlineCreationDateEnd
-                         (cons 0 *OrgHeadlineCreationDateEnd ) )
-                      (T (cons NIL T)) ) )
+                   (when (or *OrgHeadlineCreationDateStart
+                            *OrgHeadlineCreationDateEnd )
+                      (cons NIL
+                         (or *OrgHeadlineCreationDateEnd
+                            *OrgHeadlineCreationDateStart ) ) ) )
                   (">="
-                   (cond
-                      ((and
-                         *OrgHeadlineCreationDateStart
-                         *OrgHeadlineCreationDateEnd)
-                         (cons *OrgHeadlineCreationDateEnd T) )
-                      (*OrgHeadlineCreationDateStart
-                         (cons *OrgHeadlineCreationDateStart T) )
-                      (*OrgHeadlineCreationDateEnd
-                         (cons *OrgHeadlineCreationDateEnd T) )
-                      (T (cons NIL T)) ) )
+                   (when (or *OrgHeadlineCreationDateStart
+                            *OrgHeadlineCreationDateEnd )
+                      (cons (or *OrgHeadlineCreationDateStart
+                               *OrgHeadlineCreationDateEnd ) T ) ) )
                   (T
-                   (cond
-                      ((and
-                         *OrgHeadlineCreationDateStart
-                         *OrgHeadlineCreationDateEnd)
-                         (cons
-                            *OrgHeadlineCreationDateStart
-                            *OrgHeadlineCreationDateEnd ) )
-                      (*OrgHeadlineCreationDateStart
-                         (cons
-                            *OrgHeadlineCreationDateStart
-                            *OrgHeadlineCreationDateStart ) )
-                      (*OrgHeadlineCreationDateEnd
-                         (cons
-                            *OrgHeadlineCreationDateEnd
-                            *OrgHeadlineCreationDateEnd ) )
-                      (T (cons NIL T)) ) ) )
+                   (when (or *OrgHeadlineCreationDateStart
+                            *OrgHeadlineCreationDateEnd )
+                      (cons (or *OrgHeadlineCreationDateStart
+                               *OrgHeadlineCreationDateEnd NIL)
+                            (or *OrgHeadlineCreationDateEnd
+                               *OrgHeadlineCreationDateStart T ) ) ) ) )
+                  ## ("<="
+                  ##  (cond
+                  ##     ((and
+                  ##        *OrgHeadlineCreationDateStart
+                  ##        *OrgHeadlineCreationDateEnd)
+                  ##        (cons 0 *OrgHeadlineCreationDateEnd ) )
+                  ##     (*OrgHeadlineCreationDateStart
+                  ##        (cons 0 *OrgHeadlineCreationDateStart ) )
+                  ##     (*OrgHeadlineCreationDateEnd
+                  ##        (cons 0 *OrgHeadlineCreationDateEnd ) )
+                  ##     (T (cons NIL T)) ) )
+                  ## (">="
+                  ##  (cond
+                  ##     ((and
+                  ##        *OrgHeadlineCreationDateStart
+                  ##        *OrgHeadlineCreationDateEnd)
+                  ##        (cons *OrgHeadlineCreationDateEnd T) )
+                  ##     (*OrgHeadlineCreationDateStart
+                  ##        (cons *OrgHeadlineCreationDateStart T) )
+                  ##     (*OrgHeadlineCreationDateEnd
+                  ##        (cons *OrgHeadlineCreationDateEnd T) )
+                  ##     (T (cons NIL T)) ) )
+                  ## (T
+                  ##  (cond
+                  ##     ((and
+                  ##        *OrgHeadlineCreationDateStart
+                  ##        *OrgHeadlineCreationDateEnd)
+                  ##        (cons
+                  ##           *OrgHeadlineCreationDateStart
+                  ##           *OrgHeadlineCreationDateEnd ) )
+                  ##     (*OrgHeadlineCreationDateStart
+                  ##        (cons
+                  ##           *OrgHeadlineCreationDateStart
+                  ##           *OrgHeadlineCreationDateStart ) )
+                  ##     (*OrgHeadlineCreationDateEnd
+                  ##        (cons
+                  ##           *OrgHeadlineCreationDateEnd
+                  ##           *OrgHeadlineCreationDateEnd ) )
+                  ##     (T (cons NIL T)) ) ) )
                @Author *OrgHeadlineAuthor @ArchivedP *OrgHeadlineArchivedP
                @FootnoteSectionP *OrgHeadlineFootnoteSectionP
                
