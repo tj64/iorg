@@ -468,44 +468,62 @@ footnote-section-p query) ) )
                @ClosedRng
                (case *OrgHeadlineClosed=
                   ("<="
-                   (cond
-                      ((and
-                         *OrgHeadlineClosedStart
-                         *OrgHeadlineClosedEnd)
-                         (cons 0 *OrgHeadlineClosedEnd ) )
-                      (*OrgHeadlineClosedStart
-                         (cons 0 *OrgHeadlineClosedStart ) )
-                      (*OrgHeadlineClosedEnd
-                         (cons 0 *OrgHeadlineClosedEnd ) )
-                      (T (cons NIL T)) ) )
+                   (when (or *OrgHeadlineClosedStart
+                            *OrgHeadlineClosedEnd )
+                      (cons NIL
+                         (or *OrgHeadlineClosedEnd
+                            *OrgHeadlineClosedStart ) ) ) )
                   (">="
-                   (cond
-                      ((and
-                         *OrgHeadlineClosedStart
-                         *OrgHeadlineClosedEnd)
-                         (cons *OrgHeadlineClosedEnd T) )
-                      (*OrgHeadlineClosedStart
-                         (cons *OrgHeadlineClosedStart T) )
-                      (*OrgHeadlineClosedEnd
-                         (cons *OrgHeadlineClosedEnd T) )
-                      (T (cons NIL T)) ) )
+                   (when (or *OrgHeadlineClosedStart
+                            *OrgHeadlineClosedEnd )
+                      (cons (or *OrgHeadlineClosedStart
+                               *OrgHeadlineClosedEnd ) T ) ) )
                   (T
-                   (cond
-                      ((and
-                         *OrgHeadlineClosedStart
-                         *OrgHeadlineClosedEnd)
-                         (cons
-                            *OrgHeadlineClosedStart
-                            *OrgHeadlineClosedEnd ) )
-                      (*OrgHeadlineClosedStart
-                         (cons
-                            *OrgHeadlineClosedStart
-                            *OrgHeadlineClosedStart ) )
-                      (*OrgHeadlineClosedEnd
-                         (cons
-                            *OrgHeadlineClosedEnd
-                            *OrgHeadlineClosedEnd ) )
-                      (T (cons NIL T)) ) ) )
+                   (when (or *OrgHeadlineClosedStart
+                            *OrgHeadlineClosedEnd )
+                      (cons (or *OrgHeadlineClosedStart
+                               *OrgHeadlineClosedEnd NIL)
+                            (or *OrgHeadlineClosedEnd
+                               *OrgHeadlineClosedStart T ) ) ) ) )
+                  ## ("<="
+                  ##  (cond
+                  ##     ((and
+                  ##        *OrgHeadlineClosedStart
+                  ##        *OrgHeadlineClosedEnd)
+                  ##        (cons 0 *OrgHeadlineClosedEnd ) )
+                  ##     (*OrgHeadlineClosedStart
+                  ##        (cons 0 *OrgHeadlineClosedStart ) )
+                  ##     (*OrgHeadlineClosedEnd
+                  ##        (cons 0 *OrgHeadlineClosedEnd ) )
+                  ##     (T (cons NIL T)) ) )
+                  ## (">="
+                  ##  (cond
+                  ##     ((and
+                  ##        *OrgHeadlineClosedStart
+                  ##        *OrgHeadlineClosedEnd)
+                  ##        (cons *OrgHeadlineClosedEnd T) )
+                  ##     (*OrgHeadlineClosedStart
+                  ##        (cons *OrgHeadlineClosedStart T) )
+                  ##     (*OrgHeadlineClosedEnd
+                  ##        (cons *OrgHeadlineClosedEnd T) )
+                  ##     (T (cons NIL T)) ) )
+                  ## (T
+                  ##  (cond
+                  ##     ((and
+                  ##        *OrgHeadlineClosedStart
+                  ##        *OrgHeadlineClosedEnd)
+                  ##        (cons
+                  ##           *OrgHeadlineClosedStart
+                  ##           *OrgHeadlineClosedEnd ) )
+                  ##     (*OrgHeadlineClosedStart
+                  ##        (cons
+                  ##           *OrgHeadlineClosedStart
+                  ##           *OrgHeadlineClosedStart ) )
+                  ##     (*OrgHeadlineClosedEnd
+                  ##        (cons
+                  ##           *OrgHeadlineClosedEnd
+                  ##           *OrgHeadlineClosedEnd ) )
+                  ##     (T (cons NIL T)) ) ) )
                @CreationDateRng
                (case *OrgHeadlineCreationDate=
                   ("<="
