@@ -413,33 +413,11 @@ footnote-section-p query) ) )
                       (cons NIL
                          (or *OrgHeadlineTitleStampEnd
                             *OrgHeadlineTitleStampStart ) ) ) )
-                   ## (cond
-                   ##    ((and
-                   ##       *OrgHeadlineTitleStampStart
-                   ##       *OrgHeadlineTitleStampEnd)
-                   ##       (cons 0 *OrgHeadlineTitleStampEnd ) )
-                   ##    (*OrgHeadlineTitleStampStart
-                   ##       (cons 0 *OrgHeadlineTitleStampStart) )
-                   ##    (*OrgHeadlineTitleStampEnd
-                   ##       (cons 0 *OrgHeadlineTitleStampEnd ) )
-                   ##    (T (cons NIL T)) ) )
                   (">="
                    (when (or *OrgHeadlineTitleStampStart
                             *OrgHeadlineTitleStampEnd )
                       (cons (or *OrgHeadlineTitleStampStart
                                *OrgHeadlineTitleStampEnd ) T ) ) )
-                   ## (cond
-                   ##    ((and
-                   ##       *OrgHeadlineTitleStampStart
-                   ##       *OrgHeadlineTitleStampEnd)
-                   ##       (cons *OrgHeadlineTitleStampStart T) )
-                   ##    (*OrgHeadlineTitleStampStart
-                   ##       (msg (env))
-                   ##       (cons *OrgHeadlineTitleStampStart T) )
-                   ##    (*OrgHeadlineTitleStampEnd
-                   ##       (cons *OrgHeadlineTitleStampEnd T) )
-                   ##    (T
-                   ##       (cons NIL T) ) ) )
                   (T
                    (when (or *OrgHeadlineTitleStampStart
                             *OrgHeadlineTitleStampEnd )
@@ -447,22 +425,6 @@ footnote-section-p query) ) )
                                *OrgHeadlineTitleStampEnd NIL)
                             (or *OrgHeadlineTitleStampEnd
                                *OrgHeadlineTitleStampStart T ) ) ) ) )
-                   ## (cond
-                   ##    ((and
-                   ##       *OrgHeadlineTitleStampStart
-                   ##       *OrgHeadlineTitleStampEnd)
-                   ##       (cons
-                   ##          *OrgHeadlineTitleStampStart
-                   ##          *OrgHeadlineTitleStampEnd ) )
-                   ##    (*OrgHeadlineTitleStampStart
-                   ##       (cons
-                   ##          *OrgHeadlineTitleStampStart
-                   ##          *OrgHeadlineTitleStampStart ) )
-                   ##    (*OrgHeadlineTitleStampEnd
-                   ##       (cons
-                   ##          *OrgHeadlineTitleStampEnd
-                   ##          *OrgHeadlineTitleStampEnd ) )
-                   ##    (T (cons NIL T)) ) ) )
                @ScheduledRng 
                (case *OrgHeadlineScheduled=
                   ("<="
