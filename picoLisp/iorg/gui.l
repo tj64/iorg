@@ -263,10 +263,10 @@
       (<grid> 3
          (searchButton '(init> (: home query))) NIL
          (resetButton '(category level level= priority priority=
-todo-keyword todo-keyword= tags title-stamp-start title-stamp-end
-title-stamp= scheduled-start scheduled-end scheduled= deadline-start
-deadline-end deadline= closed-start closed-end closed= properties
-author creation-date-start creation-date-end creation-date= archivedp
+todo-keyword tags title-stamp-start title-stamp-end title-stamp=
+scheduled-start scheduled-end scheduled= deadline-start deadline-end
+deadline= closed-start closed-end closed= properties author
+creation-date-start creation-date-end creation-date= archivedp
 footnote-section-p query) ) )
       (--)
       (<grid> 3
@@ -274,7 +274,7 @@ footnote-section-p query) ) )
          (gui 'category '(+Var +TextField)
             '*OrgHeadlineCategory 20 ) )
       (--)
-      (<grid> 11
+      (<grid> 14
          ,"Level" NIL
          (gui 'level '(+Focus +Var +Map +Init +TextField)
             '*OrgHeadlineLevel
@@ -295,16 +295,15 @@ footnote-section-p query) ) )
             '("-" "A" "B" "C") ) NIL
          (gui 'priority= '(+Var +TextField)
             '*OrgHeadlinePriority=
-            '("==" ">=" "<=") ) )
-      (<grid> 5
+            '("==" ">=" "<=") ) 
          ,"Todo" NIL
          (gui 'todo-keyword '(+Var +Map +TextField)
             '*OrgHeadlineTodo
             '(("----" . NIL) )
-            '("----" "TODO" "DONE" "NEXT" "WAITING") ) NIL
-         (gui 'todo-keyword= '(+Var +TextField)
-            '*OrgHeadlineTodo=
-            '("==" ">=" "<=") ) )
+            '("----" "TODO" "DONE" "NEXT" "WAITING") ) NIL )
+         ## (gui 'todo-keyword= '(+Var +TextField)
+         ##    '*OrgHeadlineTodo=
+         ##    '("==" ">=" "<=") ) )
       (--)
       (<grid> 3
         ,"Tags" NIL
@@ -385,7 +384,7 @@ footnote-section-p query) ) )
       (<grid> 3
          (searchButton '(init> (: home query))) NIL
          (resetButton '(category level level= priority priority=
-todo-keyword todo-keyword= tags title-stamp-start title-stamp-end
+todo-keyword tags title-stamp-start title-stamp-end
 title-stamp= scheduled-start scheduled-end scheduled= deadline-start
 deadline-end deadline= closed-start closed-end closed= properties
 author creation-date-start creation-date-end creation-date= archivedp
@@ -411,21 +410,6 @@ footnote-section-p query) ) )
                         *OrgHeadlineLevel
                         (cons *OrgHeadlineLevel T) ) ) )
                @Todo *OrgHeadlineTodo
-               ## (case *OrgHeadlineTodo=
-               ##    ("=="
-               ##     (and
-               ##        *OrgHeadlineTodo
-               ##        (cons
-               ##           *OrgHeadlineTodo
-               ##           *OrgHeadlineTodo ) ) )
-               ##    ("<="
-               ##     (and
-               ##        *OrgHeadlineTodo
-               ##        (cons NIL *OrgHeadlineTodo ) ) )
-               ##    (">="
-               ##     (and
-               ##        *OrgHeadlineTodo
-               ##        (cons *OrgHeadlineTodo T) ) ) )
                @Priority 
                (case *OrgHeadlinePriority=
                   ("=="
@@ -482,7 +466,7 @@ footnote-section-p query) ) )
                             *OrgHeadlineTitleStampStart
                             *OrgHeadlineTitleStampStart ) )
                       (*OrgHeadlineTitleStampEnd
-                         (cons
+n                         (cons
                             *OrgHeadlineTitleStampEnd
                             *OrgHeadlineTitleStampEnd ) )
                       (T (cons NIL T)) ) ) )
