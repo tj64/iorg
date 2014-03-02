@@ -156,21 +156,20 @@
 
 (de choOrgData (Dst)
    (diaform '(Dst)
-      (<grid> 5
-         (searchButton '(init> (: home query)))NIL
+      (<grid> 3
+         (searchButton '(init> (: home query))) NIL
          (resetButton '(input-buffer author creation-date-start
-                          creation-date-end query ) )
-         NIL NIL
+                          creation-date-end query ) ) )
+      (--)
+      (<grid> 3
          ,"Input Buffer" NIL
          (gui 'input-buffer
             '(+Focus +Var +TextField) '*OrgDataInputBuffer 20 )
-         NIL NIL
          ,"Author" NIL
-         (gui 'author '(+Var +TextField) '*OrgDataAuthor 20)
-         NIL NIL )
+         (gui 'author '(+Var +TextField) '*OrgDataAuthor 20) )
       (--)
       (<grid> 7
-        ,"<Creation-Date>" NIL
+        ,"Creation-Date" NIL
             (gui 'creation-date-start '(+Var +DateField)
                '*OrgDataCreationDateStart 10 ) NIL
             (gui 'creation-date-end '(+Var +DateField)
@@ -327,7 +326,7 @@ footnote-section-p query) ) )
       (<table>
          NIL ,"Planning" '(NIL (NIL ,"Start") (NIL ,"End") NIL)
          (<row> NIL
-            ,"<Timestamp>" 
+            ,"Timestamp" 
             (gui 'title-stamp-start '(+Var +DateField)
                '*OrgHeadlineTitleStampStart 10 ) 
             (gui 'title-stamp-end '(+Var +DateField)
@@ -338,7 +337,7 @@ footnote-section-p query) ) )
                ## "=="
                '("==" ">=" "<=") ) )
          (<row> NIL
-            ,"<Scheduled>" 
+            ,"Scheduled" 
             (gui 'scheduled-start '(+Var +DateField)
                '*OrgHeadlineScheduledStart 10 )
             (gui 'scheduled-end '(+Var +DateField)
@@ -349,7 +348,7 @@ footnote-section-p query) ) )
                ## "=="
                '("==" ">=" "<=") ) )
          (<row> NIL
-            ,"<Deadline>"
+            ,"Deadline"
             (gui 'deadline-start '(+Var +DateField)
                '*OrgHeadlineDeadlineStart 10 )
             (gui 'deadline-end '(+Var +DateField)
@@ -360,7 +359,7 @@ footnote-section-p query) ) )
                ## "=="
                '("==" ">=" "<=") ) )
          (<row> NIL
-            ,"<Closed>"
+            ,"Closed"
             (gui 'closed-start '(+Var +DateField)
                '*OrgHeadlineClosedStart 10 )
             (gui 'closed-end '(+Var +DateField)
@@ -387,7 +386,7 @@ footnote-section-p query) ) )
             '*OrgHeadlineAuthor 30 ) )
       (--)
       (<grid> 7
-        ,"<Creation-Date>" NIL
+        ,"Creation-Date" NIL
             (gui 'creation-date-start '(+Var +DateField)
                '*OrgHeadlineCreationDateStart 10 ) NIL
             (gui 'creation-date-end '(+Var +DateField)
