@@ -199,85 +199,115 @@ creation-time-end creation-time =query ) ) )
                @CreationDateRng
                (case *OrgDataCreationDate=
                   ("<="
-                   (cond
-                      ((and
-                         *OrgDataCreationDateStart
-                         *OrgDataCreationDateEnd)
-                         (cons 0 *OrgDataCreationDateEnd ) )
-                      (*OrgDataCreationDateStart
-                         (cons 0 *OrgDataCreationDateStart ) )
-                      (*OrgDataCreationDateEnd
-                         (cons 0 *OrgDataCreationDateEnd ) )
-                      (T (cons NIL T)) ) )
+                   (when (or *OrgDataCreationDateStart
+                            *OrgDataCreationDateEnd )
+                      (cons NIL
+                         (or *OrgDataCreationDateEnd
+                            *OrgDataCreationDateStart ) ) ) )
+                   ## (cond
+                   ##    ((and
+                   ##       *OrgDataCreationDateStart
+                   ##       *OrgDataCreationDateEnd)
+                   ##       (cons 0 *OrgDataCreationDateEnd ) )
+                   ##    (*OrgDataCreationDateStart
+                   ##       (cons 0 *OrgDataCreationDateStart ) )
+                   ##    (*OrgDataCreationDateEnd
+                   ##       (cons 0 *OrgDataCreationDateEnd ) )
+                   ##    (T (cons NIL T)) ) )
                   (">="
-                   (cond
-                      ((and
-                         *OrgDataCreationDateStart
-                         *OrgDataCreationDateEnd)
-                         (cons *OrgDataCreationDateEnd T) )
-                      (*OrgDataCreationDateStart
-                         (cons *OrgDataCreationDateStart T) )
-                      (*OrgDataCreationDateEnd
-                         (cons *OrgDataCreationDateEnd T) )
-                      (T (cons NIL T)) ) )
+                   (when (or *OrgDataCreationDateStart
+                            *OrgDataCreationDateEnd )
+                      (cons (or *OrgDataCreationDateStart
+                               *OrgDataCreationDateEnd ) T ) ) )
+                   ## (cond
+                   ##    ((and
+                   ##       *OrgDataCreationDateStart
+                   ##       *OrgDataCreationDateEnd)
+                   ##       (cons *OrgDataCreationDateEnd T) )
+                   ##    (*OrgDataCreationDateStart
+                   ##       (cons *OrgDataCreationDateStart T) )
+                   ##    (*OrgDataCreationDateEnd
+                   ##       (cons *OrgDataCreationDateEnd T) )
+                   ##    (T (cons NIL T)) ) )
                   (T
-                   (cond
-                      ((and
-                         *OrgDataCreationDateStart
-                         *OrgDataCreationDateEnd)
-                         (cons
-                            *OrgDataCreationDateStart
-                            *OrgDataCreationDateEnd ) )
-                      (*OrgDataCreationDateStart
-                         (cons
-                            *OrgDataCreationDateStart
-                            *OrgDataCreationDateStart ) )
-                      (*OrgDataCreationDateEnd
-                         (cons
-                            *OrgDataCreationDateEnd
-                            *OrgDataCreationDateEnd ) )
-                      (T (cons NIL T)) ) ) )
-               @CreationDateRng
+                   (when (or *OrgDataCreationDateStart
+                            *OrgDataCreationDateEnd )
+                      (cons (or *OrgDataCreationDateStart
+                               *OrgDataCreationDateEnd NIL)
+                            (or *OrgDataCreationDateEnd
+                               *OrgDataCreationDateStart T ) ) ) ) )
+                   ## (cond
+                      ## ((and
+                      ##    *OrgDataCreationDateStart
+                      ##    *OrgDataCreationDateEnd)
+                      ##    (cons
+                      ##       *OrgDataCreationDateStart
+                      ##       *OrgDataCreationDateEnd ) )
+                      ## (*OrgDataCreationDateStart
+                      ##    (cons
+                      ##       *OrgDataCreationDateStart
+                      ##       *OrgDataCreationDateStart ) )
+                      ## (*OrgDataCreationDateEnd
+                      ##    (cons
+                      ##       *OrgDataCreationDateEnd
+                      ##       *OrgDataCreationDateEnd ) )
+                      ## (T (cons NIL T)) ) ) )
+               @CreationTimeRng
                (case *OrgDataCreationTime=
                   ("<="
-                   (cond
-                      ((and
-                         *OrgDataCreationTimeStart
-                         *OrgDataCreationTimeEnd)
-                         (cons 0 *OrgDataCreationTimeEnd ) )
-                      (*OrgDataCreationTimeStart
-                         (cons 0 *OrgDataCreationTimeStart ) )
-                      (*OrgDataCreationTimeEnd
-                         (cons 0 *OrgDataCreationTimeEnd ) )
-                      (T (cons NIL T)) ) )
+                   (when (or *OrgDataCreationTimeStart
+                            *OrgDataCreationTimeEnd )
+                      (cons NIL
+                         (or *OrgDataCreationTimeEnd
+                            *OrgDataCreationTimeStart ) ) ) )
+                   ## (cond
+                   ##    ((and
+                   ##       *OrgDataCreationTimeStart
+                   ##       *OrgDataCreationTimeEnd)
+                   ##       (cons 0 *OrgDataCreationTimeEnd ) )
+                   ##    (*OrgDataCreationTimeStart
+                   ##       (cons 0 *OrgDataCreationTimeStart ) )
+                   ##    (*OrgDataCreationTimeEnd
+                   ##       (cons 0 *OrgDataCreationTimeEnd ) )
+                   ##    (T (cons NIL T)) ) )
                   (">="
-                   (cond
-                      ((and
-                         *OrgDataCreationTimeStart
-                         *OrgDataCreationTimeEnd)
-                         (cons *OrgDataCreationTimeEnd T) )
-                      (*OrgDataCreationTimeStart
-                         (cons *OrgDataCreationTimeStart T) )
-                      (*OrgDataCreationTimeEnd
-                         (cons *OrgDataCreationTimeEnd T) )
-                      (T (cons NIL T)) ) )
+                   (when (or *OrgDataCreationTimeStart
+                            *OrgDataCreationTimeEnd )
+                      (cons (or *OrgDataCreationTimeStart
+                               *OrgDataCreationTimeEnd ) T ) ) )
+                   ## (cond
+                   ##    ((and
+                   ##       *OrgDataCreationTimeStart
+                   ##       *OrgDataCreationTimeEnd)
+                   ##       (cons *OrgDataCreationTimeEnd T) )
+                   ##    (*OrgDataCreationTimeStart
+                   ##       (cons *OrgDataCreationTimeStart T) )
+                   ##    (*OrgDataCreationTimeEnd
+                   ##       (cons *OrgDataCreationTimeEnd T) )
+                   ##    (T (cons NIL T)) ) )
                   (T
-                   (cond
-                      ((and
-                         *OrgDataCreationTimeStart
-                         *OrgDataCreationTimeEnd)
-                         (cons
-                            *OrgDataCreationTimeStart
-                            *OrgDataCreationTimeEnd ) )
-                      (*OrgDataCreationTimeStart
-                         (cons
-                            *OrgDataCreationTimeStart
-                            *OrgDataCreationTimeStart ) )
-                      (*OrgDataCreationTimeEnd
-                         (cons
-                            *OrgDataCreationTimeEnd
-                            *OrgDataCreationTimeEnd ) )
-                      (T (cons NIL T)) ) ) )
+                   (when (or *OrgDataCreationTimeStart
+                            *OrgDataCreationTimeEnd )
+                      (cons (or *OrgDataCreationTimeStart
+                               *OrgDataCreationTimeEnd NIL)
+                            (or *OrgDataCreationTimeEnd
+                               *OrgDataCreationTimeStart T ) ) ) ) )
+                   ## (cond
+                   ##    ((and
+                   ##       *OrgDataCreationTimeStart
+                   ##       *OrgDataCreationTimeEnd)
+                   ##       (cons
+                   ##          *OrgDataCreationTimeStart
+                   ##          *OrgDataCreationTimeEnd ) )
+                   ##    (*OrgDataCreationTimeStart
+                   ##       (cons
+                   ##          *OrgDataCreationTimeStart
+                   ##          *OrgDataCreationTimeStart ) )
+                   ##    (*OrgDataCreationTimeEnd
+                   ##       (cons
+                   ##          *OrgDataCreationTimeEnd
+                   ##          *OrgDataCreationTimeEnd ) )
+                   ##    (T (cons NIL T)) ) ) )
                @InputBuffer *OrgDataInputBuffer
                @Author *OrgDataAuthor
 
