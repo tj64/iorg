@@ -157,34 +157,81 @@
 (de choOrgData (Dst)
    (diaform '(Dst)
       (<grid> 5
-         ## "--."
          (searchButton '(init> (: home query)))NIL
-         (resetButton '(input-buffer author query)) NIL NIL
+         (resetButton '(input-buffer author creation-date-start
+                          creation-date-end query ) )
+         NIL NIL
          ,"Input Buffer" NIL
-         (gui 'input-buffer '(+Focus +Var +TextField) '*OrgDataInputBuffer 20) NIL NIL
+         (gui 'input-buffer
+            '(+Focus +Var +TextField) '*OrgDataInputBuffer 20 )
+         NIL NIL
          ,"Author" NIL
-         (gui 'author '(+Var +TextField) '*OrgDataAuthor 20) NIL NIL
-         ,"Creation-Range" NIL
-         (gui 'creation-date-start '(+Var +DateField) '*OrgDataCreationDateStart 10) NIL
-         (gui 'creation-date-end '(+Var +DateField) '*OrgDataCreationDateEnd 10) )
+         (gui 'author '(+Var +TextField) '*OrgDataAuthor 20)
+         NIL NIL )
+      (--)
+      (<grid> 7
+        ,"<Creation-Date>" NIL
+            (gui 'creation-date-start '(+Var +DateField)
+               '*OrgDataCreationDateStart 10 ) NIL
+            (gui 'creation-date-end '(+Var +DateField)
+               '*OrgDataCreationDateEnd 10 ) NIL
+             (gui 'creation-date= '(+Var +TextField)
+               '*OrgDataCreationDate=
+               '("==" ">=" "<=") ) )
+      (--)
       (gui 'query '(+QueryChart) (cho)
          '(goal
             (quote
                @InputBuffer *OrgDataInputBuffer
                @Author *OrgDataAuthor
-               @OrgDatRng (cons *OrgDataCreationDateStart
-                             (or *OrgDataCreationDateEnd T) )
-               ## @CreationDateStart *OrgDataCreationDateStart
-               ## @CreationDateEnd *OrgDataCreationDateEnd
+               @CreationDateRng
+               (case *OrgDataCreationDate=
+                  ("<="
+                   (cond
+                      ((and
+                         *OrgDataCreationDateStart
+                         *OrgDataCreationDateEnd)
+                         (cons 0 *OrgDataCreationDateEnd ) )
+                      (*OrgDataCreationDateStart
+                         (cons 0 *OrgDataCreationDateStart ) )
+                      (*OrgDataCreationDateEnd
+                         (cons 0 *OrgDataCreationDateEnd ) )
+                      (T (cons NIL T)) ) )
+                  (">="
+                   (cond
+                      ((and
+                         *OrgDataCreationDateStart
+                         *OrgDataCreationDateEnd)
+                         (cons *OrgDataCreationDateEnd T) )
+                      (*OrgDataCreationDateStart
+                         (cons *OrgDataCreationDateStart T) )
+                      (*OrgDataCreationDateEnd
+                         (cons *OrgDataCreationDateEnd T) )
+                      (T (cons NIL T)) ) )
+                  (T
+                   (cond
+                      ((and
+                         *OrgDataCreationDateStart
+                         *OrgDataCreationDateEnd)
+                         (cons
+                            *OrgDataCreationDateStart
+                            *OrgDataCreationDateEnd ) )
+                      (*OrgDataCreationDateStart
+                         (cons
+                            *OrgDataCreationDateStart
+                            *OrgDataCreationDateStart ) )
+                      (*OrgDataCreationDateEnd
+                         (cons
+                            *OrgDataCreationDateEnd
+                            *OrgDataCreationDateEnd ) )
+                      (T (cons NIL T)) ) ) )
                (select (@@)
                   ((input-buffer +OrgData @InputBuffer)
                    (author +OrgData @Author)
-                   (creation-date +Cls @OrgDatRng) )
-                   ## (creation-date +OrgData @CreationDateStart)
-                   ## (creation-date +OrgData @CreationDateEnd)
+                   (creation-date +OrgData @CreationDateRng) )
                   (part @InputBuffer @@ input-buffer)
                   (tolr @Author @@ author)
-                  (range @OrgDatRng @@ creation-date) ) ) )
+                  (range @CreationDateRng @@ creation-date) ) ) )
          6
          '((This)
             (list
