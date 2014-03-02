@@ -445,45 +445,6 @@ footnote-section-p query) ) )
                                *OrgHeadlineScheduledEnd NIL)
                             (or *OrgHeadlineScheduledEnd
                                *OrgHeadlineScheduledStart T ) ) ) ) )
-                  ## ("<="
-                  ##  (cond
-                  ##     ((and
-                  ##        *OrgHeadlineScheduledStart
-                  ##        *OrgHeadlineScheduledEnd)
-                  ##        (cons 0 *OrgHeadlineScheduledEnd ) )
-                  ##     (*OrgHeadlineScheduledStart
-                  ##        (cons 0 *OrgHeadlineScheduledStart ) )
-                  ##     (*OrgHeadlineScheduledEnd
-                  ##        (cons 0 *OrgHeadlineScheduledEnd ) )
-                  ##     (T (cons NIL T)) ) )
-                  ## (">="
-                  ##  (cond
-                  ##     ((and
-                  ##        *OrgHeadlineScheduledStart
-                  ##        *OrgHeadlineScheduledEnd)
-                  ##        (cons *OrgHeadlineScheduledEnd T) )
-                  ##     (*OrgHeadlineScheduledStart
-                  ##        (cons *OrgHeadlineScheduledStart T) )
-                  ##     (*OrgHeadlineScheduledEnd
-                  ##        (cons *OrgHeadlineScheduledEnd T) )
-                  ##     (T (cons NIL T)) ) ) 
-                  ## (T
-                  ##  (cond
-                  ##     ((and
-                  ##        *OrgHeadlineScheduledStart
-                  ##        *OrgHeadlineScheduledEnd)
-                  ##        (cons
-                  ##           *OrgHeadlineScheduledStart
-                  ##           *OrgHeadlineScheduledEnd ) )
-                  ##     (*OrgHeadlineScheduledStart
-                  ##        (cons
-                  ##           *OrgHeadlineScheduledStart
-                  ##           *OrgHeadlineScheduledStart ) )
-                  ##     (*OrgHeadlineScheduledEnd
-                  ##        (cons
-                  ##           *OrgHeadlineScheduledEnd
-                  ##           *OrgHeadlineScheduledEnd ) )
-                  ##     (T (cons NIL T)) ) ) )
                @DeadlineRng
                (case *OrgHeadlineDeadline=
                   ("<="
