@@ -178,20 +178,6 @@ creation-time-end creation-time= query ) ) )
              (gui 'creation-date= '(+Var +TextField)
                '*OrgDataCreationDate=
                '("==" ">=" "<=") ) )
-        ## ,"Creation-Time" NIL
-        ##     (gui 'creation-time-start '(+Var +TimeField)
-        ##        '*OrgDataCreationTimeStart 10 ) NIL
-        ##     (gui 'creation-time-end '(+Var +TimeField)
-        ##        '*OrgDataCreationTimeEnd 10 ) NIL
-        ##      (gui 'creation-time= '(+Var +TextField)
-        ##        '*OrgDataCreationTime=
-        ##        '("==" ">=" "<=") ) )
-##       (--)
-##       (<grid> 3
-##          (searchButton '(init> (: home query))) NIL
-##          (resetButton '(input-buffer author creation-date-start
-## creation-date-end creation-date= creation-time-start
-## creation-time-end creation-time =query ) ) )
       (--)
       (gui 'query '(+QueryChart) (cho)
          '(goal
@@ -204,31 +190,11 @@ creation-time-end creation-time= query ) ) )
                       (cons NIL
                          (or *OrgDataCreationDateEnd
                             *OrgDataCreationDateStart ) ) ) )
-                   ## (cond
-                   ##    ((and
-                   ##       *OrgDataCreationDateStart
-                   ##       *OrgDataCreationDateEnd)
-                   ##       (cons 0 *OrgDataCreationDateEnd ) )
-                   ##    (*OrgDataCreationDateStart
-                   ##       (cons 0 *OrgDataCreationDateStart ) )
-                   ##    (*OrgDataCreationDateEnd
-                   ##       (cons 0 *OrgDataCreationDateEnd ) )
-                   ##    (T (cons NIL T)) ) )
                   (">="
                    (when (or *OrgDataCreationDateStart
                             *OrgDataCreationDateEnd )
                       (cons (or *OrgDataCreationDateStart
                                *OrgDataCreationDateEnd ) T ) ) )
-                   ## (cond
-                   ##    ((and
-                   ##       *OrgDataCreationDateStart
-                   ##       *OrgDataCreationDateEnd)
-                   ##       (cons *OrgDataCreationDateEnd T) )
-                   ##    (*OrgDataCreationDateStart
-                   ##       (cons *OrgDataCreationDateStart T) )
-                   ##    (*OrgDataCreationDateEnd
-                   ##       (cons *OrgDataCreationDateEnd T) )
-                   ##    (T (cons NIL T)) ) )
                   (T
                    (when (or *OrgDataCreationDateStart
                             *OrgDataCreationDateEnd )
@@ -236,88 +202,14 @@ creation-time-end creation-time= query ) ) )
                                *OrgDataCreationDateEnd NIL)
                             (or *OrgDataCreationDateEnd
                                *OrgDataCreationDateStart T ) ) ) ) )
-                   ## (cond
-                      ## ((and
-                      ##    *OrgDataCreationDateStart
-                      ##    *OrgDataCreationDateEnd)
-                      ##    (cons
-                      ##       *OrgDataCreationDateStart
-                      ##       *OrgDataCreationDateEnd ) )
-                      ## (*OrgDataCreationDateStart
-                      ##    (cons
-                      ##       *OrgDataCreationDateStart
-                      ##       *OrgDataCreationDateStart ) )
-                      ## (*OrgDataCreationDateEnd
-                      ##    (cons
-                      ##       *OrgDataCreationDateEnd
-                      ##       *OrgDataCreationDateEnd ) )
-                      ## (T (cons NIL T)) ) ) )
-               ## @CreationTimeRng
-               ## (case *OrgDataCreationTime=
-               ##    ("<="
-               ##     (when (or *OrgDataCreationTimeStart
-               ##              *OrgDataCreationTimeEnd )
-               ##        (cons NIL
-               ##           (or *OrgDataCreationTimeEnd
-               ##              *OrgDataCreationTimeStart ) ) ) )
-               ##     ## (cond
-               ##     ##    ((and
-               ##     ##       *OrgDataCreationTimeStart
-               ##     ##       *OrgDataCreationTimeEnd)
-               ##     ##       (cons 0 *OrgDataCreationTimeEnd ) )
-               ##     ##    (*OrgDataCreationTimeStart
-               ##     ##       (cons 0 *OrgDataCreationTimeStart ) )
-               ##     ##    (*OrgDataCreationTimeEnd
-               ##     ##       (cons 0 *OrgDataCreationTimeEnd ) )
-               ##     ##    (T (cons NIL T)) ) )
-               ##    (">="
-               ##     (when (or *OrgDataCreationTimeStart
-               ##              *OrgDataCreationTimeEnd )
-               ##        (cons (or *OrgDataCreationTimeStart
-               ##                 *OrgDataCreationTimeEnd ) T ) ) )
-               ##     ## (cond
-               ##     ##    ((and
-               ##     ##       *OrgDataCreationTimeStart
-               ##     ##       *OrgDataCreationTimeEnd)
-               ##     ##       (cons *OrgDataCreationTimeEnd T) )
-               ##     ##    (*OrgDataCreationTimeStart
-               ##     ##       (cons *OrgDataCreationTimeStart T) )
-               ##     ##    (*OrgDataCreationTimeEnd
-               ##     ##       (cons *OrgDataCreationTimeEnd T) )
-               ##     ##    (T (cons NIL T)) ) )
-               ##    (T
-               ##     (when (or *OrgDataCreationTimeStart
-               ##              *OrgDataCreationTimeEnd )
-               ##        (cons (or *OrgDataCreationTimeStart
-               ##                 *OrgDataCreationTimeEnd NIL)
-               ##              (or *OrgDataCreationTimeEnd
-               ##                 *OrgDataCreationTimeStart T ) ) ) ) )
-               ##     ## (cond
-               ##     ##    ((and
-               ##     ##       *OrgDataCreationTimeStart
-               ##     ##       *OrgDataCreationTimeEnd)
-               ##     ##       (cons
-               ##     ##          *OrgDataCreationTimeStart
-               ##     ##          *OrgDataCreationTimeEnd ) )
-               ##     ##    (*OrgDataCreationTimeStart
-               ##     ##       (cons
-               ##     ##          *OrgDataCreationTimeStart
-               ##     ##          *OrgDataCreationTimeStart ) )
-               ##     ##    (*OrgDataCreationTimeEnd
-               ##     ##       (cons
-               ##     ##          *OrgDataCreationTimeEnd
-               ##     ##          *OrgDataCreationTimeEnd ) )
-               ##     ##    (T (cons NIL T)) ) ) )
                @InputBuffer *OrgDataInputBuffer
                @Author *OrgDataAuthor
 
                (select (@@)
                   ((creation-date +OrgData @CreationDateRng)
-                   ## (creation-time +OrgData @CreationTimeRng)
                    (input-buffer +OrgData @InputBuffer)
                    (author +OrgData @Author) )
                   (range @CreationDateRng @@ creation-date)
-                  ## (range @CreationTimeRng @@ creation-time)
                   (part @InputBuffer @@ input-buffer)
                   (tolr @Author @@ author) ) ) )
          6
@@ -328,12 +220,9 @@ creation-time-end creation-time= query ) ) )
                (: author)
                (: creation-date)
                (: creation-time) ) ) )
-               ## (: description) ) ) )
-               ## (and tags (pack ":" (glue ":" (: tags)) ":")) ) ) )
       (<table> 'chart (choTtl ,"OrgData" 'nr '+OrgData)
          '((btn) (NIL ,"Input Buffer") (NIL ,"Author") (NIL ,"Date")
            (NIL ,"Time") )
-           ## (NIL ,"Time") (NIL ,"Description") )
          (do (cho)
             (<row> (alternating)
                (gui 1 '(+DstButton) Dst)
