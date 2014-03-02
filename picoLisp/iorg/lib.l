@@ -98,8 +98,8 @@
             (msg "inside while ...")
             (prin "\#")
             (msg "end while ...") ) )
-      ## (out 'emc (echo)) ) )
-      (eval Exe) ) )
+      (out 'emc (echo)) ) )
+      ## (eval Exe) ) )
 
 (de emc2 (Exe . @)
    (pipe
