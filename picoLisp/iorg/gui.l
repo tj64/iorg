@@ -448,44 +448,62 @@ footnote-section-p query) ) )
                @DeadlineRng
                (case *OrgHeadlineDeadline=
                   ("<="
-                   (cond
-                      ((and
-                         *OrgHeadlineDeadlineStart
-                         *OrgHeadlineDeadlineEnd)
-                         (cons 0 *OrgHeadlineDeadlineEnd ) )
-                      (*OrgHeadlineDeadlineStart
-                         (cons 0 *OrgHeadlineDeadlineStart ) )
-                      (*OrgHeadlineDeadlineEnd
-                         (cons 0 *OrgHeadlineDeadlineEnd ) )
-                      (T (cons NIL T)) ) )
+                   (when (or *OrgHeadlineDeadlineStart
+                            *OrgHeadlineDeadlineEnd )
+                      (cons NIL
+                         (or *OrgHeadlineDeadlineEnd
+                            *OrgHeadlineDeadlineStart ) ) ) )
                   (">="
-                   (cond
-                      ((and
-                         *OrgHeadlineDeadlineStart
-                         *OrgHeadlineDeadlineEnd)
-                         (cons *OrgHeadlineDeadlineEnd T) )
-                      (*OrgHeadlineDeadlineStart
-                         (cons *OrgHeadlineDeadlineStart T) )
-                      (*OrgHeadlineDeadlineEnd
-                         (cons *OrgHeadlineDeadlineEnd T) )
-                      (T (cons NIL T)) ) )
+                   (when (or *OrgHeadlineDeadlineStart
+                            *OrgHeadlineDeadlineEnd )
+                      (cons (or *OrgHeadlineDeadlineStart
+                               *OrgHeadlineDeadlineEnd ) T ) ) )
                   (T
-                   (cond
-                      ((and
-                         *OrgHeadlineDeadlineStart
-                         *OrgHeadlineDeadlineEnd)
-                         (cons
-                            *OrgHeadlineDeadlineStart
-                            *OrgHeadlineDeadlineEnd ) )
-                      (*OrgHeadlineDeadlineStart
-                         (cons
-                            *OrgHeadlineDeadlineStart
-                            *OrgHeadlineDeadlineStart ) )
-                      (*OrgHeadlineDeadlineEnd
-                         (cons
-                            *OrgHeadlineDeadlineEnd
-                            *OrgHeadlineDeadlineEnd ) )
-                      (T (cons NIL T)) ) ) )
+                   (when (or *OrgHeadlineDeadlineStart
+                            *OrgHeadlineDeadlineEnd )
+                      (cons (or *OrgHeadlineDeadlineStart
+                               *OrgHeadlineDeadlineEnd NIL)
+                            (or *OrgHeadlineDeadlineEnd
+                               *OrgHeadlineDeadlineStart T ) ) ) ) )
+                  ## ("<="
+                  ##  (cond
+                  ##     ((and
+                  ##        *OrgHeadlineDeadlineStart
+                  ##        *OrgHeadlineDeadlineEnd)
+                  ##        (cons 0 *OrgHeadlineDeadlineEnd ) )
+                  ##     (*OrgHeadlineDeadlineStart
+                  ##        (cons 0 *OrgHeadlineDeadlineStart ) )
+                  ##     (*OrgHeadlineDeadlineEnd
+                  ##        (cons 0 *OrgHeadlineDeadlineEnd ) )
+                  ##     (T (cons NIL T)) ) )
+                  ## (">="
+                  ##  (cond
+                  ##     ((and
+                  ##        *OrgHeadlineDeadlineStart
+                  ##        *OrgHeadlineDeadlineEnd)
+                  ##        (cons *OrgHeadlineDeadlineEnd T) )
+                  ##     (*OrgHeadlineDeadlineStart
+                  ##        (cons *OrgHeadlineDeadlineStart T) )
+                  ##     (*OrgHeadlineDeadlineEnd
+                  ##        (cons *OrgHeadlineDeadlineEnd T) )
+                  ##     (T (cons NIL T)) ) )
+                  ## (T
+                  ##  (cond
+                  ##     ((and
+                  ##        *OrgHeadlineDeadlineStart
+                  ##        *OrgHeadlineDeadlineEnd)
+                  ##        (cons
+                  ##           *OrgHeadlineDeadlineStart
+                  ##           *OrgHeadlineDeadlineEnd ) )
+                  ##     (*OrgHeadlineDeadlineStart
+                  ##        (cons
+                  ##           *OrgHeadlineDeadlineStart
+                  ##           *OrgHeadlineDeadlineStart ) )
+                  ##     (*OrgHeadlineDeadlineEnd
+                  ##        (cons
+                  ##           *OrgHeadlineDeadlineEnd
+                  ##           *OrgHeadlineDeadlineEnd ) )
+                  ##     (T (cons NIL T)) ) ) )
                @ClosedRng
                (case *OrgHeadlineClosed=
                   ("<="
