@@ -159,8 +159,7 @@
       (<grid> 3
          (searchButton '(init> (: home query))) NIL
          (resetButton '(input-buffer author creation-date-start
-creation-date-end creation-date= creation-time-start
-creation-time-end creation-time= query ) ) )
+creation-date-end creation-date= query ) ) )
       (--)
       (<grid> 3
          ,"Input Buffer" NIL
