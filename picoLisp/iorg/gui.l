@@ -177,21 +177,21 @@ creation-time-end creation-time= query ) ) )
                '*OrgDataCreationDateEnd 10 ) NIL
              (gui 'creation-date= '(+Var +TextField)
                '*OrgDataCreationDate=
-               '("==" ">=" "<=") )
-        ,"Creation-Time" NIL
-            (gui 'creation-time-start '(+Var +TimeField)
-               '*OrgDataCreationTimeStart 10 ) NIL
-            (gui 'creation-time-end '(+Var +TimeField)
-               '*OrgDataCreationTimeEnd 10 ) NIL
-             (gui 'creation-time= '(+Var +TextField)
-               '*OrgDataCreationTime=
                '("==" ">=" "<=") ) )
-      (--)
-      (<grid> 3
-         (searchButton '(init> (: home query))) NIL
-         (resetButton '(input-buffer author creation-date-start
-creation-date-end creation-date= creation-time-start
-creation-time-end creation-time =query ) ) )
+        ## ,"Creation-Time" NIL
+        ##     (gui 'creation-time-start '(+Var +TimeField)
+        ##        '*OrgDataCreationTimeStart 10 ) NIL
+        ##     (gui 'creation-time-end '(+Var +TimeField)
+        ##        '*OrgDataCreationTimeEnd 10 ) NIL
+        ##      (gui 'creation-time= '(+Var +TextField)
+        ##        '*OrgDataCreationTime=
+        ##        '("==" ">=" "<=") ) )
+##       (--)
+##       (<grid> 3
+##          (searchButton '(init> (: home query))) NIL
+##          (resetButton '(input-buffer author creation-date-start
+## creation-date-end creation-date= creation-time-start
+## creation-time-end creation-time =query ) ) )
       (--)
       (gui 'query '(+QueryChart) (cho)
          '(goal
@@ -252,72 +252,72 @@ creation-time-end creation-time =query ) ) )
                       ##       *OrgDataCreationDateEnd
                       ##       *OrgDataCreationDateEnd ) )
                       ## (T (cons NIL T)) ) ) )
-               @CreationTimeRng
-               (case *OrgDataCreationTime=
-                  ("<="
-                   (when (or *OrgDataCreationTimeStart
-                            *OrgDataCreationTimeEnd )
-                      (cons NIL
-                         (or *OrgDataCreationTimeEnd
-                            *OrgDataCreationTimeStart ) ) ) )
-                   ## (cond
-                   ##    ((and
-                   ##       *OrgDataCreationTimeStart
-                   ##       *OrgDataCreationTimeEnd)
-                   ##       (cons 0 *OrgDataCreationTimeEnd ) )
-                   ##    (*OrgDataCreationTimeStart
-                   ##       (cons 0 *OrgDataCreationTimeStart ) )
-                   ##    (*OrgDataCreationTimeEnd
-                   ##       (cons 0 *OrgDataCreationTimeEnd ) )
-                   ##    (T (cons NIL T)) ) )
-                  (">="
-                   (when (or *OrgDataCreationTimeStart
-                            *OrgDataCreationTimeEnd )
-                      (cons (or *OrgDataCreationTimeStart
-                               *OrgDataCreationTimeEnd ) T ) ) )
-                   ## (cond
-                   ##    ((and
-                   ##       *OrgDataCreationTimeStart
-                   ##       *OrgDataCreationTimeEnd)
-                   ##       (cons *OrgDataCreationTimeEnd T) )
-                   ##    (*OrgDataCreationTimeStart
-                   ##       (cons *OrgDataCreationTimeStart T) )
-                   ##    (*OrgDataCreationTimeEnd
-                   ##       (cons *OrgDataCreationTimeEnd T) )
-                   ##    (T (cons NIL T)) ) )
-                  (T
-                   (when (or *OrgDataCreationTimeStart
-                            *OrgDataCreationTimeEnd )
-                      (cons (or *OrgDataCreationTimeStart
-                               *OrgDataCreationTimeEnd NIL)
-                            (or *OrgDataCreationTimeEnd
-                               *OrgDataCreationTimeStart T ) ) ) ) )
-                   ## (cond
-                   ##    ((and
-                   ##       *OrgDataCreationTimeStart
-                   ##       *OrgDataCreationTimeEnd)
-                   ##       (cons
-                   ##          *OrgDataCreationTimeStart
-                   ##          *OrgDataCreationTimeEnd ) )
-                   ##    (*OrgDataCreationTimeStart
-                   ##       (cons
-                   ##          *OrgDataCreationTimeStart
-                   ##          *OrgDataCreationTimeStart ) )
-                   ##    (*OrgDataCreationTimeEnd
-                   ##       (cons
-                   ##          *OrgDataCreationTimeEnd
-                   ##          *OrgDataCreationTimeEnd ) )
-                   ##    (T (cons NIL T)) ) ) )
+               ## @CreationTimeRng
+               ## (case *OrgDataCreationTime=
+               ##    ("<="
+               ##     (when (or *OrgDataCreationTimeStart
+               ##              *OrgDataCreationTimeEnd )
+               ##        (cons NIL
+               ##           (or *OrgDataCreationTimeEnd
+               ##              *OrgDataCreationTimeStart ) ) ) )
+               ##     ## (cond
+               ##     ##    ((and
+               ##     ##       *OrgDataCreationTimeStart
+               ##     ##       *OrgDataCreationTimeEnd)
+               ##     ##       (cons 0 *OrgDataCreationTimeEnd ) )
+               ##     ##    (*OrgDataCreationTimeStart
+               ##     ##       (cons 0 *OrgDataCreationTimeStart ) )
+               ##     ##    (*OrgDataCreationTimeEnd
+               ##     ##       (cons 0 *OrgDataCreationTimeEnd ) )
+               ##     ##    (T (cons NIL T)) ) )
+               ##    (">="
+               ##     (when (or *OrgDataCreationTimeStart
+               ##              *OrgDataCreationTimeEnd )
+               ##        (cons (or *OrgDataCreationTimeStart
+               ##                 *OrgDataCreationTimeEnd ) T ) ) )
+               ##     ## (cond
+               ##     ##    ((and
+               ##     ##       *OrgDataCreationTimeStart
+               ##     ##       *OrgDataCreationTimeEnd)
+               ##     ##       (cons *OrgDataCreationTimeEnd T) )
+               ##     ##    (*OrgDataCreationTimeStart
+               ##     ##       (cons *OrgDataCreationTimeStart T) )
+               ##     ##    (*OrgDataCreationTimeEnd
+               ##     ##       (cons *OrgDataCreationTimeEnd T) )
+               ##     ##    (T (cons NIL T)) ) )
+               ##    (T
+               ##     (when (or *OrgDataCreationTimeStart
+               ##              *OrgDataCreationTimeEnd )
+               ##        (cons (or *OrgDataCreationTimeStart
+               ##                 *OrgDataCreationTimeEnd NIL)
+               ##              (or *OrgDataCreationTimeEnd
+               ##                 *OrgDataCreationTimeStart T ) ) ) ) )
+               ##     ## (cond
+               ##     ##    ((and
+               ##     ##       *OrgDataCreationTimeStart
+               ##     ##       *OrgDataCreationTimeEnd)
+               ##     ##       (cons
+               ##     ##          *OrgDataCreationTimeStart
+               ##     ##          *OrgDataCreationTimeEnd ) )
+               ##     ##    (*OrgDataCreationTimeStart
+               ##     ##       (cons
+               ##     ##          *OrgDataCreationTimeStart
+               ##     ##          *OrgDataCreationTimeStart ) )
+               ##     ##    (*OrgDataCreationTimeEnd
+               ##     ##       (cons
+               ##     ##          *OrgDataCreationTimeEnd
+               ##     ##          *OrgDataCreationTimeEnd ) )
+               ##     ##    (T (cons NIL T)) ) ) )
                @InputBuffer *OrgDataInputBuffer
                @Author *OrgDataAuthor
 
                (select (@@)
                   ((creation-date +OrgData @CreationDateRng)
-                   (creation-time +OrgData @CreationTimeRng)
+                   ## (creation-time +OrgData @CreationTimeRng)
                    (input-buffer +OrgData @InputBuffer)
                    (author +OrgData @Author) )
                   (range @CreationDateRng @@ creation-date)
-                  (range @CreationTimeRng @@ creation-time)
+                  ## (range @CreationTimeRng @@ creation-time)
                   (part @InputBuffer @@ input-buffer)
                   (tolr @Author @@ author) ) ) )
          6
