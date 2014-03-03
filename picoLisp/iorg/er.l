@@ -197,7 +197,7 @@
 (rel creation-date (+Date))
 (rel creation-time (+Time))
 (rel org-elem-id (+Number))
-(rel elem-id (+Key +Number))
+(rel elem-id (+Need +Key +Number))
 ## (rel max-child-id (+Number))
 (rel section (+String))
 
@@ -317,7 +317,7 @@
 ## **** Code
 
 (class +OrgHeadline +orgElement)
-(rel ptree (+Need +Aux +Ref +Link) (org-elem-id) NIL (+OrgData))
+(rel ptree (+Aux +Ref +Link) (org-elem-id) NIL (+OrgData))
 ## (rel title-string (+Aux +Ref +String) (title-stamp))
 (rel title-string (+String))
 (rel title-stamp (+Bag)
@@ -333,8 +333,8 @@
 (rel properties (+List +Bag)
    ((+Ref +String))                     # Key
    ((+String)) )                        # Value
-(rel category (+Need +Ref +String))
-(rel level (+Need +Ref +Number))
+(rel category (+Ref +String))
+(rel level (+Ref +Number))
 (rel priority (+Ref +Number))
 (rel tags (+List +Ref +String))
 (rel todo-keyword (+Ref +String))

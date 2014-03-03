@@ -54,7 +54,7 @@
                 (extra)
                 (and (info (val> This))
                    "File does not exist" ) )
-            '(input-file : home obj) 40 )
+            '(input-file : home obj) 50 )
          ,"Creation-Date" NIL
          (gui '(+E/R +DateField)
             '(creation-date : home obj) 10 )
@@ -78,6 +78,65 @@
       (----)
       (gui '(+E/R +TextField)
          '(section : home obj)
-         60 30 ,"Contents" ) ) )
+        60 10 ,"Contents" )
+      (--)
+      (gui '(+E/R +Chart) '(descendants : home obj) 8
+         '((This)
+            (list
+               This
+               (and (: priority) (char @))
+               (: todo-keyword)
+               (: category)
+               (: title-string)
+               (and (: tags) (pack ":" (glue ":" @) ":"))
+               ## (let Tgs (: tags)
+               ##    (and Tgs (pack ":" (glue ":" Tgs) ":")) )
+               ) ) )
+      (<table> NIL ,"Direct Descendants"
+         '((NIL ,"*") (NIL ,"[#]") (NIL ,"Todo") (NIL ,"Category")
+           (NIL ,"Title") (NIL ,"Tags"))
+         (do 6
+            (<row> (alternating)
+               (gui 1 '(+ObjView +NumField) '(: level))
+               (gui 2 '(+TextField))
+               (gui 3 '(+TextField))
+               (gui 4 '(+TextField))
+               (gui 5 '(+TextField))
+               (gui 6 '(+TextField))
+               (gui 7 '(+DelRowButton))
+               (gui 8 '(+BubbleButton)) ) ) )
+      (scroll 6)
+      (--)
+      (gui '(+QueryChart) 12
+         '(goal '(@OrgDat (: home obj)
+                    (db ptree +OrgHeadline @OrgDat @@) ) )
+         6
+         '((This)
+           (list
+              This
+              (and (: priority) (char @))
+              (: todo-keyword)
+              (: category)
+              (: title-string)
+              (and (: tags)
+                 (pack ":" (glue ":" @) ":") )
+              ## (let Tgs (: tags)
+              ##    (and Tgs (pack ":" (glue ":" Tgs) ":")) )
+              ) ) )
+      (<table> NIL ,"All Children"
+         '((NIL ,"*") (NIL ,"[#]") (NIL ,"Todo") (NIL ,"Category")
+           (NIL ,"Title") (NIL ,"Tags") )
+         (do 12
+            (<row> (alternating)
+               (gui 1 '(+ObjView +NumField) '(: level))
+               (gui 2 '(+TextField))
+               (gui 3 '(+TextField))
+               (gui 4 '(+TextField))
+               (gui 5 '(+TextField))
+               (gui 6 '(+TextField)) ) ) )
+      (scroll 6)
+      (--)
+
+ ) )
 
 ## iorg/orgData.l ends here
