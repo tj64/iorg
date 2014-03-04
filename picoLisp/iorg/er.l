@@ -205,6 +205,15 @@
 (dm upd> ())
 (dm diff> ())
 (dm new> ())
+## FIXME: makes sense? must be called somewhere?
+(dm check> ()
+   (make
+      (or (: elem-id) (link ,"Org-Element without ID"))
+      (or (: creation-date)
+         (link ,"Org-Element without creation date" ) )
+      (or (: creation-time)
+         (link ,"Org-Element without creation time" ) )
+      ) )
 
 ## ## return for relation Rel hashLbl number as string
 ## (dm hashLblNum> (Rel)
@@ -373,25 +382,31 @@
 
 (dm url> (Tab)
    (and (may OrgData) (list "iorg/orgHeadline.l" '*ID This)) )
-
+## FIXME needs to be called? makes sense?
+(dm check> ()
+   (make
+      (or (: level) (link ,"Org-Headline without level"))
+      (or (: ptree) (link ,"Org-Headline without ptree" ) )
+      (or (: category)
+         (link ,"Org-Headline without category") ) ) )
 (dm upd> ())
 (dm diff> ())
 
 ## (de convertParseTree (Tree)
 
-(de writeParseTree (Tree)
-    (emx '(read)
-       (pack
-       "(add-to-list 'load-path "
-       ## ## FIXME! should be:
-       ## "\"" (absPath "@iorg/el/") "\"" )
-       "\"/home/tj/git/iorg/picoLisp/iorg/el/\")" )
-      "(require 'iorg-init)"
-      "(require 'iorg)"
-      "(require 'ox)"
-      "(princ (org-element-interpret-data "
-       "\"" (pack Tree) "\""
-       "))" ) )
+## (de writeParseTree (Tree)
+##     (emx '(read)
+##        (pack
+##        "(add-to-list 'load-path "
+##        ## ## FIXME! should be:
+##        ## "\"" (absPath "@iorg/el/") "\"" )
+##        "\"/home/tj/git/iorg/picoLisp/iorg/el/\")" )
+##       "(require 'iorg-init)"
+##       "(require 'iorg)"
+##       "(require 'ox)"
+##       "(princ (org-element-interpret-data "
+##        "\"" (pack Tree) "\""
+##        "))" ) )
 
 ## *** Timestamp
 ## **** Comments
