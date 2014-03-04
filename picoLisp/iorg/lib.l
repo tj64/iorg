@@ -203,11 +203,10 @@
 ## *** Process Parse Tree
 
 ## ## expects a parse-tree as produced by `iorg-normalize-parse-tree'
-## (de processParseTree Tree
-##    (makeOrgData (car Tree) (cadr Tree)) )
+## (de processParseTree Tree (makeOrgData (car Tree) (cadr Tree)) )
 
-## create a new +OrgData object and trigger creation of +OrgHeadline objects
-## for the parse-tree's headlines
+## create a new +OrgData object and trigger creation of +OrgHeadline
+## objects for the parse-tree's headlines
 (de makeOrgData (Lst)
    (msg "entering makeOrgData ...")
    ## (setq *IorgGlobalSwitch (extractOptionValue "iorg" Lst))
@@ -234,10 +233,16 @@
          'creation-date (date) )
       (msg Obj " => New OrgData object created")
       (msg (show Obj) " => Show New OrgData object")
+      ## hack to deal with bad underscores in Lst
       (while Lst
-         (makeOrgHeadline
-                  (cdr (pop 'Lst))
-                  Obj ) )
+         (let X (pop 'Lst)
+            (unless (== '_ X)
+               (makeOrgHeadline (cdr X) Obj ) ) ) )
+      ## ## better version
+      ## (while Lst
+      ##    (makeOrgHeadline
+      ##             (cdr (pop 'Lst))
+      ##             Obj ) )
       (put> Obj 'elem-id (genKey 'elem-id '+orgBaseElement))
       (put> Obj 'org-elem-id NIL)
       (treatOrgData Obj)
@@ -293,10 +298,16 @@
       (msg Obj " => New OrgHeadline object created")
       (msg (show Obj) " => Show New OrgHeadline object")
       (treatOrgHeadline Obj) )
-   (while Lst
-      (makeOrgHeadline
-         (cdr (pop 'Lst))
-         Ptree ) ) )
+      ## hack to deal with bad underscores in Lst
+      (while Lst
+         (let X (pop 'Lst)
+            (unless (== '_ X)
+               (makeOrgHeadline (cdr X) Ptree ) ) ) ) )
+      ## ## better version
+      ## (while Lst
+      ##    (makeOrgHeadline
+      ##       (cdr (pop 'Lst))
+      ##       Ptree ) ) )
 
 (de treatOrgHeadline (OrgHeadline)
   (msg "entering treatOrgHeadline ...")
