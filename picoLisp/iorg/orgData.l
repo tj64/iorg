@@ -49,11 +49,12 @@
          (gui '(+E/R +TextField)
             '(input-buffer : home obj) 20 )
          ,"Input File" NIL
-         (gui '(+Chk +E/R +TextField)
-            '(or
-                (extra)
-                (and (info (val> This))
-                   "File does not exist" ) )
+         ## (gui '(+Chk +E/R +TextField)
+            ## '(or
+            ##     (extra)
+            ##     (unless (info (val> This))
+            ##        "File does not exist" ) )
+         (gui '(+E/R +TextField)
             '(input-file : home obj) 50 )
          ,"Creation-Date" NIL
          (gui '(+E/R +DateField)
@@ -88,7 +89,8 @@
                (: todo-keyword)
                (: category)
                (: title-string)
-               (and (: tags) (pack ":" (glue ":" @) ":")) ) ) )
+               (and (: tags) (pack ":" (glue ":" @) ":")) ) )
+         car )
       (<table> NIL ,"Direct Descendants"
          '((NIL ,"*") (NIL ,"[#]") (NIL ,"Todo") (NIL ,"Category")
            (NIL ,"Title") (NIL ,"Tags"))

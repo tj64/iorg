@@ -290,7 +290,7 @@ footnote-section-p query) ) )
       (<table>
          NIL ,"Planning" '(NIL (NIL ,"Start") (NIL ,"End") NIL)
          (<row> NIL
-            ,"Timestamp" 
+            ,"Titlestamp" 
             (gui 'title-stamp-start '(+Var +DateField)
                '*OrgHeadlineTitleStampStart 10 ) 
             (gui 'title-stamp-end '(+Var +DateField)

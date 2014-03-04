@@ -47,7 +47,15 @@
           "<" (stamp
                  (: ptree creation-date)
                  (: ptree creation-time) ) ">]" )
-      ## (msg "before grid 3")
+      (--)
+      (<grid> 6
+         ,"OrgData-ID" NIL
+         (gui '(+E/R +ObjView +NumField)
+            '(ptree : home obj ) '(: elem-id) )
+         ,"Ancestor-ID" NIL
+         (gui '(+E/R +ObjView +NumField)
+            '(ancestor : home obj) '(: elem-id) ) )
+      (--)
       (<grid> 9
          ## (msg "before Level")
          ,"Level" NIL
@@ -83,7 +91,7 @@
                         (filter bool
                            (mapcar pack
                               (split (chop Strg) " ") ) ) ) )
-            25 ) )
+            50 ) )
             ## '((Tags) (and Tags (pack ":" (glue ":" Tags) ":")))
             ## '((Strg) (and Strg
             ##             (filter bool
@@ -108,7 +116,7 @@
         (gui '(+E/R +Fmt +Chart) '(title-stamp : home obj)
            list car 8 ) 
            (<grid> 5
-              ,"Timestamp" NIL NIL NIL NIL
+              ,"Titlestamp" NIL NIL NIL NIL
               ,"Type" NIL
               (gui 1 '(+SymField) 14) NIL NIL
               ,"Start (Date/Time)" NIL
