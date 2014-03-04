@@ -57,32 +57,25 @@
             '(ancestor : home obj) '(: elem-id) ) )
       (--)
       (<grid> 9
-         ## (msg "before Level")
          ,"Level" NIL
          (gui '(+E/R +NumField) '(level : home obj) 1)
-         ## (msg "before Priority")
          ,"Priority" NIL
          (gui '(+E/R +Fmt +TextField)
             '(priority : home obj)
-            ## char char 
             '((C) (and C (char C)))
             '((C) (and C (char C)))
             '("A" "B" "C") )
-         ## (msg "before Todo")
          ,"Todo" NIL
          (gui '(+E/R +TextField)
             '(todo-keyword : home obj)
             '("TODO" "DONE" "NEXT" "WAITING") ) )
       (<grid> 3
-         ## (msg "before Category")
          ,"Category" NIL
          (gui '(+E/R +TextField)
             '(category : home obj) 15)
-         ## (msg "before Title")
          ,"Title" NIL
          (gui '(+E/R +TextField)
             '(title-string : home obj) 50)
-         ## (msg "before Tags")
          ,"Tags" NIL
          (gui '(+E/R +Fmt +TextField)
             '(tags : home obj)
@@ -92,26 +85,6 @@
                            (mapcar pack
                               (split (chop Strg) " ") ) ) ) )
             50 ) )
-            ## '((Tags) (and Tags (pack ":" (glue ":" Tags) ":")))
-            ## '((Strg) (and Strg
-            ##             (filter bool
-            ##                (mapcar pack
-            ##                   (split (chop Strg) ":") ) ) ) )
-            ## 25 ) )
-      ## (msg "after grid")
-
-        ## (----)
-        ##  (gui '(+E/R +Chart) '(title-stamp : home obj) 9)
-        ##  (<table> NIL ,"Timestamp" '((NIL ,"Key") (NIL ,"Value"))
-        ##     (do 2
-        ##        (<row> NIL
-        ##           (gui 1 '(+TextField) 25)
-        ##           (gui 2 '(+TextField) 35)
-        ##           (gui 3 '(+DelRowButton))
-        ##           (gui 4 '(+BubbleButton)) ) ) )
-        ##  (<spread> (scroll 6) (editButton T))
-        ##  (----)
-
         (----)
         (gui '(+E/R +Fmt +Chart) '(title-stamp : home obj)
            list car 8 ) 
@@ -129,9 +102,7 @@
               (gui 6 '(+SymField) 14)
               (gui 7 '(+NumField) 8)
               (gui 8 '(+SymField) 8) )
-
         (----)
-
         (gui '(+E/R +Fmt +Chart) '(scheduled : home obj)
            list car 8 ) 
            (<grid> 5
@@ -148,9 +119,7 @@
               (gui 6 '(+SymField) 14)
               (gui 7 '(+NumField) 8)
               (gui 8 '(+SymField) 8) )
-
         (----)
-
         (gui '(+E/R +Fmt +Chart) '(deadline : home obj)
            list car 8 ) 
            (<grid> 5
@@ -167,18 +136,9 @@
               (gui 6 '(+Lock +SymField) 14)
               (gui 7 '(+Lock +NumField) 8)
               (gui 8 '(+Lock +SymField) 8) )
-
         (----)
-
         (gui '(+E/R +Fmt +Chart) '(closed : home obj)
            list car 8 ) 
-
-## '(mix 1 3 5)
-## '((L)(list (caar L) NIL (cadr L) NIL ...)
-
-## '(mix 1 3 5)
-## '(mix (car 1) NIL ...) ;???
-
            (<grid> 5
               ,"Closed" NIL NIL NIL NIL
               ,"Type" NIL
@@ -193,39 +153,6 @@
               (gui 6 '(+Lock +SymField) 14)
               (gui 7 '(+Lock +NumField) 8)
               (gui 8 '(+Lock +SymField) 8) )
-
-      ## (--)
-      ## (<grid> 4
-      ##    ,"Scheduled (Date/Time)" (choOrgTimestamp 0) NIL NIL
-      ##    ,"Start" NIL
-      ##    (gui '(+E/R +ObjView +DateField)
-      ##              '(scheduled-stamp : home obj)
-      ##              '(: start-dat) 15 )
-      ##    (gui '(+E/R +ObjView +TimeField)
-      ##               '(scheduled-stamp : home obj)
-      ##               '(: start-tim) 15 )
-      ##    ,"End" NIL
-      ##    (gui '(+E/R +ObjView +DateField)
-      ##               '(scheduled-stamp : home obj)
-      ##               '(: end-dat) 15 )
-      ##    (gui '(+E/R +ObjView +TimeField)
-      ##               '(scheduled-stamp : home obj)
-      ##               '(: end-tim) 15 )
-      ##    ,"Deadline (Date/Time)" (choOrgTimestamp 0)
-      ##    (gui '(+E/R +ObjView +DateField)
-      ##       '(deadline-stamp : home obj)
-      ##       '(: start-dat) 15 )
-      ##    (gui '(+E/R +ObjView +TimeField)
-      ##       '(deadline-stamp : home obj)
-      ##       '(: start-tim) 15 )
-      ##    ,"Closed (Date/Time)" (choOrgTimestamp 0)
-      ##    (gui '(+E/R +ObjView +DateField)
-      ##       '(closed-stamp : home obj)
-      ##       '(: start-dat) 15 )
-      ##    (gui '(+E/R +ObjView +TimeField)
-      ##       '(closed-stamp : home obj)
-      ##       '(: start-tim) 15 ) )
-
        (----)
       (gui '(+E/R +Chart) '(properties : home obj) 4)
       (<table> NIL ,"Properties" '((NIL ,"Key") (NIL ,"Value"))
@@ -237,27 +164,10 @@
                (gui 4 '(+BubbleButton)) ) ) )
       (<spread> (scroll 6) (editButton T))
       (----)
-
       (gui '(+E/R +Cue +TextField)
          '(section : home obj)
          "Lorem ipsum dolor sit amet"
          60 30 ,"Contents" )
-     ##  (----)
-     ##  (<grid> 12
-     ## ,"Quoted" NIL
-     ##  (gui  '(+E/R +Field +Checkbox)
-     ##     '(:quotedp : home obj) )
-     ## ,"Archived" NIL
-     ##  (gui  '(+E/R +Field +Checkbox)
-     ##     '(:archivedp : home obj) )
-     ## ,"Commented" NIL
-     ##  (gui  '(+E/R +Field +Checkbox)
-     ##     '(:commentedp : home obj) )
-     ## ,"Footnote Section" NIL
-     ##  (gui  '(+E/R +Field +Checkbox)
-     ##     '(:footnote-section-p : home obj) )
- ) ) #)
+ ) )
 
 ## iorg/orgHeadline.l ends here
-
-(0)
