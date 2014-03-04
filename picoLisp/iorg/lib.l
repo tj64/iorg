@@ -281,18 +281,22 @@
          'ptree Ptree
          'creation-time (time)
          'creation-date (date) ) )
-       (put> Obj 'ancestor
+      (put> Obj 'ancestor
          (if (= ParentID 0)
             Ptree
-            (db 'ptree '+OrgHeadline Ptree 'org-elem-id ParentID) ) )
+            (db 'ptree '+OrgHeadline Ptree
+               'org-elem-id ParentID ) ) )
       (put> Obj 'elem-id (genKey 'elem-id '+orgBaseElement))
+      (put> Obj 'archived-p
+         (and (; Obj archivedp) T) )
+      (put> Obj 'archivedp NIL)
       (msg Obj " => New OrgHeadline object created")
       (msg (show Obj) " => Show New OrgHeadline object")
       (treatOrgHeadline Obj) )
-(while Lst
-   (makeOrgHeadline
-      (cdr (pop 'Lst))
-      Ptree ) ) )
+   (while Lst
+      (makeOrgHeadline
+         (cdr (pop 'Lst))
+         Ptree ) ) )
 
 (de treatOrgHeadline (OrgHeadline)
   (msg "entering treatOrgHeadline ...")

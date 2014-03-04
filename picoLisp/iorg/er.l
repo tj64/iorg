@@ -196,6 +196,7 @@
 (rel descendants (+List +Joint) ancestor (+orgElement))
 (rel creation-date (+Date))
 (rel creation-time (+Time))
+(rel author (+String))
 (rel org-elem-id (+Number))
 (rel elem-id (+Need +Key +Number))
 ## (rel max-child-id (+Number))
@@ -376,7 +377,10 @@
    ((+Symbol)) )                        # repeater-unit
 ## (rel quotedp (+Bool))
 (rel creation-date (+Aux +Ref +Date) (creation-time))
-(rel archivedp (+Symbol))
+(rel author (+Sn +Idx +String))
+## (rel archivedp (+Symbol))
+(rel archivedp (+List +String))
+(rel archived-p (+Ref +Bool))
 ## (rel commentedp (+Bool))
 (rel footnote-section-p (+Ref +Bool))
 

@@ -34,7 +34,7 @@
 ## (rel deadline (+Any))
 ## (rel closed (+Date))
 ## (rel quotedp (+Bool))
-## (rel archivedp (+Bool))
+## (rel archived-p (+Bool))
 ## (rel commentedp (+Bool))
 ## (rel footnote-section-p (+Bool))
 
@@ -76,6 +76,9 @@
          ,"Title" NIL
          (gui '(+E/R +TextField)
             '(title-string : home obj) 50)
+         ,"Alt-Title" NIL
+         (gui '(+E/R +TextField)
+            '(alt-title-string : home obj) 50)
          ,"Tags" NIL
          (gui '(+E/R +Fmt +TextField)
             '(tags : home obj)
@@ -168,6 +171,28 @@
          '(section : home obj)
          "Lorem ipsum dolor sit amet"
          60 30 ,"Contents" )
+      (--)
+      (<grid> 7
+        ,"Archived?" NIL
+         (gui 'archived-p '(+E/R +Checkbox)
+               '(archived-p : home obj) ) NIL
+        ,"Footnote-Section?" NIL
+         (gui 'footnote-section-p '(+E/R +Checkbox)
+               '(footnote-section-p : home obj) ) )
+      (--)
+      (<grid> 3
+         ,"Author" NIL
+         (gui 'author '(+E/R +TextField)
+            '(author : home obj) 30 ) )
+      (--)
+      (<grid> 7
+        ,"Creation-Date" NIL
+        (gui 'creation-date '(+E/R +ObjView +DateField)
+               '(creation-date : home obj) ) NIL
+        ,"Creation-Time" NIL
+         (gui 'creation-time '(+E/R +ObjView +TimeField)
+               '(creation-time : home obj) ) )
+
  ) )
 
 ## iorg/orgHeadline.l ends here

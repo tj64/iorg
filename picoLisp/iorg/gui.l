@@ -243,7 +243,7 @@ creation-date-end creation-date= query ) ) )
 todo-keyword tags title-stamp-start title-stamp-end title-stamp=
 scheduled-start scheduled-end scheduled= deadline-start deadline-end
 deadline= closed-start closed-end closed= properties author
-creation-date-start creation-date-end creation-date= archivedp
+creation-date-start creation-date-end creation-date= archived-p
 footnote-section-p query) ) )
       (--)
       (<grid> 3
@@ -353,7 +353,7 @@ footnote-section-p query) ) )
       (--)
       (<grid> 7
         ,"Archived?" NIL
-         (gui 'archivedp '(+Var +Checkbox)
+         (gui 'archived-p '(+Var +Checkbox)
             '*OrgHeadlineArchivedP ) NIL
         ,"Footnote-Section?" NIL
          (gui 'footnote-section-p '(+Var +Checkbox)
@@ -364,8 +364,7 @@ footnote-section-p query) ) )
 todo-keyword tags title-stamp-start title-stamp-end
 title-stamp= scheduled-start scheduled-end scheduled= deadline-start
 deadline-end deadline= closed-start closed-end closed= properties
-author creation-date-start creation-date-end creation-date= archivedp
-footnote-section-p query) ) )
+author creation-date-start creation-date-end creation-date= archived-p footnote-section-p query) ) )
       (gui 'query '(+QueryChart) (cho)
          '(goal
             (quote
@@ -503,8 +502,10 @@ footnote-section-p query) ) )
                       (cons (or *OrgHeadlineCreationDateStart
                                *OrgHeadlineCreationDateEnd NIL)
                             (or *OrgHeadlineCreationDateEnd
-                               *OrgHeadlineCreationDateStart T ) ) ) ) )
-               @Author *OrgHeadlineAuthor @ArchivedP *OrgHeadlineArchivedP
+                               *OrgHeadlineCreationDateStart T ) ) )
+                   ) )
+               @Author *OrgHeadlineAuthor
+               @ArchivedP *OrgHeadlineArchivedP
                @FootnoteSectionP *OrgHeadlineFootnoteSectionP
                
                (select (@@)
@@ -520,14 +521,13 @@ footnote-section-p query) ) )
                    ## properties
                    (author +OrgData
                       @Author (ptree +OrgHeadline) )
-                   (archivedp +OrgHeadline @ArchivedP)
+                   (archived-p +OrgHeadline @ArchivedP)
                    (footnote-section-p
                       +OrgHeadline @FootnoteSectionP ) )
                   (range @TitleStampRng @@ title-stamp)
                   (range @ScheduledRng @@ scheduled)
                   (range @DeadlineRng @@ deadline)
                   (range @ClosedRng @@ closed)
-
                   (head @Category @@ category)
                   (range @Level @@ level)
                   (range @Priority @@ priority)
@@ -535,10 +535,11 @@ footnote-section-p query) ) )
                   ## tags
                   (tolr @Author @@ ptree author)
                   (range @CreationDateRng @@ creation-date)
-                  (head @ArchivedP @@ archivedp)
+                  ## (head @ArchivedP @@ archivedp)
+                  (or ((not @ArchivedP))
+                     ((val T @@ archived-p)) )
                   (or ((not @FootnoteSectionP))
-                     ((val T @@ footnote-section-p)) )
- ) ) )
+                     ((val T @@ footnote-section-p)) ) ) ) )
          7
          '((This)
             (list
@@ -913,3 +914,5 @@ footnote-section-p query) ) )
          (T (prin Str)) ) ) )
 
 ## iorg/gui.l ends here
+
+(0)
