@@ -95,9 +95,10 @@
          (cons 'emacsclient
             "-s" "iorg-server" "-e" (rest) )
          (while (echo "#")
-            (msg "inside while ...")
+            ## (msg "inside while ...")
             (prin "\#")
-            (msg "end while ...") ) )
+            ## (msg "end while ...")
+            ) )
       ## (out 'emc (echo)) ) )
       (eval Exe) ) )
 

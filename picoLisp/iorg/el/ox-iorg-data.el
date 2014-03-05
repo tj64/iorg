@@ -450,6 +450,14 @@ MATCH is the match-string to be converted, with 'nil' becoming
   (and (stringp strg)
         (replace-regexp-in-string "\n" "^J" strg)))
 
+(defun org-iorg-data-fix-carets (strg)
+  "Escape carets"
+  (and (stringp strg)
+        (replace-regexp-in-string
+	 "\\^"
+	 (regexp-quote "^")
+	 strg nil t)))
+
 ;;;; Template
 
 (defun org-iorg-data-template (contents info)
@@ -746,7 +754,8 @@ CONTENTS is its contents, as a string or nil.  INFO is ignored."
   "Filter final output string STRG ignoring BACKEND and INFO."
   (let ((print-escape-newlines t))
     (org-iorg-data-fix-newlines
-     (org-iorg-data-nil-and-t-to-uppercase strg))))
+     (org-iorg-data-fix-carets
+      (org-iorg-data-nil-and-t-to-uppercase strg)))))
 
 
 ;; (defun org-iorg-data-filter-headline-function (headline backend info)

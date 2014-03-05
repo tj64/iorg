@@ -185,11 +185,10 @@
          (gui 'author '(+E/R +TextField)
             '(author : home obj) 30 ) )
       (--)
-      (<grid> 7
+      (<grid> 4
         ,"Creation-Date" NIL
         (gui 'creation-date '(+E/R +ObjView +DateField)
-               '(creation-date : home obj) ) NIL
-        ,"Creation-Time" NIL
+               '(creation-date : home obj) ) 
          (gui 'creation-time '(+E/R +ObjView +TimeField)
                '(creation-time : home obj) ) )
 
