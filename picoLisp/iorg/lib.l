@@ -95,9 +95,7 @@
          (cons 'emacsclient
             "-s" "iorg-server" "-e" (rest) )
          (while (echo "#")
-            ## (msg "inside while ...")
             (prin "\#")
-            ## (msg "end while ...")
             ) )
       ## (out 'emc (echo)) ) )
       (eval Exe) ) )
@@ -743,7 +741,21 @@
 ## FIXME fast, but renders lots of \n in html output
 ## let ox-html.el render Org-file
 (de oxRender (Path)
-   (ems '(echo)
+   ## (ems '(echo)
+
+   ## (ems '(use C (char)
+   ##          (loop
+   ##             (setq C (char))
+   ##             (T (eof))
+   ##             (prin C) ) )
+
+     (ems '(use F (char)
+              (fifo 'F (char))
+              (loop
+                 (fifo 'F (char) )
+                 (T (eof))
+                 (prin (fifo 'F)) ) )
+
       (pack
          "(with-temp-buffer "
          "(insert-file-contents "

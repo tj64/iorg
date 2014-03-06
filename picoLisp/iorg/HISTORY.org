@@ -1,4 +1,19 @@
-* NEXT Version 1.0
+* NEXT Version 0.3
+** Fix URLs in html wiki pages 
+   [2014-03-06 Do 11:04]
+*** TODO Fix URLs in files uploaded in HELP page
+   [2014-03-06 Do 11:05]
+*** TODO Fix footnote URLs in wiki pages
+    [2014-03-06 Do 11:06]
+** TODO announce in picolisp mailing list
+   [2013-07-16 Di 02:20]
+** TODO announce in org-mode mailing list
+   [2013-07-16 Di 02:20]
+** TODO set version tag and push to github
+   [2013-07-16 Di 02:20]
+
+* DONE Version 0.2
+  - State "DONE"       from "NEXT"       [2014-03-06 Do 11:04]
 ** TODO announce in picolisp mailing list
    [2013-07-16 Di 02:20]
 ** TODO announce in org-mode mailing list
@@ -7,7 +22,8 @@
    [2013-07-16 Di 02:20]
 
 
-* NEXT Version 0.9
+* DONE Version 0.1
+  - State "DONE"       from "NEXT"       [2014-03-06 Do 11:04]
 ** TODO secure TCP server: ckeck .pw file, check for tty/localhost, cmd memq allowed?
    [2013-08-16 Fr 16:14]
 
