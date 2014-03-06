@@ -1,36 +1,77 @@
-* NEXT Version 0.3
-** Fix URLs in html wiki pages 
-   [2014-03-06 Do 11:04]
-*** TODO Fix URLs in files uploaded in HELP page
-   [2014-03-06 Do 11:05]
-*** TODO Fix footnote URLs in wiki pages
-    [2014-03-06 Do 11:06]
-** TODO announce in picolisp mailing list
-   [2013-07-16 Di 02:20]
-** TODO announce in org-mode mailing list
-   [2013-07-16 Di 02:20]
-** TODO set version tag and push to github
-   [2013-07-16 Di 02:20]
+* TODO Version 0.5 
+  [2014-03-06 Do 11:56]
 
-* DONE Version 0.2
-  - State "DONE"       from "NEXT"       [2014-03-06 Do 11:04]
-** TODO announce in picolisp mailing list
-   [2013-07-16 Di 02:20]
-** TODO announce in org-mode mailing list
-   [2013-07-16 Di 02:20]
-** TODO set version tag and push to github
-   [2013-07-16 Di 02:20]
+** TODO add taskjuggler and ledger support
+   [2014-03-06 Do 13:50]
+** TODO add habits to iorg
+   [2014-03-06 Do 13:49]
+** TODO add event-logging functionality to iorg
+   [2014-03-06 Do 13:48]
+*** TODO deal with LOG drawers in Org-files
+   [2014-03-06 Do 13:52]
+** TODO add capture functionality to iorg
+   [2014-03-06 Do 13:47]
+** TODO add clocking functionality to iorg
+   [2014-03-06 Do 13:47]
+** TODO write w3m minor-modes for iorg and iorg-agenda
+   [2014-03-06 Do 12:28]
+** TODO report bugs wrt to emacsclient printing unwanted _ and "
+   [2014-03-06 Do 11:15]
 
+** TODO make *iorg-serv-proc* buffer names unique
+  [2014-03-06 Do 12:12]
 
-* DONE Version 0.1
-  - State "DONE"       from "NEXT"       [2014-03-06 Do 11:04]
-** TODO secure TCP server: ckeck .pw file, check for tty/localhost, cmd memq allowed?
-   [2013-08-16 Fr 16:14]
+** TODO fix javascript
+   [2014-03-06 Do 12:12]
 
-look at bin/psh and lib/http.l (-> function psh)
+** TODO run picodoc on er.l, fix relations in picodoc
+   [2014-03-06 Do 12:12]
+
+** TODO write iorg-minor-mode.el
+   [2014-03-06 Do 12:12]
+
+for editing and publishing from 
+ - Org-mode
+   (use current buffer/file & CUSTOM-ID (or title-string) as ptree &
+   headline to search for)
+ - Dired 
+   (use file under point as ptree to search for)
+ - globally (file-name completion with org-agenda-files)
+
+use prefix args to distinguish cases.
+
+use either iorg-scrape-server or emacs-w3m to navigate and use web-ui.
+
+*** TODO define core-functions in iorg-minor-mode
+   [2014-03-06 Do 12:07]
+iorg-[login,logout,edit,delete]
+
+*** TODO define capture functions in iorg-minor-mode
+    [2014-03-06 Do 13:45]
+
+*** TODO define agenda functions in iorg-minor-mode
+    [2014-03-06 Do 13:46]
+
+*** TODO define clocking functions in iorg-minor-mode
+    [2014-03-06 Do 13:46]
+** TODO fix issues with additional list item in menu
+   [2014-03-06 Do 12:09]
+
+on graphic display only
+
+** TODO write more query-scripts
+   [2014-03-06 Do 12:08]
+
+ (like "queries/getDocList.l")
+
+** TODO write ox-iorg-form.el
+   [2014-03-06 Do 12:05]
+
+*** TODO cache .l pages produced by ox-iorg-form.el
+   [2014-03-06 Do 12:11]
 
 ** TODO fix scrape-server issue "IP address already bind"
-   [2013-08-15 Do 22:04]
+   [2014-03-06 Do 12:04]
 
 #+begin_quote
 [/home/tj/git/iorg/picoLisp/iorg/scrape-server.l:7] !? (port 6789)
@@ -38,45 +79,110 @@ IP bind error: Address already in use
 ? 
 #+end_quote
 
-** TODO write ox-iorg.el
-   [2013-08-15 Do 21:45]
-*** TODO write other templates (table.l, checkboxes.l, plain-list.l ...??)
+** TODO secure TCP server: check .pw file, check for tty/localhost, cmd memq allowed?
+   [2014-03-06 Do 12:05]
+look at bin/psh and lib/http.l (-> function psh)
+
+** TODO announce in picolisp mailing list
+   [2014-03-06 Do 11:56]
+** TODO announce in org-mode mailing list
+   [2014-03-06 Do 11:57]
+** TODO set version tag and push to github
+   [2014-03-06 Do 11:57]
+
+
+* TODO Version 0.4
+  [2014-03-06 Do 11:12]
+
+** TODO fix GUI for deadlines and closed
+   [2014-03-06 Do 11:54]
+
+keep timestamp datastructure, but reduce GUI fields to those actually
+valid for these planning types
+
+** TODO create base +OrgData object in init.l
+   [2014-03-06 Do 12:31]
+** TODO write iorg-agenda.l and choIorgAgenda in gui.l
+   [2014-03-06 Do 11:14]
+** TODO write export> method for +OrgData and +OrgHeadline
+   [2014-03-06 Do 11:12]
+** TODO set version tag and push to github
+   [2014-03-06 Do 11:57]
+
+* NEXT Version 0.3
+
+** TODO deal with repeaters in timestamp search
+   [2014-03-06 Do 13:50]
+** TODO enable adding new descendants to orgElements
+   [2014-03-06 Do 13:25]
+
+add button "[new descendant]" in orgData.l and orgHeadline.l, with
+trailing  "[ ] append?" checkbox
+
+** TODO fix use of grids in GUIs
+   [2014-03-06 Do 11:11]
+
+use grid only with >1 rows, use '-' to span fields over several
+columns (like in table rows ...)
+
+** TODO fix pilog search for properties
+   [2014-03-06 Do 11:11]
+** TODO fix pilog search for tags
+   [2014-03-06 Do 11:10]
+** TODO fix import of headline properties
+   [2014-03-06 Do 11:10]
+** TODO fix URLs in html wiki pages
+   [2014-03-06 Do 11:04]
+*** TODO fix URLs in files uploaded in HELP page
+   [2014-03-06 Do 11:05]
+*** TODO fix footnote URLs in wiki pages
+    [2014-03-06 Do 11:06]
+** TODO set version tag and push to github
+   [2014-03-06 Do 11:58]
+
+* DONE Version 0.2
+  - State "DONE"       from "NEXT"       [2014-03-06 Do 11:04]
+
+/NOTE: this is incomplete and was edited afterwards/
+
+** DONE write ox-iorg-data.el
+   - State "DONE"       from "TODO"       [2014-03-06 Do 12:03]
+   [2013-07-16 Di 02:30]
+
+** DONE set version tag and push to github
+   - State "DONE"       from "TODO"       [2014-03-06 Do 11:55]
+   [2013-07-16 Di 02:20]
+
+
+* DONE Version 0.1
+  - State "DONE"       from "NEXT"       [2014-03-06 Do 11:04]
+
+/NOTE: this is incomplete and was edited afterwards/
+
+*** CANCELLED write other templates :CANCELLED:
+    - State "CANCELLED"  from "TODO"       [2014-03-06 Do 11:59] \\
+      not needed
     [2013-08-15 Do 21:50]
-*** TODO write preliminary "iorg/templates/headline.l"
+
+(table.l, checkboxes.l, plain-list.l ...??) 
+
+*** DONE write preliminary "iorg/templates/headline.l"
+    - State "DONE"       from "TODO"       [2014-03-06 Do 11:59]
     [2013-08-15 Do 21:47]
-*** TODO write "iorg/er.l"
+*** DONE write "iorg/er.l"
+    - State "DONE"       from "TODO"       [2014-03-06 Do 11:59]
     [2013-08-15 Do 21:47]
-** TODO make preliminary versions of iorg-dired and iorg-agenda work
-   [2013-08-15 Do 21:44]
-** TODO write more query-scripts (like "queries/getDocList.l")
-   [2013-08-15 Do 21:42]
-** TODO make repl and scrape-server load "iorg/lib" (-> displayAll)
+** DONE make repl and scrape-server load "iorg/lib" (-> displayAll)
+   - State "DONE"       from "TODO"       [2014-03-06 Do 12:06]
    [2013-08-15 Do 21:41]
-** TODO define core-functions: iorg-[login,logout,edit,delete]
-   [2013-08-15 Do 21:40]
 ** DONE fix issues with calling `iorg-scrape-start-server
    CLOSED: [2013-08-16 Fr 00:56]
    :LOGBOOK:
    - State "DONE"       from "TODO"       [2013-08-16 Fr 00:56]
    :END:
    [2013-08-15 Do 21:38]
-** TODO make *iorg-serv-proc* buffer names unique
-   [2013-08-15 Do 21:35]
-** TODO fix internal links in preview of uploaded files on help page
-   [2013-08-15 Do 21:34]
-** TODO fix issues with additional list item in menu
-   [2013-07-20 Sa 00:50]
-** TODO write iorg-minor-mode.el for editing and publishing from Emacs
-   [2013-07-16 Di 02:31]
-** TODO fix javascript
-   [2013-07-16 Di 02:30]
-** TODO cache .l pages produced by ox-iorg.el
-   [2013-07-16 Di 02:30]
-** TODO write ox-iorg.el
-   [2013-07-16 Di 02:30]
-** TODO run picodoc on er.l, fix relations in picodoc
-   [2013-07-16 Di 02:36]
-** TODO define classes
+** DONE define classes
+   - State "DONE"       from "TODO"       [2014-03-06 Do 12:01]
    [2013-07-16 Di 02:24]
 ** DONE make iorg-repl load "lib/eedit.l" (-> inferior-picolisp.el)
    CLOSED: [2013-08-15 Do 21:46]
@@ -108,10 +214,7 @@ IP bind error: Address already in use
    - State "DONE"       from "TODO"       [2013-07-16 Di 16:57]
    :END:
    [2013-07-16 Di 02:21]
-** TODO announce in picolisp mailing list
-   [2013-07-16 Di 02:20]
-** TODO announce in org-mode mailing list
-   [2013-07-16 Di 02:20]
-** TODO set version tag and push to github
+** DONE set version tag and push to github
+   - State "DONE"       from "TODO"       [2014-03-06 Do 11:55]
    [2013-07-16 Di 02:20]
 

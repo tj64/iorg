@@ -738,24 +738,26 @@
 
 ## ** Render document as HTML
 
-## FIXME fast, but renders lots of \n in html output
+## FIXME replace hacks with fix of the root cause (in emacsclient ?)
 ## let ox-html.el render Org-file
 (de oxRender (Path)
+   ## ## preferable version
    ## (ems '(echo)
 
+   ## ## hack that does not delete trailing double-quotes
    ## (ems '(use C (char)
    ##          (loop
    ##             (setq C (char))
    ##             (T (eof))
    ##             (prin C) ) )
 
+   ## ## hack that deletes both unwanted double-quotes
      (ems '(use F (char)
               (fifo 'F (char))
               (loop
                  (fifo 'F (char) )
                  (T (eof))
                  (prin (fifo 'F)) ) )
-
       (pack
          "(with-temp-buffer "
          "(insert-file-contents "
