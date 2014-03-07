@@ -59,6 +59,28 @@
 
 (mime "d" NIL 120)
 
+## ** Global iOrg Variables
+
+(setq
+   *TimestampType (cons
+                    '("---")
+                    (mapcar
+                       '((S) (cons (name S) S ) )
+                       '(active inactive active-range
+                           inactive-range ) ) )
+
+   *RepeaterType (cons
+                    '("---")
+                    (mapcar
+                       '((S) (cons (name S) S ) )
+                       '(cumulate restart catch-up) ) )
+
+   *RepeaterUnit (cons
+                       '("---")
+                       (mapcar
+                          '((S) (cons (name S) S ) )
+                          '(hour day week month year) ) ) )
+                    
 ## ** Entry point
 
 ## FIXME: account for possible "../../"

@@ -519,8 +519,7 @@ author creation-date-start creation-date-end creation-date= archived-p footnote-
                    (deadline +OrgHeadline @DeadlineRng)
                    (closed +OrgHeadline @ClosedRng)
                    ## properties
-                   (author +OrgData
-                      @Author (ptree +OrgHeadline) )
+                   (author +OrgHeadline @Author)
                    (archived-p +OrgHeadline @ArchivedP)
                    (footnote-section-p
                       +OrgHeadline @FootnoteSectionP ) )
@@ -533,7 +532,7 @@ author creation-date-start creation-date-end creation-date= archived-p footnote-
                   (range @Priority @@ priority)
                   (head @Todo @@ todo-keyword)
                   ## tags
-                  (tolr @Author @@ ptree author)
+                  (tolr @Author @@ author)
                   (range @CreationDateRng @@ creation-date)
                   ## (head @ArchivedP @@ archivedp)
                   (or ((not @ArchivedP))
