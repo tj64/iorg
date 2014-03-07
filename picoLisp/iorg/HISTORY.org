@@ -1,6 +1,8 @@
 * TODO Version 0.5 
   [2014-03-06 Do 11:56]
 
+** TODO add 'calender-style' date/time insertion help
+   [2014-03-07 Fr 08:34]
 ** TODO add taskjuggler and ledger support
    [2014-03-06 Do 13:50]
 ** TODO add habits to iorg
@@ -15,8 +17,10 @@
    [2014-03-06 Do 13:47]
 ** TODO write w3m minor-modes for iorg and iorg-agenda
    [2014-03-06 Do 12:28]
-** TODO report bugs wrt to emacsclient printing unwanted _ and "
+** TODO report bugs wrt to emacsclient
    [2014-03-06 Do 11:15]
+
+printing unwanted _ and "
 
 ** TODO make *iorg-serv-proc* buffer names unique
   [2014-03-06 Do 12:12]
@@ -79,9 +83,11 @@ IP bind error: Address already in use
 ? 
 #+end_quote
 
-** TODO secure TCP server: check .pw file, check for tty/localhost, cmd memq allowed?
+** TODO secure TCP server
    [2014-03-06 Do 12:05]
 look at bin/psh and lib/http.l (-> function psh)
+
+check .pw file, check for tty/localhost, cmd memq allowed?
 
 ** TODO announce in picolisp mailing list
    [2014-03-06 Do 11:56]
@@ -111,6 +117,9 @@ valid for these planning types
 
 * NEXT Version 0.3
 
+** DONE make some timestamp fields drop-down lists
+   - State "DONE"       from "TODO"       [2014-03-07 Fr 12:20]
+   [2014-03-07 Fr 09:30]
 ** TODO deal with repeaters in timestamp search
    [2014-03-06 Do 13:50]
 ** TODO enable adding new descendants to orgElements
@@ -119,6 +128,8 @@ valid for these planning types
 add button "[new descendant]" in orgData.l and orgHeadline.l, with
 trailing  "[ ] append?" checkbox
 
+** TODO write chk> methods for +OrgData and +OrgHeadline
+   [2014-03-07 Fr 11:53]
 ** TODO fix use of grids in GUIs
    [2014-03-06 Do 11:11]
 

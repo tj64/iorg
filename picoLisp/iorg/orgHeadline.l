@@ -94,7 +94,14 @@
            (<grid> 5
               ,"Titlestamp" NIL NIL NIL NIL
               ,"Type" NIL
-              (gui 1 '(+SymField) 14) NIL NIL
+              (gui 1 '(+Map +TextField)
+                 '(("---" . NIL)
+                   ("active" . active)
+                   ("inactive" . inactive)
+                   ("active-range" . active-range)
+                   ("inactive-range" . inactive-range) )
+                 '("---" "active" "inactive" "active-range"
+                   "inactive-range" ) ) NIL NIL
               ,"Start (Date/Time)" NIL
               (gui 2 '(+DateField) 14)
               (gui 3 '(+TimeField) 8) NIL
@@ -102,16 +109,33 @@
               (gui 4 '(+DateField) 14)
               (gui 5 '(+TimeField) 8) NIL
               ,"Repeater (Type/Value/Unit)" NIL
-              (gui 6 '(+SymField) 14)
+              (gui 6 '(+Map +TextField)
+                 '(("---" . NIL)
+                   ("cumulate (+)" . cumulate)
+                   ("restart (.+)" . restart)
+                   ("catch-up (++)" . catch-up) )
+                 '("---" "cumulate (+)" "restart (.+)"
+                   "catch-up (++)" ) )
               (gui 7 '(+NumField) 8)
-              (gui 8 '(+SymField) 8) )
+              (gui 8 '(+Map +TextField)
+                 '(("---" . NIL) ("hour" . hour) ("day" . day)
+                   ("week" . week) ("month" . month)
+                   ("year" . year) )
+                 '("---" "hour" "day" "week" "month" "year") ) )
         (----)
         (gui '(+E/R +Fmt +Chart) '(scheduled : home obj)
            list car 8 ) 
            (<grid> 5
               ,"Scheduled" NIL NIL NIL NIL
               ,"Type" NIL
-              (gui 1 '(+SymField) 14) NIL NIL
+              (gui 1 '(+Map +TextField)
+                 '(("---" . NIL)
+                   ("active" . active)
+                   ("inactive" . inactive)
+                   ("active-range" . active-range)
+                   ("inactive-range" . inactive-range) )
+                 '("---" "active" "inactive" "active-range"
+                   "inactive-range" ) ) NIL NIL
               ,"Start (Date/Time)" NIL
               (gui 2 '(+DateField) 14)
               (gui 3 '(+TimeField) 8) NIL
@@ -119,16 +143,33 @@
               (gui 4 '(+DateField) 14)
               (gui 5 '(+TimeField) 8) NIL
               ,"Repeater (Type/Value/Unit)" NIL
-              (gui 6 '(+SymField) 14)
+              (gui 6 '(+Map +TextField)
+                 '(("---" . NIL)
+                   ("cumulate (+)" . cumulate)
+                   ("restart (.+)" . restart)
+                   ("catch-up (++)" . catch-up) )
+                 '("---" "cumulate (+)" "restart (.+)"
+                   "catch-up (++)" ) ) 
               (gui 7 '(+NumField) 8)
-              (gui 8 '(+SymField) 8) )
+              (gui 8 '(+Map +TextField)
+                 '(("---" . NIL) ("hour" . hour) ("day" . day)
+                   ("week" . week) ("month" . month)
+                   ("year" . year) )
+                 '("---" "hour" "day" "week" "month" "year") ) )
         (----)
         (gui '(+E/R +Fmt +Chart) '(deadline : home obj)
            list car 8 ) 
            (<grid> 5
               ,"Deadline" NIL NIL NIL NIL
               ,"Type" NIL
-              (gui 1 '(+SymField) 14) NIL NIL
+              (gui 1 '(+Map +TextField)
+                 '(("---" . NIL)
+                   ("active" . active)
+                   ("inactive" . inactive)
+                   ("active-range" . active-range)
+                   ("inactive-range" . inactive-range) )
+                 '("---" "active" "inactive" "active-range"
+                   "inactive-range" ) ) NIL NIL
               ,"Start (Date/Time)" NIL
               (gui 2 '(+DateField) 14)
               (gui 3 '(+TimeField) 8) NIL
@@ -136,16 +177,32 @@
               (gui 4 '(+Lock +DateField) 14)
               (gui 5 '(+Lock +TimeField) 8) NIL
               ,"Repeater (Type/Value/Unit)" NIL
-              (gui 6 '(+Lock +SymField) 14)
-              (gui 7 '(+Lock +NumField) 8)
-              (gui 8 '(+Lock +SymField) 8) )
-        (----)
+              (gui 6 '(+Map +TextField)
+                 '(("---" . NIL)
+                   ("cumulate (+)" . cumulate)
+                   ("restart (.+)" . restart)
+                   ("catch-up (++)" . catch-up) )
+                 '("---" "cumulate (+)" "restart (.+)"
+                   "catch-up (++)" ) )
+              (gui 7 '(+NumField) 8)
+              (gui 8 '(+Map +TextField)
+                 '(("---" . NIL) ("hour" . hour) ("day" . day)
+                   ("week" . week) ("month" . month)
+                   ("year" . year) )
+                 '("---" "hour" "day" "week" "month" "year") ) )              (----)
         (gui '(+E/R +Fmt +Chart) '(closed : home obj)
            list car 8 ) 
            (<grid> 5
               ,"Closed" NIL NIL NIL NIL
               ,"Type" NIL
-              (gui 1 '(+SymField) 14) NIL NIL
+              (gui 1 '(+Map +TextField)
+                 '(("---" . NIL)
+                   ("active" . active)
+                   ("inactive" . inactive)
+                   ("active-range" . active-range)
+                   ("inactive-range" . inactive-range) )
+                 '("---" "active" "inactive" "active-range"
+                   "inactive-range" ) ) NIL NIL
               ,"Start (Date/Time)" NIL
               (gui 2 '(+DateField) 14)
               (gui 3 '(+TimeField) 8) NIL
@@ -153,9 +210,19 @@
               (gui 4 '(+Lock +DateField) 14)
               (gui 5 '(+Lock +TimeField) 8) NIL
               ,"Repeater (Type/Value/Unit)" NIL
-              (gui 6 '(+Lock +SymField) 14)
+              (gui 6 '(+Map +TextField)
+                 '(("---" . NIL)
+                   ("cumulate (+)" . cumulate)
+                   ("restart (.+)" . restart)
+                   ("catch-up (++)" . catch-up) )
+                 '("---" "cumulate (+)" "restart (.+)"
+                   "catch-up (++)" ) )
               (gui 7 '(+Lock +NumField) 8)
-              (gui 8 '(+Lock +SymField) 8) )
+              (gui 8 '(+Map +TextField)
+                 '(("---" . NIL) ("hour" . hour) ("day" . day)
+                   ("week" . week) ("month" . month)
+                   ("year" . year) )
+                 '("---" "hour" "day" "week" "month" "year") ) )
        (----)
       (gui '(+E/R +Chart) '(properties : home obj) 4)
       (<table> NIL ,"Properties" '((NIL ,"Key") (NIL ,"Value"))
