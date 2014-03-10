@@ -97,13 +97,6 @@
               (gui 1 '(+Map +TextField)
                  *TimestampType
                  (mapcar car *TimestampType) ) NIL NIL
-                 ## '(("---" . NIL)
-                 ##   ("active" . active)
-                 ##   ("inactive" . inactive)
-                 ##   ("active-range" . active-range)
-                 ##   ("inactive-range" . inactive-range) )
-                 ## '("---" "active" "inactive" "active-range"
-                 ##   "inactive-range" ) ) NIL NIL
               ,"Start" NIL
               (gui 2 '(+DateField) 14)
               (gui 3 '(+TimeField) 8) NIL
@@ -114,20 +107,10 @@
               (gui 6 '(+Map +TextField)
                  *RepeaterType
                  (mapcar car *RepeaterType) )
-                 ## '(("---" . NIL)
-                 ##   ("cumulate (+)" . cumulate)
-                 ##   ("restart (.+)" . restart)
-                 ##   ("catch-up (++)" . catch-up) )
-                 ## '("---" "cumulate (+)" "restart (.+)"
-                 ##   "catch-up (++)" ) )
               (gui 7 '(+NumField) 8)
               (gui 8 '(+Map +TextField)
                  *RepeaterUnit
                  (mapcar car *RepeaterUnit) ) )
-                 ## '(("---" . NIL) ("hour" . hour) ("day" . day)
-                 ##   ("week" . week) ("month" . month)
-                 ##   ("year" . year) )
-                 ## '("---" "hour" "day" "week" "month" "year") ) )
         (----)
         (gui '(+E/R +Fmt +Chart) '(scheduled : home obj)
            list car 8 ) 
@@ -137,13 +120,6 @@
               (gui 1 '(+Map +TextField)
                  *TimestampType
                  (mapcar car *TimestampType) ) NIL NIL
-                 ## '(("---" . NIL)
-                 ##   ("active" . active)
-                 ##   ("inactive" . inactive)
-                 ##   ("active-range" . active-range)
-                 ##   ("inactive-range" . inactive-range) )
-                 ## '("---" "active" "inactive" "active-range"
-                 ##   "inactive-range" ) ) NIL NIL
               ,"Start" NIL
               (gui 2 '(+DateField) 14)
               (gui 3 '(+TimeField) 8) NIL
@@ -154,20 +130,10 @@
               (gui 6 '(+Map +TextField)
                  *RepeaterType
                  (mapcar car *RepeaterType) )
-                 ## '(("---" . NIL)
-                 ##   ("cumulate (+)" . cumulate)
-                 ##   ("restart (.+)" . restart)
-                 ##   ("catch-up (++)" . catch-up) )
-                 ## '("---" "cumulate (+)" "restart (.+)"
-                 ##   "catch-up (++)" ) ) 
               (gui 7 '(+NumField) 8)
               (gui 8 '(+Map +TextField)
                  *RepeaterUnit
                  (mapcar car *RepeaterUnit) ) )
-                 ## '(("---" . NIL) ("hour" . hour) ("day" . day)
-                 ##   ("week" . week) ("month" . month)
-                 ##   ("year" . year) )
-                 ## '("---" "hour" "day" "week" "month" "year") ) )
         (----)
         (gui '(+E/R +Fmt +Chart) '(deadline : home obj)
            list car 8 ) 
@@ -177,13 +143,6 @@
               (gui 1 '(+Map +TextField)
                  *TimestampType
                  (mapcar car *TimestampType) ) NIL NIL
-                 ## '(("---" . NIL)
-                 ##   ("active" . active)
-                 ##   ("inactive" . inactive)
-                 ##   ("active-range" . active-range)
-                 ##   ("inactive-range" . inactive-range) )
-                 ## '("---" "active" "inactive" "active-range"
-                 ##   "inactive-range" ) ) NIL NIL
               ,"Start" NIL
               (gui 2 '(+DateField) 14)
               (gui 3 '(+TimeField) 8) NIL
@@ -194,21 +153,11 @@
               (gui 6 '(+Map +TextField)
                  *RepeaterType
                  (mapcar car *RepeaterType) )
-                 ## '(("---" . NIL)
-                 ##   ("cumulate (+)" . cumulate)
-                 ##   ("restart (.+)" . restart)
-                 ##   ("catch-up (++)" . catch-up) )
-                 ## '("---" "cumulate (+)" "restart (.+)"
-                 ##   "catch-up (++)" ) )
               (gui 7 '(+NumField) 8)
               (gui 8 '(+Map +TextField)
                  *RepeaterUnit
                  (mapcar car *RepeaterUnit) ) )
-                 ## '(("---" . NIL) ("hour" . hour) ("day" . day)
-                 ##   ("week" . week) ("month" . month)
-                 ##   ("year" . year) )
-                 ## '("---" "hour" "day" "week" "month" "year") ) )    
-(----)
+           (----)
         (gui '(+E/R +Fmt +Chart) '(closed : home obj)
            list car 8 ) 
            (<grid> 5
@@ -217,14 +166,7 @@
               (gui 1 '(+Map +TextField)
                  *TimestampType
                  (mapcar car *TimestampType) ) NIL NIL
-                 ## '(("---" . NIL)
-                 ##   ("active" . active)
-                 ##   ("inactive" . inactive)
-                 ##   ("active-range" . active-range)
-                 ##   ("inactive-range" . inactive-range) )
-                 ## '("---" "active" "inactive" "active-range"
-                 ##   "inactive-range" ) ) NIL NIL
-              ,"Start" NIL
+             ,"Start" NIL
               (gui 2 '(+DateField) 14)
               (gui 3 '(+TimeField) 8) NIL
               ,"End" NIL
@@ -234,20 +176,10 @@
               (gui 6 '(+Map +TextField)
                  *RepeaterType
                  (mapcar car *RepeaterType) )
-                 ## '(("---" . NIL)
-                 ##   ("cumulate (+)" . cumulate)
-                 ##   ("restart (.+)" . restart)
-                 ##   ("catch-up (++)" . catch-up) )
-                 ## '("---" "cumulate (+)" "restart (.+)"
-                 ##   "catch-up (++)" ) )
               (gui 7 '(+Lock +NumField) 8)
               (gui 8 '(+Map +TextField)
                  *RepeaterUnit
                  (mapcar car *RepeaterUnit) ) )
-                 ## '(("---" . NIL) ("hour" . hour) ("day" . day)
-                 ##   ("week" . week) ("month" . month)
-                 ##   ("year" . year) )
-                 ## '("---" "hour" "day" "week" "month" "year") ) )
        (----)
       (gui '(+E/R +Chart) '(properties : home obj) 4)
       (<table> NIL ,"Properties" '((NIL ,"Key") (NIL ,"Value"))

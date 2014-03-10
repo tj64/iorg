@@ -687,7 +687,7 @@
 
 ## It can be used like
 
-##    (log "+myLogFile" '(gt0 le0 + - * /)
+##    (logtrace "+myLogFile" '(gt0 le0 + - * /)
 ##       (myProgram
 ##          (myFun
 ##             (foo (bar ..)) ) ) )
@@ -698,7 +698,7 @@
 ## The "+" is to append the output to the log file. Without it,
 ## "myLogFile" will be overwritten from scratch each time.
 
-(de log (File Funs . Prg)
+(de logtrace (File Funs . Prg)
    (err File
       (prog2
          (mapc trace Funs)

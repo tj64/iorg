@@ -117,6 +117,8 @@ valid for these planning types
 
 * NEXT Version 0.3
 
+** TODO Improve GUI for timestamps
+   [2014-03-10 Mo 08:49]
 ** DONE make some timestamp fields drop-down lists
    - State "DONE"       from "TODO"       [2014-03-07 Fr 12:20]
    [2014-03-07 Fr 09:30]
