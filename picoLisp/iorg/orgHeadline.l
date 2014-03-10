@@ -89,97 +89,83 @@
                               (split (chop Strg) " ") ) ) ) )
             50 ) )
         (----)
-        (gui '(+E/R +Fmt +Chart) '(title-stamp : home obj)
-           list car 8 ) 
-           (<grid> 5
-              ,"Titlestamp" NIL NIL NIL NIL
-              ,"Type" NIL
+      (<table> NIL ,"Planning" NIL
+         (<row> NIL ,"Titlestamp")
+         (<row> NIL
+           (prog
+              (gui '(+E/R +Fmt +Chart) '(title-stamp : home obj)
+                 list car 8 ) 
               (gui 1 '(+Map +TextField)
                  *TimestampType
-                 (mapcar car *TimestampType) ) NIL NIL
-              ,"Start" NIL
-              (gui 2 '(+DateField) 14)
-              (gui 3 '(+TimeField) 8) NIL
-              ,"End" NIL
-              (gui 4 '(+DateField) 14)
-              (gui 5 '(+TimeField) 8) NIL
-              ,"Repeater" NIL
+                 (mapcar car *TimestampType) ) 
+              (gui 2 '(+DateField) 10)
+              (gui 3 '(+TimeField) 8)
+              (gui 4 '(+DateField) 10)
+              (gui 5 '(+TimeField) 8)
               (gui 6 '(+Map +TextField)
                  *RepeaterType
                  (mapcar car *RepeaterType) )
-              (gui 7 '(+NumField) 8)
+              (gui 7 '(+NumField) 3)
               (gui 8 '(+Map +TextField)
                  *RepeaterUnit
-                 (mapcar car *RepeaterUnit) ) )
-        (----)
-        (gui '(+E/R +Fmt +Chart) '(scheduled : home obj)
-           list car 8 ) 
-           (<grid> 5
-              ,"Scheduled" NIL NIL NIL NIL
-              ,"Type" NIL
+                 (mapcar car *RepeaterUnit) ) ) )
+         (<row> NIL ,"Scheduled")
+         (<row> NIL
+           (prog
+              (gui '(+E/R +Fmt +Chart) '(scheduled : home obj)
+                 list car 8 )
               (gui 1 '(+Map +TextField)
                  *TimestampType
-                 (mapcar car *TimestampType) ) NIL NIL
-              ,"Start" NIL
-              (gui 2 '(+DateField) 14)
-              (gui 3 '(+TimeField) 8) NIL
-              ,"End" NIL
-              (gui 4 '(+DateField) 14)
-              (gui 5 '(+TimeField) 8) NIL
-              ,"Repeater" NIL
+                 (mapcar car *TimestampType) )
+              (gui 2 '(+DateField) 10)
+              (gui 3 '(+TimeField) 8)
+              (gui 4 '(+DateField) 10)
+              (gui 5 '(+TimeField) 8)
               (gui 6 '(+Map +TextField)
                  *RepeaterType
                  (mapcar car *RepeaterType) )
-              (gui 7 '(+NumField) 8)
+              (gui 7 '(+NumField) 3)
               (gui 8 '(+Map +TextField)
                  *RepeaterUnit
-                 (mapcar car *RepeaterUnit) ) )
-        (----)
-        (gui '(+E/R +Fmt +Chart) '(deadline : home obj)
-           list car 8 ) 
-           (<grid> 5
-              ,"Deadline" NIL NIL NIL NIL
-              ,"Type" NIL
+                 (mapcar car *RepeaterUnit) ) ) )
+         (<row> NIL ,"Deadline")
+         (<row> NIL
+           (prog
+              (gui '(+E/R +Fmt +Chart) '(deadline : home obj)
+                 list car 8 ) 
               (gui 1 '(+Map +TextField)
                  *TimestampType
-                 (mapcar car *TimestampType) ) NIL NIL
-              ,"Start" NIL
-              (gui 2 '(+DateField) 14)
-              (gui 3 '(+TimeField) 8) NIL
-              ,"End" NIL
-              (gui 4 '(+Lock +DateField) 14)
-              (gui 5 '(+Lock +TimeField) 8) NIL
-              ,"Repeater" NIL
+                 (mapcar car *TimestampType) )
+              (gui 2 '(+DateField) 10)
+              (gui 3 '(+TimeField) 8)
+              (gui 4 '(+DateField) 10)
+              (gui 5 '(+TimeField) 8)
               (gui 6 '(+Map +TextField)
                  *RepeaterType
                  (mapcar car *RepeaterType) )
-              (gui 7 '(+NumField) 8)
+              (gui 7 '(+NumField) 3)
               (gui 8 '(+Map +TextField)
                  *RepeaterUnit
-                 (mapcar car *RepeaterUnit) ) )
-           (----)
-        (gui '(+E/R +Fmt +Chart) '(closed : home obj)
-           list car 8 ) 
-           (<grid> 5
-              ,"Closed" NIL NIL NIL NIL
-              ,"Type" NIL
+                 (mapcar car *RepeaterUnit) ) ) )
+         (<row> NIL ,"Closed")
+         (<row> NIL
+           (prog
+              (gui '(+E/R +Fmt +Chart) '(closed : home obj)
+                 list car 8 ) 
               (gui 1 '(+Map +TextField)
                  *TimestampType
-                 (mapcar car *TimestampType) ) NIL NIL
-             ,"Start" NIL
-              (gui 2 '(+DateField) 14)
-              (gui 3 '(+TimeField) 8) NIL
-              ,"End" NIL
-              (gui 4 '(+Lock +DateField) 14)
-              (gui 5 '(+Lock +TimeField) 8) NIL
-              ,"Repeater" NIL
+                 (mapcar car *TimestampType) )
+              (gui 2 '(+DateField) 10)
+              (gui 3 '(+TimeField) 8)
+              (gui 4 '(+DateField) 10)
+              (gui 5 '(+TimeField) 8)
               (gui 6 '(+Map +TextField)
                  *RepeaterType
                  (mapcar car *RepeaterType) )
-              (gui 7 '(+Lock +NumField) 8)
+              (gui 7 '(+NumField) 3)
               (gui 8 '(+Map +TextField)
                  *RepeaterUnit
-                 (mapcar car *RepeaterUnit) ) )
+                 (mapcar car *RepeaterUnit) ) ) ) )
        (----)
       (gui '(+E/R +Chart) '(properties : home obj) 4)
       (<table> NIL ,"Properties" '((NIL ,"Key") (NIL ,"Value"))

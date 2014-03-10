@@ -61,25 +61,39 @@
 
 ## ** Global iOrg Variables
 
+## (setq
+##    *TimestampType (cons
+##                     '("---")
+##                     (mapcar
+##                        '((S) (cons (name S) S ) )
+##                        '(active inactive active-range
+##                            inactive-range ) ) )
+
+##    *RepeaterType (cons
+##                     '("---")
+##                     (mapcar
+##                        '((S) (cons (name S) S ) )
+##                        '(cumulate restart catch-up) ) )
+
+##    *RepeaterUnit (cons
+##                        '("---")
+##                        (mapcar
+##                           '((S) (cons (name S) S ) )
+##                           '(hour day week month year) ) ) )
+
 (setq
-   *TimestampType (cons
-                    '("---")
-                    (mapcar
-                       '((S) (cons (name S) S ) )
-                       '(active inactive active-range
-                           inactive-range ) ) )
+   *TimestampType '(("-" . NIL) ("<" . active) ("[" . inactive)
+                    ("<<" .  active-range) ("[[" . inactive-range) )
+   ## *TimestampTypeBeg '(("-" . NIL) ("<" . active) ("[" . inactive)
+   ##                     ("<<" . active-range) ("[[" . inactive-range))
+   ## *TimestampTypeEnd '(("-" . NIL) (">" . active) ("]" . inactive)
+   ##                     (">>" . active-range) ("]]" . inactive-range))
+   *RepeaterType '(("-" . NIL) ("+" . cumulate) (".+" . restart)
+                   ("++" . catch-up) )
 
-   *RepeaterType (cons
-                    '("---")
-                    (mapcar
-                       '((S) (cons (name S) S ) )
-                       '(cumulate restart catch-up) ) )
+   *RepeaterUnit '(("-" . NIL) ("h" . hour) ("d" . day) ("w" . week)
+                   ("m" . month) ("y" . year) ) )
 
-   *RepeaterUnit (cons
-                       '("---")
-                       (mapcar
-                          '((S) (cons (name S) S ) )
-                          '(hour day week month year) ) ) )
                     
 ## ** Entry point
 
