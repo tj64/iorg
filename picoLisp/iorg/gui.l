@@ -156,24 +156,24 @@
 
 (de choOrgData (Dst)
    (diaform '(Dst)
-      (<grid> 3
-         (searchButton '(init> (: home query))) NIL
+      ## (<grid> 3
+         (searchButton '(init> (: home query))) # NIL
          (resetButton '(input-buffer author creation-date-start
-creation-date-end creation-date= query ) ) )
+creation-date-end creation-date= query ) ) # )
       (--)
-      (<grid> 3
+      (<grid> 5
          ,"Input Buffer" NIL
          (gui 'input-buffer
-            '(+Focus +Var +TextField) '*OrgDataInputBuffer 20 )
+            '(+Focus +Var +TextField) '*OrgDataInputBuffer 28) - -
          ,"Author" NIL
-         (gui 'author '(+Var +TextField) '*OrgDataAuthor 20) )
-      (--)
-      (<grid> 7
+         (gui 'author '(+Var +TextField) '*OrgDataAuthor 28) - -
+      ## (--)
+      ## (<grid> 7
         ,"Creation-Date" NIL
             (gui 'creation-date-start '(+Var +DateField)
-               '*OrgDataCreationDateStart 10 ) NIL
+               '*OrgDataCreationDateStart 10 ) # NIL
             (gui 'creation-date-end '(+Var +DateField)
-               '*OrgDataCreationDateEnd 10 ) NIL
+               '*OrgDataCreationDateEnd 10 ) # NIL
              (gui 'creation-date= '(+Var +TextField)
                '*OrgDataCreationDate=
                '("==" ">=" "<=") ) )
