@@ -133,7 +133,8 @@ trailing  "[ ] append?" checkbox
 
 ** TODO write chk> methods for +OrgData and +OrgHeadline
    [2014-03-07 Fr 11:53]
-** TODO fix use of grids in GUIs
+** DONE fix use of grids in GUIs
+   - State "DONE"       from "TODO"       [2014-03-10 Mo 22:30]
    [2014-03-06 Do 11:11]
 
 use grid only with >1 rows, use '-' to span fields over several

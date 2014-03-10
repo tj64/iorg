@@ -237,55 +237,50 @@ creation-date-end creation-date= query ) ) )
 
 (de choOrgHeadline (Dst)
    (diaform '(Dst)
-      (<grid> 3
-         (searchButton '(init> (: home query))) NIL
+         (searchButton '(init> (: home query)))
          (resetButton '(category level level= priority priority=
 todo-keyword tags title-stamp-start title-stamp-end title-stamp=
 scheduled-start scheduled-end scheduled= deadline-start deadline-end
 deadline= closed-start closed-end closed= properties author
 creation-date-start creation-date-end creation-date= archived-p
-footnote-section-p query) ) )
+footnote-section-p query) )
       (--)
-      (<grid> 3
+      (<grid> 9
         ,"Category" NIL
          (gui 'category '(+Var +TextField)
-            '*OrgHeadlineCategory 20 ) )
-      (--)
-      (<grid> 14
+            '*OrgHeadlineCategory 30 ) - - - - - -
          ,"Level" NIL
          (gui 'level '(+Focus +Var +Map +Init +TextField)
             '*OrgHeadlineLevel
             '(("-" . NIL) ("1" . 1) ("2" . 2) ("3" . 3) ("4" . 4)
               ("5" . 5)( "6" . 6) ("7" . 7) ("8" . 8))
             "-"
-            '("-" "1" "2" "3" "4"  "5" "6" "7" "8") ) NIL
+            '("-" "1" "2" "3" "4"  "5" "6" "7" "8") )
          (gui 'level= '(+Var +TextField)
             '*OrgHeadlineLevel=
-            '("==" ">=" "<=") ) NIL
-         ,"Priority" NIL
+            '("==" ">=" "<=") )
+         ,"Priority"
          (gui 'priority '(+Var +Map +TextField)
             '*OrgHeadlinePriority
             '(("-" . NIL)
               ("A" . `(char "A"))
               ("B" . `(char "B"))
               ("C" . `(char "C")) )
-            '("-" "A" "B" "C") ) NIL
+            '("-" "A" "B" "C") )
          (gui 'priority= '(+Var +TextField)
             '*OrgHeadlinePriority=
             '("==" ">=" "<=") ) 
-         ,"Todo" NIL
+         ,"Todo"
          (gui 'todo-keyword '(+Var +Map +TextField)
             '*OrgHeadlineTodo
             '(("----" . NIL) )
-            '("----" "TODO" "DONE" "NEXT" "WAITING") ) NIL )
+            '("----" "TODO" "DONE" "NEXT" "WAITING") )
          ## (gui 'todo-keyword= '(+Var +TextField)
          ##    '*OrgHeadlineTodo=
          ##    '("==" ">=" "<=") ) )
-      (--)
-      (<grid> 3
         ,"Tags" NIL
          (gui 'tags '(+Var +TextField)
-            '*OrgHeadlineTags 40 ) )
+            '*OrgHeadlineTags 30 ) - - - - - - )
       (--)
       (<table>
          NIL ,"Planning" '(NIL (NIL ,"Start") (NIL ,"End") NIL)
@@ -336,35 +331,31 @@ footnote-section-p query) ) )
                (gui 4 '(+BubbleButton)) ) ) )
       (scroll 6)
       (--)
-      (<grid> 3
+      (<grid> 5
          ,"Author" NIL
          (gui 'author '(+Var +TextField)
-            '*OrgHeadlineAuthor 30 ) )
-      (--)
-      (<grid> 7
+            '*OrgHeadlineAuthor 30 ) - -
         ,"Creation-Date" NIL
             (gui 'creation-date-start '(+Var +DateField)
-               '*OrgHeadlineCreationDateStart 10 ) NIL
+               '*OrgHeadlineCreationDateStart 10 )
             (gui 'creation-date-end '(+Var +DateField)
-               '*OrgHeadlineCreationDateEnd 10 ) NIL
+               '*OrgHeadlineCreationDateEnd 10 )
              (gui 'creation-date= '(+Var +TextField)
                '*OrgHeadlineCreationDate=
-               '("==" ">=" "<=") ) )
-      (--)
-      (<grid> 7
+               '("==" ">=" "<=") )
         ,"Archived?" NIL
          (gui 'archived-p '(+Var +Checkbox)
-            '*OrgHeadlineArchivedP ) NIL
+            '*OrgHeadlineArchivedP ) - -
         ,"Footnote-Section?" NIL
          (gui 'footnote-section-p '(+Var +Checkbox)
-             '*OrgHeadlineFootnoteSectionP ) )            
-      (<grid> 3
+             '*OrgHeadlineFootnoteSectionP ) ) - -
+      (--)
          (searchButton '(init> (: home query))) NIL
          (resetButton '(category level level= priority priority=
 todo-keyword tags title-stamp-start title-stamp-end
 title-stamp= scheduled-start scheduled-end scheduled= deadline-start
 deadline-end deadline= closed-start closed-end closed= properties
-author creation-date-start creation-date-end creation-date= archived-p footnote-section-p query) ) )
+author creation-date-start creation-date-end creation-date= archived-p footnote-section-p query) )
       (gui 'query '(+QueryChart) (cho)
          '(goal
             (quote
