@@ -386,7 +386,6 @@
 
 (dm url> (Tab)
    (and (may OrgData) (list "iorg/orgHeadline.l" '*ID This)) )
-## FIXME needs to be called? makes sense?
 (dm check> ()
    (make
       (or (: level) (link ,"Org-Headline without level"))

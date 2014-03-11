@@ -144,7 +144,8 @@ columns (like in table rows ...)
    [2014-03-06 Do 11:11]
 ** TODO fix pilog search for tags
    [2014-03-06 Do 11:10]
-** TODO fix import of headline properties
+** DONE fix import of headline properties
+   - State "DONE"       from "TODO"       [2014-03-11 Di 05:21]
    [2014-03-06 Do 11:10]
 ** TODO fix URLs in html wiki pages
    [2014-03-06 Do 11:04]

@@ -84,15 +84,39 @@
 (setq
    *TimestampType '(("-" . NIL) ("<" . active) ("[" . inactive)
                     ("<<" .  active-range) ("[[" . inactive-range) )
-   ## *TimestampTypeBeg '(("-" . NIL) ("<" . active) ("[" . inactive)
-   ##                     ("<<" . active-range) ("[[" . inactive-range))
-   ## *TimestampTypeEnd '(("-" . NIL) (">" . active) ("]" . inactive)
-   ##                     (">>" . active-range) ("]]" . inactive-range))
    *RepeaterType '(("-" . NIL) ("+" . cumulate) (".+" . restart)
                    ("++" . catch-up) )
 
    *RepeaterUnit '(("-" . NIL) ("h" . hour) ("d" . day) ("w" . week)
-                   ("m" . month) ("y" . year) ) )
+                   ("m" . month) ("y" . year) )
+
+  *OrgExportWithVars '("(org-export-with-archived-trees t) "
+                       "(org-export-with-clocks t) "
+                       "(org-export-with-date t) "
+                       "(org-export-with-email t) "
+                       "(org-export-with-entities t) "
+                       "(org-export-with-footnotes t) "
+                       "(org-export-with-latex t) "
+                       "(org-export-with-priority t) "
+                       "(org-export-with-section-numbers t) "
+                       "(org-export-with-special-strings t) "
+                       "(org-export-with-sub-superscripts t) "
+                       "(org-export-with-tags t) "
+                       "(org-export-with-timestamps t) "
+                       "(org-export-with-todo-keywords t) "
+                       "(org-export-with-author t) "
+                       "(org-export-with-creator t) "
+                       "(org-export-with-drawers t) "
+                       "(org-export-with-emphasize t) "
+                       "(org-export-with-fixed-width t) "
+                       "(org-export-with-inlinetasks t) "
+                       "(org-export-with-planning t) "
+                       "(org-export-with-properties t) "
+                       "(org-export-with-smart-quotes t) "
+                       "(org-export-with-statistics-cookies t) "
+                       "(org-export-with-tables t) "
+                       "(org-export-with-tasks t) "
+                       "(org-export-with-toc nil) " ) )
 
                     
 ## ** Entry point
