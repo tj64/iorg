@@ -46,7 +46,9 @@
           " Obj" This )
       (<grid> 3
          ,"Input Buffer" NIL
-         (gui '(+E/R +TextField)
+         (gui '(+Chk +E/R +TextField)
+            '(unless (val> This)
+                ,"Please provide a name" )
             '(input-buffer : home obj) 20 )
          ,"Input File" NIL
          ## (gui '(+Chk +E/R +TextField)

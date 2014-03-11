@@ -206,7 +206,8 @@
 (dm upd> ())
 (dm diff> ())
 (dm new> ())
-## FIXME: makes sense? must be called somewhere?
+## ## FIXME: must be called somewhere! best before canonical use of
+## ## stored object.
 ## (dm check> ()
 ##    (make
 ##       (or (: elem-id) (link ,"Org-Element without ID"))
@@ -386,6 +387,8 @@
 
 (dm url> (Tab)
    (and (may OrgData) (list "iorg/orgHeadline.l" '*ID This)) )
+## ## FIXME: must be called somewhere! best before canonical use of
+## ## stored object.
 ## (dm check> ()
 ##    (make
 ##       (log 'debug "(check> . +OrgHeadline) entered)" This)

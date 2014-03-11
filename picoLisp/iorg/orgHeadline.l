@@ -49,6 +49,16 @@
                  (: ptree creation-time) ) ">]" )
       (--)
       (<grid> 6
+         ## ,"OrgData-ID" NIL
+         ## (gui '(+Chk +E/R +Obj +NumField)
+         ##    '(unless (val> This)
+         ##        "Please provide an OrgData-ID" )
+         ##    '(ptree : home obj ) '(: elem-id) 6 )
+         ## ,"Ancestor-ID" NIL
+         ## (gui '(+Chk +E/R +Obj +NumField)
+         ##    '(unless (val> This)
+         ##        "Please provide an Ancestor-ID" )
+         ##    '(ancestor : home obj) '(: elem-id) 6 ) )
          ,"OrgData-ID" NIL
          (gui '(+E/R +ObjView +NumField)
             '(ptree : home obj ) '(: elem-id) )
@@ -58,27 +68,38 @@
       (--)
       (<grid> 9
          ,"Level" NIL
-         (gui '(+E/R +NumField) '(level : home obj) 1)
+         (gui '(+Chk +E/R +Map +NumField)
+            '(unless (val> This)
+                "Please provide a headline level")
+            '(level : home obj)
+            '(("-" . NIL) ("1" . 1) ("2" . 2) ("3" . 3) ("4" . 4)
+              ("5" . 5)( "6" . 6) ("7" . 7) ("8" . 8))
+            '("-" "1" "2" "3" "4"  "5" "6" "7" "8") )
          ,"Priority" NIL
-         (gui '(+E/R +Fmt +TextField)
+         (gui '(+E/R +Fmt +Map +TextField)
             '(priority : home obj)
             '((C) (and C (char C)))
             '((C) (and C (char C)))
+            '(("-" . NIL))
             '("A" "B" "C") )
          ,"Todo" NIL
-         (gui '(+E/R +TextField)
+         (gui '(+E/R +Map +TextField)
             '(todo-keyword : home obj)
+            '(("---" . NIL))
             '("TODO" "DONE" "NEXT" "WAITING") ) )
-      (<grid> 3
+      (<grid> 7
          ,"Category" NIL
          (gui '(+E/R +TextField)
-            '(category : home obj) 15)
+            '(category : home obj) 15) NIL
+         ,"Author" NIL
+         (gui 'author '(+E/R +TextField)
+            '(author : home obj) 23 )
          ,"Title" NIL
          (gui '(+E/R +TextField)
-            '(title-string : home obj) 50)
+            '(title-string : home obj) 50) - - - -
          ,"Alt-Title" NIL
          (gui '(+E/R +TextField)
-            '(alt-title-string : home obj) 50)
+            '(alt-title-string : home obj) 50) - - - -
          ,"Tags" NIL
          (gui '(+E/R +Fmt +TextField)
             '(tags : home obj)
@@ -87,7 +108,7 @@
                         (filter bool
                            (mapcar pack
                               (split (chop Strg) " ") ) ) ) )
-            50 ) )
+            50 ) - - - -)
         (----)
       (<table> NIL ,"Planning" NIL
          (<row> NIL ,"Titlestamp")
@@ -182,26 +203,20 @@
          "Lorem ipsum dolor sit amet"
          60 30 ,"Contents" )
       (--)
-      (<grid> 7
+      (<grid> 3
         ,"Archived?" NIL
          (gui 'archived-p '(+E/R +Checkbox)
-               '(archived-p : home obj) ) NIL
+               '(archived-p : home obj) ) 
         ,"Footnote-Section?" NIL
          (gui 'footnote-section-p '(+E/R +Checkbox)
                '(footnote-section-p : home obj) ) )
       (--)
-      (<grid> 3
-         ,"Author" NIL
-         (gui 'author '(+E/R +TextField)
-            '(author : home obj) 30 ) )
-      (--)
-      (<grid> 4
+      (<grid> 5
         ,"Creation-Date" NIL
         (gui 'creation-date '(+E/R +ObjView +DateField)
-               '(creation-date : home obj) ) 
+               '(creation-date : home obj) ) NIL 
          (gui 'creation-time '(+E/R +ObjView +TimeField)
                '(creation-time : home obj) ) )
-
  ) )
 
 ## iorg/orgHeadline.l ends here

@@ -117,6 +117,11 @@ valid for these planning types
 
 * NEXT Version 0.3
 
+** TODO define org-todo-keywords in picolisp
+   [2014-03-11 Di 23:56]
+
+set them when importing orgData
+
 ** TODO add descendants and children to orgHeadline gui
    [2014-03-11 Di 12:51]
 ** TODO put each timestamp part in table cell
