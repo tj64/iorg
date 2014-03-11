@@ -45,7 +45,7 @@
    *IorgCss '("iorg/css/worg.css" "iorg/css/iorg.css")
    *IorgPort 5001 )
 
-(load "iorg/er.l" "iorg/lib.l" "iorg/gui.l")
+(load "iorg/er.l" "iorg/lib.l" "iorg/gui.l" "iorg/log.l")
 
 (permission
    OrgData     "Edit Org Element Objects"
