@@ -61,7 +61,7 @@
             '(creation-date : home obj) 10 )
          ,"Creation-Time" NIL
          (gui '(+E/R +TimeField)
-            '(creation-time : home obj) 8 ) )
+            '(creation-time : home obj) 5 ) )
       (--)
       (<grid> 3
          ,"Author" NIL

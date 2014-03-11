@@ -117,6 +117,10 @@ valid for these planning types
 
 * NEXT Version 0.3
 
+** TODO add descendants and children to orgHeadline gui
+   [2014-03-11 Di 12:51]
+** TODO put each timestamp part in table cell
+   [2014-03-11 Di 11:29]
 ** DONE Improve GUI for timestamps
    - State "DONE"       from "TODO"       [2014-03-10 Mo 14:34]
    [2014-03-10 Mo 08:49]
@@ -133,6 +137,11 @@ trailing  "[ ] append?" checkbox
 
 ** TODO write chk> methods for +OrgData and +OrgHeadline
    [2014-03-07 Fr 11:53]
+** DONE set +TimeField length from 8 to 5 -> no seconds
+   - State "DONE"       from "TODO"       [2014-03-11 Di 11:29]
+   [2014-03-11 Di 11:28]
+** TODO fix use of grids in orgHeadline.l
+   [2014-03-11 Di 11:28]
 ** DONE fix use of grids in GUIs
    - State "DONE"       from "TODO"       [2014-03-10 Mo 22:30]
    [2014-03-06 Do 11:11]

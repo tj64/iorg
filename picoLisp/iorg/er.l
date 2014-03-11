@@ -388,10 +388,164 @@
    (and (may OrgData) (list "iorg/orgHeadline.l" '*ID This)) )
 (dm check> ()
    (make
-      (or (: level) (link ,"Org-Headline without level"))
       (or (: ptree) (link ,"Org-Headline without ptree" ) )
+      (or (: title-string)
+         (link ,"Org-Headline without title-string") )
+      (unless
+         (or
+            (not (: properties))
+            (= (length (: properties))
+               (length
+                  (filter 'bool
+                     (mapcar 'car (: properties)) ) ) ) )
+         (link ,"Org-Headline properties without key") ) )
+      (unless
+         (or
+            (not (: title-stamp))
+            (and
+               (member "range"
+                  (mapcar 'pack
+                     (split (chop (car (: title-stamp))) "-") ) )
+               (car (nth (: title-stamp) 2))
+               (car (nth (: title-stamp) 4)) )
+            (and
+               (not
+                  (member "range"
+                     (mapcar 'pack
+                        (split (chop (car (: title-stamp))) "-") ) ) )
+               (if2
+                  (car (nth (: title-stamp) 2))
+                  (car (nth (: title-stamp) 4))
+                  NIL T T NIL) )
+            (and
+               (if2
+                  (car (nth (: title-stamp) 2))
+                  (car (nth (: title-stamp) 3))
+                  T T NIL T )
+               (if2
+                  (car (nth (: title-stamp) 4))
+                  (car (nth (: title-stamp) 5))
+                  T T NIL T ) )
+            (or
+               (and
+                  (= (length (: title-stamp)) 8)
+                  (car (nth (: title-stamp) 7))
+                  (car (nth (: title-stamp) 6)) )
+               (<= (length (: title-stamp)) 5) ) )
+           (link
+              ,"Org-Headline with invalid title-stamp" ) )
       (or (: category)
-         (link ,"Org-Headline without category") ) ) )
+         (link ,"Org-Headline without category") )
+      (unless
+         (and
+            (: level) (num (: level))
+            (memq (: level) '(1 2 3 4 5 6 7 8)) )
+         (link ,"Org-Headline without valid level") )
+      (unless
+         (or
+            (not (: scheduled))
+            (and
+               (member "range"
+                  (mapcar 'pack
+                     (split (chop (car (: scheduled))) "-") ) )
+               (car (nth (: scheduled) 2))
+               (car (nth (: scheduled) 4)) )
+            (and
+               (not
+                  (member "range"
+                     (mapcar 'pack
+                        (split (chop (car (: scheduled))) "-") ) ) )
+               (if2
+                  (car (nth (: scheduled) 2))
+                  (car (nth (: scheduled) 4))
+                  NIL T T NIL) )
+            (and
+               (if2
+                  (car (nth (: scheduled) 2))
+                  (car (nth (: scheduled) 3))
+                  T T NIL T )
+               (if2
+                  (car (nth (: scheduled) 4))
+                  (car (nth (: scheduled) 5))
+                  T T NIL T ) )
+            (or
+               (and
+                  (= (length (: scheduled)) 8)
+                  (car (nth (: scheduled) 7))
+                  (car (nth (: scheduled) 6)) )
+               (<= (length (: scheduled)) 5) ) )
+           (link
+              ,"Org-Headline with invalid scheduled-timestamp" ) )
+      (unless
+         (or
+            (not (: deadline))
+            (and
+               (member "range"
+                  (mapcar 'pack
+                     (split (chop (car (: deadline))) "-") ) )
+               (car (nth (: deadline) 2))
+               (car (nth (: deadline) 4)) )
+            (and
+               (not
+                  (member "range"
+                     (mapcar 'pack
+                        (split (chop (car (: deadline))) "-") ) ) )
+               (if2
+                  (car (nth (: deadline) 2))
+                  (car (nth (: deadline) 4))
+                  NIL T T NIL) )
+            (and
+               (if2
+                  (car (nth (: deadline) 2))
+                  (car (nth (: deadline) 3))
+                  T T NIL T )
+               (if2
+                  (car (nth (: deadline) 4))
+                  (car (nth (: deadline) 5))
+                  T T NIL T ) )
+            (or
+               (and
+                  (= (length (: deadline)) 8)
+                  (car (nth (: deadline) 7))
+                  (car (nth (: deadline) 6)) )
+               (<= (length (: deadline)) 5) ) )
+           (link
+              ,"Org-Headline with invalid deadline-timestamp" ) )
+      (unless
+         (or
+            (not (: closed))
+            (and
+               (member "range"
+                  (mapcar 'pack
+                     (split (chop (car (: closed))) "-") ) )
+               (car (nth (: closed) 2))
+               (car (nth (: closed) 4)) )
+            (and
+               (not
+                  (member "range"
+                     (mapcar 'pack
+                        (split (chop (car (: closed))) "-") ) ) )
+               (if2
+                  (car (nth (: closed) 2))
+                  (car (nth (: closed) 4))
+                  NIL T T NIL) )
+            (and
+               (if2
+                  (car (nth (: closed) 2))
+                  (car (nth (: closed) 3))
+                  T T NIL T )
+               (if2
+                  (car (nth (: closed) 4))
+                  (car (nth (: closed) 5))
+                  T T NIL T ) )
+            (or
+               (and
+                  (= (length (: closed)) 8)
+                  (car (nth (: closed) 7))
+                  (car (nth (: closed) 6)) )
+               (<= (length (: closed)) 5) ) )
+           (link
+              ,"Org-Headline with invalid closed-timestamp" ) ) )
 (dm upd> ())
 (dm diff> ())
 

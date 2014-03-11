@@ -99,9 +99,9 @@
                  *TimestampType
                  (mapcar car *TimestampType) ) 
               (gui 2 '(+DateField) 10)
-              (gui 3 '(+TimeField) 8)
+              (gui 3 '(+TimeField) 5)
               (gui 4 '(+DateField) 10)
-              (gui 5 '(+TimeField) 8)
+              (gui 5 '(+TimeField) 5)
               (gui 6 '(+Map +TextField)
                  *RepeaterType
                  (mapcar car *RepeaterType) )
@@ -118,9 +118,9 @@
                  *TimestampType
                  (mapcar car *TimestampType) )
               (gui 2 '(+DateField) 10)
-              (gui 3 '(+TimeField) 8)
+              (gui 3 '(+TimeField) 5)
               (gui 4 '(+DateField) 10)
-              (gui 5 '(+TimeField) 8)
+              (gui 5 '(+TimeField) 5)
               (gui 6 '(+Map +TextField)
                  *RepeaterType
                  (mapcar car *RepeaterType) )
@@ -137,9 +137,9 @@
                  *TimestampType
                  (mapcar car *TimestampType) )
               (gui 2 '(+DateField) 10)
-              (gui 3 '(+TimeField) 8)
+              (gui 3 '(+TimeField) 5)
               (gui 4 '(+DateField) 10)
-              (gui 5 '(+TimeField) 8)
+              (gui 5 '(+TimeField) 5)
               (gui 6 '(+Map +TextField)
                  *RepeaterType
                  (mapcar car *RepeaterType) )
@@ -156,9 +156,9 @@
                  *TimestampType
                  (mapcar car *TimestampType) )
               (gui 2 '(+DateField) 10)
-              (gui 3 '(+TimeField) 8)
+              (gui 3 '(+TimeField) 5)
               (gui 4 '(+DateField) 10)
-              (gui 5 '(+TimeField) 8)
+              (gui 5 '(+TimeField) 5)
               (gui 6 '(+Map +TextField)
                  *RepeaterType
                  (mapcar car *RepeaterType) )
