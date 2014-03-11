@@ -172,7 +172,7 @@
             (gui 'creation-date-end '(+Var +DateField)
                '*OrgDataCreationDateEnd 10 )
                '*OrgDataCreationDate=
-               '("==" ">=" "<=") ) )
+               '("==" ">=" "<=") )
       (--)
       (gui 'query '(+QueryChart) (cho)
          '(goal
@@ -344,7 +344,7 @@ footnote-section-p query) )
             '*OrgHeadlineArchivedP ) - -
         ,"Footnote-Section?" NIL
          (gui 'footnote-section-p '(+Var +Checkbox)
-             '*OrgHeadlineFootnoteSectionP ) ) - -
+             '*OrgHeadlineFootnoteSectionP ) - - )
       (--)
          (searchButton '(init> (: home query))) NIL
          (resetButton '(category level level= priority priority=

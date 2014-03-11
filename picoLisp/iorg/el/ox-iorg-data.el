@@ -78,7 +78,7 @@
   '((:iorg-export-p nil "iorg" t t)
     (:iorg-data "IORG_DATA" nil nil space)
     (:iorg-form "IORG_FORM" nil nil space)))
-
+ 
 
 ;;; Variables
 ;;;; Internal Variables
@@ -436,7 +436,7 @@ compliant form."
 MATCH is the match-string to be converted, with 'nil' becoming
 'NIL' and 't' becoming 'T'."
   (cond
-   ((string= match "t")
+    ((string= match "t")
     (format "%s" "T"))
    ((string= match "nil")
     (format "%s" "NIL"))
@@ -560,11 +560,13 @@ CONTENTS is its contents, as a string or nil.  INFO is ignored."
                    (org-element-property :title headline)
                    'timestamp 'identity)))
              'alt-title-string
-             (let ((attl (org-element-property :alt-title headline)))
+             (let ((attl
+		    (org-element-property :alt-title headline)))
                (and attl (substring-no-properties (car attl))))
              'properties props
              'category
-             (substring-no-properties (org-export-get-category headline info))
+             (substring-no-properties
+	      (org-export-get-category headline info))
              'level
              (org-element-property :level headline)
              'priority
@@ -627,7 +629,8 @@ CONTENTS is its contents, as a string or nil.  INFO is ignored."
       (delq nil
             (add-to-list
              'org-iorg-data-node-properties
-             (list key (org-element-property :value node-property))))))
+             (list key
+		   (org-element-property :value node-property))))))
   "")
 
           ;;  (org-element-property :month-end headline)
