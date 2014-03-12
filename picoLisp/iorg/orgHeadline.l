@@ -211,6 +211,56 @@
          (gui 'footnote-section-p '(+E/R +Checkbox)
                '(footnote-section-p : home obj) ) )
       (--)
+      (gui '(+E/R +Chart) '(descendants : home obj) 8
+         '((This)
+            (list
+               This
+               (and (: priority) (char @))
+               (: todo-keyword)
+               (: category)
+               (: title-string)
+               (and (: tags) (pack ":" (glue ":" @) ":")) ) )
+         car )
+      (<table> NIL ,"Direct Descendants"
+         '((NIL ,"*") (NIL ,"[#]") (NIL ,"Todo") (NIL ,"Category")
+           (NIL ,"Title") (NIL ,"Tags"))
+         (do 6
+            (<row> (alternating)
+               (gui 1 '(+ObjView +NumField) '(: level))
+               (gui 2 '(+TextField))
+               (gui 3 '(+TextField))
+               (gui 4 '(+TextField))
+               (gui 5 '(+TextField))
+               (gui 6 '(+TextField))
+               (gui 7 '(+DelRowButton))
+               (gui 8 '(+BubbleButton)) ) ) )
+      (scroll 6)
+      (--)
+      (gui '(+QueryChart) 12
+         '(goal '(@OrgHeader (: home obj)
+                    (db ancestor +OrgElement @OrgHeader @@) ) )
+         6
+         '((This)
+           (list
+              This
+              (and (: priority) (char @))
+              (: todo-keyword)
+              (: category)
+              (: title-string)
+              (and (: tags) (pack ":" (glue ":" @) ":")) ) ) )
+      (<table> NIL ,"All Children"
+         '((NIL ,"*") (NIL ,"[#]") (NIL ,"Todo") (NIL ,"Category")
+           (NIL ,"Title") (NIL ,"Tags") )
+         (do 12
+            (<row> (alternating)
+               (gui 1 '(+ObjView +NumField) '(: level))
+               (gui 2 '(+TextField))
+               (gui 3 '(+TextField))
+               (gui 4 '(+TextField))
+               (gui 5 '(+TextField))
+               (gui 6 '(+TextField)) ) ) )
+      (scroll 6)
+      (--)
       (<grid> 5
         ,"Creation-Date" NIL
         (gui 'creation-date '(+E/R +ObjView +DateField)
