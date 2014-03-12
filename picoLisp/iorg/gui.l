@@ -491,6 +491,7 @@ author creation-date-start creation-date-end creation-date= archived-p footnote-
                             (or *OrgHeadlineCreationDateEnd
                                *OrgHeadlineCreationDateStart T ) ) )
                    ) )
+               @Properties *OrgHeadlineProperties
                @Author *OrgHeadlineAuthor
                @ArchivedP *OrgHeadlineArchivedP
                @FootnoteSectionP *OrgHeadlineFootnoteSectionP
@@ -505,7 +506,7 @@ author creation-date-start creation-date-end creation-date= archived-p footnote-
                    (scheduled +OrgHeadline @ScheduledRng)
                    (deadline +OrgHeadline @DeadlineRng)
                    (closed +OrgHeadline @ClosedRng)
-                   ## properties
+                   ## (properties +OrgHeadline @Properties)
                    (author +OrgHeadline @Author)
                    (archived-p +OrgHeadline @ArchivedP)
                    (footnote-section-p
@@ -518,10 +519,9 @@ author creation-date-start creation-date-end creation-date= archived-p footnote-
                   (range @Level @@ level)
                   (range @Priority @@ priority)
                   (head @Todo @@ todo-keyword)
-                  ## tags
+                  ## (tags +OrgHeadline @Tags)
                   (tolr @Author @@ author)
                   (range @CreationDateRng @@ creation-date)
-                  ## (head @ArchivedP @@ archivedp)
                   (or ((not @ArchivedP))
                      ((val T @@ archived-p)) )
                   (or ((not @FootnoteSectionP))
