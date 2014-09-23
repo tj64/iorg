@@ -900,5 +900,3 @@ author creation-date-start creation-date-end creation-date= archived-p footnote-
          (T (prin Str)) ) ) )
 
 ## iorg/gui.l ends here
-
-(0)

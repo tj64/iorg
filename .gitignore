@@ -1,4 +1,6 @@
-wiki.tgz
+*.tgz
+very-old-picoLisp/*
+old-picoLisp/*
 picoLisp/*
 !picoLisp/iorg
 picoLisp/iorg/html

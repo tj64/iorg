@@ -24,22 +24,23 @@
 ;;;; Commentary
 
 ;; This library implements a iOrg Form back-end for Org exporter.
-;;
+
 ;; It introduces two interactive functions, `org-iorg-form-export-as-org'
 ;; and `org-iorg-form-export-to-org', which export, respectively, to
 ;; a temporary buffer and to a file.
-;;
+
 ;; A publishing function is also provided: `org-iorg-form-publish-to-org'.
 
 ;;; Require
 ;; (eval-when-compile (require 'cl))
 (require 'ox-html)
+(require 'org-dp-lib)
 
 (declare-function htmlize-buffer "htmlize" (&optional buffer))
 
 ;;; Define Back-End
 
-(org-export-define-derived-backend 'iorg 'html
+(org-export-define-derived-backend 'iorg-form 'html
   :translate-alist
   '((headline . org-iorg-form-headline)
     (item . org-iorg-form-item)
@@ -80,9 +81,9 @@
 ;;;; Internal Variables
 ;;;; User Configurable Variables
 
-(defgroup org-export-iorg nil
+(defgroup org-export-iorg-form nil
   "Options for exporting Org mode files to iOrg HTML Forms."
-  :tag "Org Export iOrg"
+  :tag "Org Export iOrg Form"
   :group 'org-export
   :version "24.4"
   :package-version '(Org . "8.0"))
@@ -99,7 +100,7 @@ work on the same website.  When this variable is non-nil,
 creating an htmlized version of an Org buffer using
 `org-iorg-form-export-as-org' will include a link to this URL if the
 setting of `org-html-htmlize-output-type' is 'css."
-  :group 'org-export-iorg
+  :group 'org-export-iorg-form
   :type '(choice
 	  (const :tag "Don't include external stylesheet link" nil)
 	  (string :tag "URL or local href")))

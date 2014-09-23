@@ -226,7 +226,7 @@ PicoLisp. This is a hack necessary because of the way the
      (list
       (read-number "Port: ")
       (read-string "Host: ")))
-    ((equal current-prefix-arg '(32))
+    ((equal current-prefix-arg '(64))
      (list
       (read-number "Port: ")
       (read-string "Host: ")
