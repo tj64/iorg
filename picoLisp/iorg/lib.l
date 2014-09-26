@@ -99,7 +99,6 @@
             ) )
       ## (out 'emc (echo)) ) )
       (eval Exe) ) )
-
 (de emc2 (Exe . @)
    (pipe
       (in
@@ -208,6 +207,7 @@
 ## objects for the parse-tree's headlines
 (de makeOrgData (Lst)
    (msg "entering makeOrgData ...")
+   (msg Lst "makeOrgdata Lst arg")
    ## (setq *IorgGlobalSwitch (extractOptionValue "iorg" Lst))
    ## (msg *IorgGlobalSwitch " => *IorgGlobalSwitch ")
    ##    (unless (= "nil" *IorgGlobalSwitch)
