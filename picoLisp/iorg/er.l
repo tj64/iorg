@@ -775,5 +775,3 @@
    (6 (+Doc mup)) )                    # H:4096 Full-text index
 
 ## iorg/er.l ends here
-
-(0)
