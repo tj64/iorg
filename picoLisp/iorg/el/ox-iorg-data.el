@@ -488,10 +488,15 @@ holding export options."
            ;;     (reverse chld))
            'input-file (plist-get info :input-file)
            'input-buffer (plist-get info :input-buffer)
-           'author (car (plist-get info :author))
-           'creator (plist-get info :creator)
-           'email (plist-get info :email)
-           'description (plist-get info :description))
+           ;; 'author (car (plist-get info :author))
+           'author (substring-no-properties
+		    (plist-get info :author))
+           'creator (substring-no-properties
+		     (plist-get info :creator))
+           'email (substring-no-properties
+		   (plist-get info :email))
+           'description (substring-no-properties
+			 (plist-get info :description)))
           contents))
 
 ;; (defun org-iorg-timestamp-template (contents info)
