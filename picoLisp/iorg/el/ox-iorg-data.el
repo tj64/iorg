@@ -490,7 +490,7 @@ holding export options."
            'input-buffer (plist-get info :input-buffer)
            ;; 'author (car (plist-get info :author))
            'author (substring-no-properties
-		    (plist-get info :author))
+		    (car (plist-get info :author)))
            'creator (substring-no-properties
 		     (plist-get info :creator))
            'email (substring-no-properties
