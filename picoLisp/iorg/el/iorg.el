@@ -60,6 +60,11 @@ There is a mode hook, and a few commands:
 ;;   "Regexp that matches the label of an object or the
 ;;   reference to such a labeled in a circular list.")
 
+(defvar iorg-directory
+   (file-name-directory
+    (directory-file-name (file-name-directory (buffer-file-name))))
+  "iOrg directory.")
+
 (defvar iorg-default-map-types
   (append org-element-all-elements org-element-all-objects)
   "Default types to be selected by `org-element-map'.")
