@@ -55,11 +55,6 @@ There is a mode hook, and a few commands:
 ;; ** Consts
 ;; ** Vars
 
-(defvar iorg-directory
-   (file-name-directory
-    (directory-file-name (file-name-directory (buffer-file-name))))
-  "iOrg directory.")
-
 (defvar iorg-default-host-path "http://localhost:5001"
   "Default path (protocol, host, port) for iOrg server.")
 
