@@ -43,11 +43,13 @@
    *IorgCss '("iorg/css/worg.css" "iorg/css/iorg.css")
    *IorgPort 5001 )
 
-(load "iorg/er.l" "iorg/lib.l" "iorg/gui.l" "iorg/log.l")
+(load "iorg/er.l" "iorg/er2.l" "iorg/lib.l" "iorg/gui.l"
+   "iorg/gui2.l" "iorg/log.l" )
 
 (permission
    OrgData     "Edit Org Element Objects"
    Iorg        "Edit Iorg Wiki Documents"
+   IorgForm    "Create Iorg Forms"
    System      "Edit System Data"
    Upload      "File upload"
    RoleAdmin   "Role Administration"

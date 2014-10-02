@@ -35,11 +35,18 @@
                      ("Home" "!start")
                      ("logout" (and *Login "!stop"))
                      (NIL (<hr>))
-                     ("Documents" (and (may Iorg) "iorg/doc.l"))
-                     ("Org Data" (and (may OrgData) "iorg/orgData.l"))
-                     ("Org Headlines" (and (may OrgData) "iorg/orgHeadline.l"))
-                     ("Role Administration" (and (may RoleAdmin) "iorg/role.l"))
-                     ("User Administration" (and (may Iorg) "iorg/user.l"))
+                     ("Documents"
+                        (and (may Iorg) "iorg/doc.l") )
+                     ("Org Data"
+                        (and (may OrgData) "iorg/orgData.l") )
+                     ("Org Headlines"
+                        (and (may OrgData) "iorg/orgHeadline.l") )
+                     ("Piki Test"
+                        (and (may OrgData) "iorg/piki.l") )
+                     ("Role Administration"
+                        (and (may RoleAdmin) "iorg/role.l") )
+                     ("User Administration"
+                        (and (may Iorg) "iorg/user.l") )
                      ("Upload" (and (may Upload) "iorg/upload.l"))
                      ("Help" (and (may Iorg) "iorg/help.l")) ) )
                ((NIL NIL 'main)
@@ -559,6 +566,8 @@ author creation-date-start creation-date-end creation-date= archived-p footnote-
 (de choAgenda ()
    )
 
+(de choPiki ()
+   )
 
 ## (de choOrgTitle ()
 ##    )
