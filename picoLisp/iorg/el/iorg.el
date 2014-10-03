@@ -31,7 +31,6 @@
 ;; (require 'inferior-picolisp nil 'NOERROR)
 ;; (require 'outorg nil 'NOERROR)
 (require 'ox)
-
 (eval-when-compile (require 'cl))
 
 ;; * Mode and Exporter definitions
@@ -55,13 +54,34 @@ There is a mode hook, and a few commands:
 ;; ** Consts
 ;; ** Vars
 
+(defvar iorg-installation-directory ""
+  "iOrg installation directory.")
+
+(setq iorg-installation-directory
+      (file-name-directory
+       (directory-file-name
+	(file-name-directory
+	 (buffer-file-name)))))
+
 (defvar iorg-default-host-path "http://localhost:5001"
   "Default path (protocol, host, port) for iOrg server.")
 
 ;; ** Hooks
 ;; ** Customs
 ;; *** Custom Groups
+
+(defgroup iorg nil
+  "Options for interactive Org mode."
+  :tag "iOrg"
+  :group 'org)
+
 ;; *** Custom Vars
+
+;; (defcustom iorg-installation-directory 
+;;   "iOrg installation 'picoLisp' directory."
+;;   :group 'org-iorg-form
+;;   :type 'dir)
+
 ;; * Functions
 ;; ** Non-interactive Functions
 ;; *** Helper Functions
