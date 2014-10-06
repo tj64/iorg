@@ -61,7 +61,7 @@ There is a mode hook, and a few commands:
       (file-name-directory
        (directory-file-name
 	(file-name-directory
-	 (buffer-file-name)))))
+	 (or load-file-name (buffer-file-name))))))
 
 (defvar iorg-default-host-path "http://localhost:5001"
   "Default path (protocol, host, port) for iOrg server.")
@@ -85,6 +85,48 @@ There is a mode hook, and a few commands:
 ;; * Functions
 ;; ** Non-interactive Functions
 ;; *** Helper Functions
+
+(defun iorg--clean-string-ends (strg)
+  "Convert STRG."
+  (when (org-string-nw-p strg)
+    (format "%s"
+    (mapconcat
+     'identity (split-string strg "\"" 'OMIT-NULLS) "\""))))
+
+(defun iorg-fmt-strg (strg &optional quote-lst-p unquote-strg-p)
+  "Deal intelligently with double-quotes in strings.
+
+When QUOTE-LST-P is non-nil, and STRG is surrounded by
+parenthesis \"(\" and \")\", quote it, otherwise do not quote it
+but replace contained double-quotes \"\"\" with quoted
+double-quotes.
+
+When UNQUOTE-STRG-P is non-nil, and STRG is not surrounded by
+parenthesis \"(\" and \")\", do not quote it but replace
+contained double-quotes \"\"\" with quoted double-quotes,
+otherwise quote it.
+
+This function allows to always use `princ', i.e.
+
+: #+BEGIN_SRC emacs-lisp
+:  (format \"%s\" strg)
+: #+END_SRC
+
+at the highest level, but preprocessing 'strg' with
+`iorg-fmt-strg' to nevertheless get the desired level of quoting
+conditional on STRG's characteristics and optional args
+QUOTE-LST-P and UNQUOTE-STRG-P."
+  (when (org-string-nw-p strg)
+    (let ((lst-p (and (string= (substring strg 0 1) "(")
+		     (string= (substring strg
+					 (1- (length strg))
+					 (length strg)) ")"))))
+      (cond
+       ((and lst-p quote-lst-p)
+	  (format "%S" strg))
+       ((or lst-p unquote-strg-p)
+	(replace-regexp-in-string "\"" "\"" strg))
+       (t (format "%S" strg))))))
 
 ;; *** Core Functions
 
